@@ -1,0 +1,436 @@
+﻿
+;────────────────────────────────────
+;도구생성 처리
+;────────────────────────────────────
+@MANAGE_MP
+#DIM LCOUNT
+#DIM 수입예상
+#DIM 평균
+#DIM 분배종수
+#DIM 최대치
+#DIM 처리종
+#DIMS 분배종
+#DIM 원REDRAW
+
+;마력가 전혀 없으면 처리하지 않는다
+SIF CFLAG:마력 == 0
+	RETURN 0
+IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
+	SKIPDISP 1
+ENDIF
+;-------------------------------------------------------------------------
+;마력수입에 관한 처리
+;-------------------------------------------------------------------------
+;수입의기록를 참조해, 장래의 수입을 예측한다
+
+;이미 현재의마력는 데이타베이스에 기입필 보고인 것 전제
+수입예상 = CFLAG:6101 - CFLAG:6100
+FOR LCOUNT, 0, 20
+	SIF CFLAG:(6101 + LCOUNT) == 0
+		BREAK
+	수입예상 = (수입예상 * LCOUNT + CFLAG:(6102 + LCOUNT) - CFLAG:(6101 + LCOUNT)) / (LCOUNT + 1)
+NEXT
+;-------------------------------------------------------------------------
+;런닝코스트(running cost)에 관한 처리
+;-------------------------------------------------------------------------
+;※현재는 0으로 처리하고 있지만, 마력를 수집하는필요가 있는 정도이니까
+;  자동적으로소모 해 마땅한 것은?
+
+;-------------------------------------------------------------------------
+;마력분배에 관한 처리
+;-------------------------------------------------------------------------
+;마력의 사용 먼저는 『조교자추가, 기교상승, 지식·기능취득, 도구연성』이 존재한다.
+;이것들을 현재의 상황, 소질, 능력 따위에 의해 판단해, 우선도나 소비 한계마력를 설정한다.
+
+SIF FLAG:디버그
+	PRINTFORML 「마력 소비 처리」(가용 마력:{CFLAG:마력})
+
+분배종 = 인원추가/기교상승/기능취득/도구연성
+
+CALL SET_CRI_VAR, 분배종
+
+LOCALS = MANAGE_MP
+
+CALL CHA_CRI_VAR, "조교자의 소질"
+CALLFORM %LOCALS%_TALENT_T
+
+CALL CHA_CRI_VAR, "조교대상의 소질"
+CALLFORM %LOCALS%_TALENT_M
+
+CALL CHA_CRI_VAR, "조교자가임신"
+CALLFORM %LOCALS%_MATERNITY_T
+
+CALL CHA_CRI_VAR, "조교자의 능력"
+CALLFORM %LOCALS%_ABL_T
+
+CALL CHA_CRI_VAR, "성별 관계"
+CALLFORM %LOCALS%_SEX
+
+CALL CHA_CRI_VAR, "조교자의체력"
+CALLFORM %LOCALS%_PHYSICAL_T
+
+CALL CHA_CRI_VAR, "조교자의기력"
+CALLFORM %LOCALS%_MENTAL_T
+
+CALL CHA_CRI_VAR, "조교자의흥미"
+CALLFORM %LOCALS%_INTEREST_T
+
+CALL CHA_CRI_VAR, "조교자의초조함"
+CALLFORM %LOCALS%_IRRITATION_T
+
+CALL CHA_CRI_VAR, "조교자의호감도"
+CALLFORM %LOCALS%_LIKE_T
+
+CALL CHA_CRI_VAR, "조교대상의호감도"
+CALLFORM %LOCALS%_LIKE_M
+
+CALL CHA_CRI_VAR, "실행 판정"
+CALLFORM %LOCALS%_ABLE
+
+;──────────────────────────────
+;최종판정
+;──────────────────────────────
+CALL DEF_CRI_VAR()
+CALL ANA_CRI_VAR()
+
+SIF FLAG:디버그
+;OriginalString : 
+	PRINTW 
+
+;분배종 마다의 기준치취득
+SPLIT 분배종, "/", LOCALS
+분배종수 = RESULT
+CALLF GET_CRI_VAR("누계")
+;하는 김에 평균치를 취한다
+평균 = 0
+FOR LCOUNT, 0, 분배종수
+	LOCAL:LCOUNT = RESULT:LCOUNT
+	SIF LOCAL:LCOUNT > -99
+		평균 += LOCAL:LCOUNT
+NEXT
+평균 /= 분배종수
+WHILE 1
+	;최대치취득
+	최대치 = MAXARRAY(LOCAL, 0, 분배종수)
+	;최대치가-99를 밑돌면 종료
+	SIF 최대치 <= -99
+		BREAK
+	;큰 값의 것으로부터 순서에 처리
+	처리종 = FINDELEMENT(LOCAL, 최대치, 0, 분배종수)
+	;사용 가능마력판정용 수치 대입
+	CALLF MANAGE_MP_PROP(1, LOCAL:처리종 - 평균, 수입예상)
+	;처리종이……
+	SELECTCASE LOCALS:처리종
+		CASE "인원 추가"
+			;SIF FLAG:디버그
+			;	PRINTFORML 『인원 추가』
+		CASE "기교상승"
+			CALL RIZE_ABL_AI
+		CASE "기능취득"
+			CALL GAIN_TALENT_AI
+		CASE "도구연성"
+			CALL MAKE_TOOLS
+	ENDSELECT
+	;현재의 처리종에 대해서 처리를 종료한다
+	LOCAL:처리종 = -99
+	IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
+		SKIPDISP 1
+	ENDIF
+WEND
+;-------------------------------------------------------------------------
+;조교자의 소질을 참조
+;-------------------------------------------------------------------------
+@MANAGE_MP_TALENT_T
+
+;조교자가겁쟁이
+SIF TALENT:겁쟁이
+	CALL ADD_CRI_VAR("인원 추가", 3)
+
+;조교자가프라이드높음/낮다
+IF TALENT:프라이드높음
+	CALL ADD_CRI_VAR("기교상승", 6)
+	CALL ADD_CRI_VAR("기능취득", 9)
+	CALL ADD_CRI_VAR("도구연성", -6)
+ELSEIF TALENT:프라이드낮음
+	CALL ADD_CRI_VAR("기교상승", -6)
+	CALL ADD_CRI_VAR("기능취득", -9)
+	CALL ADD_CRI_VAR("도구연성", 6)
+ENDIF
+
+;조교자가무관심/호기심
+IF TALENT:무관심
+	CALL ADD_CRI_VAR("기교상승", -3)
+	CALL ADD_CRI_VAR("기능취득", -9)
+	CALL ADD_CRI_VAR("도구연성", -9)
+ELSEIF TALENT:호기심
+	CALL ADD_CRI_VAR("기교상승", 3)
+	CALL ADD_CRI_VAR("기능취득", 9)
+	CALL ADD_CRI_VAR("도구연성", 9)
+ENDIF
+
+;조교자가습득빠름/습득느림
+IF TALENT:습득빠름
+	CALL ADD_CRI_VAR("기교상승", 6)
+	CALL ADD_CRI_VAR("기능취득", 6)
+ELSEIF TALENT:습득느림
+	CALL ADD_CRI_VAR("기교상승", -6)
+	CALL ADD_CRI_VAR("기능취득", -6)
+ENDIF
+
+;조교자가헌신적
+IF TALENT:헌신적
+	CALL ADD_CRI_VAR("기교상승", 6)
+	CALL ADD_CRI_VAR("기능취득", 3)
+ENDIF
+
+;조교자가수동적
+IF TALENT:수동적
+	CALL ADD_CRI_VAR("인원 추가", 6)
+	CALL ADD_CRI_VAR("도구연성", 3)
+ENDIF
+	
+;-------------------------------------------------------------------------
+;조교대상의 소질을 참조
+;-------------------------------------------------------------------------
+@MANAGE_MP_TALENT_M
+
+;조교대상가무관심/호기심
+IF TALENT:MASTER:무관심
+	CALL ADD_CRI_VAR("기능취득", -3)
+	CALL ADD_CRI_VAR("도구연성", -3)
+ELSEIF TALENT:MASTER:호기심
+	CALL ADD_CRI_VAR("기능취득", 3)
+	CALL ADD_CRI_VAR("도구연성", 3)
+ENDIF
+
+;-------------------------------------
+;조교자가임신중
+;-------------------------------------
+@MANAGE_MP_MATERNITY_T
+
+;임신중
+IF TALENT:임신
+	CALL ADD_CRI_VAR("인원 추가", 9)
+	CALL ADD_CRI_VAR("기교상승", -9)
+	CALL ADD_CRI_VAR("기능취득", -9)
+	CALL ADD_CRI_VAR("도구연성", 6)
+ENDIF
+
+;-------------------------------------------------------------------------
+;조교자의 능력을 참조
+;-------------------------------------------------------------------------
+@MANAGE_MP_ABL_T
+
+;조교자의봉사정신가[0→0, 5→5]를 가산(0～5)
+CALL ADD_CRI_VAR("기교상승", LINE_CALC(ABL:봉사정신, "0→0, 5→5, LIMIT/0～5"))
+CALL ADD_CRI_VAR("기능취득", LINE_CALC(ABL:봉사정신, "0→0, 5→5, LIMIT/0～5"))
+
+;-------------------------------------------------------------------------
+;성별 관계
+;동성으로 대응의 능력이나 소질이 없는 경우는 몸의접촉를 피하도록(듯이)
+;-------------------------------------------------------------------------
+@MANAGE_MP_SEX
+
+;조교자에바이가 없고, 남자끼리
+IF TALENT:남자 && TALENT:MASTER:남자 && !TALENT:바이
+	;조교자의ＢＬ끼가[0→0, 4→4]를 가산(0～4)
+	CALL ADD_CRI_VAR("인원 추가", LINE_CALC(ABL:ＢＬ끼, "0→0, 4→4, LIMIT/0～4"))
+	;조교자의ＢＬ끼가[0→0, 4→2]를 가산(0～2)
+	CALL ADD_CRI_VAR("도구연성", LINE_CALC(ABL:ＢＬ끼, "0→0, 4→2, LIMIT/0～2"))
+	;조교자의ＢＬ끼가[0→-2, 4→0]을 가산(-2～0)
+	CALL ADD_CRI_VAR("기교상승", LINE_CALC(ABL:ＢＬ끼, "0→-2, 4→0, LIMIT/-2～0"))
+	CALL ADD_CRI_VAR("기능취득", LINE_CALC(ABL:ＢＬ끼, "0→-2, 4→0, LIMIT/-2～0"))
+ENDIF
+
+;조교자에바이가 없고, 여자끼리
+IF !TALENT:남자 && !TALENT:MASTER:남자 && !TALENT:바이
+	;조교자의레즈끼가[0→0, 4→4]를 가산(0～4)
+	CALL ADD_CRI_VAR("인원 추가", LINE_CALC(ABL:레즈끼, "0→0, 4→4, LIMIT/0～4"))
+	;조교자의레즈끼가[0→0, 4→2]를 가산(0～2)
+	CALL ADD_CRI_VAR("도구연성", LINE_CALC(ABL:레즈끼, "0→0, 4→2, LIMIT/0～2"))
+	;조교자의레즈끼가[0→-2, 4→0]을 가산(-2～0)
+	CALL ADD_CRI_VAR("기교상승", LINE_CALC(ABL:레즈끼, "0→-2, 4→0, LIMIT/-2～0"))
+	CALL ADD_CRI_VAR("기능취득", LINE_CALC(ABL:레즈끼, "0→-2, 4→0, LIMIT/-2～0"))
+	
+	;조교자의레즈중독가[0→0, 4→4]를 가산(0～4)
+	CALL ADD_CRI_VAR("기교상승", LINE_CALC(ABL:레즈중독, "0→0, 4→4, LIMIT/0～4"))
+	CALL ADD_CRI_VAR("기능취득", LINE_CALC(ABL:레즈중독, "0→0, 4→4, LIMIT/0～4"))
+ENDIF
+
+;조교자가남성혐오 한편, 조교대상이남자
+IF TALENT:남성혐오 && TALENT:MASTER:남자
+	CALL ADD_CRI_VAR("인원 추가", 2)
+	CALL ADD_CRI_VAR("도구연성", 4)
+ENDIF
+
+;-------------------------------------
+;조교자의체력
+;-------------------------------------
+@MANAGE_MP_PHYSICAL_T
+
+;조교자의체력가[0→-4, 1500→2]를 가산(-4～2)
+CALL ADD_CRI_VAR("기교상승", LINE_CALC(BASE:체력, "0→-4, 1500→2, LIMIT/-4～2"))
+CALL ADD_CRI_VAR("기능취득", LINE_CALC(BASE:체력, "0→-4, 1500→2, LIMIT/-4～2"))
+;조교자의체력가[0→-2, 500→0]을 가산(-2～0)
+CALL ADD_CRI_VAR("도구연성", LINE_CALC(BASE:체력, "0→-2, 500→0, LIMIT/-2～0"))
+
+;-------------------------------------
+;조교자의기력
+;-------------------------------------
+@MANAGE_MP_MENTAL_T
+
+;조교자의기력가[0→-4, 1500→2]를 가산(-4～2)
+CALL ADD_CRI_VAR("기교상승", LINE_CALC(BASE:기력, "0→-4, 1500→2, LIMIT/-4～2"))
+CALL ADD_CRI_VAR("기능취득", LINE_CALC(BASE:기력, "0→-4, 1500→2, LIMIT/-4～2"))
+;조교자의체력가[0→-2, 500→0]을 가산(-2～0)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(BASE:기력, "0→-2, 500→0, LIMIT/-2～0"))
+CALL ADD_CRI_VAR("도구연성", LINE_CALC(BASE:기력, "0→-2, 500→0, LIMIT/-2～0"))
+
+;-------------------------------------
+;조교자의흥미
+;-------------------------------------
+@MANAGE_MP_INTEREST_T
+
+;조교자의흥미가[0→-4, 1000→4]를 가산(-4～4)
+CALL ADD_CRI_VAR("기교상승", LINE_CALC(BASE:흥미, "0→-4, 1000→4, LIMIT/-4～4"))
+CALL ADD_CRI_VAR("기능취득", LINE_CALC(BASE:흥미, "0→-4, 1000→4, LIMIT/-4～4"))
+;조교자의흥미가[0→2, 1000→-2]를 가산(-2～2)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(BASE:흥미, "0→-2, 1000→2, LIMIT/-2～2"))
+;조교자의흥미가[0→4, 1000→-4]를 가산(-4～4)
+CALL ADD_CRI_VAR("도구연성", LINE_CALC(BASE:흥미, "0→-4, 1000→4, LIMIT/-4～4"))
+
+;-------------------------------------
+;조교자의초조함
+;-------------------------------------
+@MANAGE_MP_IRRITATION_T
+
+;조교자의초조함가[0→0, 800→5]를 가산(0～5)
+CALL ADD_CRI_VAR("도구연성", LINE_CALC(BASE:초조함, "0→0, 800→5, LIMIT/0～5"))
+
+;-------------------------------------
+;조교자의호의
+;-------------------------------------
+@MANAGE_MP_LIKE_T
+
+;조교자의호의가[-2000→3 2000→-3]을 가산(-3～3)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(CFLAG:호의, "-2000→3, 2000→-3, LIMIT/-3～3"))
+;조교자의호의가[-2000→-3 2000→3]을 가산(-3～3)
+CALL ADD_CRI_VAR("기교상승", LINE_CALC(CFLAG:호의, "-2000→-3, 2000→3, LIMIT/-3～3"))
+CALL ADD_CRI_VAR("기능취득", LINE_CALC(CFLAG:호의, "-2000→-3, 2000→3, LIMIT/-3～3"))
+
+;-------------------------------------
+;조교대상의호의
+;주인공으로부터조교자에의호의는조교자자신이 보유 하고 있는데 주의
+;-------------------------------------
+@MANAGE_MP_LIKE_M
+
+;조교자의호의가[-2000→3 2000→-3]을 가산(-3～3)
+CALL ADD_CRI_VAR("인원 추가", LINE_CALC(CFLAG:M호의, "-2000→3, 2000→-3, LIMIT/-3～3"))
+
+;----------------------------------------------------------
+;실행 판정
+;----------------------------------------------------------
+@MANAGE_MP_ABLE
+
+;온으로 되어 있지 않은 설정에 관해서는 실행 불가
+SIF !(FLAG:AI자유도 & 1)
+	CALL DIM_CRI_VAR("인원 추가", -999)
+SIF !(FLAG:AI자유도 & 2)
+	CALL DIM_CRI_VAR("기교상승", -999)
+SIF !(FLAG:AI자유도 & 4)
+	CALL DIM_CRI_VAR("기능취득", -999)
+SIF !(FLAG:AI자유도 & 8)
+	CALL DIM_CRI_VAR("도구연성", -999)
+
+;────────────────────────────────────
+;관련제함수
+;────────────────────────────────────
+;-------------------------------------
+;마력소비성향
+;0를 기준에 큰 만큼마력를 소비했다
+;ARG:0 = 0:사용 가능마력판정 1:수치 대입
+;ARG:1 =요구 편차(0을 기준에 큰 만큼 이 종별로마력를 소비했다)
+;ARG:2 =수입 예상
+;-------------------------------------
+@MANAGE_MP_PROP(ARG = 0, ARG:1, ARG:2)
+#FUNCTION
+IF ARG
+	LOCAL:0 = ARG:1 / 5
+	LOCAL:1 = (ARG:2 * 2 / MAX(CFLAG:마력, 1)) - 2
+	RETURNF 0
+ENDIF
+RETURNF LOCAL + LOCAL:1 + TALENT:호기심 - TALENT:무관심 + TALENT:충동적 - TALENT:자제심 + TALENT:낙관적 - TALENT:비관적
+
+;────────────────────────────────────
+;기교상승 처리
+;※ARG는 요구 편차(0을 기준에 큰 만큼 이 종별로마력를 소비했다)
+;────────────────────────────────────
+@RIZE_ABL_AI
+#DIM 가용마력
+
+;사용 가능마력판정
+가용마력 = RIZE_ABL_MP_ABLE()
+
+SIF FLAG:디버그
+	PRINTFORML 「기교 상승 처리」(가용 마력:{가용마력})
+
+SKIPDISP 0
+WHILE 1
+	;마력불발판정
+	IF 가용마력 < RIZE_ABL_V(0)
+		SIF FLAG:디버그
+			PRINTFORMW 가용 마력이 부족합니다(앞으로 {RIZE_ABL_V(0) - 가용마력})
+		RETURN 0
+	ENDIF
+	;기교상승에 도전
+	CALL RIZE_ABL
+	LOCAL = RESULT:1
+	SELECTCASE RESULT
+		;성공시
+		CASE 0
+			;지문 표시
+			PRINTFORMW %CALLNAME:TARGET%의 조교 기교는<{ABL:기교}>가 되었습니다
+			;이벤트구상:조교기교업
+			;CALL KOJO_EVENT(110, 1)
+			;CALL VOIDLINE_IF(RESULT)
+			
+			;마력·가용마력를 소비
+			CFLAG:마력 -= LOCAL
+			가용마력 -= LOCAL
+			SIF FLAG:디버그
+				PRINTFORML (가용 마력:{가용마력})
+		;마력불발시
+		CASE 1
+			IF FLAG:디버그
+				PRINTFORML 마력이 부족합니다(앞으로 {RIZE_ABL_V(0) - CFLAG:마력})
+;OriginalString : 
+				PRINTW 
+			ENDIF
+			RETURN 0
+		;조교레벨불발시
+		CASE 2
+			IF FLAG:디버그
+				PRINTFORML 조교 레벨이 부족합니다(앞으로 {RIZE_ABL_V(1) - CFLAG:조교레벨})
+;OriginalString : 
+				PRINTW 
+			ENDIF
+			RETURN 0
+		;기교상한시
+		CASE 3
+			IF FLAG:디버그
+				PRINTFORML 이 이상 기교는 올릴 수 없습니다(현재 기교：{ABL:기교})
+;OriginalString : 
+				PRINTW 
+			ENDIF
+			RETURN 0
+	ENDSELECT
+WEND
+
+;------------------------------------------
+;사용 가능마력판정
+;------------------------------------------
+@RIZE_ABL_MP_ABLE()
+#FUNCTION
+;마력불발기준 설정
+RETURNF LIMIT(CFLAG:마력 * (8 + MANAGE_MP_PROP() + TALENT:습득빠름 - TALENT:습득느림) * 10 / 100, 0, CFLAG:마력)
+

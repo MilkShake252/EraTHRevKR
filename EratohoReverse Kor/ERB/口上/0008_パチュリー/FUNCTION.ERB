@@ -1,0 +1,28 @@
+﻿@EFFECT_SHOOT_K8
+;앨리스구상보다 빌리고 있습니다
+SELECTCASE NOWEX:MASTER:사정
+	;드라이사정
+	CASE 1
+		CALL QUAKE(4)
+	;대량사정
+	CASE 3
+		CALL FLASH(2)
+	;그 외
+	CASEELSE
+		CALL FLASH(1)
+ENDSELECT
+
+@RANDLIPS_K8(ARG)
+#FUNCTIONS
+#DIMS CONST STARTER = "짠다", "", ""
+#DIMS CONST ENDER = "", "―"
+SELECTCASE ARG
+	CASE 0
+		RETURNF @"%STARTER:(RAND:3)%…… 응…… 읏…… 츄푸"
+	CASE 1
+		RETURNF "…… 츄우…… 푸츗츄루룻"
+	CASE 2
+		RETURNF @"… 쥬룻……%ENDER:(RAND:2)%"
+	CASE 3
+		RETURNF "응…… 츄풋…… 끄덕…… 츄"
+ENDSELECT

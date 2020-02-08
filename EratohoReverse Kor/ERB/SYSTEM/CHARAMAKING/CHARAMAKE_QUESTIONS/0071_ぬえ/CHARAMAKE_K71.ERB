@@ -1,0 +1,54 @@
+﻿;ぬえ＠CPMの人
+@CHARAMAKE_K71(ARG)
+PRINTFORMW 「이봐、잠에 취하지 말고 일어나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「너는 뭐하는 녀석이냐고?　그런 건 알 리가 없지. 질문에 대답해」
+PRINTFORMW 「나무들로 둘러싸인 깊은 산 속에서, 눈앞에 무엇인가가 지나갔어. 그건 뭐?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 낙엽
+PRINTFORMDL [2] 요괴
+PRINTFORMDL [3] 들새
+PRINTFORMDL [4] 사람
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「입 다물고 있다니 건방지구나. 뭐 좋아」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「재미없는 대답이구나. 뭐 좋아」
+		CALLF CM_PROF("충동",     -20)
+		CALLF CM_PROF("낙관",     20)
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람",   10)
+	CASE 2
+		PRINTFORML 「너는 거기서 끝이야!」
+		CALLF CM_PROF("피학",     20)
+		CALLF CM_PROF("낙관",     -20)
+		CALLF CM_PROF("호기심",   10)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람",   10)
+	CASE 3
+		PRINTFORML 「뭐、그런 것 정도는 있겠지」
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("신경질",   10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",   10)
+	CASE 4
+		PRINTFORML 「헤에……당신 소질 있어. 재미있네」
+		CALLF CM_PROF("공격",     20)
+		CALLF CM_PROF("도착",     30)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("모랄",   -30)
+		CALLF CM_PROF("Ａ를 좋아하는 사람",   10)
+ENDSELECT
+PRINTFORMW 「자、질문은 끝. 이젠 자던지 마음대로 해」
+RETURN 1

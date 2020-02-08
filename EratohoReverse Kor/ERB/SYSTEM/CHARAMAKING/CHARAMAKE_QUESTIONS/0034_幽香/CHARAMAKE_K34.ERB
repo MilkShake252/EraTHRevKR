@@ -1,0 +1,73 @@
+﻿;幽香＠kapnaluqa
+@CHARAMAKE_K34(ARG)
+PRINTFORMW 「언제까지 자고 있을거야？　빨리 일어나세요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그럼、질문에 답해줄까…」
+PRINTFORMW 「그렇네……이 세상에서 제일 좋다고 생각하는 노래를 알려줘」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 봄바람의　꽃의 눈보라에　파묻혀　눈도 사라져버린　시가의 산로
+PRINTFORMDL [2] 5월을 기다리는　귤나무 꽃　그 향기를 맡으면　사랑했던 옛 사람　그 옷자락의 내음이 나네
+PRINTFORMDL [3] 비 내리자　단풍 늘고　오가는 이의 소매도　빛이 나는구나
+PRINTFORMDL [4] 흰 눈이　장소를 가리지 않고　떨어지매　꽃과 연 없는 바위에도　꽃이 핀 양 하는구나
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「특별히 생각나는 건 없어？　그래……재미 없네」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「솔직하구나. 응……칭찬하고 있다구？」
+		PRINTFORML 「물론 벚꽃은 최고니까 즐겨서 나쁠 건 없어」
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+	CASE 2
+		PRINTFORML 「그래……혹시 당신에게도 안타까운 추억이 있는걸까？」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 3
+		PRINTFORML 「당신의 마음을 끈 것은 선명한 단풍？
+		PRINTFORML 　아니면 그것을 누군가와 함께 봤던 추억일까？」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -20)
+	CASE 4
+		PRINTFORML 「일부러 이 노래를 선택하다니……확실히 하얀 눈도 아름다워
+		PRINTFORML 　하지만、아름답다고는해도 겨울은 차갑고、꽃들도 잠들어 있다는 걸 잊지 마」
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「잘 알겠어. 그럼 안녕히 주무세요. 좋은 꿈을 보면 좋겠네」
+RETURN 1
+

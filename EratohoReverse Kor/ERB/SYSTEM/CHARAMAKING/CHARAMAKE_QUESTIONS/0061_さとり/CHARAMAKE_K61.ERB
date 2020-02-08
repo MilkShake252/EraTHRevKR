@@ -1,0 +1,62 @@
+﻿;さとり＠/L
+@CHARAMAKE_K61(ARG)
+PRINTFORMW 「자(글쎄), 눈을 뜨는 시간이야!」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL
+PRINTFORML 「갑작스럽겠지만 내 질문에 대답해」
+PRINTFORML 「마음을 읽을 수 있으니까 하나 하나 대답할 필요는 없어」
+PRINTFORMW 「『지저』에서 연상되는 것을 마음 속에 그려봐」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 지저인 
+PRINTFORMDL [2] 지옥 
+PRINTFORMDL [3] 간헐천 지하 센터
+PRINTFORMDL [4] 눈앞의 소녀를 마음 속으로……
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML (……아무것도 읽어낼 수 없어?  정말로 아무것도 생각하지 않는 거네)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML (……지저인?  아무래도 우리들에게 편견을 가지고 있는 것 같구나) 
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("호기심", -10)
+	CASE 2
+		PRINTFORML (……평범해서 재미 없네) 
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+		CALLF CM_PROF("지성", -10)
+	CASE 3
+		PRINTFORML (……어째서 알고 있는 걸까..?  조금 기분 나쁘네)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("동성애", 10)
+	CASE 4
+		PRINTFORML (……음란해. 초대면인 나에게 이런 뻔뻔한 감정을 가질 수 있다니…) 
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORML 「꽤 재미있었어요」
+PRINTFORMW 「빨리 앞으로 가 주세요」
+RETURN 1

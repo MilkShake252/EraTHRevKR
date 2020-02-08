@@ -1,0 +1,893 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	앨리스구상 숍이벤트구상파일
+;
+;	숍으로부터 불려 가는구상를 정리한 파일
+;
+;version		Reason
+;1. 71@0503		EV110의 MS화. EV111에 가필
+;1. 71			@구상기입 체크 사양에
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;숍이벤트구상
+;========================================================================
+
+;────────────────────────────────────
+;EV101, 의상변경
+;────────────────────────────────────
+;·숍으로부터의상변경을 실시했을 경우에 표시
+;-------------------------------------------------
+@KOJO_EVENT_K14_101(ARG)
+;-------------------------------------------------
+;인수 내역…
+;ARG=
+;  1의 위…（0, 이제(벌써) 입고 있다, 1, 갈아입은, 2, 부끄러워서 입을 수 없는, 3, 싫어해 입지 않는, 9, 가지고 있지 않다）
+;  10의 위…（0, 통상, 10, 반라, 20, 전라, 30, 속옷없음）
+;  백의 위… 코스프레를 위해서(때문에) 보류
+;  천의 위…（0, 조교자, 1000, 조교대상）
+;  예（조교대상가 부끄러워해전라로 할 수 없었다=1022）
+;-------------------------------------------------
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교자가 갈아입었다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 1
+	SELECTCASE ARG
+		;통상되었다
+		CASE 1
+			PRINTFORMW 「이게 가장 나다운 의상일까､ 어때…？」
+			RETURN 1
+		;반라되었다
+		CASE 11
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%、이런 모습이 취향이야…？」
+			RETURN 1
+		;전라되었다
+		CASE 21
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORML 「집안이라고 해도……」
+				PRINTFORMW 「임부가 전라로 돌아다니다니、이래도 될까 하는 기분이 들어」
+			ELSE
+				PRINTFORMW 「…변태」
+			ENDIF
+			RETURN 1
+		;…… 스으스으 한다          현재의 R#와_L에서는 실장되어 있지 않다. 장래적으로는 부활할 가능성은 비교적 있다
+		;CASE 31
+		;	PRINTFORMW 「나에게스커트의 걷어올림을 해 주었으면 한 것일까…?」
+		;	RETURN 1
+		;그 외
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교자가 부끄러워해 갈아입을 수 없다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 2
+	SELECTCASE ARG
+		;반라라도 부끄럽다
+		CASE 12
+			PRINTFORMW 「%RAND_SPLIT(@"%CNAME(MASTER, TARGET)%…、바보야？/싫어")%」
+			RETURN 1
+		;평상시부터전라는 조금……
+		CASE 22
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORMW 「임신중인 내게、평소부터 전라로 있어 달라니。그런…」
+				PRINTFORMW 「저기 %CNAME(MASTER, TARGET)%…、한번 죽어볼래？」
+			;この条件を成立させるのは難しい
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「나 그런 변태、아냐…」
+			ELSE
+				PRINTFORMW 「엄청나게 바보 같아。거절이야」
+			ENDIF
+			RETURN 1
+		;팬츠가 없기 때문에 부끄러운 걸!     현재는 실장되어 있지 않다
+		;CASE 32
+		;	PRINTFORMW 「각하야」
+		;	RETURN 1
+		;그 외
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교자가 싫어해 갈아입을 수 없다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 3
+	SELECTCASE ARG
+		;반라는 싫어
+		CASE 13
+			PRINTFORMW 「%RAND_SPLIT("시시하네요. 거절이야/싫엇!")%」
+			RETURN 1
+		;평상시부터전라는 싫어
+		CASE 23
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORML 「하？ %CNAME(MASTER, TARGET)%…、지금 장난치는 거야？」
+				PRINTFORMW 「나、임신하고 있다고！？ 뱃속에 있는 건 %CNAME(MASTER, TARGET)%의 아이라고！？」
+				PRINTFORMW 「너무 바보같은 말을 하면、때려 눕혀 줄 테니까…」
+			ELSEIF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「집에 누가 올 때는 어떻게 해…」
+				PRINTFORMW 「절대로 싫엇！」
+			ELSE
+				PRINTFORMW 「%RAND_SPLIT("바보같은 말 하지 말아줘、얼른 죽어줄래？/싫어。말도 안 돼")%」
+			ENDIF
+			RETURN 1
+		;스으스으 하는 것은 혐						현재의 Rev에서는 실장되어 있지 않다
+		;CASE 33
+		;	PRINTFORMW 「싫어요, 그런 바보 같은 모습…」
+		;	RETURN 1
+		;그 외
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교자가 갈아입는 것을 그만둔	FIRSTEVENT(30)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;%CALLNAME:TARGET%의 의상는 벌써[　　]로 설정되어 있습니다
+;------------------------------------------------
+IF 구상기입체크(100) && ARG < 1000 && (ARG % 10) == 0
+	SELECTCASE ARG
+		;통상인 채
+		CASE 0
+			PRINTFORMW 「별로 %RAND_SPLIT("갈아입을 필요 없어/이대로 좋아")%」
+			RETURN 1
+		;半裸のまま
+		CASE 10
+			PRINTFORMW 「뭐、이대로도 좋으려나…」
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%도 그게 더 좋지？ 이 변태…」
+			RETURN 1
+		;全裸のまま
+		CASE 20
+			IF TALENT:TARGET:임신 && TALENT:TARGET:주인님
+				PRINTFORMW 「솔직히、뱃속의 아이에게 좋지 않을 것 같아。이거…」
+			ELSE
+				PRINTFORMW 「이제 와서 %CNAME(MASTER, TARGET)%에게 감출 것도 없고」
+				PRINTFORMW 「별로 알몸인 채로도 괜찮아。다만…」
+				PRINTFORM 「냉정하게 생각해 보면、엄청 바보같지만。말야
+				CALL PRINT_SYMBOL_K14
+			ENDIF
+			RETURN 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교대상를 갈아입음시켰다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG >= 1000 && (ARG % 10) == 1
+	SELECTCASE ARG
+		;통상되었다
+		CASE 1001
+			PRINTFORMW 「그게 가장 %CNAME(MASTER, TARGET)%답네」
+			RETURN 1
+		;半裸になった
+		CASE 1011
+			PRINTFORMW 「이런 것도 나쁘지 않을、지도…」
+			RETURN 1
+		;全裸になった
+		CASE 1021
+			PRINTFORM 「후훗…、이 변태
+			CALL PRINT_SYMBOL_K14
+			RETURN 1
+		;…… 스으스으 한다
+		;CASE 1031
+		;	PRINTFORMW 「이것은 이것대로 있어, 일지도…」
+		;	RETURN 1
+		;그 외
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교대상가 부끄러워해 갈아입을 수 없다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG >= 1000 && (ARG & 10) == 2
+	SELECTCASE ARG
+		;반라라도 부끄럽다
+		CASE 1012
+			IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「그래、어쩔 수 없네…」
+			ELSE
+				PRINTFORMW 「부끄러워 해봤자、이제와서 어쩌고 자시고도 없지 않아？」
+				PRINTFORMW 「뭐、이번은 봐줄게」
+			ENDIF
+			RETURN 1
+		;普段から全裸なんて恥ずかしい
+		CASE 1022
+			IF CFLAG:TARGET:의존도 > CFLAG:MASTER:의존도
+				PRINTFORMW 「그래、유감이네…」
+			ELSE
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%에게 아직 치정심이 남아있을 줄이야…」
+;OriginalString : 인8, "「ちょっと驚きね？」")
+				CALL FADEIN(8, "「조금 놀랐어？」")
+				WAIT
+			ENDIF
+			RETURN 1
+		;팬츠가 없기 때문에 부끄러운 걸!
+		;CASE 1032
+		;	PRINTFORMW 「좋지 않아, 어차피 줄어드는 것이 아닐 것이고…」
+		;	RETURN 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교대상가 싫어해 갈아입을 수 없다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG >= 1000 && (ARG & 10) == 3
+	SELECTCASE ARG
+		;반라는 싫어
+		CASE ARG == 1013
+			PRINTFORMW 「그렇게나 싫어…？」
+			RETURN 1
+		;普段から全裸なんて嫌
+		CASE 1023
+			PRINTFORMW 「아무래도 안 돼…？」
+			RETURN 1
+		;스으스으 하는 것은 싫어
+		;CASE 1033
+		;	PRINTFORMW 「%CNAME(MASTER, TARGET)%도 완고하구나…」
+		;	RETURN 1
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;조교대상를 갈아입음시킨다의 것을 그만둔 FIRSTEVENT(70)
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;%CALLNAME:MASTER%의 의상는 벌써[　　]로 설정되어 있습니다
+;------------------------------------------------
+IF 구상기입체크(100) && ARG >= 1000 && (ARG % 10) == 0
+	SELECTCASE ARG
+		;통상인 채
+		CASE 1000
+			PRINTFORMW 「지금으로서는、갈아입힐 필요는 없으니까 말야」
+			RETURN 1
+		;半裸のまま
+		CASE 1010
+			PRINTFORMW 「그렇네。일단、그 모습 그대로 둘까」
+			RETURN 1
+		;全裸のまま
+		CASE 1020
+			PRINTFORMW 「벗은 채로도 괜찮아 보이니、%조사처리(CNAME(MASTER, TARGET),"는")% 그대로 있어도 돼」
+			SELECTCASE CFLAG:MASTER:의존도
+				CASE IS > 5000
+					PRINTFORM 「오히려 벗은 게 더 좋은 거지？ 이 변태…
+					CALL PRINT_SYMBOL_K14
+				CASE IS > 3000
+					PRINTFORM 「잘 어울린다고 생각해。그렇지
+					CALL PRINT_SYMBOL_K14
+				CASEELSE
+					PRINTFORMW 「하인으로서는、그게 어울리는 모습이고 말야。그렇지？」
+			ENDSELECT
+			RETURN 1
+		;CASE 1030
+		;	RETURN 0
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;────────────────────────────────────
+;EV102, 조교자변경
+;────────────────────────────────────
+;·조교자를 교대시켰다때에 표시
+;-------------------------------------------------
+@KOJO_EVENT_K14_102(ARG)
+;-------------------------------------------------
+;인수 내역…
+;ARG=(0, 구상주가 다른 캐릭터에게 맡긴, 1, 구상주가조교자되었다)
+;구조교자는 「%CALLNAME:SHOP_OLDTARGET%」, 신조교자는 「%CALLNAME:SHOP_NEWTARGET%」로 참조할 수 있다
+;구상주는 TARGET로 참조
+;-------------------------------------------------
+
+;일행 비운다
+PRINTL
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;다른조교자에 교대
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 0
+	;앨리스가주인님
+	IF TALENT:TARGET:주인님
+		;상사상애
+		IF AFFECTION("상사상애")
+			PRINTFORMW 「기분 전환이라는 거？」
+			PRINTFORMW 「아무튼 좋아. %RAND_SPLIT(@"정액들%CNAME(SHOP_NEWTARGET, TARGET)%에 귀여워해 받는 것! /조금 정도의 이기적임은 허락해 준다.")% 그렇지만…」
+			PRINTFORMW 「나를 언제까지고 기다리게 하면 어떻게 될지、 잘 생각해 두도록 해！！」
+			PRINTFORMD 앨리스는 그렇게 단언하고
+				SELECTCASE RANDEVENT(3, 0)
+					CASE 0
+						PRINTFORMDW %CALLNAME:MASTER%에게 짚 인형을 내보였다……
+					CASE 1
+						PRINTFORMDW %CALLNAME:MASTER%에게 극태 애널바이브를 내보였다……
+					CASE 2
+						PRINTFORMDW 그리모어를 꺼내어、저주의 주문을 외치고 있다……
+				ENDSELECT
+		;그 외
+		ELSE
+			PRINTFORMW 「뭐야、내가 불만이라는 거야？」
+			PRINTFORMW 「뭐어 상관없지만。 나도 조금 생각해야 하겠는데！」
+		ENDIF
+	;보통조수
+	ELSE
+		PRINTFORMW 「%RAND_SPLIT("흐ー응/어라、그래")%。별로 상관없다고？」
+		PRINTFORMW 「그러면, 뒤는 %CNAME(SHOP_NEWTARGET, TARGET)%에게 맡기고… 나는 한가로이 있어 볼까」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님이조교자되었다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 1
+	;앨리스가주인님
+	IF TALENT:TARGET:주인님
+		;상사상애
+		IF AFFECTION("상사상애")
+			SELECTCASE RANDEVENT(2, 10)
+				CASE 0
+					PRINTFORMW 「뭐、결국 이렇게 될 줄 알고 있었지만！」
+					PRINTFORMDW 앨리스는 조금 토라진 듯 말한 뒤、%CALLNAME:MASTER%에게 몸을 기대왔다… 
+					PRINTFORMW 「쓸쓸한 생각을 하게 만든 빚、확실하게 받아낼 테니까 말야？ 우후후…」
+				CASEELSE
+					PRINTFORMW 「어라、내가 그리워진 거야？」
+					PRINTFORMW 「이봐、뭐하는 거야？ 정마알、솔직하게 말해！」
+					PRINTFORMW 「제대로 말하면、이번 일은 물에 흘려보내 줄 거라고？」
+			ENDSELECT
+		;기타
+		ELSE
+			PRINTFORMW 「후후… 떨어져 봐야 『앨리스 님』의 진가를 알 수 있었다는 걸까？」
+			PRINTFORMW 「자아 어서 와。오늘은 듬뿍 귀여워 해 줄게」
+			PRINTFORM 「여러가지 의미로、말이야
+			CALL PRINT_SYMBOL_K14
+		ENDIF
+	;보통조수
+	ELSE
+		PRINTFORMW 「잠깐 %CNAME(SHOP_OLDTARGET, TARGET)%. 나에게 귀찮음마다를 꽉 누를 생각?」
+		PRINTFORMW 「뭐 좋아。어차피、힘껏 즐겨줄 테니까」
+		PRINTFORMW 「부숴버려도 모르지만、말야♪」
+	ENDIF
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV110, 마력사용
+;────────────────────────────────────
+;·마력를 소비해 어떠한 특전을 구입했다때에 표시
+;-------------------------------------------------
+@KOJO_MS_EVENT_K14_110(ARG)
+;-------------------------------------------------
+;인수 내역…
+;ARG=(0, 마력사용전, 1, 조교기교, 2, 지식를 얻기 전, 3, 배합지식취득, 4, 매혹취득, 5, 금단의지식취득,
+;     6, 도구능숙취득, 7, 기술을 얻기 전, 8, 혀기술취득, 9, 손가락기술취득, 10, 긴박능숙,
+;     11, 새드소거/새드취득, 12, 더러움무시취득, 38, 착의플레이선호, 39, 허리기술)
+;
+;이벤트구상: 아이템
+;인수 내역…
+;ARG=(13, 아이템 연성전, 14, 로터연성, 15, 바이브연성, 16, 애널비즈연성, 17, 페니스밴드연성,
+;     18, 애널바이브연성, 19, 클리캡연성, 20, 유두캡연성, 21, 오나홀연성)
+;
+;이벤트구상:고문도구 연성
+;인수 내역…
+;ARG=(22, 고문도구 연성전, 23, 눈가리개연성, 24, 채찍연성, 25, 밧줄연성, 26, 볼개그연성, 27, 바늘연성,
+;     28, 관장세트연성, 29, 삼각목마연성, 30, 거울연성, 31, 개목걸이연성, 32, 도구를 커스터마이즈했다)
+;
+;그 외이벤트
+;인수 내역…
+;ARG=(33, 후타나리화/되돌리는, 34, 거유화/되돌리는, 35, 빈유화/되돌리는, 36, 정력의 한계 가격인상승)
+;-------------------------------------------------
+;주인님의 입장이 아닌 경우, 미묘하게 되는 개소가 나올 생각이했다의 것으로구상함수를 MS로 해 버리는 일에
+;-------------------------------------------------
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님마력사용전
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 0
+	;=================================================
+	;처음
+	;=================================================
+	IF 구상기입체크(100) && FIRSTEVENT(0)
+		PRINTFORMW 「똑같은 마력이라고 해도、이건 그다지 익숙하지가 않네」
+		PRINTFORMW 「뭐、사용법은 파악했지만 말이지…」
+		PRINTFORMW 「일단、시험해 봐야겠네」
+		RETURN 1
+	ENDIF
+	
+	;-------------------------
+	;처음 이외의 처리
+	;-------------------------
+	;왠지 이런 일되었다. 라고 할까, 이런 느낌이라면 자연히(에) 정합성이 잡힐 생각이했다w
+	SELECTCASE ORDEREVENT(0)
+		CASE 0
+				PRINTFORMW 「아무렇지도 않게、카탈로그 같은 게 근처에 있고 말야」
+				PRINTFORMW 「그런데 이것、언제 집에 들여온 걸까。불가사의하네…」
+			CASE 1
+				PRINTFORMW 「어떻게 봐도、바깥 세상에서 온 아이템 종류。그리고、어느 사이엔가 집안에 있던 카탈로그 같은 것」
+				PRINTFORMW 「이런 류의 일을 해치울 인물은、한 사람밖에 생각나지 않는데…」
+		CASEELSE
+			SELECTCASE RANDEVENT(2, 0)
+				CASE 0
+					PRINTFORMW 「솔직히 말해서、마력으로 연성한다는 실감이 없네。이거」
+					PRINTFORMW 「뭔가 주문을 하면、상품이 나오는 느낌…」
+				CASE 1
+					PRINTFORMW 「만약 내 추측대로라면、그녀석과 뭔가 관계가 있을 터…」
+					PRINTFORMW 「그렇지만 그게 사실이라면、지금까지 했던 일、전부 들통났다는 소리네」
+					PRINTFORMW 「생각하는 것만으로、머리가 아파졌어……」
+				CASE 2
+					PRINTFORMW 「어차피라 치면、이 밖에도 좀더 이것저것 주문할 수 있었으면 좋겠는데」
+					PRINTFORMW 「잠깐 유카리에게 상담…、할 수도 없겠네。표면상……」
+			ENDSELECT
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님의조교기교가 업
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 1
+	IF FIRSTEVENT(1)
+		PRINTFORMW 「이렇게 간단하게 무언가를 얻을 수 있다니、조금 의문이네」
+		PRINTFORMW 「어떤 의미에서、마술에 대한 모독…、이라는 기분도 들어」
+	;아라이멘도正
+	ELSEIF ALI(0)
+		PRINTFORMW 「나도 조금은 능숙해진 걸까…？」
+		PRINTFORMW 「저기、기대해도 좋다구？ \@ AFFECTION("상사상애") ? 후훗 # 우후후 \@…」
+	;아라이멘도負
+	ELSE
+		PRINTFORMW 「나도 조금은 능숙해진 걸까…？」
+		PRINTFORM 「좀 더 괴롭혀 줄 테니까、기대해…
+		CALL PRINT_SYMBOL_K14
+	ENDIF
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님매혹취득
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;별로 타의는 없어 앨리스님의 마음의 절규라는 일로 잘 부탁드립니다
+IF 구상기입체크(100) && ARG == 4
+	PRINTFORMW 「뭐어、이정도 쯤이야」
+	PRINTFORMW 「그런데、내가 초기설정부터 이걸 가지고 있지 않다니 이상하지 않아？」
+	PRINTFORMW 「조금만 생각하면 알 수 있을 텐데…」
+	PRINTFORMW 「제작자라는 건、모이고 모인 게 얼간이만 잔뜩 있는 걸까？」
+	RETURN 1
+ENDIF
+
+;대상한정측에서 만든 것을 우선 가져 왔다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님금단의지식취득
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 5
+	PRINTFORMW 「뭐、뭐야 이거。지식이、내 안에 흘러들어 왔어……」
+	PRINTFORMW 「이런 술식…、본 적도 들은 적도 없어」
+	PRINTFORMW 「솔직히、이게 어떤 영향을 미칠지도 모르겠는데」
+	PRINTFORMW 「%RAND_SPLIT("파츄리/마리사")%에게 물어보면、뭔가 알 수 있으려나？」
+	RETURN 1
+ENDIF
+
+;도구봉인패치라든지 죽으면 된다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님 아이템 연성전
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 13
+	IF FIRSTEVENT(13)
+		PRINTFORMW 「그럼、무얼 연성 해볼까」
+		PRINTFORMW 「저기、%CNAME(MASTER, TARGET)%라면 어떤 걸 고를래？」
+		PRINTFORMW 「아아、그래그래。연성한 건 없앨 수가 없으니까、잘 생각하는 게 좋다구？」
+		PRINTFORM 「후회하지 않도록、말이야
+		CALL PRINT_SYMBOL_K14
+		RETURN 1
+	ENDIF
+	
+	SELECTCASE RANDEVENT(3, 13)
+		CASE 0
+			PRINTFORMW 「솔직히、실제로 연성해보지 않으면 나도 잘 모르겠어」
+			PRINTFORMW 「이런 것에 대한 지식이、그리 있을 리도 없고……」
+		CASE 1
+			PRINTFORMW 「자 그럼、뭘로 해볼까」
+			PRINTFORMW 「실제로 어떤 게 나올지、보는 즐거움이 있네」
+		CASE 2
+			PRINTFORMW 「이거、무엇이든지 가능한 능력처럼 보이지만、상당히 제약이 있어」
+			PRINTFORMW 「무엇보다도…、제약이 있기 때문에、그 말도 안되는 능력이 되지만 말야」
+	ENDSELECT
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님 아이템 연성
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && INRANGE(ARG, 14, 21)
+	SELECTCASE ARG
+		;로터
+		CASE 14
+			PRINTFORMW 「이렇게 보는 것만으로는 잘 느낌이 오지 않네。어떻게 사용하는 물건이려나？」
+		;바이브
+		CASE 15
+			PRINTFORMW 「아아、역시。확실히 이건、보자마자 알겠네…」
+		;애널비즈
+		CASE 16
+			PRINTFORML 「으～응、이건」
+			PRINTFORMW 「상상력을 발휘하면 어떻게든 알 수 있겠지만、알고 싶지 않은 기분이 드네…」
+		;페니스밴드
+		CASE 17
+			PRINTFORMW 「확실히 이건 설명이 필요 없네。시험해 볼 게 기대돼、후후。그치만…」
+			PRINTFORMW 「쌍두로 되어있을 거라고는 생각지 못했어……」
+		;애널바이브
+		CASE 18
+			PRINTFORMW 「뭐어…、보면 왠지 모르게 알겠는데。그치만、너무 역겨운 물건이네……」
+		;클리캡
+		CASE 19
+			PRINTFORMW 「어라、이건 조금 귀여워 보이네」
+		;유두캡
+		CASE 20
+			PRINTFORMW 「흐～응、과연。클립 식으로 되어 있어서 집으면 되는 거네」
+			PRINTFORMW 「잘도 생각해냈네에……」
+		;오나홀
+		CASE 21
+			PRINTFORMW 「아아、이건 알겠어。알겠지만…、알고 싶지 않은 기분이 들어」
+			PRINTFORMW 「머리가 아프기 시작했어……」
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님ＳＭ상품 연성전
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 22
+	SELECTCASE ORDEREVENT(22)
+		CASE 0
+			PRINTFORMW 「본 적이 있는 물건부터、그렇지 않는 것까지…」
+			PRINTFORMW 「고문 도구라고 해도、실로 다양한 물건이 있네。이런이런」
+			PRINTFORMW 「그런데 잘 보니、도구마다 해설이 써 있네。흠흠……」
+		CASE 1
+			PRINTFORMW 「마력으로 연성한다고는 해도、나 자신、그 원리는 잘 알지 못해」
+			PRINTFORMW 「보아하니、어느 것이나 다 바깥 세상의 물건인 것 같은데。그렇다면 역시、유카리가 뭔가 연관되어 있는 거려나…」
+		CASEELSE
+			SELECTCASE RANDEVENT(3, 22)
+				CASE 0
+					PRINTFORMW 「그럼、이번에는 어떻게 할까」
+					PRINTFORMW 「어지럽혀지니까、너무 필요 없는 물건은 연성하고 싶지 않네에」
+				CASE 1
+					PRINTFORMW 「결국、뭐든지 자유롭게 연성할 수 있는 건 아니네。조금 유감」
+					PRINTFORMW 「바깥 세상의 인형 같은 걸 손에 넣을 수 있다면、최고겠는데…」
+				CASE 2
+					PRINTFORMW 「이런 물건을 만드는 바깥 세상이란 곳은、도대체 어떤 곳일까」
+					PRINTFORMW 「조금 보고 싶은 기분이 들기도 하고…、연관되고 싶지 않은 기분도 들어」
+			ENDSELECT
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님ＳＭ상품 연성
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && INRANGE(ARG, 23, 32)            ;도구커스터마이즈도 포함한다
+	;파생을 처리
+	SELECTCASE ARG
+		;눈가리개
+		CASE 23
+			PRINTFORMW 「흠、눈가리개라。뭐、시계를 빼앗긴 %CNAME(MASTER, TARGET)%을 괴롭히는 것도、한 가지 재미이긴 하겠네」
+		;채찍
+		CASE 24
+			PRINTFORMW 「보기만 해도 흉악하네。이걸 쓰면、%조사처리(CNAME(MASTER, TARGET),"는")% 어떤 소리를 들려줄까？」
+			PRINTFORMW 「\@ TALENT:TARGET:새드 || !ALI(0) ? 후후、더는 기다릴 수가 없네。오싹오싹해져서 # 이제부터의 즐거움、이네\@…」
+		;밧줄
+		CASE 25
+			PRINTFORMW 「밧줄로 구속、이네。뭐、내 경우…마력의 실을 쓰면 되긴 하지만」
+			PRINTFORMW 「그치만 이런 거、일단은 모양부터라는 말도 있잖아？ 후후…」
+		;볼개그
+		CASE 26
+			PRINTFORMW 「과연, 알겠어。이거、시끄러운 \@ TALENT:MASTER:남자 ? 마조 # 암컷 \@ 돼지를 입 다물게 하는데 딱이네」
+		;바늘
+		CASE 27
+			PRINTFORMW 「바늘이라고는 해도、이런 일 전용의 물건 같네。굉장히 가늘어」
+			PRINTFORMW 「눈가리개와 같이 쓰면 효과적이라고 쓰여 있는데。자、어떤 걸까…」
+		;관장셋트
+		CASE 28
+			PRINTFORMW 「말하자면、장내 세척을 위한 물건이라는 건데…」
+			PRINTFORMW 「고문 도구용으로 최적화되어 있다든가。정말이지、어처구니 없는 이야기야」
+		;삼각목마
+		CASE 29
+			PRINTFORMW 「고문도구로서 존재한다는 건、지식으로서는 알고 있었지만…」
+			PRINTFORMW 「그렇지만 이거、등줄기에 뭐 나있지 않아！？」
+		;거울
+		CASE 30
+			PRINTFORMW 「치정심을 부채질하는 도구로서 이런 게 존재한다는 건、비교적 납득 가능한 이야기네」
+			PRINTFORMW 「그런데 이거、평범하게 거울로 쓸 수도 있겠는데…」
+		;목줄
+		CASE 31
+			PRINTFORMW 「펫을 바깥에 데리고 나갈 때에는 이걸 빠뜨릴 수 없다、라든지。흠흠」
+			PRINTFORMW 「솔직히、그다지 취미는 아니지만。목줄을 채운、%CNAME(MASTER, TARGET)%의 모습을 상상하면…」
+			PRINTFORMW 「조금 오싹오싹해지네……」
+		;도구をカスタマイズ		ORDEREVENT使いたい感が。まぁ後で考えることに
+		CASE 32
+			PRINTFORMW 「도구를 커스터마이즈하는 걸로、보다 효과적인 조교 어쩌구저쩌구…라든지」
+			PRINTFORMW 「정말이지…、어처구니 없어질 정도로 빈틈이 없네」
+		;기존 부분은 범용 처리에.
+		CASEELSE
+			SELECTCASE RANDEVENT(3, 1)
+			CASE 0
+				PRINTFORMW 「이런 거 누가 생각해낸 걸까…？」
+				PRINTFORM 「뭐어、이건 이것대로 즐길 수 있을 것 같으니까 상관없지만…말야
+				CALL PRINT_SYMBOL_K14
+			CASE 1
+				PRINTFORMW 「이건 상당히 흉악한 물건이네…」
+				PRINTFORM 「%CNAME(MASTER, TARGET)%에게 시험해보는 게 기대돼…
+				CALL PRINT_SYMBOL_K14
+			CASE 2
+				PRINTFORMW 「이 마력이라는 거、정말로 뭐든지 되는 거네」
+				PRINTFORMW 「너무 어처구니 없는 것 같은 기분도 들지만…」
+			ENDSELECT
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님후타나리화 or후타나리소거
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 33 && FLAG:모드 != 1
+	;후타나리화
+	IF TALENT:TARGET:후타나리
+		;조교대상이남자
+		IF TALENT:MASTER:남자
+			PRINTFORM 「이것으로%CNAME(MASTER, TARGET)%의 엉덩이를 찔러 줄 수 있어요
+			CALL PRINT_SYMBOL_K14
+			PRINTFORMW 「\@ TALENT:MASTER:작은체형 ? 여자 # 여자 \@같이 울릴 수 있어 주기 때문에, 즐거움으로 하고 있어……」
+		;조교대상가처녀
+		ELSEIF TALENT:MASTER:처녀
+			PRINTFORMW 「그렇게 말하면%CNAME(MASTER, TARGET)%라고 그, 아직…, (이었)였어?」
+			IF CFLAG:합의
+				PRINTFORMW 「뭐,%CNAME(MASTER, TARGET)%의ＯＫ는 이제 받고 있는 (뜻)이유이고…」
+				PRINTFORM 「앞으로는 언제 시험할까……, 라는 곳이군요? 후후
+				CALL PRINT_SYMBOL_K14
+			ELSE
+				PRINTFORMW 「뭐,%CNAME(MASTER, TARGET)%로부터의ＯＫ는 받을 수 있지 않은 것이지만…」
+				PRINTFORMW 「그 날이 오는 것을 즐거움으로 하고 있는 원. 후후……」
+			ENDIF
+		;조건 없음
+		ELSE
+			PRINTFORMW 「%CNAME(MASTER, TARGET)%, 이런 것이 좋아하는 (뜻)이유…?」
+			PRINTFORM 「아무튼, 모처럼이니까 나도 즐기게 해 주는 일로 해요
+			CALL PRINT_SYMBOL_K14
+		ENDIF
+	;후타나리소거
+	ELSE
+		;조교대상이남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「여자의 내가 자기보다 큰 물건을 매달고 있는 것은 견딜 수  없었는지 해들?」
+			PRINTFORMW 「이봐요, 어떻게야? 분명히 말해 보세요!」
+			PRINTFORMW 「～응이라고. 농담이야, 농담. 킥킥」
+		;조교대상가처녀
+		ELSEIF TALENT:MASTER:처녀
+			PRINTFORMW 「결국,%CNAME(MASTER, TARGET)%에 시험할 기회가 없었던 (뜻)이유이지만…」
+			PRINTFORMW 「그것이 결과적으로 좋았던 것일까, 그렇지 않는 것인지. 뭐, 정말 말할 수 없는 곳」
+		;조건 없음
+		ELSE
+			PRINTFORMW 「역시 원의 내 쪽이 좋을까? 라고  할까…」
+			PRINTFORMW 「갑자기 이렇게…, 시원해져버리자(면). 어쩐지, 반대로 초조해요」
+			PRINTFORMW 「이것이 보통은 두인데? 후후」
+		ENDIF
+	ENDIF
+	RETURN 2
+ENDIF
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님거유화 or통상에 되돌린다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 34 && FLAG:모드 != 1
+	;거유화
+	IF TALENT:TARGET:거유
+		;조교대상이남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「남자란 건 역시 가슴이 큰 쪽이 좋은 걸까？」
+			PRINTFORMW 「잠깐、시선이 음흉하다구。이 변태…」
+		;조교대상が거유
+		ELSEIF TALENT:MASTER:거유
+			PRINTFORMW 「우훗、이걸로 전부 갖춰졌다는 이야기네？」
+		;条件없음
+		ELSE
+			PRINTFORMW 「큰 쪽이 취향？」
+		ENDIF
+	;元に戻す
+	ELSE
+		;조교대상が남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「원래의 내가 가장 좋다는 이야기지？」
+		;가슴を大きく
+		ELSE
+			PRINTFORMW 「역시 이쪽이 나답지？」
+		ENDIF
+	ENDIF
+	RETURN 2
+ENDIF	
+
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;앨리스님빈유화 or통상에 되돌린다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 35 && FLAG:모드 != 1
+	;빈유화
+	IF TALENT:TARGET:빈유
+		;조교대상이남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「남자는 큰 쪽을 좋아한다고 자주 들었지만…」
+			PRINTFORMW 「%조사처리(CNAME(MASTER, TARGET),"는")% 다른 것 같네？」
+		;조교대상が거유
+		ELSEIF TALENT:MASTER:거유
+			PRINTFORMW 「그 의기양양한 얼굴…」
+			PRINTFORMW 「어쩔 생각인지、털어놓게 할 필요가 있어 보이는데！」
+		;조교대상が빈유
+		ELSEIF TALENT:MASTER:빈유
+			PRINTFORMW 「자기보다 큰 게 질투난다던가？」
+		;기타
+		ELSE
+			PRINTFORMW 「작은 쪽이 좋아？」
+			PRINTFORMW 「이상한 사람이네…」
+		ENDIF
+	;바탕으로 되돌린다
+	ELSE
+		;조교대상이남자
+		IF TALENT:MASTER:남자
+			PRINTFORMW 「원래의 내가 가장 좋다는 거지？」
+		;가슴を小さく
+		ELSE
+			PRINTFORMW 「어깨가 뭉치니까 이쪽이 좋아」
+		ENDIF
+	ENDIF
+	RETURN 2
+ENDIF
+
+;────────────────────────────────────
+;EV111, 주인님로서 새로운조교자를 고용했다
+;────────────────────────────────────
+@KOJO_EVENT_K14_111(ARG)
+;-------------------------------------------------
+;·새로운조교자가 TARGET가 되어 있기 (위해)때문에, 구상주는 TARGET는 아니기 때문에 주의
+;·구상주를 참조했다 있고 경우는 FLAG:주인님로
+;-------------------------------------------------
+;반환값（1, 표시, 2, 표시해 가입했다캐릭터의 가입구상를 스킵）
+IF 구상기입체크(100)
+	IF 0
+	;서니/르나체/스타의 경우
+	;요정 풍치가, 라든지 말했지만 한 번 안면이 있는 경우는 요정씨라든지 부를 것 같다. 그렇지만 어디까지나 개로서는 인식 하고 있지는 않다고 하는 느낌으로
+	ELSEIF GROUPMATCH(NO:TARGET, 45, 46, 47)
+		CSTR:(FLAG:주인님):호칭목록 = %CALLNAME:TARGET%_요정씨/%CSTR:(FLAG:주인님):호칭목록%
+	;메디슨의 경우. 어딘지 모르게 이렇게 부를 것 같은 생각이 든다고 한다. 맹월초에서는 함께 있는 장면이 있었고, 뭐 다소는 말야?
+	ELSEIF NO:TARGET == 33 && CALLNAME:TARGET == "메디슨"
+		CSTR:(FLAG:2):호칭목록 = 메디슨_메디/%CSTR:(FLAG:2):호칭목록%
+	ELSE
+		;그 외 소환 가능한 상손（레이무/마리사/파츄리/사쿠야/레밀리아/유카리/유카/히나/사나에）는 경칭 생략
+	ENDIF
+	;CSTR:(FLAG:2):호칭목록 = 전의 이름_부르게 하고 싶은 이름/%CSTR:(FLAG:2):호칭목록%
+	IF FAVOR(3000, 3000, (FLAG:주인님))
+		SELECTCASE NO:TARGET
+			;스키마 요괴		유카리구상에 대응 하게 한다
+			CASE 22
+				PRINTFORMW 「뭐, 너이니까……그러한 등장의 방법 한다고는 생각했지만…」
+				PRINTFORMW 「사람의 집에 올 때 정도, 보통으로 할 수 없는거야!?」
+				PRINTFORMW 「이라고 말할까 나…, 어째서 보라색을 불러 버렸어 까……」
+			;그 외
+			CASEELSE
+				PRINTFORML 「어머나,%CNAME(TARGET, (FLAG:주인님))%  갑자기 왜?」
+				PRINTFORMW 「집에 부른 기억은 없는데…」
+				PRINTFORMW 「은 코라! 마음대로 집안 들어가지 말아!」
+				CALL TWAIT3_K14
+				PRINTFORMW 「아무튼, 발각되어 버린 것은 방법 없네요…」
+				PRINTFORMW 「그렇지만 자주(잘) 기억해 두세요? 사람의 것에 마음대로 손을 대면, 허락하지 않으니까!」
+		ENDSELECT
+	;조교대상에반항각인 있어
+	ELSEIF MARK:(FLAG:주인님):반항각인 >= 1
+		PRINTFORMW 「잘 와 준 원이군요,%CNAME(TARGET, (FLAG:주인님))%. 우선, 비밀 엄수로 부탁해요」
+		PRINTFORMW 「아무튼 한심한 이야기이지만, 조금 고생해군요」
+		PRINTFORMW 「%CNAME(TARGET, (FLAG:주인님))%하지만 도와 주면 살아나는데…」
+	;그 외
+	ELSE
+		SELECTCASE NO:TARGET
+			;마리사           상당히 심할지도 모른다w
+			CASE 2
+				PRINTFORMW 「계(오)세요 마리사. 빨랐어요」
+				PRINTFORMW 「먼저 말하지만, 특별히 식사에 초대했다고 (뜻)이유가 아니니까?」
+				PRINTFORMW 「아무튼 그……뭐라고 말할까. 마리사도 마법사라면, 이런 일도 알아 두어야 한다고 생각하며」
+				PRINTFORMW 「정직, 이런 기회는 그런 실 생각해요? 킥킥」
+			;파츄리
+			CASE 8
+				PRINTFORMW 「잘 와 준 원이군요. 응, 갑자기 왜 사?」
+				PRINTFORMW 「그렇구나, 책을 읽고만 있는데도 질렸지 않을까 생각하며」
+				PRINTFORMW 「은 아무튼, 파츄리에 한해서 그런 일은 없을 것 같지만. 후후」
+			;스키마 요괴       유카리구상에 대응 하게 한다
+			CASE 22
+				PRINTFORMW 「어머나, 계(오)세요 보라색, 은……자기」
+				PRINTFORMW 「그러한 등장의 방법 그만두어 준다? 보통으로 현관으로부터 들어 오세요, 현관으로부터!」
+			;그 외
+			CASEELSE
+				;얼라이먼트정
+				IF ALI(0, (FLAG:주인님))		;TARGET로 참조 할 수 없는 이 개소에서 사용하기 위해서(때문에)@ALI를 개변. 뭐 다른 것이라도 용도는 뭘까 있어 그렇게?
+					PRINTFORMW 「계(오)세요,%CNAME(TARGET, (FLAG:주인님))%  잘 와 준 원이군요」
+					PRINTFORMW 「그래요, 이것이 예의. 도와 주면 다양하게 살아나요」
+					PRINTFORMW 「그러면, 지금부터 잘 부탁해요」
+				;얼라이먼트부
+				ELSE
+					PRINTFORMW 「어머나, 생각했던 것보다 빨랐어요.%CNAME(TARGET, (FLAG:주인님))%」
+					PRINTFORMW 「갑자기 불러내 왜 사? 그것은 아무튼, 응……, 그렇구나」
+					PRINTFORMW 「우선, 현관앞에서 이야기할 수 있는 것은 아닌거예요. 뭐, 곧바로 알아요……」
+				ENDIF
+		ENDSELECT
+	ENDIF
+	
+	;---------------------------------------------------------------------------
+	;현재 TALENT:주인님 이외는조수를 부를 수 없는 것 같지만, 예기치 않은 개변에 대비해 보험의 의미로소환가능조수를 대입해 둔다
+	;라고 할까, 만일 소환했다대상의구상내에서 설정되어 있었을 경우는 저것인 느낌. EV11의 머리에서도 한다든가, 그다지 생각하고 싶지 않구나!
+	;---------------------------------------------------------------------------
+	;레이무
+	SIF NO:TARGET == 1
+		CSTR:소환가능조수 = 마리사/사쿠야/레밀리아/유카리/스이카/테위/레이센/문장/유카/코마치/니토리/서니 밀크/루나 차일드/스타사파이어/텐시/카센/코스즈/바늘묘환/
+	;마리사
+	SIF NO:TARGET == 2
+		CSTR:소환가능조수 = 레이무/파츄리/사쿠야/레밀리아/유카리/스이카/니토리/카센/코스즈/
+	;파츄리
+	SIF NO:TARGET == 8
+		CSTR:소환가능조수 = 마리사/소악마/사쿠야/레밀리아/
+	;사쿠야
+	SIF NO:TARGET == 9
+		CSTR:소환가능조수 = 레이무/마리사/메이링/레밀리아/요우무/
+	;레밀리아
+	SIF NO:TARGET == 10
+		CSTR:소환가능조수 = 레이무/마리사/파츄리/메이링/사쿠야/
+	;유카리
+	SIF NO:TARGET == 22
+		CSTR:소환가능조수 = 레이무/마리사/요우무/유유코/란/스이카/
+	;메디슨
+	SIF NO:TARGET == 33
+		CSTR:소환가능조수 = 유카/에이린/
+	;유카
+	SIF NO:TARGET == 34
+		CSTR:소환가능조수 = 리글/메디슨/
+	;히나
+	SIF NO:TARGET == 39
+		CSTR:소환가능조수 = 니토리/파르시/
+	;사나에
+	SIF NO:TARGET == 42
+		CSTR:소환가능조수 = 레이무/마리사/스와코/코가사/
+	;서니 밀크
+	SIF NO:TARGET == 45
+		CSTR:소환가능조수 = 치르노/릴리 화이트/루나 차일드/스타사파이어/
+	;루나 차일드
+	SIF NO:TARGET == 46
+		CSTR:소환가능조수 = 치르노/릴리 화이트/서니 밀크/스타사파이어/
+	;스타사파이어
+	SIF NO:TARGET == 47
+		CSTR:소환가능조수 = 치르노/릴리 화이트/서니 밀크/루나 차일드/
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;EV112, 앨리스님이조교자로서 가입했다
+;────────────────────────────────────
+@KOJO_EVENT_K14_112(ARG)
+;-------------------------------------------------
+;·주인님의 이름은 「FLAG:주인님」로 참조할 수 있다
+;·주인님가 고용구상로 반환값 2를 돌려주고 있으면 표시되지 않는다
+;·구상주는 TARGET
+;-------------------------------------------------
+IF 구상기입체크(100)
+	;조교대상의반항각인Lv2 이상
+	IF MARK:(FLAG:주인님):반항각인 >= 2
+		PRINTFORMW 「%조사처리(CNAME((FLAG:주인님), TARGET),"가")% 고생하고 있다고 들어서 왔는데…」
+		PRINTFORMW 「이건 확실히、상당히 처치 곤란한 물건 같네…」
+		PRINTFORMW 「뭐어、이제 와서는 어쩔 수 없으니까、%CNAME((FLAG:주인님), TARGET)%에게는 훈육 방법을 가르쳐 주도록 할게」
+		PRINTFORMW 「내 솜씨、잘 보도록 해。우후후…」
+	;조교대상의반항각인Lv2以下
+	ELSE
+		PRINTFORMW 「무슨 일인가 생각했더니、상당히 재밌어 보이네？」
+		PRINTFORMW 「%CNAME((FLAG:주인님), TARGET)%에게 이런 취미가 있었는지 몰랐는데…」
+		PRINTFORMW 「뭐어 모처럼의 기회니까、한껏 즐기도록 할게。우후후…」
+	ENDIF
+	RETURN 1
+ENDIF

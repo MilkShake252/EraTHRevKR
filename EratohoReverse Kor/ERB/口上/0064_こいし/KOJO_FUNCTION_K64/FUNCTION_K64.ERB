@@ -1,0 +1,266 @@
+﻿;-------------------------------------------------
+;코이시구상 자작 함수 파일
+;-------------------------------------------------
+;잡다한 자작 함수의 파일
+;적당한 만들기인 것으로 정상적인 동작의 보증은 하기 어렵습니다(땀
+;아마 이구상로 밖에 사용하지 않는 것 같은 녀석이라든지
+;분류할 길 없는 녀석이라든지
+;모으는 것으로 해도 수가발리나 아니개라든지
+;치환 예정의 함수라든지
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:K64_DICE
+;개  요점:다이스를 흔드는 함수
+;인  수: ARG:0…[생략가능] 다이스를 흔드는 개수(1이상) 생략했다경우는 1
+;　　　  ARG:1…[생략가능] 다이스의 면수(2이상) 생략했다경우는 6
+;　　　 ARGS:0…[생략가능] 반환값의 종류(SUM:합계/LOW:제일 낮은 눈/HIGH:제일 높은 눈) 생략했다경우는 SUM(합계)
+;반환값:다이스눈(1이상)
+;비  고:식 안의 함수
+;어딘지 모르게 착상으로. 이하는 사용예
+;4 d6(6면다이스 4개의 합계치)→K64_DICE(4, 6)
+;2 d20 해 낮은 눈(20면다이스 2개의 제일 낮은 눈)→K64_DICE(2, 20, 1)
+;코인 플립 5회중 3회 이상 성공→K64_DICE(5, 2) - 5 >= 3
+;우선 TRPG 따위라면 1 d2라든지 나오는 것 같은 것으로 면수 2이상으로 움직인다
+;1 d100의 계산으로 RAND:100하는 것과 RAND:10*10+RAND:10하는 것으로 얼마나가 차이가 나는지는 모른다
+;숫자가 커지면 편향을 무시 할 수 없겠지만… 수학은 잘 모른다
+;즉, 너무 면수의 너무 큰 다이스로 해서는 안 된다. 좋다?
+;-------------------------------------------------
+@K64_DICE(ARG:0 = 1, ARG:1 = 6, ARGS:0 = "SUM")
+#FUNCTION
+#LOCALSIZE 2
+;인수 이상할 때
+SIF ARG:0 < 1
+	THROW @K64_DICE로 다이스를 흔드는 개수가 1개 미만입니다（{ARG:0}）
+SIF ARG:1 < 2
+	THROW @K64_DICE로 다이스의 면수가 2 미만입니다（{ARG:1}）
+LOCAL:0 = 1 + RAND:(ARG:1)	;1개목
+FOR LOCAL:1, 1, ARG:0		;2개목 이후
+	;반환값 종류 분기
+	SELECTCASE TOUPPER(ARGS:0)
+		CASE "SUM"
+			LOCAL:0 += 1 + RAND:(ARG:1)					;합계치
+		CASE "LOW"
+			LOCAL:0 = MIN(LOCAL:0, 1 + RAND:(ARG:1))	;제일 낮은 눈
+		CASE "HIGH"
+			LOCAL:0 = MAX(LOCAL:0, 1 + RAND:(ARG:1))	;제일 높은 눈
+		CASEELSE
+			THROW @K64_DICE로 미정도리의 반환값종이 지정했다（%ARGS:0%）
+	ENDSELECT
+	SIF LOCAL:0 < 1	;여기서 1 미만이라든지 오버플로우군요 너무 합니다
+		THROW @K64_DICE로 오버플로우가 발생했다모양입니다. 현재의 값={LOCAL:0}
+NEXT
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:K64_FNAME
+;개  요점:풀네임취득함수(있는 사람 한정)
+;인  수:ARG:0… 캐릭터등록번호(MASTER라든지 TARGET라든지)
+;반환값:지정 캐릭터의 풀네임의 캐릭터 라인
+;비  고:식 안의 함수
+;@K64_FULLNAME의 인수 차이판. 처리도 통째로 맡김
+;☆반각 스페이스를 지우는 옵션이라든지 필요할까나? 오히려 데포로 지워야 할?
+;-------------------------------------------------
+@K64_FNAME(ARG:0)
+#FUNCTIONS
+RETURNF K64_FULLNAME(NO:(ARG:0))
+
+
+;-------------------------------------------------
+;함수명:K64_FULLNAME
+;개  요점:풀네임취득함수
+;인  수:ARG:0… 캐릭터번호(코이시라면 64라든지)
+;반환값:지정 캐릭터의 풀네임의 캐릭터 라인
+;비  고:식 안의 함수
+;CSTR:등장명를 사용할 수 있으므로 거의 필요없을지도
+;일부 바뀐 이름이 들어가 있는 사람이 있거나 하므로 그 대응만
+;기본은 CSV로부터 CSTR:등장명을반환만
+;☆반각 스페이스를 지우는 옵션이라든지 필요할까나? 오히려 데포로 지워야 할?
+;-------------------------------------------------
+@K64_FULLNAME(ARG:0)
+#FUNCTIONS
+SELECTCASE ARG:0	;특수 케이스 처리
+	CASE 0	;당신					존재하고 있으면 이름 변할지도 모르기 때문에 NAME을반환
+		SIF GETCHARA(ARG:0, 1) >= 0
+			RETURNF NAME:(ARG:0)
+	CASE 62	;린						정의가 "린"인 것으로
+		RETURNF "카엔뵤우 린"
+	CASE 71	;미나미츠					정의가 "무라사 선장"인 것으로
+		RETURNF "촌사 미나미츠"
+	CASE 73	;카센					정의가 "자화선"인 것으로
+		RETURNF "이바라키 카센"
+	CASE 76	;청아					정의가"청아딸들"인 것으로
+		RETURNF "곽 청아"
+ENDSELECT
+RETURNF CSVCSTR(ARG:0, GETNUM(CSTR, "등장명"))
+
+
+;-------------------------------------------------
+;함수명:K64_GETCHARABYNAME
+;개  요점:지정 캐릭터 카운트 함수
+;인  수:ARGS:0… 캐릭터의 이름(NAME) 또는 통칭(CALLNAME)
+;　　　  ARG:0…[생략가능] 0이라면 비SP캐릭터, 1이라면 비SP·SP캐릭터 양쪽 모두를 검색. 생략했다경우는 1(양쪽 모두)
+;　　　         ※SP캐릭터…CFLAG:0이 0이 아닌 캐릭터
+;반환값:지정 캐릭터의등록번호. 존재하지 않는 경우는-1
+;비  고:식 안의 함수
+;ARG:0 생략시의 거동이 Emuera의 GETCHARA와 역인 것으로 일단 주의
+;-------------------------------------------------
+@K64_GETCHARABYNAME(ARGS:0, ARG:0 = 1)
+#FUNCTION
+RETURNF GETCHARA(K64_NOBYNAME(ARGS:0), ARG:0)
+
+
+;-------------------------------------------------
+;함수명:K64_GETCHARACOUNT
+;개  요점:지정 캐릭터 카운트 함수
+;인  수:ARGS:0… 캐릭터의 이름(NAME) 또는 통칭(CALLNAME)."/"단락으로 복수 지정 가능
+;반환값:지정했다캐릭터중 존재하고 있는 인원수
+;비  고:식 안의 함수
+;어디서 살까는 불명
+;-------------------------------------------------
+@K64_GETCHARACOUNT(ARGS:0)
+#FUNCTION
+#LOCALSIZE 3
+LOCAL:0 = 0
+SPLIT ARGS:0, "/", LOCALS, LOCAL:1
+FOR LOCAL:2, 0, LOCAL:1
+	LOCAL:0 += (K64_GETCHARABYNAME(LOCALS:(LOCAL:2)) >= 0)
+NEXT
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:K64_GETKCOLOR
+;개  요점:구상색취득함수
+;인  수:ARG:0… 캐릭터번호
+;반환값:구상의 색치(16진, 0 xRRGGBB)
+;지정 캐릭터의구상색설정이 정의되고 있으면 그 색을취득
+;되어 있지 않으면, K64_KOJO_COLOR로 정의하고 있는 값을반환
+;식 안의 함수는 아니기 때문에 실제 귀찮음
+;-------------------------------------------------
+@K64_GETKCOLOR(ARG:0)
+#LOCALSIZE 2
+LOCAL:0 = GETCOLOR()
+CALL K64_KOJO_COLOR(ARG:0)
+LOCAL:1 = GETCOLOR()
+SETCOLOR LOCAL:0
+RETURN LOCAL:1
+
+
+;-------------------------------------------------
+;함수명:K64_KCOLOR
+;개  요점:승손에구상색정의 함수
+;인  수:ARG:0… 캐릭터번호
+;반환값:색치(16진, 0 xRRGGBB)
+;특정 캐릭터의구상색을 승손에 정의해 두는 함수
+;대부분 중복 피하기의 메모 쓰기에 가깝지만, 지령전의 여러분은 만들어 둔다
+;（라고 하면서 사토리 밖에 만들지 않았다）
+;이지만 직접 부르는 것은 조금 그윽하지 않다
+;구상 들어가 있다면, 문제 없을 따름은 그구상색을 존중했다 있고 것으로
+;장래적으로구상가 들어 올 가능성도 고려해, 귀찮아도 K64_GETKCOLOR를 이용해야 함
+;-------------------------------------------------
+@K64_KCOLOR(ARG:0)
+#FUNCTION
+SELECTCASE ARG:0
+	CASE 4	;대요정
+		RETURNF 0x00FF00
+	CASE 11	;플랑드르
+		RETURNF 0xFF5E64
+	CASE 14	;앨리스
+		RETURNF 0x36A6FF
+	CASE 21	;란
+		RETURNF 0xDAA520
+	CASE 22	;유카리
+		RETURNF 0xCC99FF
+	CASE 29	;에이린
+		RETURNF 0xFFFAFA
+	CASE 32	;문
+		RETURNF 0xA07878
+	CASE 39	;히나
+		RETURNF 0xB5213B
+	CASE 40	;니토리
+		RETURNF 0x00AAC8
+	CASE 44	;스와코
+		RETURNF 0xEEEE00
+	CASE 48	;아큐
+		RETURNF 0xF2B2FF
+	CASE 52	;텐시
+		RETURNF 0x5A96FA
+	CASE 59	;파르시
+		RETURNF 0x96C896
+	CASE 61	;사토리. 뱌쿠렌씨와 색 입어 해 버리고 있지만, 현재구상가 있는 것은 아니기 때문에, 우선 이대로
+		RETURNF 0xFFCCFF
+	CASE 62	;린
+		;RETURNF ＜보류＞
+	CASE 63	;하늘
+		;RETURNF ＜보류＞
+	CASE 64	;코이시
+		RETURNF 0xCCFFCC
+	CASE 68	;미나미츠
+		RETURNF 0x96B4FA
+	CASE 69	;별
+		RETURNF 0xF04040
+	CASE 70	;뱌쿠렌
+		RETURNF 0xFFE0FF
+	CASE 71	;누에
+		RETURNF 0xDDA0DD
+ENDSELECT
+RETURNF 0xA0A0A0	;그 외의 여러분은 디폴트
+
+
+;-------------------------------------------------
+;함수명:K64_KOJO_COLOR
+;개  요점:강제구상색설정 함수
+;인  수:ARG:0… 캐릭터번호
+;반환값:없음(RESULT 보호)
+;지정 캐릭터의구상색설정이 정의되고 있으면 그 색에,
+;되어 있지 않으면, K64_KCOLOR로 정의하고 있는 색으로 한다
+;디폴트색에당했다경우도 바꾸어 버리는… 좋은 것일까? 좋네요
+;색치만취득 하는 식 안의 함수가 여러가지 재사용할 수 있지만
+;TRYCCALLFORM 하는 형편상, 식 안의 함수에 할 수 없는 것이 뭐라고도
+;-------------------------------------------------
+@K64_KOJO_COLOR(ARG:0)
+#LOCALSIZE 1
+LOCAL:0 = RESULT
+TRYCCALLFORM KOJO_COLOR_K{ARG:0}
+	SETCOLOR GETCOLOR() == 0xA0A0A0 ? K64_KCOLOR(ARG:0) # GETCOLOR()	;결과 디폴트색이라면 바꾸어도… 괜찮아?
+CATCH
+	SETCOLOR K64_KCOLOR(ARG:0)
+ENDCATCH
+RETURN LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:K64_NOBYNAME
+;개  요점:캐릭터명→캐릭터번호변환 함수
+;인  수:ARGS:0… 캐릭터의 이름(NAME) 또는 통칭(CALLNAME)
+;반환값:지정했다캐릭터의 캐릭터번호
+;비  고:식 안의 함수
+;착상… 착상인 것이야…
+;-------------------------------------------------
+@K64_NOBYNAME(ARGS:0)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL:0 = GETNUM(RELATION, ARGS:0)
+SIF LOCAL:0 < 0
+	THROW @K64_NOBYNAME에 존재하지 않는 캐릭터의 이름이 도 사라질 수 있는 했다（%ARGS:0%）
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:K64_SILENCE
+;개  요점:정적 함수
+;인  수:ARGS:0…[생략가능]표시 위치(LEFT/CENTER/RIGHT). 생략했다경우는 현재의 ALIGNMENT에 따른다
+;반환값:없음(아마 RESULT 보호)
+;정적이든지 침묵하고 있는 모습 따위를 표현하는 캐릭터 라인을 표시하는 함수
+;실태는 본 대로
+;-------------------------------------------------
+@K64_SILENCE(ARGS:0)
+#LOCALSSIZE 1
+LOCALS:0 = %CURRENTALIGN()%
+CALL ALIGNMENTS(ARGS:0)
+;OriginalString : \n・\n・\n・\n
+PRINTFORMDW \n·\n·\n·\n
+CALL ALIGNMENTS(LOCALS:0)
+RETURN RESULT

@@ -1,0 +1,61 @@
+﻿;阿求＠Crow
+@CHARAMAKE_K48(ARG)
+PRINTFORMW 「아、일어난 것 같네요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「기다렸어요、간신히 제 차례네요」
+PRINTFORML 「그럼 가볍게 갈게요？」
+PRINTFORMW 「당신의 여생、이 중에서 한가지를 선택하라고하면 어떻게 하실거죠？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 돈이나 이성、욕망에 곤란함 없는 생활을 1년
+PRINTFORMDL [2] 가정을 가지고、아이가 태어나는 평범하고 행복한 15년
+PRINTFORMDL [3] 현재의 상황을 유지한 채로 30년
+PRINTFORMDL [4] 불로불사
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「뭐、그렇네요」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「굵고 짧게、알기 쉽네요一」
+		PRINTFORML 「그렇지만 딱 1년이에요？  견딜 수 있나요？」
+		CALLF CM_PROF("솔직함",   +10)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("신경질", -30)
+		CALLF CM_PROF("낙관",   +20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", +20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", +20)
+		CALLF CM_PROF("호기심", +20)
+		
+	CASE 2
+		PRINTFORML 「좋지요、평범한 행복이라는 것도」
+		PRINTFORML 「아이에게 중요한 시기에 돌아가시게 되어버리지만♪」
+		CALLF CM_PROF("모랄", +10)
+		CALLF CM_PROF("지성",   +20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", +10)
+		CALLF CM_PROF("낙관",   -20)
+		CALLF CM_PROF("호기심", -20)
+
+	CASE 3
+		PRINTFORML 「지금이 이미 행복하다면、당연히 이걸 선택해야겠죠」
+		CALLF CM_PROF("모랄", +10)
+		CALLF CM_PROF("신경질", +20)
+		CALLF CM_PROF("호기심", -20)
+
+	CASE 4
+		PRINTFORML 「제정신인가요？」
+		CALLF CM_PROF("솔직야", +30)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("지성",   -30)
+		CALLF CM_PROF("결벽",   -30)
+		CALLF CM_PROF("호기심", +20)
+
+ENDSELECT
+PRINTFORMW 「여러가지 의미로、지금부터도 힘내세요」
+RETURN 1
+

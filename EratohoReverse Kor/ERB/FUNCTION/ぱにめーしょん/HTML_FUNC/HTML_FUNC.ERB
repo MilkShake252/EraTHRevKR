@@ -1,0 +1,447 @@
+﻿;===============================================================================
+;
+;	HTML_PRINT 관련 함수군
+;
+;===============================================================================
+;	예：LOCALS = %HTML_ADDBOLDTAG()%
+;		LOCALS = %HTML_ADDFONTTAG(LOCALS,0xFFC0C0)%
+;		LOCALS = %HTML_ADDBUTTONTAG(LOCALS,"UNKO")%
+;		LOCALS = %HTML_SETTAGTEXT("똥똥",LOCALS)%
+;		→ <button value = 'UNKO'><font color = '#ffc0c0' ><b>똥똥</b></font></button>
+;-------------------------------------------------------------------------------
+;
+;	■변수 사용하고 싶다! 라든지 하나 하나손치는 것이 귀찮은 나 같은 사람용
+;
+;	■본문 치환용【HTML】는 HTML_FUNC.ERH에서, HTML_SUBSTITUTE로
+;	  CONST 지정해 팥고물의 것으로, 마음에 들지 않으면 각자 옮겨놓읍시다
+;
+;	■여러 차례 해 버리면 그 만큼 네스트 되어 버려 → <button><button></button></button>
+;	  어떤 불편이 일어날까는 모르고, 회피 처리는 STRFIND가 무겁기 때문에 하지 않아
+;
+;	■당연히 라이센스 프리
+;
+;===============================================================================
+
+
+;-------------------------------------------------------------------------------
+;	HTML_TOTAGTEXT(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>본문이야―</font></button>
+;		LOCALS:1 = %HTML_TOTAGTEXT(LOCALS:0)%
+;		→  <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;-------------------------------------------------------------------------------
+;	기본 명령의 HTML_TOPLAINTEXT 의 역, 태그 부분만큼을취득 해, 없으면 아무것도 돌려주지 않는다
+;	본문만 갈아넣거나 하는 용. 그리고 레이어라든지.
+;===============================================================================
+@HTML_TOTAGTEXT( ARGS )
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS '= REPLACE( ARGS, ESCAPE(HTML_TOPLAINTEXT(ARGS)), HTML_SUBSTITUTE)
+IF LOCALS != HTML_SUBSTITUTE
+	RETURNF LOCALS
+ELSE
+	RETURNF
+ENDIF
+
+
+;-------------------------------------------------------------------------------
+;	HTML_SETTAGTEXT(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_SETTAGTEXT("본문이야",LOCALS:0)%
+;		→  <button value = 'hoge'><font color = '#8080c0'>본문이야―</font></button>
+;-------------------------------------------------------------------------------
+;	HTML_TOTAGTEXT로 피한 태그 부분을 환송한다
+;===============================================================================
+@HTML_SETTAGTEXT( ARGS , ARGS:1 )
+#FUNCTIONS
+RETURNF REPLACE( ARGS:1, HTML_SUBSTITUTE, ARGS )
+
+
+;-------------------------------------------------------------------------------
+;	HTML_SETTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_SETTAGTEXT(LOCALS:0,"본문이야")%
+;		→  <button value = 'hoge'><font color = '#8080c0'>본문이야―</font></button>
+;-------------------------------------------------------------------------------
+;	HTML_TOTAGTEXT로 피한 태그 부분을 환송한다
+;===============================================================================
+@HTML_SETTAG( ARGS , ARGS:1 )
+#FUNCTIONS
+RETURNF REPLACE( ARGS, HTML_SUBSTITUTE, ARGS:1 )
+
+;-------------------------------------------------------------------------------
+;	HTML_GETTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_GETTAG(LOCALS:0,"color")%
+;		→  0x8080c0
+;
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_GETTAG(LOCALS:0,"BUTTON")%
+;		→  hoge
+;-------------------------------------------------------------------------------
+;	·HTML_PRINT의 사양에 의해 격납되고 있는 캐릭터 라인으로부터
+;	  align, color, bcolor, face, button의 각 VALUE치를취득 한다
+;	  comment로<! --  -->의 내용도취득 할 수 있다
+;
+;	·코멘트 태그의취득의 사양
+;	  구문상의 것(화이트 스페이스(의미가 없는 공백)인가,
+;	  캐릭터 라인 변수 내부의 의미가 있는 반각 스페이스인 것인지를 ERB상으로부터 판단하는 것이 할 수 없기 때문에
+;	  취득했다캐릭터 라인으로부터 반각 스페이스는 제거됩니다
+;	  ( <! --HOGE--> <! -- HOGE --> <! -- H O G E  -->는 모두 HOGE와 돌아간다)
+;
+;	·→변경  (구사양:COLOR와 BCOLOR의 2개는, #ZZZZZZ → 0 xZZZZZZ로 변환하기 (위해)때문에, 바로 TOINT에 처넣을 수 있다)
+;	  【제 3 인수 ARG가 1의 경우에 한정해】 #ZZZZZZ → 0 xZZZZZZ에 변환을 시도한다
+;	  COLORBYNAME 지정의 가능성이 있는 것을 완전히 무심코 무시하고 있었다
+;
+;	· 꽤 힘 기술인 실장하고 있기 (위해)때문에, 속도가 소중한 것에는 조금 어렵다
+;	  STRFIND 사용할 수 밖에 없는데 STRFIND 무겁다 응…
+;	  일단 위에서 쓴 다중 네스트 회피 처리는 이것을 사용하면 가능
+;===============================================================================
+@HTML_GETTAG( ARGS = "＠", ARGS:1 = "＠" , ARG )
+#FUNCTIONS
+#LOCALSIZE 5
+#LOCALSSIZE 20
+#DIMS TAG,1
+#DIMS VALUE,1
+#DIM SPLITNUM,1
+VARSET LOCAL
+; 인수는 대문자에서도 소문자라도 좋지만, 내부는 소문자로 돌고 있기 (위해)때문에 소문자 추천
+TAG '= TOLOWER(ARGS:1)
+VALUE =
+; 인수를 각각의 사양과 대면시킨다
+SELECTCASE TAG
+	; 네스트도 아니면 VALUE형도 아닌 너무 독특한 코멘트 태그는 전용 처리
+	CASE "comment","flag"
+		LOCAL:0 = STRFINDU( ARGS, ESCAPE("<!--") )
+		IF LOCAL:0 != -1
+			LOCAL:1 = STRFINDU( ARGS, ESCAPE("-->") )
+			IF LOCAL:1 != -1
+				LOCAL:0 += 4
+				RETURNF REPLACE( SUBSTRINGU( ARGS , LOCAL:0 , (LOCAL:1 - LOCAL:0) ) , " ", "" )
+			ENDIF
+		ENDIF
+		RETURNF
+	CASE "align"
+		TAG   = <p
+		VALUE = align
+	CASE "color"
+		TAG   = <font
+		VALUE = color
+		LOCAL:4 = 1
+	CASE "bcolor"
+		TAG   = <font
+		VALUE = bcolor
+		LOCAL:4 = 1
+	CASE "face"
+		TAG   = <font
+		VALUE = face
+	CASE "button"
+		TAG   = <button
+		VALUE = value
+	CASE "tooltip","title"
+		TAG   = <button
+		VALUE = title
+	CASE "＠"
+		SPLIT ARGS, ">", LOCALS, SPLITNUM
+		RETURNF HTML_TOPLAINTEXT(ARGS)
+	CASEELSE
+		THROW %ARGS:1%가이상입니다
+ENDSELECT
+; 태그를 뿔뿔이 흩어지게 SPLIT SPLIT 재이용 가능
+SIF ARGS != "＠"
+	SPLIT ARGS, ">", LOCALS, SPLITNUM
+; SPLIT했다곳부터 위에서 지정당했다TAG를 찾는다
+LOCAL = FINDELEMENT( LOCALS ,ESCAPE(TAG) , 0 , SPLITNUM + 1 )
+; 발견되었다
+IF LOCAL != -1
+	; 상에서 지정당했다VALUE를 찾는다
+	LOCAL:1 = STRFINDU( LOCALS:LOCAL , ESCAPE(VALUE) , 0)
+	; 발견되었다
+	IF LOCAL:1 != -1
+		; VALUE의 하나차의 '의 문자 위치와 VALUE의 2개 다음의 ' (즉 네스트)까지의 문자 위치를 찾는다
+		LOCAL:2 = STRFINDU( LOCALS:LOCAL , "'" , LOCAL:1 ) + 1
+		LOCAL:3 = STRFINDU( LOCALS:LOCAL , "'" , LOCAL:2 + 1 ) - LOCAL:2
+			; 발견되지 않을 이유 없다고 생각하지만
+			SIF LOCAL:2 == -1 || LOCAL:3 == -1
+				THROW %ARGS%의 네스트가이상입니다
+		; 전후 컷으로필요인 부분을 추출
+		VALUE '= SUBSTRINGU( LOCALS:LOCAL , LOCAL:2 , LOCAL:3 )
+		; 16 진수야플래그가 있다면#을 0 x로 변환한다
+		IF LOCAL:4 == 1 && ARG == 1
+			RETURNF REPLACE( VALUE , "#" , "0x" )
+		ELSE
+			RETURNF VALUE
+		ENDIF
+	ENDIF
+ENDIF
+RETURNF
+
+;-------------------------------------------------------------------------------
+;	HTML_DELTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_DELTAG(LOCALS:0,"color")%
+;		→  0x8080c0
+;
+;	예:LOCALS:0 = <button value = 'hoge'><font color = '#8080c0'>【HTML】</font></button>
+;		LOCALS:1 = %HTML_GETTAG(LOCALS:0,"BUTTON")%
+;		→  hoge
+;-------------------------------------------------------------------------------
+@HTML_DELTAG( ARGS = HTML_SUBSTITUTE, ARGS:1 )
+#FUNCTIONS
+#LOCALSIZE 5
+#LOCALSSIZE 3
+VARSET LOCAL
+VARSET LOCALS
+; 인수는 대문자에서도 소문자라도 좋지만, 내부는 소문자로 돌고 있기 (위해)때문에 소문자 추천
+LOCALS '= ARGS
+ARGS:1 '= TOLOWER(ARGS:1)
+; 인수를 각각의 사양과 대면시킨다
+; 는<p align='～'><nobr><br><button value='～'><font face='～' color='#～' bcolor='#～'><b><i><u><s>입니다
+SELECTCASE ARGS:1
+	CASE "p"
+		LOCALS:1 = <p
+		LOCALS:2 = </p>
+	CASE "nobr"
+		LOCALS:1 = <nobr
+		LOCALS:2 = </nobr>
+	CASE "br"
+		LOCALS:1 = <br
+		LOCALS:2 =
+	CASE "button"
+		LOCALS:1 = <button
+		LOCALS:2 = </button>
+	CASE "font"
+		LOCALS:1 = <font
+		LOCALS:2 = </font>
+	CASE "comment","flag"
+		LOCALS:1 '= "<!-- "
+		LOCALS:2 '= " -->"
+	CASE "b","bold"
+		LOCALS:1 = <b
+		LOCALS:2 = </b>
+	CASE "i","italic"
+		LOCALS:1 = <i
+		LOCALS:2 = </i>
+	CASE "u","under","underline"
+		LOCALS:1 = <u
+		LOCALS:2 = </u>
+	CASE "s","strike"
+		LOCALS:1 = <s
+		LOCALS:2 = </s>
+	CASEELSE
+		THROW %ARGS:1%가이상입니다
+ENDSELECT
+; "<x"를 찾는다
+LOCAL:1 = STRFINDU( LOCALS, LOCALS:1 , 0 )
+; 발견되었다
+IF LOCAL:1 != -1
+	; <x직후의">"를 찾는다
+	LOCAL:2 = STRFINDU( LOCALS , ">" , LOCAL:1 )
+	; 발견되었다
+	IF LOCAL:2 != -1
+		LOCALS '= SUBSTRINGU( LOCALS,  0, LOCAL:1 ) + SUBSTRINGU( LOCALS, LOCAL:2 + 1 )
+		; </xxx>를 삭제
+		LOCALS '= REPLACE( ESCAPE(LOCALS), ESCAPE(LOCALS:2), "" )
+	ENDIF
+ENDIF
+RETURNF LOCALS
+
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDFONTTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDFONTTAG("원은―",0xFF8080)%
+;		→  <font color = '#FF8080'>원은―</font>
+;-------------------------------------------------------------------------------
+;	ARGS에 font 태그를 네스트시킨다
+;	인수는 본문, 색, 마우스 오버색, 폰트 지정
+;===============================================================================
+@HTML_ADDFONTTAG( ARGS = HTML_SUBSTITUTE , COLOR , BCOLOR , FACE )
+#FUNCTIONS
+#DIMS COLOR,1
+#DIMS BCOLOR,1
+#DIMS FACE,1
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCALS =
+; color = '#c08080'라든지의 색설정
+IF COLOR != ""
+	IF ISNUMERIC(COLOR) && INRANGE( TOINT(COLOR),0,0xFFFFFF )
+		LOCALS += "color = '#" + CONVERT(TOINT(COLOR),16) + "' "
+	ELSE
+		LOCALS += "color = '" + COLOR + "' "
+	ENDIF
+ENDIF
+; bcolor = '#ffff00'라든지의 색설정
+IF BCOLOR != ""
+	IF ISNUMERIC(BCOLOR) && INRANGE( TOINT(BCOLOR),0,0xFFFFFF )
+		LOCALS += "bcolor = '#" + CONVERT(TOINT(BCOLOR),16) + "' "
+	ELSE
+		LOCALS += "bcolor = '" + BCOLOR + "' "
+	ENDIF
+ENDIF
+; face = '나눔명조'라든지의 폰트 설정
+IF FACE != ""
+	SIF CHKFONT(FACE) == 1
+		LOCALS += "face = '" + FACE + "' "
+ENDIF
+; 여기까지 와 font 태그에 뭔가 추가하는 것이 있었다
+IF LOCALS != ""
+	RETURNF "<font " + LOCALS + ">" + ARGS + "</font>"
+ELSE
+	RETURNF ARGS
+ENDIF
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDBUTTONTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDBUTTONTAG("원은―","HOGE")%
+;		→  <button value = 'HOGE'>원은―</button>
+;-------------------------------------------------------------------------------
+;	ARGS에 button 태그를 네스트시킨다
+;	인수는 본문, 버튼 라벨
+;===============================================================================
+@HTML_ADDBUTTONTAG(ARGS = HTML_SUBSTITUTE , ARGS:1 , ARGS:2)
+#FUNCTIONS
+#DIMS VALUE,1
+#DIMS TITLE,1
+VARSET LOCALS
+SIF ARGS:1 != ""
+	LOCALS += "value = '" + ARGS:1 + "' "
+SIF ARGS:2 != ""
+	LOCALS += "title = '" + ARGS:2 + "' "
+IF LOCALS != ""
+	RETURNF "<button " + LOCALS + ">" + ARGS + "</button>"
+ELSE
+	RETURNF ARGS
+ENDIF
+
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDCOMMENTTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDCOMMENTTAG("원은―","HOGE")%
+;		→  원은―<! -- HOGE -->
+;
+;	예:LOCALS:0 =원은―<! -- HOGE -->
+;		LOCALS:0 = %HTML_ADDCOMMENTTAG(LOCALS:0,"HAGE")%
+;		→  원은―<! -- HOGE/HAGE -->
+
+;-------------------------------------------------------------------------------
+;	ARGS에<! --ARGS:1-->를 부가한다
+;	벌써 코멘트 태그가 존재하고 있는 경우 ARGS:2를 단락지어 기호로서(초기치"/")
+;	기존의 것에 추가하는 형태로 동작한다
+;	(내용의 분할 따위를 SPLIT로 할 것을 상정한 사양)
+;===============================================================================
+@HTML_ADDCOMMENTTAG(ARGS = HTML_SUBSTITUTE , ARGS:1 , ARGS:2 = "/")
+#FUNCTIONS
+#LOCALSSIZE 2
+VARSET LOCALS
+LOCALS:1 '= HTML_GETTAG(ARGS,"COMMENT")
+IF LOCALS:1 != ""
+	LOCALS:1 += ARGS:2 + ARGS:1
+	LOCALS:0 '= HTML_DELTAG(ARGS,"COMMENT")
+ELSE
+	LOCALS:1 '= ARGS:1
+	LOCALS:0 '= ARGS
+ENDIF
+RETURNF LOCALS:0 + "<!-- " + LOCALS:1 + " -->"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDOTHERTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDOTHERTAG("원은―","b")%
+;		→  <b>원은―</b>
+;-------------------------------------------------------------------------------
+;	본 그대로 시리즈를 1개로 한다
+;===============================================================================
+@HTML_ADDOTHERTAG( ARGS = HTML_SUBSTITUTE, ARGS:1 )
+#FUNCTIONS
+#LOCALSSIZE 2
+VARSET LOCALS
+ARGS:1 '= TOLOWER(ARGS:1)
+SELECTCASE ARGS:1
+	CASE "nobr"
+		LOCALS:0 = <nobr>
+		LOCALS:1 = </nobr>
+	CASE "br"
+		LOCALS:0 = <br>
+		LOCALS:1 =
+	CASE "b","bold"
+		LOCALS:0  = <b>
+		LOCALS:1 = </b>
+	CASE "i","italic"
+		LOCALS:0  = <i>
+		LOCALS:1 = </i>
+	CASE "u","under","underline"
+		LOCALS:0  = <u>
+		LOCALS:1 = </u>
+	CASE "s","strike"
+		LOCALS:0  = <s>
+		LOCALS:1 = </s>
+	CASEELSE
+		THROW %ARGS:1%가이상입니다(<nobr> <br> <b> <i> <u> <s>마셔 대응하고 있습니다)
+ENDSELECT
+RETURNF LOCALS:0 + ARGS + LOCALS:1
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDNOBRTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	아무튼 본 그대로
+;===============================================================================
+@HTML_ADDNOBRTAG( ARGS = HTML_SUBSTITUTE )
+#FUNCTIONS
+RETURNF "<nobr>" + ARGS + "</nobr>"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDBOLDTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	ry
+;===============================================================================
+@HTML_ADDBOLDTAG( ARGS = HTML_SUBSTITUTE )
+#FUNCTIONS
+RETURNF "<b>" + ARGS + "</b>"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDITALICTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	ry
+;===============================================================================
+@HTML_ADDITALICTAG( ARGS = HTML_SUBSTITUTE )
+#FUNCTIONS
+RETURNF "<i>" + ARGS + "</i>"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDUNDERTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	ry
+;===============================================================================
+@HTML_ADDUNDERTAG( ARGS = HTML_SUBSTITUTE )
+#FUNCTIONS
+RETURNF "<u>" + ARGS + "</u>"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDSTRIKETAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	ry
+;===============================================================================
+@HTML_ADDSTRIKETAG( ARGS = HTML_SUBSTITUTE )
+#FUNCTIONS
+RETURNF "<s>" + ARGS + "</s>"
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDALIGNTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	P태그는 맨 앞/최후미가 아니면 안된 것 같으니까, 마지막에 사용하자
+;===============================================================================
+@HTML_ADDALIGNTAG( ARGS = HTML_SUBSTITUTE , VALUE )
+#FUNCTIONS
+#DIMS VALUE,1
+RETURNF "<p align = '" + VALUE + "'>" + ARGS + "</p>"
+
+; <br>
+; 과연손동으로 입

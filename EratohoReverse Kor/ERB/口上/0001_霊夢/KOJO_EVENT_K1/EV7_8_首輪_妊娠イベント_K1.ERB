@@ -1,0 +1,372 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	레이무구상 개목걸이, 임신이벤트구상파일
+;
+;	노예목걸이의취득, 및임신·출산이벤트구상를 정리한 파일
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;========================================================================
+;EV7, 【노예목걸이】취득이벤트구상 
+;========================================================================
+;·조교자로부터노예목걸이를 선물? 된다
+;·EVENT_S.ERB @EVENTTURNEND로부터@SLAVE_COLLAR를 개입시켜 불려 간다
+;·표시 타이밍은조교종료후, 한편일상이벤트의 전
+;·조교자의호의가 5000이상＆조교대상의호의가 2000이상으로【노예목걸이】미소지, 한편조교자가 소질[새드]를 소지하고 있는 경우에 발생
+;·선천적으로 소질[새드]가 없는 경우에서도, 마력에 의한취득가 가능한 일에 주의
+;·※현행 사양을 확인했다 마지막으로는 조금 저것인 느낌인 것으로, 장래적으로는 바뀔 가능성이 비교적 높다고 생각합니다
+;·CFLAG:TARGET:노예목걸이봉인를 임의의 개소에서 세우는 것으로이벤트의봉인는 가능하게 되어 있습니다
+;-------------------------------------------------
+@KOJO_EVENT_K1_7(ARG)
+;-------------------------------------------------
+;·DRAWLINE→[구상표시]→VOIDLINE_IF(구상측으로부터 RESULT가 돌아가면 PRINTL)→지문 표시
+;·지문은 이하와 같다
+;-------------------------------------------------
+;  격렬한조교이기 때문에 축 늘어지고 있는 %CALLNAME:MASTER%에
+;  %CALLNAME:TARGET%는 스스로의노예인 것을 나타내는개목걸이를장착시켰다…
+;  【노예목걸이】를손에 입했다.
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;【노예목걸이】취득
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(0)
+	;이 경우의구상주는 돕는 사람과했다 불린 입장. 본래의 주인은 그 밖에 있다고 하는 상황
+	;=================================================
+	;구상주가주인님가 아닌 경우
+	;=================================================
+	IF 구상기입체크(0) && !TALENT:TARGET:주인님
+;OriginalString : 
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+	
+	;주인이노예에개목걸이를 주는 Rev에 있어서는 보통? 의 시추에이션
+	;=================================================
+	;구상주가주인님
+	;=================================================
+	IF 구상기입체크(0) && TALENT:TARGET:주인님
+;OriginalString : 
+		PRINTFORMW 
+		RETURN 1
+	ENDIF
+ENDIF
+
+;========================================================================
+;EV8, 조교자임신·출산이벤트구상 
+;========================================================================
+;·조교자의임신발각으로부터 출산까지의구상
+;·@EVENTTURNEND로부터@PREGNACY_CHECK를 개입시켜 불려 간다
+;·표시 타이밍은조교종료후, 한편일상이벤트의 전
+;-------------------------------------------------
+@KOJO_EVENT_K1_8(ARG)
+;-------------------------------------------------
+;인수 내역…
+;ARG=(0. 임신발각/1. 출산 가까이/2. 출산 직전/3. 여아 출산/4. 남아 출산)
+;-------------------------------------------------
+;  CFLAG:TARGET:질정 > 10000으로 CFLAG:TARGET:임신가 선다
+;  이후, @EVENTTURNEND를경과 할 때마다 카운트 되어
+;  CFLAG:TARGET:임신=(5, 임신발각/15, 슬슬 태어날 그렇게/16이후, 태어난다! →출산)이라고 하는 흐름이 된다
+;-------------------------------------------------
+;·시스템 측에공행의 처리가 없기 때문에, 필요라고 생각되는 개소에는 공행용의 PRINTL를 가르쳐 둡니다
+;·필수라고 할 것이 아니고, 뭐 기호에 응해 삭제하자마자 자유에
+;·장래적으로는@VOIDLINE_IF등이 가르쳐질 가능성도 전혀 없는 것도 아니다
+;-------------------------------------------------
+
+;-------------------------------------------------
+;·조교자는 소질[임신][모유체질]를 얻는다
+;·DRAWLINE→지문 표시→[구상표시]의 흐름
+;·지문은 이하와 같다
+;-------------------------------------------------
+;  %CALLNAME:TARGET%의 배가 조금 부풀어 오르고 있다
+;  아무래도 %CALLNAME:MASTER%의 자를임신했다 같다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ARG:0, 임신발각
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 0
+	IF 구상기입체크(100) && FIRSTEVENT(0)
+;OriginalString : 何度も何度も%CALLNAME:MASTER%의 子種を注ぎ込み、%CALLNAME:TARGET%의 卵子を撃ち抜き続けた結果
+		PRINTFORMDW 몇번이나 몇번이나 %CALLNAME:MASTER%의 정자를 쏟아, %CALLNAME:TARGET%의 난자를 계속 관통한 결과
+;OriginalString : とうとう受精시켰다卵子が着床했다らしい
+		PRINTFORMDW 드디어 수정시킨 난자가 착상 한 것 같다
+;OriginalString : 「임신」
+		PRINTFORMW 「임신」
+;OriginalString : 「しちゃったみたいね」
+		PRINTFORMW 「해 버린 것 같구나」
+		;대상한정구상로 하지 않는 것이면 조건으로 단락짓는 (분)편이 바람직한 생각이 듭니다@/L
+		SIF TALENT:MASTER:남자
+;OriginalString : 「名前、考えておきなさいよ？お・と・う・さ・ん♪」
+			PRINTFORMW 「이름, 생각해 두세요? ·후·흥·흥·응♪」
+;OriginalString : にへら。と입元を緩める%CALLNAME:TARGET%
+		PRINTFORMDW 당신과。그리고 입가에 미소를 띄는 %CALLNAME:TARGET%
+;OriginalString : その日の晩御飯はお赤飯だった
+		PRINTFORMDW 그 날의 저녁밥은 팥찰밥이었다
+;OriginalString : 
+		PRINTFORML
+;OriginalString : 「임신中も、その…」
+		PRINTFORMW 「임신중도, 그…」
+;OriginalString : 「えっちはしてあげるから…寂しがらなくていいわよ？」
+		PRINTFORMW 「야한일은 해 주니깐… 쓸쓸해 할 필요는 없어?」
+	ELSE
+;OriginalString : %CALLNAME:TARGET%はお茶碗にお赤飯を盛り付けながらにまにまと입元を緩めている
+		PRINTFORMDW %CALLNAME:TARGET%는 찻잔에 팥찰밥을 담음이면서에 와 입가에 미소를 띄고 있다
+;OriginalString : 「また、出来ちゃったみたいね」
+		PRINTFORMW 「또, 만들어 버린 것 같구나」
+;OriginalString : 「あんたと私の、愛の結晶」
+		PRINTFORMW 「너와 나의、사랑의 결정」
+;OriginalString : 
+		PRINTFORML
+;OriginalString : 「何回孕ませれば気が済むのよ？」
+		PRINTFORMW 「몇번이나 임신시켜야 기분이 내키는거야?」
+;OriginalString : 「野球の試合ができるまで？…どうせあんたの事だから、その位じゃ済まないんでしょ」
+		PRINTFORMW 「야구 시합을 할 수 있을 때까지? … 어차피 너의 일이니까, 그 정도는 네 맘대로」
+		;강조 (위해)때문에 개행
+;OriginalString : 
+		PRINTFORML
+;OriginalString : %CALLNAME:TARGET%は呆れながらも否定はしなかった…
+		PRINTFORMDW %CALLNAME:TARGET%는 기가 막히면서도 부정은 하지 않았다…
+;OriginalString : 
+		PRINTFORML
+;OriginalString : 「
+		PRINTFORM 「
+		CALL HEARTBW
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;젓가락을 입에 물면서, 한 그릇 더의 밥을 담는 %CALLNAME:MASTER%
+;식탁의 전에 앉아 숙이고 있는 %CALLNAME:TARGET%
+;식탁의 옆에서네발로 엎드림로 개 먹어 하는 %CALLNAME:MASTER%
+;「견식 있고는 그만해요」
+;나는 바보개이니까 이것으로 좋아
+;
+;「저기요」
+;%CALLNAME:MASTER%, %CALLNAME:TARGET%를 올려본다
+;「아이가 생겼어」
+;%CALLNAME:MASTER%, 상냥하고 %CALLNAME:TARGET%를 껴안고 뺨을 비빈다
+
+;슈르 개그조가 강한 +%CALLNAME:MASTER%를 너무 움직이는+키친플레이와의 통합성에 문제가 나오기 때문에(위해) comment out
+
+;-------------------------------------------------
+;·DRAWLINE→지문 표시→[구상표시]의 흐름
+;·지문은 이하와 같다
+;-------------------------------------------------
+;  %CALLNAME:TARGET%의 배가 많이 부풀어 올라 왔다
+;  슬슬 태어날 것 같습니다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ARG:1, 슬슬 출생할 것 같다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 1 && FIRSTEVENT(0)
+;OriginalString : 「私ね、両親の記憶が無いの」
+	PRINTFORMW 「 나, 부모님의 기억이 없는거야」
+;OriginalString : 「捨て子だったのを拾われたらしくて」
+	PRINTFORMW 「기아였던 것을 주워진 것 같아서」
+;OriginalString : 「誰に拾われたのかすら、覚えてなくて…拾われてから、巫女になって…」
+	PRINTFORMW 「누구에게 주워졌는지조차, 기억하지 않아서…주워지고 나서, 무녀가 되어…」
+;OriginalString : 
+	PRINTFORML
+;OriginalString : 「ずっと一人で暮らしてきたから本当は、夫婦や家族ってよくわからないの」
+	PRINTFORML 「쭉 혼자서 살아 왔기 때문에 사실은, 부부나 가족은 잘 모르는거야」
+;OriginalString : 「………」
+	PRINTFORMW 「………」
+;OriginalString : 「임신すると不安になるって本当なのね」
+	PRINTFORMW 「임신하면 불안하게 된다 라는 사실인 것」
+;OriginalString : 
+	PRINTFORML
+;OriginalString : 「お願い」
+	PRINTFORMW 「부탁」
+;OriginalString : 「傍にいて」
+	PRINTFORMW 「옆에 있으며」
+;OriginalString : 「ずっと一緒にいて」
+	PRINTFORMW 「쭉 함께 있으며」
+;OriginalString : 「幸せな家庭、私と一緒に作って」
+	PRINTFORMW 「행복한 가정, 나와 함께 만들며」
+;OriginalString : 
+	PRINTFORML
+;OriginalString : %CALLNAME:MASTER%は%CALLNAME:TARGET%を包み込むように優しく抱きしめてやった
+	PRINTFORMDW %CALLNAME:MASTER%(은)는 %CALLNAME:TARGET%를 감싸도록(듯이) 상냥하게 꼭 껴안아 주었다
+;OriginalString : %CALLNAME:MASTER%의 受動的な性分にも使い途はあったようだ
+	PRINTFORMDW %CALLNAME:MASTER%의 수동적인 성품에도 용도는 있던 것 같다
+	RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;·DRAWLINE→[구상표시]→지문 표시의 흐름
+;·지문은 이하와 같다
+;-------------------------------------------------
+;  %CALLNAME:TARGET%가 해산기있던 것 같습니다.
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ARG:2, 출생한다!
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 2
+	[SKIPSTART]
+	;조정. 출산후 묘사에 이전에 대해 comment out  좀 더 조정이필요
+;OriginalString : 「아무것도 할 수 없다니, 그런 일 없어요」
+	PRINTFORMW 「아무것도 할 수 없다니, 그런 일 없어요」
+	[SKIPEND]
+	;%CALLNAME:MASTER%에 격려받으면서에 응대
+;OriginalString : 「私が頑張るから…あんたは私の손、握ってて頂戴」
+	PRINTFORMW 「내가 노력하기 때문에…너는 나의 손, 잡고 있어 주세요」
+	RETURN 1
+ENDIF
+
+;────────────────────────────────────
+;·ARG:3, ARG:4(여자/사내 아이)가 태어났다는 ARG:2(태어난다!)에연속 해 발생
+;·여자라면 어머니와 닮은 꼴, 사내 아이라면 아버지와 닮은 꼴이 된다
+;·여기서 말하는 모친은 당연히조교자를 가리므로, 후타나리MASTER에서도 부친 취급인 것은 애교
+;·지문 표시→[구상표시]→지문 표시의 흐름
+;·지문은 분기 개소에 나타내는 대로
+;────────────────────────────────────
+
+;-------------------------------------------------
+;%CALLNAME:TARGET%는 %CALLNAME:MASTER%에 격려받으면서, 어머니와 닮은 꼴의 사랑스러운여자를 무사 출산 섬했다.
+;[구상표시]←지금 여기
+;;갓난아기를 포옹했다%CALLNAME:TARGET%는, 우리 아이와 %CALLNAME:MASTER%에 향하여 미소짓고 있습니다.
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ARG:3, 여자가 출생했다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 3
+	;처음출산 한정 추가 묘사
+	IF FIRSTEVENT(0)
+		;당신와레이무
+;OriginalString : 「何もできないなんて、そんな事なかったわよ」
+		PRINTFORMW 「아무것도 할 수 없다니, 그런 일 없었어요」
+;OriginalString : 「こうやって손を握って、一緒に居て、励ましてくれたじゃない」
+		PRINTFORMW 「이렇게 손을 잡아, 함께 있어, 격려해 주었잖아 」
+;OriginalString : 「気になるんなら、そうね？」
+		PRINTFORMW 「신경이 쓰인다면, 그렇구나?」
+;OriginalString : 「ご褒美に、입付けの一つも貰えたら、それでいいわ」
+		PRINTFORMW 「 포상에, 입맞춤의 하나도 받을 수 있으면, 그것으로 좋아요」
+		;상호입 막아 안에 대해 %CALLNAME:MASTER%의 분의 침묵 가필
+;OriginalString : 
+		PRINTFORML
+;OriginalString : ………
+		PRINTFORMDW ………
+;OriginalString : ………
+		PRINTFORMW ………
+;OriginalString : 
+		PRINTFORML
+	ENDIF
+	;당신와레이무가 아이에 대해
+;OriginalString : 「この子はどんな子に育つのかしら…」
+	PRINTFORMW 「이 아이는 어떤 아이로 자랄까…」
+;OriginalString : 「私に似たら、お嫁の貰い손に困るかしらね」
+	PRINTFORMW 「 나를 닮아 버리면, 시집가는건 곤란한 걸까」
+;OriginalString : 「くすっ」
+	PRINTFORMW 「키득」
+;OriginalString : 
+	PRINTFORML
+	;레이무와 아이
+;OriginalString : 「この子が次の巫女になるかはわからないけれど…」
+	PRINTFORMW 「이 아이가 다음의 무녀가 될까는 모르지만…」
+;OriginalString : 「役目を継いでくれなくてもいい」
+	PRINTFORMW 「역할을 이어 주지 않아도 괜찮아」
+;OriginalString : 「勉強できなくてもいい、大物にならなくったっていい」
+	PRINTFORMW 「공부를 잘 못해도, 거물이 되지 않고 평범하게 살아도 좋아」
+;OriginalString : 「悪戯好きでもどれだけ손を焼かされてもいい」
+	PRINTFORMW 「못된 장난을 좋아해도 얼마나 손을 소 빌려주어져도 괜찮다」
+;OriginalString : 
+	PRINTFORML
+	;마루다이 식품
+;OriginalString : 「わんぱくでもいいから、たくましく育ってほしいわ」
+	PRINTFORMW 「구라도 좋으니까, 씩씩하게 자라기를 원해요」
+	;%CALLNAME:MASTER%과 아이
+;OriginalString : 
+	PRINTFORML
+;OriginalString : %CALLNAME:MASTER%が我が子のその小さな손に、そっと指を近づけると、
+	PRINTFORMDW %CALLNAME:MASTER%(은)는 우리 아이의 그 작은 손에, 살그머니 손가락을 접근하면,
+;OriginalString : 我が子が指を握ってきた
+	PRINTFORMDW 우리 아이가 손가락을 잡아 왔다
+	[SKIPSTART]
+	;해피엔드인 막다른 골목을 쓸 수 있으면 개방  와 동시에 후계 주변을 조정한다
+	;뉘앙스가 다르기 때문에(위해) 조정
+	;PRINTFORMDW %CALLNAME:MASTER%의 가슴중에는, 우리 아이에게로의애정와
+	;PRINTFORMDW 스스로가 역할을 이루어, 그리고 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+;OriginalString : 스스로가 생물로서의 의무를 완수해, 그리고
+	PRINTFORMDL 스스로가 생물로서의 의무를 완수해, 그리고
+;OriginalString : 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+	PRINTFORMDW 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+	[SKIPEND]
+RETURN 1
+ENDIF
+
+;-------------------------------------------------
+;%CALLNAME:TARGET%는 %CALLNAME:MASTER%에 격려받으면서, 아버지와 닮은 꼴의 건강한 사내 아이를 무사 출산 섬했다.
+;;[구상표시]←지금 여기
+;갓난아기를 포옹했다%CALLNAME:TARGET%는, 우리 아이와 %CALLNAME:MASTER%에 향하여 미소짓고 있습니다.
+;━━━━━━━━━━━━━━━━━━━━━━━━
+;ARG:4, 사내 아이가 출생했다
+;━━━━━━━━━━━━━━━━━━━━━━━━
+IF 구상기입체크(100) && ARG == 4
+	;처음출산 한정 추가 묘사
+	IF FIRSTEVENT(0)
+		;당신와레이무
+;OriginalString : 「何もできないなんて、そんな事なかったわよ」
+		PRINTFORMW 「아무것도 할 수 없다니, 그런 일 없었어요」
+;OriginalString : 「こうやって손を握って、一緒に居て、励ましてくれたじゃない」
+		PRINTFORMW 「이렇게 손을 잡아, 함께 있어, 격려해 주었잖아 」
+;OriginalString : 「気になるんなら、そうね？」
+		PRINTFORMW 「신경이 쓰인다면, 그렇구나?」
+;OriginalString : 「ご褒美に、입付けの一つも貰えたら、それでいいわ」
+		PRINTFORMW 「 포상에, 입맞춤의 하나도 받을 수 있으면, 그것으로 좋아요」
+		;상호입 막아 안에 대해당신의 분의 침묵 가필
+;OriginalString : 
+		PRINTFORML
+;OriginalString : ………
+		PRINTFORMDW ………
+;OriginalString : ………
+		PRINTFORMW ………
+;OriginalString : 
+		PRINTFORML
+	ENDIF
+	;당신와레이무가 아이에 대해
+;OriginalString : 「この子はどんな子に育つのかしら…」
+	PRINTFORMW 「이 아이는 어떤 아이로 자랄까…」
+;OriginalString : 「あんたに似たら、照れ屋になるかしらね」
+	PRINTFORMW 「너를 닮으면(자), 수줍음을 잘 타는 사람이 되는 것일까」
+;OriginalString : 「くすっ」
+	PRINTFORMW 「키득」
+;OriginalString : 
+	PRINTFORML
+	;레이무와 아이
+;OriginalString : 「跡を継いでくれなくてもいい」
+	PRINTFORMW 「뒤를 이어 주지 않아도 괜찮다」
+;OriginalString : 「勉強できなくてもいい、大物にならなくったっていい」
+	PRINTFORMW 「공부할 수 없어도 괜찮은, 거물이 되지 않고 끊어도 좋다」
+;OriginalString : 「悪戯好きでも、どれだけ손を焼かされてもいい」
+	PRINTFORMW 「못된 장난을 좋아해도, 얼마나 손을 소 빌려주어져도 괜찮다」
+;OriginalString : 
+	PRINTFORML
+	;마루다이 식품
+;OriginalString : 「わんぱくでもいいから、たくましく育ってほしいわ」
+	PRINTFORMW 「구라도 좋으니까, 씩씩하게 자라기를 원해요」
+	;%CALLNAME:MASTER%과 아이
+;OriginalString : 
+	PRINTFORML
+;OriginalString : %CALLNAME:MASTER%が我が子のその小さな손に、そっと指を近づけると、
+	PRINTFORMDW %CALLNAME:MASTER%(은)는 우리 아이의 그 작은 손에, 살그머니 손가락을 접근하면,
+;OriginalString : 我が子が指を握ってきた
+	PRINTFORMDW 우리 아이가 손가락을 잡아 왔다
+	;당신와 아이
+;OriginalString : 
+	PRINTFORML
+;OriginalString : %CALLNAME:MASTER%がその小さな손にそっと指を近づけると、我が子が指を握ってきた
+	PRINTFORMDW %CALLNAME:MASTER%(은)는 그 작은 손에 살그머니 손가락을 접근하면, 우리 아이가 손가락을 잡아 왔다
+	[SKIPSTART]
+	;해피엔드인 막다른 골목을 쓸 수 있으면 개방  와 동시에 후계 주변을 조정한다
+	;뉘앙스가 다르다
+	;PRINTFORMDW %CALLNAME:MASTER%의 가슴중에는, 우리 아이에게로의애정와
+	;PRINTFORMDW 스스로가 역할을 이루어, 그리고 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+;OriginalString : 스스로가 생물로서의 의무를 완수해, 그리고
+	PRINTFORMDL 스스로가 생물로서의 의무를 완수해, 그리고
+;OriginalString : 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+	PRINTFORMDW 언젠가는 죽어 가는 것이라고 하는 자각이 싹텄다
+	[SKIPEND]
+	RETURN 1
+ENDIF
+
+;========================================================================
+;EV9, 조교대상임신·출산이벤트구상 
+;========================================================================
+;·미구현이며, 호출도 존재하지 않는다
+;-------------------------------------------------
+;@KOJO_EVENT_K1_9(ARG)

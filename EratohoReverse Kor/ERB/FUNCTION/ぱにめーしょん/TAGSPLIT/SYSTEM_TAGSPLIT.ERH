@@ -1,0 +1,13 @@
+﻿; 블록을 태그와 본문 으로 분해하는 두는 곳
+#DIMS TAGSPLIT_STR,1
+#DIMS TAGSPLIT_TAG,1
+
+; 블록으로부터 태그 마다 분해하는 두는 곳
+#DIMS TAGSPLIT_TAGBLOCS,20
+; 블록으로부터 태그 마다 분해했다의 것을, 한층 더 태그와 수치로 분해하는 두는 곳
+#DIMS TAGSPLIT_TAGPROPS,2
+; 인수를 태그와 수치로 분해하는 두는 곳
+#DIMS TAGSPLIT_NOWPROPS,2
+; 태그 분할수
+#DIM TAGSPLIT_TAGNUM,1
+

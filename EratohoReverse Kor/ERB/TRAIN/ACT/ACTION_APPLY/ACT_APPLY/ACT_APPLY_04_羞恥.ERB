@@ -1,0 +1,226 @@
+﻿;────────────────────────────────────
+;040, 자위
+;────────────────────────────────────
+;리액션전（Ｓ/Ｎ/Ｈ）[벌]（이탈, 중독충족）
+@ACTION_APPLY_40
+;거부 될 가능성이 있으므로 여기는 명령을 내리는 곳까지 처리합니다
+;이탈SOURCE 증가, 조교대상노출증, 자위중독, 조교레벨에 의해 감소
+SOURCE:MASTER:이탈 = 1200 - GET_ABL(MASTER, "노출증") * 8 - GET_ABL(MASTER, "자위중독") * 20 - CFLAG:MASTER:조교레벨 * 20
+;이탈SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:이탈 = SOURCE:MASTER:이탈 < 0 ? 0 # SOURCE:MASTER:이탈
+;조교대상자위중독, 기교에 응해중독충족SOURCE 증가
+SOURCE:MASTER:중독충족 = GET_ABL(MASTER, "자위중독") * (GET_ABL(MASTER, "자위중독") + 10) * (GET_ABL(MASTER, "기교") + 10) / 1000
+;조교대상자위중독에 응해발기도상승
+TCVAR:MASTER:발기도 += 100 + GET_ABL(MASTER, "자위중독") * 5
+TFLAG:경과시간 += 3
+
+;리액션 후（쾌Ｃ, 쾌Ｖ, 쾌Ａ, 쾌Ｂ, 성행위, 노출, 이탈, 중독충족）
+@ACTION_APPLY2_40
+IF IS_COMGRONAME("소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다")
+	;자위의 실행 함수 호출
+	CALL ONANIE_APPLY
+	;조교대상의손를 한 개 점유 한다
+	TFLAG:손사용중++
+;그 외의 경우(거절)
+ELSE
+	;REACT분류에 요구에 응하지 않는 것을 세트
+	CALL SET_COMGRO("거부")
+ENDIF
+
+;────────────────────────────────────
+;041, 음부공개
+;────────────────────────────────────
+;리액션전（Ｓ/Ｎ/Ｈ）（쾌Ｃ, 노출, 이탈）
+@ACTION_APPLY_41
+;하반신전부강제탈의
+TFLAG:강제탈의 = 5
+;손가락기술소질, 조교대상기교에 응해쾌ＣSOURCE 증가
+SOURCE:MASTER:쾌Ｃ = 30 + (TALENT:손가락기술 + 1) * GET_ABL(TARGET, "기교")
+;쾌ＣSOURCE, 거울사용에 응해노출SOURCE 증가
+SOURCE:MASTER:노출 = SOURCE:MASTER:쾌Ｃ / 3 + (TEQUIP:거울 + 1) * 250
+;노출SOURCE에 응해이탈SOURCE 증가, 노출증, 조교대상조교레벨에 의해 감소
+SOURCE:MASTER:이탈 = SOURCE:MASTER:노출 - GET_ABL(MASTER, "노출증") * 2 - CFLAG:MASTER:조교레벨 * 5
+;더러움이 서로 옮긴다
+STAIN:MASTER:보지 |= STAIN:손
+STAIN:손 |= STAIN:MASTER:보지
+;이탈SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:이탈 = SOURCE:MASTER:이탈 < 0 ? 0 # SOURCE:MASTER:이탈
+;안면승마계 해제
+CALL FACESITTING_SET(0)
+;조교자, 조교대상자위를 중단
+TEQUIP:자위중 = 0
+TFLAG:경과시간 += 1
+
+;리액션 후（Ｓ/Ｎ/Ｈ）（쾌Ｃ, 노출, 이탈）
+@ACTION_APPLY2_41
+;현재 처리 없음
+
+;────────────────────────────────────
+;042, 자위과시
+;────────────────────────────────────
+;리액션전（Ｓ/Ｎ/Ｈ/Ａ）（이탈, 욕정추가, 쾌Ｃ, 쾌Ｖ, 쾌Ｂ）
+@ACTION_APPLY_42
+;같은 확률로 상＋하겉옷, 상반신전부, 하반신전부의 어떤 것인지를자주탈의
+TFLAG:자주탈의 = 3 + RAND:3
+;조교자해방소질이 존재하면악세서리－까지, 전라까지자주탈의의 어딘가에 발전
+SIF TALENT:해방
+	TFLAG:자주탈의 = 7 + RAND:2
+;조교자억압/수줍음소질이 존재하면상반신겉옷, 하반신겉옷자주탈의 또는탈의없음까지 경감
+SIF TALENT:억압 || TALENT:수줍음
+	TFLAG:자주탈의 = RAND:3
+;조교자착의플레이선호소질이 존재하면속옷만자주탈의에 고정
+SIF TALENT:착의플레이선호
+	TFLAG:자주탈의 = 9
+;조교자욕망, 기교, 조교레벨, 조교자기교, 손가락기술소질에 응해쾌ＣSOURCE 증가
+SOURCE:쾌Ｃ = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:손가락기술 + 1)
+;조교자가 비남자라면, 조교자욕망, 기교, 조교레벨, 조교자기교, 손가락기술소질에 응해쾌ＢSOURCE 증가
+SIF !TALENT:남자
+	SOURCE:쾌Ｂ = 50 + GET_ABL(TARGET, "욕망") * GET_ABL(TARGET, "기교") * GET_TRAINLV(TARGET) * 2 / 100 + GET_ABL(TARGET, "기교") * 2 * (TALENT:TARGET:손가락기술 + 1)
+
+
+;조교자가바이브를 소지하고 있어, 처녀도 남자도 아니면바이브사용
+;일시 생략. 부활시킨다때는 실행 판정을 다시 봐 ACT파생의 (분)편으로 처치
+[SKIPSTART]
+IF ITEM:바이브 && ! TALENT:처녀 && ! TALENT:남자
+	;조교자욕망, 조교레벨, 도구능숙소질, 기교, 도구강화에 응해쾌ＶSOURCE 증가
+	SOURCE:쾌Ｖ = 50 + GET_ABL(TARGET, "욕망") * (GET_TRAINLV(TARGET) + 1) * 5 / 10 + (TALENT:도구능숙 + 1) * GET_ABL(TARGET, "기교") * (ITEM:9 + 1) * 3
+	;대신에쾌ＣSOURCE 감소
+	TIMES SOURCE:쾌Ｃ , 0.80
+ENDIF
+[SKIPEND]
+
+;쾌x총계를취득 해 LOCAL에
+LOCAL = SOURCE:쾌Ｃ + SOURCE:쾌Ｖ + SOURCE:쾌Ｂ
+;조교대상조교레벨와욕망를 봐, 어느 쪽인지가 낮으면 LOCAL 경감
+IF CFLAG:MASTER:조교레벨 < 1 || ABL:MASTER:욕망 < 1
+	TIMES LOCAL, 0.10
+ELSEIF CFLAG:MASTER:조교레벨 < 3 || ABL:MASTER:욕망 < 2
+	TIMES LOCAL, 0.25
+ELSEIF CFLAG:MASTER:조교레벨 < 5 || ABL:MASTER:욕망 < 3
+	TIMES LOCAL, 0.40
+ELSEIF CFLAG:MASTER:조교레벨 < 8 || ABL:MASTER:욕망 < 4
+	TIMES LOCAL, 0.60
+ELSEIF CFLAG:MASTER:조교레벨 < 11 || ABL:MASTER:욕망 < 5
+	TIMES LOCAL, 0.85
+ENDIF
+;LOCAL가 1/5만여라조교자욕정가 증가
+CUP:MASTER:욕정 += LOCAL / 5
+;LOCAL에 응해이탈SOURCE 증가, 조교대상노출증, 조교레벨에 의해 감소
+SOURCE:MASTER:이탈 = LOCAL - GET_ABL(MASTER, "노출증") * 2 - CFLAG:MASTER:조교레벨 * 5
+;이탈SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:이탈 = SOURCE:MASTER:이탈 < 0 ? 0 # SOURCE:MASTER:이탈
+;안면승마계 해제
+CALL FACESITTING_SET(0)
+;조교자욕망에 응해발기도상승
+TCVAR:MASTER:금회발기 += 100 + GET_ABL(TARGET, "욕망")
+TFLAG:경과시간 += 3
+
+;리액션 후（Ｓ/Ｎ/Ｈ/Ａ）（이탈, 욕정추가, 쾌Ｃ, 쾌Ｖ, 쾌Ｂ）
+@ACTION_APPLY2_42
+;조교자자위를 개시
+TEQUIP:자위중 |= 2
+
+;────────────────────────────────────
+;043, 수치플레이（Ｓ/Ｎ/Ｈ）（노출）
+;────────────────────────────────────
+@ACTION_APPLY_43
+;개시시
+IF TFLAG:ACT파생 == 0
+	;노출SOURCE 증가
+	SOURCE:MASTER:노출 = 200
+	;거울를 고정시킨다
+	TEQUIP:거울 = 1
+;종료시
+ELSE
+	;거울를 정리한다
+	TEQUIP:거울 = 0
+ENDIF
+;안면승마계 해제
+CALL FACESITTING_SET(0)
+TFLAG:경과시간 += 2
+
+;────────────────────────────────────
+;044, 야외플레이（Ｈ/Ａ）[벌]（구속<=개목걸이의 일, 노출, 이탈, 트라우마）
+;────────────────────────────────────
+@ACTION_APPLY_44
+;종료시
+IF TFLAG:ACT파생 == 1
+	;야외플레이종료
+	TEQUIP:야외플레이 = 0
+;개시시
+ELSE
+	;반항각인에 응해구속SOURCE 증가
+	SOURCE:MASTER:구속 = 50 + MARK:반항각인 * 15
+	;노출SOURCE 증가
+	SOURCE:MASTER:노출 = 300
+	;구속SOURCE에 응해이탈SOURCE 증가, 조교대상노출증, 조교레벨에 의해 감소
+	SOURCE:MASTER:이탈 = 150 + SOURCE:MASTER:구속 - GET_ABL(MASTER, "노출증") * 3 - CFLAG:MASTER:조교레벨 * 10
+	;이탈SOURCE가 부의 값을 받지 않게 조정
+	SOURCE:MASTER:이탈 = SOURCE:MASTER:이탈 < 0 ? 0 # SOURCE:MASTER:이탈
+	;조교대상겁쟁이, 무관심, 억압, 해방, 수줍음, 수치없음소질, 이탈SOURCE에 응해트라우마SOURCE 증감
+	SOURCE:MASTER:트라우마 = TALENT:MASTER:겁쟁이 * 150 - TALENT:MASTER:무관심 * 50 + TALENT:MASTER:억압 * 150 - TALENT:MASTER:해방 * 50 + TALENT:MASTER:수줍음 * 250 - TALENT:MASTER:수치없음 * 150 + SOURCE:MASTER:이탈
+	;이탈SOURCE가 0이라면트라우마SOURCE도 0이 된다
+	SOURCE:MASTER:트라우마 = SOURCE:MASTER:이탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마SOURCE가 부의 값을 받지 않게 조정
+	SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마(각인)의 원이 이조교였던 경우, 트라우마SOURCE를 1.5배로 한다
+	SIF CFLAG:MASTER:트라우마 == 44
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+	;야외플레이개시
+	TEQUIP:야외플레이 = 1
+ENDIF
+;안면승마계 해제
+CALL FACESITTING_SET(0)
+;조교자, 조교대상자위를 중단
+TEQUIP:자위중 = 0
+TFLAG:경과시간 += 5
+
+;────────────────────────────────────
+;045, 방뇨
+;────────────────────────────────────
+;리액션전（Ｎ/Ｈ/Ａ）[벌]（노출, 이탈, 트라우마）
+@ACTION_APPLY_45
+;노출SOURCE 증가
+SOURCE:MASTER:노출 = 350
+;이탈SOURCE 증가, 조교대상노출증, 조교레벨에 의해 감소
+SOURCE:MASTER:이탈 = 750 - GET_ABL(MASTER, "노출증") * 15 - CFLAG:MASTER:조교레벨 * 30
+;이탈SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:이탈 = SOURCE:MASTER:이탈 < 0 ? 0 # SOURCE:MASTER:이탈
+;조교대상겁쟁이, 무관심, 억압, 해방, 수줍음, 수치없음소질, 이탈SOURCE에 응해트라우마SOURCE 증감
+SOURCE:MASTER:트라우마 = TALENT:MASTER:겁쟁이 * 150 - TALENT:MASTER:무관심 * 50 + TALENT:MASTER:억압 * 150 - TALENT:MASTER:해방 * 50 + TALENT:MASTER:수줍음 * 250 - TALENT:MASTER:수치없음 * 150 + SOURCE:MASTER:이탈
+;이탈SOURCE가 0이라면트라우마SOURCE도 0이 된다
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:이탈 == 0 ? 0 # SOURCE:MASTER:트라우마
+;트라우마SOURCE가 부의 값을 받지 않게 조정
+SOURCE:MASTER:트라우마 = SOURCE:MASTER:트라우마 < 0 ? 0 # SOURCE:MASTER:트라우마
+	;트라우마(각인)의 원이 이조교였던 경우, 트라우마SOURCE를 1.5배로 한다
+	SIF CFLAG:MASTER:트라우마 == 45
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+;조교대상자위를 중단
+TEQUIP:자위중 &= ~1
+TFLAG:경과시간 += 2
+
+;리액션 후（Ｎ/Ｈ/Ａ）[벌]（노출, 이탈, 트라우마）
+@ACTION_APPLY2_45
+IF IS_COMGRONAME("소극적으로 한다/태연하게 한다/적극적으로 한다/받아들인다")
+	;소변를 잃는다
+	BASE:MASTER:소변 = 0
+	;굴종SOURCE 증가
+	SOURCE:MASTER:굴종 += 200
+	SOURCE:MASTER:달성 += 50 + LOCAL
+	;조교대상Ｖ를 점유 한다
+	TFLAG:Ｖ사용중 = 2
+;그 외의 경우(거절)
+ELSE
+	;REACT분류에 요구에 응하지 않는 것을 세트
+	CALL SET_COMGRO("거부")
+	;노출, 이탈, 트라우마, 굴종SOURCE 감소
+	TIMES SOURCE:MASTER:노출 , 0.40
+	TIMES SOURCE:MASTER:이탈 , 0.50
+	TIMES SOURCE:MASTER:트라우마 , 0.10
+	TIMES SOURCE:MASTER:굴종 , 0.20
+ENDIF
+
+;────────────────────────────────────
+;046, 코스프레（Ｓ/Ｎ/Ｈ/Ａ）（미구현）
+;────────────────────────────────────
+;@ACTION_APPLY_46

@@ -1,0 +1,53 @@
+﻿;白蓮＠CPMの人
+@CHARAMAKE_K70(ARG)
+PRINTFORMW 「좋은 아침입니다. 한가지 괜찮을까요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「조금 막연한 질문일지도 모르겠습니다만, 대답해 주시면」
+PRINTFORMW 「신앙이란 무엇일가요?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 믿어 받아들이는 것
+PRINTFORMDL [2] 교의를 이해해、자신의 것으로 하는 것
+PRINTFORMDL [3] 혜택이라는 권리를 얻기 위한 의무
+PRINTFORMDL [4] 갖고 싶다면 다리를 벌려
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답 해 주시지 않으시는건가요……」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그렇네요. 많은 사람들에게 있어서는 그렇겠지요」
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("지성",     -10)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("공격",     -10)
+	CASE 2
+		PRINTFORML 「그것이 이상입니다만, 그 경지에 오를 수 있는 사람은 적고……」
+		CALLF CM_PROF("지성",     20)
+		CALLF CM_PROF("낙관",     -10)
+		CALLF CM_PROF("모랄",   20)
+		CALLF CM_PROF("결벽",     20)
+	CASE 3
+		PRINTFORML 「무슨 일이라도 대가는 필요. 그렇게 말씀하시는군요……」
+		CALLF CM_PROF("솔직야",   -20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("지성",     10)
+	CASE 4
+		PRINTFORML 「……당신과 같은 사람에 대한 것도 생각하지 않으면 안 된다. 어려운 것입니다」
+		CALLF CM_PROF("지성",     -30)
+		CALLF CM_PROF("공격",     20)
+		CALLF CM_PROF("충동",     30)
+		CALLF CM_PROF("결벽",     -20)
+		CALLF CM_PROF("모랄",   -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람",   10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람",   10)
+ENDSELECT
+PRINTFORMW 
+RETURN 1
+

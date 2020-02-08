@@ -1,0 +1,57 @@
+﻿;芳香＠ぱ。
+@CHARAMAKE_K75(ARG)
+PRINTFORMW 「우오오ーーー！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「큰일이야!　질문하려고 했던 것을 잊어 버렸어!」
+PRINTFORMW 「거기 너!　알고 있냐!」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 신을 믿습니까?
+PRINTFORMDL [2] 좋아하는 연예인은?
+PRINTFORMDL [3] 밥?　목욕?　아니면…
+PRINTFORMDL [4] 모릅니다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답이 없는 단순한 시체인 것 같다아아아」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「우우, 종교는 안 돼!　분쟁을 부른다구!」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("충동", 10)
+	CASE 2
+		PRINTFORML 「우오―！　의미를 모르겠어―!　이렇게 보여도 묘지에서는 아이돌이다」
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("모랄", -10)
+	CASE 3
+		PRINTFORML 「야한 일은 안 돼,  그것만은 안 되는 거야」
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("결벽", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+	CASE 4
+		PRINTFORML 「음!　우리도 모르겠어!　동료가…뭐、되지 않는다고!」
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("도착", -30)
+ENDSELECT
+PRINTFORMW 「우오ー！！　안ー녕ー이ー다ー」
+RETURN 1

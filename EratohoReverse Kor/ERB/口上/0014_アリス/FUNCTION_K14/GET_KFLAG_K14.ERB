@@ -1,0 +1,13 @@
+﻿;-------------------------------------------------
+;KFLAG를 정의
+;-------------------------------------------------
+@GET_KFLAG_K14(ARGS, ARG = -2)
+#FUNCTION
+ARG = ARG != -2 ? ARG # TARGET
+SELECTCASE ARGS
+	CASE "상사상애"
+		RETURNF KFLAG:ARG:100 == 1
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@GET_KFLAG_K14에 무효인 정의(%ARGS%)가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT

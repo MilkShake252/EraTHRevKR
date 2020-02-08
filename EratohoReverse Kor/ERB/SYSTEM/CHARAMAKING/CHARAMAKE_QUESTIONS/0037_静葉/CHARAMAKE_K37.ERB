@@ -1,0 +1,62 @@
+﻿;静葉＠Crow
+@CHARAMAKE_K37(ARG)
+PRINTFORMW 「아、일어났구나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「나는 당연히 가을에 대해서 질문이야」
+PRINTFORMW 「당신이 가을이란 말을 듣고 떠올리는 건 어떤거야？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 식욕의 가을
+PRINTFORMDL [2] 독서의 가을
+PRINTFORMDL [3] 스포츠의 가을
+PRINTFORMDL [4] 그 외의 가을
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「혹시、가을、싫어한다거나……？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「뭘 먹어도 맛있는 계절이지」
+		PRINTFORML 「말은 살쪄도 되지만、당신은 조심해」
+		CALLF CM_PROF("솔직야",  +10)
+		CALLF CM_PROF("충동",    +10)
+		CALLF CM_PROF("낙관",    +10)
+		CALLF CM_PROF("지성",    -20)
+		CALLF CM_PROF("신경질",  -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",  +10)
+	CASE 2
+		PRINTFORML 「가을의 긴 밤에 독서、풍류가 있지」
+		CALLF CM_PROF("공격",    -20)
+		CALLF CM_PROF("충동",    -20)
+		CALLF CM_PROF("지성",    +30)
+		CALLF CM_PROF("도착",    -10)
+		CALLF CM_PROF("모랄",  +10)
+		CALLF CM_PROF("신경질",  +10)
+	CASE 3
+		PRINTFORML 「소문에 의하면、외계에는 운동회라고하는 축제가 있다는 것 같아」
+		PRINTFORML 「나도 한번 보고싶다……」
+		CALLF CM_PROF("공격",    +20)
+		CALLF CM_PROF("피학",    -10)
+		CALLF CM_PROF("충동",    +10)
+		CALLF CM_PROF("수치",    -10)
+		CALLF CM_PROF("지성",    -10)
+		CALLF CM_PROF("신경질",  -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람",  +10)
+	CASE 4
+		PRINTFORML 「예술、하이킹、온철……가을은 뭘 해도 멋진 계절입니다」
+		PRINTFORML 「야한 일……？　에엣！？」
+		CALLF CM_PROF("솔직야",  -10)
+		CALLF CM_PROF("호기심",  +20)
+		CALLF CM_PROF("수치",    -20)
+		CALLF CM_PROF("도착",    +20)
+		CALLF CM_PROF("동성애",  +10)
+		CALLF CM_PROF("결벽",    -10)
+		CALLF CM_PROF("모랄",  -10)
+ENDSELECT
+PRINTFORMW 
+RETURN 1

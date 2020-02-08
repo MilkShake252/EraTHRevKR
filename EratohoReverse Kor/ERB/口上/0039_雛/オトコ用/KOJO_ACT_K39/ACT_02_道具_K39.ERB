@@ -1,0 +1,394 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;히나구상 도구계 액션구상파일
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;        
+;도구계 ACT20～26
+;        
+[SKIPSTART]
+	#TFLAG:ACT
+		20=로터
+		21=바이브
+		22=애널바이브
+		23=애널비즈
+		24=Ｃ애무도구
+		25=유두캡
+		26=페니스밴드
+	#TFLAG:ACT분류 == 2에 해당
+	#범용 리액션에 대해서는 MENUMATCH(TFLAG:ACT, "도구")로 줍는 것이 가능
+	#조교자가조교대상에도구를 사용한다. 이구상의 시점에서조교자는 벌써손를 내고 있다
+	#미약·로션를 사용하는 케이스가 있다
+	#도구류의장착, 해제등은 TFLAG:ACT파생로 정의된다
+[SKIPEND]
+
+
+;///////////////
+;ACT20, 로터
+;///////////////
+[SKIPSTART]
+	#Ｃ중심으로애무 한다
+	#애무계로부터 발생하는 경우도 있다
+	#TFLAG:징계·플래그가 서 있으면 발생하지 않는다
+	#턴방침가"하드", "이상"라면 발생하지 않는다
+	#TEQUIP(클리캡/오나홀/페니스밴드/삼각목마)장착중에는 발생하지 않는다
+	#성교중/성교봉사중에는 발생하지 않는다
+	#조교대상에페니스가 있는 경우는 발생하지 않는다
+	#ACT파생없음
+[SKIPEND]
+@KOJO_MALE_ACT_K39_20
+;남자용구상인 것으로 불요
+RETURN 0
+
+
+;ACT21, 바이브
+[SKIPSTART]
+	#조교대상이남자의 경우는 발생하지 않는다
+	#TFLAG:징계·플래그가 끊고 있으면 발생하지 않는다
+	#턴방침가"이상"라면 발생하지 않는다
+	#TEQUIP(삼각목마/페니스밴드)장착중이라면 발생하지 않는다
+	#성교중에는 발생하지 않는다
+	#조교대상가처녀에서도 발생할 가능성이 있다
+[SKIPEND]
+@KOJO_MALE_ACT_K39_21 ;TFLAG:ACT파생(0=바이브장착/1=해제)
+;남자용구상인 것으로 불요
+RETURN 0
+
+
+;///////////////////
+;ACT22, 애널바이브
+;///////////////////
+[SKIPSTART]
+	#턴방침가"소프트", "이상"라면 발생하지 않는다
+	#TEQUIP(애널비즈/관장기＋플러그/삼각목마/페니스밴드)장착중은 발생하지 않는다
+	#항문섹스중(TEQUIP:성교중 == 6, 혹은 A_SEX())에는 발생하지 않는다
+[SKIPEND]
+@KOJO_MALE_ACT_K39_22 ;TFLAG:ACT파생(0=애널바이브장착/1=해제)
+
+[SKIPSTART]
+;ACT22_0, 애널바이브장착
+;=========================
+IF ! TFLAG:ACT파생
+ENDIF
+
+;ACT22_1, 애널바이브해제 //이미 장비 하고 있는 경우, 애널바이브해제가 된다
+;=========================
+IF TFLAG:ACT파생 == 1
+ENDIF
+[SKIPEND]
+RETURN 0
+
+
+;///////////////////
+;ACT23, 애널비즈
+;///////////////////
+[SKIPSTART]
+	#애널비즈장착/해제/추가
+	#TFLAG:징계·플래그가 서 있으면 발생하지 않는다
+	#턴방침가"이상"라면 발생하지 않는다
+	#TEQUIP(애널바이브/관장기＋플러그/삼각목마/페니스밴드)장착중에는 발생하지 않는다
+	#Ａ성교중(TEQUIP:성교중 == 6, 혹은 A_SEX()) 시에는 발생하지 않는다
+[SKIPEND]
+@KOJO_MALE_ACT_K39_23 ;TFLAG:ACT파생(0=장착/1=해제/2=추가)
+
+[SKIPSTART]
+;ACT23_0, 애널비즈장착  //장착시에 1～3개의 사이에 랜덤으로 정해진다
+;=========================
+IF ! TFLAG:ACT파생
+ENDIF
+
+;ACT_23_1, 애널비즈해제 //구슬이 5개 들어가 있는 경우, 애널비즈해제가 된다
+;==========================
+IF TFLAG:ACT파생 == 1
+ENDIF
+
+;ACT23_2, 애널비즈추가  //비즈의 추가는 1～3의 사이에 랜덤으로 정해진다
+;=========================
+IF TFLAG:ACT파생 == 2
+ENDIF
+[SKIPEND]
+RETURN 0
+
+
+;/////////////////
+;ACT24, Ｃ애무도구
+;/////////////////
+[SKIPSTART]
+	#클리캡/오나홀의장착, 해제
+	#오나홀을 소지 또한조교대상에페니스가 있는 경우는 「오나홀」에 파생한다
+	#TFLAG:징계·플래그가 서 있으면 발생하지 않는다
+	#턴방침가"하드", "이상"의 경우는 발생하지 않는다
+	#TEQUIP(삼각목마/페니스밴드)장착중에는 발생하지 않는다
+	#오나홀장착는발기도가 1000 이하(TCVAR:MASTER:발기도 < 1000)의 경우에 연주해져 발생하지 않는다
+	#성교봉사중에는 발생하지 않는다
+[SKIPEND]
+@KOJO_MALE_ACT_K39_24 ;TFLAG:ACT파생(0=클리캡장착/1=클리캡해제/2=오나홀장착/3=오나홀해제)
+
+;클리캡장착, 해제
+;======================
+SIF GROUPMATCH(TFLAG:ACT파생, 0, 1) ;남자용구상인 것으로 불요. 만일 불러내져도 리턴 0!
+	RETURN 0
+
+;ACT24_2, 오나홀장착
+;=======================
+IF TFLAG:ACT파생 == 2
+	;호의, 호감도로 분기
+	IF GET_KFLAG_K39("상사상애", (FLAG:주인님))
+		{
+		CALL HTMLPRINTW(
+		@"「라고 할까%HTMLFONT("<b>이것</b>", , COLOR2_K39("WHITE"))%…、" + 
+		"일부러 내가 붙여 주는필요 없네요」")
+		}
+		{
+		CALL HTMLPRINTW(
+		@"「이봐요, 어떻게했다의? 사양하지 않고 빨리%HTMLFONT("<b>그것</b>", , 
+		COLOR2_K39("WHITE"))%사용하면?」")
+		}
+	ELSE
+;OriginalString : 「\@ FIRSTACT(0) ? 折角の機会ですから、 # さて次は、ちょっと \@コレを使ってみましょうか」
+		PRINTFORMW 「\@ FIRSTACT(0) ? 모처럼의 기회이기 때문에, # 그런데 다음은, 조금 \@코레를 사용해 볼까요」
+		{
+;OriginalString : 「%CNAME(MASTER, TARGET)%には、ちょっと\@ TALENT:MASTER:동정 
+		PRINTFORMW 「%CNAME(MASTER, TARGET)%에는, 조금\@ TALENT:MASTER:동정 
+		? 자극이 너무 강한 
+		# 물발리나 있고 
+		\@일지도 모르지만」
+		}
+	ENDIF
+	CALL FADE_TO_CLEARLINE(10, @"「\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 킥킥 # 후후 \@……」")
+	RETURN 1
+ENDIF
+
+;ACT24_3, 오나홀해제//이미 장비 하고 있는 경우, 오나홀해제가 된다
+;=======================
+IF TFLAG:ACT파생 == 3
+	;정액 서로 더러워져
+	;============
+	IF GET_STAIN("페니스", "정액", MASTER)
+		SELECTCASE RANDACT(3, 30)
+			CASE 0
+;OriginalString : 「こんなに汚し\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? ちゃって # てしまって \@…」
+				PRINTFORMW 「이렇게 더럽혀\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 는 # 라고 끝내 \@…」
+				{
+;OriginalString : 「これは綺麗に洗っておかないといけ\@ 
+				PRINTFORMW 「이것은 깨끗이 씻어 두지 않으면 가라\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 없네요 
+				# 선이군요 \@」
+				}
+			CASE 1
+;OriginalString : 「すっかり愉しんだよう\@ !GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? ね？ # ですね\@」
+				PRINTFORMW 「완전히 즐긴 듯\@ !GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 저기?  # (이)군요\@」
+				{
+;OriginalString : 「このまま外했다ら、中のものが零れてき\@ 
+				PRINTFORMW 「이대로 제외하면, 안의 것이 흘러넘쳐 나무\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 좋을 것 같다 
+				# 그렇습니다 \@」
+				}
+			CASE 2
+				{
+;OriginalString : 「しかし、まぁ…随分と派손に吐き出했다もの\@ 
+				PRINTFORMW 「그러나, 아무튼…상당히 화려하게 토해낸 것\@ 
+				!GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 입니다 
+				# \@군요」
+				}
+				{
+				CALL HTMLPRINTW(
+				@"「%HTMLFONT("<b>이것</b>", , COLOR2_K39("WHITE"))%가 그렇게 좋았다" + 
+				@"\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 의 # 입니까 \@?」")
+				}
+		ENDSELECT
+		{
+		CALL FADE_TO_CLEARLINE(
+		10, 
+		@"「\@ TENSION(TARGET, 8) == "높다" 
+		? %RAND_SPLIT("킥킥/후훗")% 
+		# %RAND_SPLIT("키득/후후")% \@」")
+		}
+		RETURN 1
+	ENDIF
+
+	;기타·조건없음
+	;================
+	IF 구상기입체크(100)
+		SELECTCASE RANDACT(2, 31)
+			CASE 0
+				{
+;OriginalString : 「\@ 
+				PRINTFORMW 「\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 뭐?    
+				# 어머나,  
+				\@그 얼굴. 어떻게했다\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 의 
+				# 응입니다 \@?」
+				}
+				CALL FADEIN(12, @"「혹시……, 서운하다든가\@ !RAND:3 ? ?  # \@」")
+				WAIT
+				CALL FADE_TO_CLEARLINE(15, "「후후……」")
+			CASE 1
+				{
+;OriginalString : 「愉しんでいるところ申し訳\@ 
+				PRINTFORML 「즐기고 있는 곳(중) 변명\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 없지만 
+				# 없습니다만\@…」
+				}
+				{
+;OriginalString : 「こればっかりという訳にもいかない\@ 
+				PRINTFORMW 「이것뿐이라고 하는 것도 없다\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 의 것 
+				# 응입니다 \@」
+				}
+				CALL FADEIN(8, "「나도, 그…」")
+				{
+;OriginalString : 「\@ 
+				PRINTFORMW 「\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? ,  
+				# 
+				\@그 밖에 시 싶은 것, 아\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 
+				# \@해……」
+				}
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;/////////////////////
+;ACT25, 유두캡
+;/////////////////////
+[SKIPSTART]
+	#유두캡장착/해제
+	#TFLAG:징계·플래그가 서 있으면 발생하지 않는다
+	#턴방침가"하드", "이상"라면 발생하지 않는다
+	#유두캡라고 말해도, 지문에서는 클립로터라고 하는 취급
+	#조교대상이남자에서도 발생한다
+[SKIPEND]
+@KOJO_MALE_ACT_K39_25 ;TFLAG:ACT파생(0=장착/1=해제)
+
+;ACT25_0, 유두캡장착
+;===========================
+IF !TFLAG:ACT파생
+	;처음
+	;====
+	IF FIRSTACT(0)
+;OriginalString : 「男性用のこんなものまであるなんて…」
+		PRINTFORMW 「남성용의 이런 것까지 있다니…」
+		{
+;OriginalString : 「なんとも業の深い話\@ 
+		PRINTFORMW 「정말 업의 깊은 이야기\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 군요. 아휴예요 
+		# 군요 \@……」
+		}
+		{
+;OriginalString : 「まぁでも…、折角の機会\@ 
+		PRINTFORMW 「아무튼에서도…, 모처럼의 기회\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 이고, 우선은 시험해 보지 않으면 
+		# 이고, 우선 시험해 보지 않으면 \@」
+		}
+		CALL FADE_TO_CLEARLINE(10, "「후후……」")
+		RETURN 1
+	ENDIF
+
+	;기타·조건없음
+	;================
+	IF 구상기입체크(100)
+		;처음은 공통 부분
+		{
+		CALL HTMLPRINTW(
+		@"「그런데,%CNAME(MASTER, TARGET)%에%HTMLFONT("<b>이것</b>", , COLOR2_K39("WHITE"))%" + 
+		@"를 붙여 주고\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 원 # 야 \@」")
+		}
+		;조교대상가Ｂ민감인가Ｂ둔감인 경우
+		IF TALENT:MASTER:Ｂ민감 || TALENT:MASTER:Ｂ둔감
+			IF TALENT:MASTER:Ｂ민감
+;OriginalString : 「感度の良い%CNAME(MASTER, TARGET)%には、刺激が強すぎる
+				PRINTFORM 「감도가 좋다%CNAME(MASTER, TARGET)%에는, 자극이 너무 강한
+			ELSE
+				{
+;OriginalString : 「でも、そう\@ 
+				PRINTFORM 「 그렇지만, 그렇게\@ 
+				GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+				? 응 
+				# 군요 
+				\@. 감도가 나쁘다%CNAME(MASTER, TARGET)%에는, 효력이 얇다
+				}
+			ENDIF
+;OriginalString : かも知れ\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? ないけど # ませんけど \@」
+			PRINTFORMW 일지도 알려지고\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 없지만 # 선이지만 \@」
+			CALL FADE_TO_CLEARLINE(10, @"「킥킥…」")
+		;그 외
+		ELSE
+			{
+;OriginalString : 「まぁそう\@ 
+			PRINTFORMW 「아무튼 그렇게\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 응 
+			# 군요 
+			\@. 남자\@ 
+			TALENT:MASTER:작은체형 
+			? 의 아이 
+			# 
+			\@가 몸에 걸쳐, 너무 볼품이 하는 것은\@ 
+			GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+			? 없다 
+			# 없습니다 
+			\@지만」
+			}
+			CALL FADE_TO_CLEARLINE(10, @"「후후……」")
+;OriginalString : %CALLNAME%そういうと、悪戯っぽい笑みを浮かべた…
+			PRINTFORMDW %CALLNAME%그러한과 못된 장난 같은 미소를 띄웠다…
+		ENDIF
+		RETURN 1
+	ENDIF
+ENDIF
+
+;ACT25_1, 유두캡해제//이미 장비 하고 있는 경우, 유두캡해제가 된다
+;===========================
+IF TFLAG:ACT파생 == 1
+	{
+	CALL HTMLPRINTW(@"「후후, 수고 하셨습니다\@ 
+	!GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+	? 로했다 
+	# 
+	\@%HTML_PS_K39()%」")
+	}
+	{
+;OriginalString : 「\@ 
+	PRINTFORMW 「\@ 
+	GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+	? 이봐요, 움직이지 마. 지금 떼어 주기 때문에 
+	# , 제외해 주어요 \@」
+	}
+	RETURN 1
+ENDIF
+
+
+;///////////////////
+;ACT26, 페니스밴드
+;///////////////////
+[SKIPSTART]
+	#페니스밴드장착/해제
+	#조교자가조교대상에 쌍두페니스밴드장착 시키려고 하는 장면
+	#조교대상가처녀라면, 처녀상실가 일어난다
+	#TFLAG:징계·플래그가 서 있으면 발생하지 않는다
+	#TEQUIP:(애널비즈/애널바이브/관장기＋플러그/삼각목마)장착중에는 발생하지 않는다
+	#성교중/성교봉사중에는 발생하지 않는다
+	#조교대상에페니스가 있으면 발생하지 않는다
+	#TEQUIP(바이브/클리캡)는 양립하지 않는 것으로서 해제된다
+[SKIPEND]
+@KOJO_ACT_K39_26 ;TFLAG:ACT파생(0=장착/1=해제)
+;남자용구상인 것으로 불요
+RETURN 0

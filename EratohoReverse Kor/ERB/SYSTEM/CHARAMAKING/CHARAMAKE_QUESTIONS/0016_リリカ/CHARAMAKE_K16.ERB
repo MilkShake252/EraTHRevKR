@@ -1,0 +1,48 @@
+﻿@CHARAMAKE_K16(ARG)
+PRINTFORMW 「저기、저기、일어나아～。귀찮을거라고는 생각하지만、내 질문에 대답했으면 해」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「어떤 악기를 연주해보고 싶다고 생각해？」
+PRINTFORMW 「그렇게 깊이 생각하지 말아줘」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 기타
+PRINTFORMDL [2] 트럼펫
+PRINTFORMDL [3] 피아노
+PRINTFORMDL [4] 커주
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「노 코멘트인가…악기、싫어？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「현악기를 선택하는구나ー. 현이 끊어지면 제법 위험하다구？」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("호기심", -20)
+	CASE 2
+		PRINTFORML 「관악기인가ー. 폐활량、괜찮아？」
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("신경질", -10)
+	CASE 3
+		PRINTFORML 「그치、그치！　역시 건반악기는 좋지！」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("프라이드", -10)
+	CASE 4
+		PRINTFORML 「……상당한 걸 선택하는구나」
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("공격", -30)
+ENDSELECT
+PRINTFORMW 「질문은 이걸로 끝이야. 방해해서 미안해、안녕히 주무세요」
+RETURN 1

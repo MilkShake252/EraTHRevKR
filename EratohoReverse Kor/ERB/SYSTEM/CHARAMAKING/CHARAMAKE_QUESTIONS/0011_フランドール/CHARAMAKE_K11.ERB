@@ -1,0 +1,77 @@
+﻿@CHARAMAKE_K11(ARG)
+IF RAND:2
+	CALL CHARAMAKE_K11_2(ARG)
+	RETURN 2
+ENDIF
+PRINTFORMW 「저기、일어나. 언제까지고 자고 있으면、지루한걸」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「……알고 싶은 게 잇는데. 피는、어디서 나오는 거야？」
+PRINTFORML 「인간에게서 피가 나온다고 하는데、나 항상 본 적 없으니까」
+PRINTFORMW 「신선하고 새빨간……마셔보고 싶은데. 어디에서 마실 수 있는지、알고 있어？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 목덜미에서
+PRINTFORMDL [2] 팔뚝에서
+PRINTFORMDL [3] 입술에서
+PRINTFORMDL [4] 거기에서
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORMW 「어라？ 모르는구나. 뭐ー야……재미없어」
+		PRINTFORML 「역시 부쉈을때 나오는 걸까？」
+		PRINTFORMW 「다음엔 가능한만큼、그렇게……콰앙！ 하고 해볼게. 아하하하」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+;광기な感じ
+	CASE 1
+		PRINTFORML 「흐ー응、거길 씹는 거、전에 본 적 있었는데말야. 후후……」
+		PRINTFORML 「역시 거기서부터인거네. 근본부터 가득 나올 것 같아、두근두근하고」
+		PRINTFORMW 「그러니까 끼얹을만큼 붉은 걸 마실 수 있는걸까」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("호기심", 20)
+;Ｓっ気な感じ
+	CASE 2
+		PRINTFORML 「흐ー응、그런 곳에서 나오는 거구나、생각도 못해봤어」
+		PRINTFORMW 「그럼 바로、이렇게……어、안되는 거야？」
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("도착", 10)
+;エロＳっ気な感じ
+	CASE 3
+		PRINTFORML 「내 입술을 맞추면 되는 거야？ 그건 키스잖아」
+		PRINTFORMW 「………응、…응……츄……」
+		PRINTFORMW 「푸하………후후. 저기、이렇게하면 어떻게 나오는걸까」
+		PRINTFORMW 「이대로 토해 주면、잔뜩 마실 수 있는데」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("충동", -20)
+;無知ちゅっちゅな感じ
+	CASE 4
+		PRINTFORML 「……？ 거기라니、어디？」
+		PRINTFORMW 「뭐어야？ 비밀로 한다던가？ 알려줘」
+		PRINTFORMW 「알고 있는 거지. 저기、알려줘……저기、저기」
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+		CALLF CM_PROF("피학", -20)
+ENDSELECT
+PRINTFORMW 「……뭐어 좋다. 다음에 또、절대로 마실 테니까……우후후」
+RETURN 1

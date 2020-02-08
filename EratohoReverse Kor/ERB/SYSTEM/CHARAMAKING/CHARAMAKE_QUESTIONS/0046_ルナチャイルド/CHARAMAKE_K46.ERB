@@ -1,0 +1,62 @@
+﻿;ルナ@Enter
+@CHARAMAKE_K46(ARG)
+PRINTFORMW 「어라？　좀 더 잘 거라고 생각했지만……일어나버렸네」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「잠깐만、내 질문에 답해줄래？　안 돼？」
+PRINTFORMW 「고마워. 그럼、하나만」
+PRINTFORMW 「당신이 숲을 걷고 있을 때、한 마리의 작은 요정이 덫에 걸려있는 걸 발견했습니다. 당신이라면 어떻게 할거야？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 불쌍하다　돕는다
+PRINTFORMDL [2] 그건 누군가의 사냥감이다　내버려둔다
+PRINTFORMDL [3] 귀여울 것 같다　데리고 돌아간다
+PRINTFORMDL [4] 좋은 사냥감이다　범한다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「요정에게 있어선、그게 가장 기쁜 대답이네、고마워」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("결벽", -10)
+	CASE 2
+		PRINTFORML 「그렇네. 어쩌면 제일 정당한 대답일지도 몰라요」
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("지성", 20)
+	CASE 3
+		PRINTFORML 「그래. 그럼、행복하게 해줘」
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「인간은、성욕에 저항하지 않는 걸까」
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+ENDSELECT
+PRINTFORMW 「당신은 실제로는 어떤 대응을 할까. 잘자」
+RETURN 1

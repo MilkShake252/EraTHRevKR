@@ -1,0 +1,73 @@
+﻿@CHARAMAKE_K11_2(ARG)
+PRINTFORMW 「아、일어났어？　꽤 일어나지 않아서、이제　꾸욱　해버릴까하고 생각해버렸어」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「놀래켜버린걸까. 별로 먹거나 하지는 않아　내 질문에 대답했으면 하는 것 뿐」
+PRINTFORMW 「나와 놀이를 한다면 어떤 놀이가 좋아？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 술래잡기
+PRINTFORMDL [2] 숨바꼭질
+PRINTFORMDL [3] 소꿉놀이
+PRINTFORMDL [4] 탄막놀이
+PRINTFORMDL [5] 의사놀이
+PRINTFORMDL [9] 하면 안 되는 놀이
+CALL INPUTINT(0, 1, 2, 3, 4, 5, 9)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어째서 대답하지 않는 거야？　나랑은 놀고 싶지 않아？」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「고정적.…흡혈”귀”가 술래잡기라는 것도 좀 이상한 느낌이네」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", -10)
+	CASE 2
+		PRINTFORML 「숨바꼭질？　나 스펠카드로 모습을 감출 수 있는데…　에、그건 안 돼？ 유감」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("신경질", 20)
+	CASE 3
+		PRINTFORML 「재밌을 것 같다. 역할은…당신이 파파고 내가 마마、사쿠야가…（중략）남은 펫 열할은 언니야！」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관",  20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("모랄", 20)
+	CASE 4
+		PRINTFORML 「헤에、당신 탄막 놀이에 자신 있구나.　나도 자신있다구？」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("지성", 10)
+	CASE 5
+		PRINTFORML 「에ー？　당신 이상한 생각 하는 거 아냐？」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+		CALLF CM_PROF("모랄", -20)
+	CASE 9
+		PRINTFORML 「엣？　…정직하네. 그치만 그런 거 싫지 않아」
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동",  30)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「그럼 안녕　환상향에 오면 정말로 놀자」
+RETURN 1

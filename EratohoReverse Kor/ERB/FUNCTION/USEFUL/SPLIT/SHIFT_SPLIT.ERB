@@ -1,0 +1,31 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	Module		:SHIFT_SPLIT.ERB
+;	Facility	:인수로서 도당했다ARGS를, ARGS:1으로 단락지었을 경우의 캐릭터 라인을 ARG만 쉬프트시켰다캐릭터 라인을반환함수@SHIFT_SPLIT
+;
+;	Licence		:라이센스 프리.
+;
+;	Modification Data:
+;
+;	Edit	Date			Author					Reason
+;	001		2011/09/25		Ｎ새					신규 작성
+;	002		2013/02/05							SPLIT의 수정을 이용했다RESULT 보호
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;@SHIFT_SPLIT
+;ARGS   조작하는 캐릭터 라인
+;ARGS:1 ARGS를 단락짓는 캐릭터 라인
+;ARG　　비켜 놓는 값
+;ARGS:2않고들했다 후 남은 부분에 대입하는 캐릭터 라인
+;ARG:1  비켜 놓는 배열 범위의 시초가
+;ARG:2  비켜 놓는 배열 요소의 범위의 수
+;※ARGS에 공문자열이 없는 경우, 추가를 실시하지 않는다
+;================================================
+@SHIFT_SPLIT(ARGS , ARGS:1 , ARG , ARGS:2 = "" , ARG:1 = 0 , ARG:2 = 200)
+#FUNCTIONS
+#LOCALSSIZE 200
+#LOCALSIZE 1
+VARSET LOCALS
+SPLIT ARGS , ARGS:1 , LOCALS, LOCAL
+ARRAYSHIFT LOCALS , ARG , ARGS:2 , ARG:1 , ARG:2
+RETURNF LOCALS

@@ -1,0 +1,56 @@
+﻿;ムラサ＠CPMの人
+@CHARAMAKE_K68(ARG)
+PRINTFORML 「여보…………여보세요~」
+PRINTFORMW 「눈을 뜨셨습니까. 조금 묻고 싶은 게 있어서」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「네, 감사합니다. 간단……하지는 않지만、정답은 없기 때문에 느긋하게」
+PRINTFORMW 「당신은 믿음직스럽지 못한 널판지 한 장으로 가까스로 바다에 떠 있습니다」
+PRINTFORMW 「그리고 눈앞에는 빠진 사람이 도움을 청해 손을 뻗고 있습니다」
+PRINTFORMW 「그러나, 잡고 있는 널판지는 두 사람의 체중을 유지할 수 없을 것 같고, 판 없이는 당신은 빠져 버립니다」
+PRINTFORMW 「그런데、 당신이라면 어떻게 합니까?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 판을 양보해、눈앞의 사람을 돕는다
+PRINTFORMDL [2] 자신을 위해、눈앞의 사람을 죽게 내버려 둔다
+PRINTFORMDL [3] 해 보지 않으면 모르는 일이니까、 눈앞의 사람을 돕는다
+PRINTFORMDL [4] 빠진 사람이 아이라면, 판을 양보해 돕는다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그렇네. 이것은 어렵고 정답이 없는 문제. 침묵를 꾸짖을 수 있는 사람은 없어요」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「상냥하구나. 바라건대, 그 상냥함이 보답받기를」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("결벽", 20)
+	CASE 2
+		PRINTFORML 「당신같은 사람은……싫지 않아요」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("도착", 10)
+	CASE 3
+		PRINTFORML 「불쌍한 두 명은 차가운 바다의 밑바닥으로……현실은 그런 거야」
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 10)
+	CASE 4
+		PRINTFORML 「흐응……당신은 “우등생”이군요」
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("지성", 20)
+ENDSELECT
+PRINTFORMW 「이상한 질문을 해 버려서 미안하네요. 안녕히 주무세요」
+RETURN 1

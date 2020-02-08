@@ -1,0 +1,66 @@
+﻿@CHARAMAKE_K9(ARG)
+PRINTFORMW 「자、눈을 뜨세요。너무 제 손을 귀찮게 하지 말고」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「시간이 아까우니까 빨리 끝내죠」
+PRINTFORML 「그런데、여기 몇개의 나이프가 있는데」
+PRINTFORMW 「당신이라면 어떤 걸 선택하겠어？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 쿠크리 나이프
+PRINTFORMDL [2] 툴 나이프
+PRINTFORMDL [3] 대거 나이프
+PRINTFORMDL [4] 나이프따위 필요 없어！
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그건 우유부단해서 선택할 수 없다、고 해석하겠어요」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「꽤 좋은 선택이네. 살상력은 상당한걸」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 2
+		PRINTFORML 「뭐、편리하긴 하죠. 할 수 있는 건 많지만 정작 도움은 안된다고도 할 수 있지만」
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)	
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("공격", -20)
+	CASE 3
+		PRINTFORML 「후후、건방지구나. 당신이 잘 다룰 수 있을까？」
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+	CASE 4
+		PRINTFORML 「과도한 자신감은 죽음을 부릅니다만？」
+		CALLF CM_PROF("지성", -30)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("모랄", 30)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -30)
+		CALLF CM_PROF("피학", 20)
+ENDSELECT
+PRINTFORML 「내 용건은 이상이야」
+PRINTFORMW 「빨리 나가줘」
+RETURN 1
+

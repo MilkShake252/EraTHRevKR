@@ -1,0 +1,57 @@
+﻿;一輪@Enter
+@CHARAMAKE_K67(ARG)
+PRINTFORMW 「일어났네요. 그럼 조금만 질문에 대답해 주세요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「당신은 보물을 찾아 탐험하러 갔습니다」
+PRINTFORMW 「그러자、거기서 큰 주먹이 내려오는 게 아니겠습니까」
+PRINTFORMW 「자、그 때 당신은 어떻게 합니까?」
+PRINTFORMW 「라고 운잔이 말하고 있습니다」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 도망친다
+PRINTFORMDL [2] 피한다
+PRINTFORMDL [3] 직면한다
+PRINTFORMDL [4] 어차피 구름이겠지
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어머나、대답할 수 없습니까?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「흐흥, 보통이라면 그렇게 하겠죠」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("충동", 10)
+	CASE 2
+		PRINTFORML 「그래서 피할 수 있다면 좋겠습니다만」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 10)
+	CASE 3
+		PRINTFORML 「호우, 꽤 용감하네요」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("프라이드", 30)
+	CASE 4
+		PRINTFORML 「뒤틀려있네요……」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("솔직야", -40)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("프라이드", -30)
+ENDSELECT
+PRINTFORMW 「대답해 주셔서 기쁩니다. 이제 느긋하게 쉬어 주세요」
+PRINTFORMW 「라고 운잔이 말하고 있습니다」
+RETURN 1
+

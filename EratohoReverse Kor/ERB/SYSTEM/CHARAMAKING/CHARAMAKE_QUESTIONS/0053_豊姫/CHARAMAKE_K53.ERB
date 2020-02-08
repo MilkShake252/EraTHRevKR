@@ -1,0 +1,100 @@
+﻿;豊姫＠ぱ。
+@CHARAMAKE_K53(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「최초의 방에 어서오세요、헤매는 분」
+	CASE 9
+		PRINTFORMW 「수고하셨습니다. 마지막 방은 나야」
+	CASEELSE
+		PRINTFORMW 「후후、눈을 떴나요？」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질문하겠습니다. 후후、심플하게」
+PRINTFORMW 「바다와 산、지상에도 있었죠. 당신은 어느 쪽을 좋아하나요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 바다
+PRINTFORMDL [2] 산
+PRINTFORMDL [3] 강
+PRINTFORMDL [4] 너
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「선문답은 아니에요. 그렇게 입다물고 있지않아도、저기？」
+		PRINTFORMW 「가보세요. 이래서는 나도 얻을 게 없네요」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「더러워진 바다는 붉은 색으로 물들어간다고 합니다」
+		PRINTFORMW 「바다는 생명의 근원、즉 더러움의 온상. 후후、업보랍니다」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("피학", 30)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("동성애", -10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+	CASE 2
+		PRINTFORML 「밤의 산은 달빛을 받아、짐승들이 발호하는 피비린내 나는 세계」
+		PRINTFORMW 「달은 태평해 미려한 것이 본의. 짐승이나 요괴들은 어찌나 오만한 것일까」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+	CASE 3
+		PRINTFORML 「뒤틀린 아이여. 단지、강은 바다와 산을 연결하는 맑은 길」
+		PRINTFORMW 「의외로、그 대답은 핵심을 말하고 있는 것인지도 모르겠군요」
+		CALLF CM_PROF("솔직야", -30)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「지상의 사람은 수상한 말을 하는군요」
+		PRINTFORMW 「고마워. 하지만 나는、다른 사람 말을 제대로 듣지 않는 사람은 싫어」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", -30)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("수치", -30)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+ENDSELECT
+RETURN 1
+

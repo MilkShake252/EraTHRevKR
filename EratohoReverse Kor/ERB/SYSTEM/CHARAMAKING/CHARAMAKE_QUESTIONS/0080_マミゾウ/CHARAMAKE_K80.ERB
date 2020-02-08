@@ -1,0 +1,67 @@
+﻿;マミゾウ＠ぱ。
+@CHARAMAKE_K80(ARG)
+PRINTFORMW 「우옷호. 일어났나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「조금 이야기 하지 않겠어」
+PRINTFORMW 「그렇지. 너, 좋아하는 옛날 이야기는 뭐?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 모모타로
+PRINTFORMDL [2] 신데렐라
+PRINTFORMDL [3] 우라시마 타로
+PRINTFORMDL [4] 딱딱 산
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「음…쓸쓸하군」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「귀신이라면 공격해 빼앗아도 괜찮다…홋호, 인간은 옛날부터 그렇지」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", 10)
+	CASE 2
+		PRINTFORML 「서양의 이야기인가. 너 상당히 로맨티스트군」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「사람도 요괴도 작은 것이지, 한때의 즐거움도 행복할지도 모르지」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「어흠, 흠흠. ……갑자기 더워졌군」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「슬슬 시간인가. 잘자――」
+RETURN 1
+

@@ -1,0 +1,71 @@
+﻿;美鈴＠へんたゐ
+@CHARAMAKE_K6(ARG)
+PRINTFORMW 「여보세ー요、일어났나요？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「괜찮은 것 같네요、그럼 질문을……」
+PRINTFORMW 「한창 일을 하던 때 참을 수 없는 졸음이！　그럴 때、당신은 어떻게 하나요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 참고 노력한다
+PRINTFORMDL [2] 조금 쉰 후 노력한다
+PRINTFORMDL [3] 단념하고 잔다
+PRINTFORMDL [4] 어느샌가 자고 있었다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……혹시 자고 있는 건 아니죠？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「제법 노력파군요、대단해요」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("모랄", 20)
+	CASE 2
+		PRINTFORML 「잠깐 쉰다는 게 어느샌가 본격적인 휴식이……같은 일도 있지요……」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("모랄", 10)
+	CASE 3
+		PRINTFORML 「그렇네요、때로는 체념도 중요해요！」
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("모랄", -20)
+	CASE 4
+		PRINTFORML 「그렇네요、깨닫기 전에 자고 있죠……」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("신경질", -30)
+		CALLF CM_PROF("모랄", -10)
+ENDSELECT
+PRINTFORMW 「질문은 마지막입니다、수고하셨습니다――――후에에！？」
+PRINTFORMW 「사、사쿠야씨！？　저는 업무중에 자거나하지 않아요！」
+PRINTFORMW 「히야아아아앗、죄송합니다아아………………」
+RETURN 1

@@ -1,0 +1,63 @@
+﻿;チルノ＠ぱ。
+@CHARAMAKE_K5(ARG)
+PRINTFORMW 「자 일어나！　일어날지 동면할지 선택해！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「내 질문이야！」
+PRINTFORMW 「얼음이라고하면 뭐！？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 아이스 먹고 싶다
+PRINTFORMDL [2] 차갑고 슬픈、그리고 덧없는
+PRINTFORMDL [3] 별로 뭐라고도…
+PRINTFORMDL [9] 바보
+CALL INPUTINT(0, 1, 2, 3, 9)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「…혹시 무슨 질문을했는지 모르는 거 아냐？　바보？」
+		PRINTFORMW 「정말이지…이제 몰라！　잘자！」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「먹는 것 밖에 생각하지 않는 거야？」
+		PRINTFORMW 「그렇게 좋아한다면 꿈속에서라도 배불리 먹으면 좋잖아！」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("낙관", 20)
+	CASE 2
+		PRINTFORML 「흐흥、시적인 말을 하는구나！」
+		PRINTFORMW 「천천히 쉬어도 돼、잘자――」
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("도착", 10)
+	CASE 3
+		PRINTFORML 「뭐、뭐라고ー！」
+		PRINTFORMW 「당신 같은 거 동면해버려라ー！」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("신경질", 20)
+	CASE 9
+		PRINTFORML 「바보？　뭐야 그게ーーー！？」
+		PRINTFORMW 「영원히 잠들게 해 주겠어ー！　이、이、잇！」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+ENDSELECT
+RETURN 1

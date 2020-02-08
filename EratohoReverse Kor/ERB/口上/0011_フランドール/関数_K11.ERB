@@ -1,0 +1,567 @@
+﻿;==================================================
+;
+;	함수 두는 곳
+;
+;==================================================
+
+;-------------------------------------------------
+;함수명:PRINT_HEARTCBW
+;개  요점:HEARTCB를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 하트색지정
+;인  수:1 하트의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Verdana）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@K11_PRINT_HEARTCBW(ARG:1 = 0xC07070, ARG = 1, ARGS = "Verdana", ARG:2 = 0xff5e64, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+
+;흡혈당했다등 자지 끙끙 설정은, 무엇일까요. 정말 이해할 수 없습니다. 나도 흡혈 되어 끙끙이 되고 싶습니다
+@K11_VAMPIRE
+	TCVAR:MASTER:발기도 = 1500
+	MAXBASE:MASTER:사정 += 100
+	BASE:MASTER:사정 = MAXBASE:MASTER:사정
+RETURN RESULT
+
+;강제 SEX행동
+@K11_SEX
+	IF TEQUIP:MASTER:하반신겉옷 || TEQUIP:MASTER:하반신속옷
+		TCVAR:행동예약 = 5
+	ELSE
+		SELECTCASE RAND:6
+;			CASE 0
+;				TCVAR:행동예약 = 12
+;			CASE 1
+;				TCVAR:행동예약 = 42
+			CASE 0
+				TCVAR:행동예약 = 95
+			CASE 1
+				TCVAR:행동예약 = 96
+			CASE 2
+				TCVAR:행동예약 = 97
+			CASE 3
+				TCVAR:행동예약 = 98
+			CASE 4
+				TCVAR:행동예약 = 99
+			CASEELSE
+				TCVAR:행동예약 = 103
+		ENDSELECT
+	ENDIF
+	KFLAG:11 = 1
+RETURN RESULT
+
+
+[SKIPSTART]
+;개시시에니삭스를 가터 벨트로 한다
+;개막 속공 벗는 일이 되어도 울지 않는다
+@K11_SOCKS_CHANGE1
+;전라설정의 경우, 이벤트 일어나지 않는다. 섹스도 일어나기 쉬운반라추천.
+IF CFLAG:TARGET:의상 == 0 || CFLAG:TARGET:의상 == 1
+	
+	IF KFLAG:4 == 0 && FAVOR(1500, 1500)
+		;없다고는 생각하지만, 한번도 나오지 않았으면 그건 그걸로 외롭기 때문에, 1번은호감도에 의해 서로 갈아입어
+		KFLAG:4 = 1
+	ELSE
+		;착의플레이선호 있으면, 3분의 1
+		;없으면 9분의 1으로 변경으로 갈아입는다
+		LOCAL:1 = PERCENT(66)
+		SIF LOCAL:1
+			RETURN RESULT
+		LOCAL:2 = PERCENT(66)
+		SIF LOCAL:2 && TALENT:TARGET:착의플레이선호 == 0
+			RETURN RESULT
+	ENDIF
+
+	;가터 변경
+	EQUIP:TARGET:양말 = 3
+	TEQUIP:TARGET:양말 = 3
+	;K11_SOCKS_CHANGE2로 사용하는플래그
+	KFLAG:3 = 1
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+	PRINTFORMW 「있지……오늘은 이런거 신어 봤는데、 어때？」
+	IF CFLAG:TARGET:의상 == 0
+		PRINTFORMDW 플랑이 미니스커트 자락을 들어올리자、어른의 색과 향기를 발하는 가터 스타킹이 있었다
+		PRINTFORM 「왠지 야해보이지. %MASTERNAME% 기뻐해 주면 좋겠는데
+		CALL K11_PRINT_HEARTCBW
+	ELSEIF CFLAG:TARGET:의상 == 1
+		PRINTFORMDW 플랑이 속옷차림인 채 가는  다리를 내밀자 어른의 색과 향기를 발하는 가터스타킹이 있었다
+		PRINTFORM 「후훗、 이런거 좋아했지？ %MASTERNAME%를 위해서 신고 왔으니까、 기뻐해
+		CALL K11_PRINT_HEARTCBW
+	ENDIF
+	IF RAND:2
+		PRINTFORMDW 순진무구한 사랑스러움을 가지는 플랑과, 어른의 색과 향이 추가되어 %플레이어를% 유혹한다
+	ENDIF
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+ENDIF
+RETURN RESULT
+
+;종료시에 가터 벨트를통상의니삭스에 되돌린다
+@K11_SOCKS_CHANGE2
+;우와세키수로 세운플래그를 줍는다
+IF KFLAG:3 == 1
+	EQUIP:TARGET:양말 = 2
+	TEQUIP:TARGET:양말 = 2
+	KFLAG:3 = 0
+ENDIF
+RETURN RESULT
+
+[SKIPEND]
+
+;코스프레로 매우 놀아 본다.
+;아직 설정 불충분한 것 같으니까, 버그를 일으키거나 할지도. 아아, 또 화가 날지도. 그렇지만 해 보고 싶은걸.
+@K11_CLOTHES_CHANGE1
+;반라·전라설정의 경우, 이벤트 일어나지 않는다. 호감도 3000로 발생
+IF CFLAG:TARGET:의상 == 0 && FAVOR(3000, 3000)
+	;없다고는 생각하지만, 한번도 나오지 않았으면 그건 그걸로 외롭기 때문에, 1번은 3500호감도에 의해 서로 갈아입어
+	IF KFLAG:6 == 0 && FAVOR(3500, 3500)
+		KFLAG:6 = 1
+	ELSE
+		;착의플레이선호 있는 경우
+		IF TALENT:TARGET:착의플레이선호 == 1
+			;3분의 1으로 갈아입지 않는다
+			LOCAL:1 = PERCENT(33)
+				SIF LOCAL:1
+				RETURN RESULT
+		;착의플레이선호 없는 경우
+		ELSE
+			;5분의 4로 갈아입지 않는다
+			LOCAL:1 = PERCENT(80)
+				SIF LOCAL:1
+				RETURN RESULT
+		ENDIF
+	ENDIF
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+
+	;일단전라로 한다
+	EQUIP:TARGET:양말 = 0
+	TEQUIP:TARGET:양말 = 0
+	EQUIP:TARGET:하반신속옷 = 0
+	TEQUIP:TARGET:하반신속옷 = 0
+	EQUIP:TARGET:상반신속옷 = 0
+	TEQUIP:TARGET:상반신속옷 = 0
+	EQUIP:TARGET:하반신겉옷 = 0
+	TEQUIP:TARGET:하반신겉옷 = 0
+	EQUIP:TARGET:상반신겉옷 = 0
+	TEQUIP:TARGET:상반신겉옷 = 0
+
+;EQUIP:코스프레 <※>코스프레(1=노예복/2=기모노/3=메이드복/4=차이나드레스/5=세라복/6=스쿨미즈/7=바니걸복/8=체육복)
+;EQUIP:악세서리 특수        (1=장갑/2=소매/3=우의)
+;EQUIP:양말 양말        (1=양말/2=니삭스/3=가터벨트)
+;EQUIP:하반신속옷 하반신속옷  (1=드로와즈/2=팬티/3=트렁크/4=팬티스타킹)
+;EQUIP:상반신속옷 상반신속옷  (1=브래지어/2=캐미숄/3=붕대)
+;EQUIP:하반신겉옷 하반신겉옷  (1=스커트/2=치마바지/3=몸빼/4=바지)
+;EQUIP:상반신겉옷 상반신겉옷  (1=겉옷)
+;EQUIP:전신겉옷 전신겉옷    (1=기모노/2=도사복/3=원피스)
+
+	;1=노예복
+	IF RAND:8 == 0
+		EQUIP:코스프레 = 1
+		TEQUIP:TARGET:코스프레 = 1
+		EQUIP:TARGET:양말 = 3
+		TEQUIP:TARGET:양말 = 3
+		PRINTFORMDW 플랑은 레더 본디지를 입었다
+		PRINTFORMDW 당연히, 아이용의 특주 사이즈였다
+		PRINTFORMW 「후훗、 이런거 %MASTERNAME% 좋아했지♪ 오늘은 플랑이 여왕님♪」
+	;2=기모노
+	ELSEIF RAND:7 == 0
+		EQUIP:코스프레 = 2
+		TEQUIP:TARGET:코스프레 = 2
+		EQUIP:TARGET:하반신속옷 = 2
+		TEQUIP:TARGET:하반신속옷 = 2
+		PRINTFORMDW 플랑은 ,  아이용의 핑크와 빨강의 사랑스러운 기모노를 입었다
+		PRINTFORM 「이 옷을 "풀어헤쳐서" 입으면, 남자가 긱뻐한대. 그러니까 엣찌할 때 %MASTERNAME%의 손으로 벗겨줘
+		CALL K11_PRINT_HEARTCBW
+	;3=메이드복
+	ELSEIF RAND:6 == 0
+		EQUIP:코스프레 = 3
+		TEQUIP:TARGET:코스프레 = 3
+		EQUIP:TARGET:양말 = 2
+		TEQUIP:TARGET:양말 = 2
+		;메이드복플랑의속옷는드로와즈라고 생각합니다!!!!! 1111
+		EQUIP:TARGET:하반신속옷 = 1
+		TEQUIP:TARGET:하반신속옷 = 1
+		PRINTFORMDW 플랑은 홍마관의 메이드복을 입었다
+		PRINTFORMDW 스커트의 끝을 들어올려 인사를 한다
+		PRINTFORM 「우후후、 명령해 주세요, 주인님
+		CALL K11_PRINT_HEARTCBW
+	;4=차이나드레스
+	ELSEIF RAND:5 == 0
+		EQUIP:코스프레 = 4
+		TEQUIP:TARGET:코스프레 = 4
+		EQUIP:TARGET:하반신속옷 = 2
+		TEQUIP:TARGET:하반신속옷 = 2
+		PRINTFORMDW 플랑은, 깊은 슬릿이 들어간 섹시한 차이나복을 입었다
+		PRINTFORMW 「이거 왠지 짧아,%MASTERNAME%한테 팬티 보여질 것 같아♪」
+	;5=세라복
+	ELSEIF RAND:4 == 0
+		EQUIP:코스프레 = 5
+		TEQUIP:TARGET:코스프레 = 5
+		EQUIP:TARGET:양말 = 1
+		TEQUIP:TARGET:양말 = 1
+		EQUIP:TARGET:하반신속옷 = 2
+		TEQUIP:TARGET:하반신속옷 = 2
+		EQUIP:TARGET:상반신속옷 = 1
+		TEQUIP:TARGET:상반신속옷 = 1
+		PRINTFORMDW 플랑은 %플레이어가% 잘 알고 있는 세라복을 입었다
+		PRINTFORM 「쿡… %MASTERNAME%가 "청춘"시대를 보내지 못했던것, 플랑이 실현시켜 줄게
+		CALL K11_PRINT_HEARTCBW
+	;6=스쿨미즈
+	ELSEIF RAND:3 == 0
+		EQUIP:코스프레 = 6
+		TEQUIP:TARGET:코스프레 = 6
+		EQUIP:TARGET:양말 = 2
+		TEQUIP:TARGET:양말 = 2
+		PRINTFORMDW 플랑은 스쿨미즈를 입었다
+		PRINTFORMDW 스쿨미즈의 앞가슴에 크게『４－９－５　플랑』하고 쓰여져 있었다
+		PRINTFORMW 「그거, 일전에 도서관에 풀이 생겼을때를 준비해서 받은 먼 바다의 수영복이야 ♪」
+	;7=바니슈트
+	ELSEIF RAND:2 == 0
+		EQUIP:코스프레 = 7
+		TEQUIP:TARGET:코스프레 = 7
+		EQUIP:TARGET:하반신속옷 = 4
+		TEQUIP:TARGET:하반신속옷 = 4
+		PRINTFORMW 플랑은 바니슈트를 입었다
+		IF TALENT:TARGET:빈유 
+			PRINTFORMDW 덧붙여 가슴의 사이즈가 전혀 맞지 않아서, 이미 작은 유두가 보이고 있다
+		ELSE
+			PRINTFORMDW 가슴의 사이즈도 풍유의 마법을 쓴 플랑이랑 딱 맞고 있다
+		ENDIF
+		PRINTFORM 「토끼는 엣찌를 정말 좋아한대. 에헤헤, 플랑이랑 딱 맞네
+		CALL K11_PRINT_HEARTCBW
+	;8=체육복
+	ELSE
+		EQUIP:코스프레 = 8
+		TEQUIP:TARGET:코스프레 = 8
+		EQUIP:TARGET:양말 = 1
+		TEQUIP:TARGET:양말 = 1
+		EQUIP:TARGET:하반신속옷 = 2
+		TEQUIP:TARGET:하반신속옷 = 2
+		PRINTFORMDW 플랑은 부르마로 갈아입었다
+		PRINTFORMDW 부르마를 입었을때의 감촉이 신경쓰이는지 손으로 계속 끝자락을 만지고 있다
+		PRINTFORMW 「이건 운동복이지. 그러니까 꼭, 모두  엣찌할때 입고 있는 거네♪」
+	ENDIF
+
+	;K11_CLOTHES_CHANGE2로 사용하는플래그  （코스프레용）
+	KFLAG:5 = 1
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+;양말만의 변경
+ELSEIF CFLAG:TARGET:의상 == 0 || CFLAG:TARGET:의상 == 1
+	IF KFLAG:4 == 0 && FAVOR(1500, 1500)
+		;없다고는 생각하지만, 한번도 나오지 않았으면 그건 그걸로 외롭기 때문에, 1번은호감도에 의해 서로 갈아입어
+		KFLAG:4 = 1
+	ELSE
+		;레어를 출했다 있고 것으로, 적당하게 확률을 넣는다. 착의플레이선호로 상승보정
+		LOCAL:1 = PERCENT(60)
+		SIF LOCAL:1
+			RETURN RESULT
+		LOCAL:2 = PERCENT(66)
+		SIF LOCAL:2 && TALENT:TARGET:착의플레이선호 == 0
+			RETURN RESULT
+	ENDIF
+
+	;가터 변경
+	EQUIP:TARGET:양말 = 3
+	TEQUIP:TARGET:양말 = 3
+	;K11_CLOTHES_CHANGE2로 사용하는플래그 （가터용）
+	KFLAG:3 = 1
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+	PRINTFORMDL 
+	PRINTFORMW 「저기……오늘은 이런 거 신어봤는데、  어때?」
+	IF CFLAG:TARGET:의상 == 0
+		PRINTFORMDW 플랑이 미니스커트 옷자락을 들어올리자、어른의 색과 향을 발하는, 벨트가 붙은 검은 가터스타킹이 있었다
+		PRINTFORM 「왠지 엣찌해 보이지. %MASTERNAME% 기뻐해 주면 좋겠는데
+		CALL K11_PRINT_HEARTCBW
+	ELSEIF CFLAG:TARGET:의상 == 1
+		PRINTFORMDW 플랑이 속옷 차림인 채로 가는 다리를 내밀자、어른의 색과 향을 발하는, 벨트가 붙은 검은 가터스타킹이 있었다
+		PRINTFORM 「후후、 이런거 좋아했지？ %MASTERNAME%를 위해서 신었으니까 즐겨줘
+		CALL K11_PRINT_HEARTCBW
+	ENDIF
+	
+	LOCAL = GETCOLOR()
+	SETCOLOR 0xCCCCCC
+	DRAWLINE
+	SETCOLOR LOCAL
+
+ENDIF
+RETURN RESULT
+
+;종료시에통상의 옷에 되돌린다
+@K11_CLOTHES_CHANGE2
+;우와세키수로 세운플래그를 줍는다（코스프레）
+IF KFLAG:5 == 1
+	EQUIP:코스프레 = 0
+	TEQUIP:TARGET:코스프레 = 0
+
+	EQUIP:TARGET:양말 = 2
+	TEQUIP:TARGET:양말 = 2
+	EQUIP:TARGET:하반신속옷 = 2
+	TEQUIP:TARGET:하반신속옷 = 2
+	EQUIP:TARGET:상반신속옷 = 2
+	TEQUIP:TARGET:상반신속옷 = 2
+	EQUIP:TARGET:하반신겉옷 = 1
+	TEQUIP:TARGET:하반신겉옷 = 1
+	EQUIP:TARGET:상반신겉옷 = 1
+	TEQUIP:TARGET:상반신겉옷 = 1
+	KFLAG:5 = 0
+
+ELSEIF KFLAG:3 == 1
+;우와세키수로 세운플래그를 줍는다（가터 벨트）
+	EQUIP:TARGET:양말 = 2
+	TEQUIP:TARGET:양말 = 2
+	KFLAG:3 = 0
+
+ENDIF
+RETURN RESULT
+
+
+;초기설정  빗치화
+@K11_STATUSSET
+	;개요［2］의 경우라면 상냥한 눈의플랑가 된다
+	IF KFLAG:1 == 2
+		TALENT:TARGET:처녀 = 0
+		TALENT:TARGET:더러움무시 = 1
+		;정조무관심의 유녀라고 하는 것은 에로하다. 만나고 싶다
+		TALENT:TARGET:정조무관심 = 1
+		TALENT:TARGET:마음씨착한 = 1
+		TALENT:TARGET:헌신적 = 1
+		TALENT:TARGET:충동적 = 0
+;		TALENT:TARGET:변태적 = 0
+;		TALENT:TARGET:낙관적 = 1
+		TALENT:TARGET:새드 = 0
+		TALENT:TARGET:얌전한 = 1
+		TALENT:TARGET:솔직 = 1
+		TALENT:TARGET:혀기술 = 1
+		TALENT:TARGET:손가락기술 = 1
+		TALENT:TARGET:회복빠름 = 1
+		TALENT:TARGET:허리기술 = 1
+	ELSE
+		TALENT:TARGET:처녀 = 0
+		TALENT:TARGET:더러움무시 = 1
+		;정조무관심의 유녀라고 하는 것은 에로하다. 만나고 싶다
+		TALENT:TARGET:정조무관심 = 1
+		TALENT:TARGET:혀기술 = 1
+		TALENT:TARGET:손가락기술 = 1
+		TALENT:TARGET:회복빠름 = 1
+		TALENT:TARGET:허리기술 = 1
+	ENDIF
+	EXP:TARGET:Ｃ경험 = 18
+	EXP:TARGET:Ｖ경험 = 50
+	EXP:TARGET:Ａ경험 = 20
+	EXP:TARGET:Ｂ경험 = 10
+	EXP:TARGET:절정경험 = 25
+	EXP:TARGET:성교경험 = 60
+	EXP:TARGET:자위경험 = 40
+	EXP:TARGET:조교자위경험 = 10
+	EXP:TARGET:정액경험 = 70
+	EXP:TARGET:구음경험 = 30
+	EXP:TARGET:수음경험 = 30
+	EXP:TARGET:키스경험 = 20
+	EXP:TARGET:고통쾌락경험 = 80
+	EXP:TARGET:이상경험 = 10
+	EXP:TARGET:긴박경험 = 85
+	EXP:TARGET:Ｖ확장경험 = 5
+	EXP:TARGET:Ａ확장경험 = 2
+	ABL:TARGET:욕망 = 2
+	ABL:TARGET:기교 = 2
+	ABL:TARGET:Ｃ감각 = 1
+	ABL:TARGET:Ｖ감각 = 2
+	ABL:TARGET:Ａ감각 = 1
+	ABL:TARGET:정액중독 = 1
+	ABL:TARGET:애무 = 2
+	ABL:TARGET:성교 = 2
+RETURN RESULT
+
+;통칭 설정
+@K11_NAMESET
+	;스토리 분기
+	IF KFLAG:1 == 2
+		;남자였던 경우
+		IF TALENT:MASTER:남자 == 1
+			RESULTS = 오라버니
+			MASTERNAME = %RESULTS%
+		;녀 혹은후타나리였던 경우（기본적으로 상정하지 않습니다）
+		ELSE
+			RESULTS = 오라버니
+			MASTERNAME = %RESULTS%
+		ENDIF
+	ELSE
+	PRINTL 　
+		$INPUT_LOOP_2
+		;남자였던 경우
+		IF TALENT:MASTER:남자 == 1
+			PRINTFORMDL [1] 삼촌;두려워하고 모양
+			PRINTFORMDL [2] 오빠
+			PRINTFORMDL [3] 도깨비 있고님
+			PRINTFORMDL 
+			PRINTFORMDL [9] ※스스로 통칭을 입력한다（비추천）
+			INPUT
+			IF RESULT == 1
+				RESULTS = 아저씨
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 2
+				RESULTS = 오라버니
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 3
+				RESULTS = 오빠
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 9
+				PRINTFORMDL ※례 【 타로 】(이)라고 입력했을 경우,
+				PRINTFORML 「타로…♪」
+				PRINTFORMDL 등으로 표시되는 개소가 발생합니다. 아행이라면 문제 없을지도.
+				PRINTL 　
+				$INPUT_LOOP_3
+				INPUTS
+				STRLENS RESULTS
+				IF RESULT > 14
+					PRINTFORML 「너무 길어 기억할 수 없어요」
+					GOTO INPUT_LOOP_3
+				ELSEIF RESULTS == ""
+					GOTO INPUT_LOOP_3
+				ELSE
+					IF RESULTS == "플랑"
+						PRINTFORML 「그거, 내 애칭인데」
+					ELSEIF RESULTS == "플랑도르"
+						PRINTFORML 「흐응、그렇구나,흐ー응、헤ー」
+						PRINTFORML 「그래서、 그건 내 이름이지만」
+					ELSEIF RESULTS == "레밀리아"
+						PRINTFORML 「…… 아하하 하! 에 네, 그렇구나, 아─, 재미있다」
+					ELSEIF RESULTS == "레이무"
+						PRINTFORML 「-응자, 당신의 이름은 사실은 마리사씨인 것」
+					ELSEIF RESULTS == "마리사"
+						PRINTFORML 「어머나, 정직하게 대답하다니 드물구나, 마리사씨?」
+					ELSEIF RESULTS == "사쿠야"
+						PRINTFORML 「그렇게 어머나, 정직하게 대답하다니 드물구나, 마리사씨?」
+					ELSEIF RESULTS == "파츄리"
+						PRINTFORML 「어머나, 어느새 그렇게 혈색 좋아졌는지 해들 」
+					ELSEIF RESULTS == "사쿠야"
+						PRINTFORML 「도―, 그렇다면 케이크 가져와. 배 고파졌어요」
+					ELSEIF RESULTS == "메이링"
+						PRINTFORML 「응과…… 이것은 하극상은 녀석?」
+					ELSE
+						PRINTFORML 「%RESULTS%?」
+					ENDIF
+					PRINTFORMDL [0] 네
+					PRINTFORMDL [1] 아니오
+;OriginalString : 
+					PRINTDL 
+					PRINTFORMDL [9] 역시 그만둔다
+					$INPUT_LOOP_4
+					INPUT
+					IF RESULT == 0
+						MASTERNAME = %RESULTS%
+						PRINTFORMDW %CALLNAME:MASTER%(은)는, 진정한 이름%MASTERNAME%(을)를 가르쳤다
+					ELSEIF RESULT == 1
+						GOTO INPUT_LOOP_3
+					ELSEIF RESULT == 9
+						GOTO INPUT_LOOP_2
+					ELSE
+						GOTO INPUT_LOOP_4
+					ENDIF
+				ENDIF
+			ELSE
+				GOTO INPUT_LOOP_2
+			ENDIF
+		;녀 혹은후타나리였던 경우（기본적으로 상정하지 않습니다）
+		ELSE
+			PRINTFORMDL [1] 언니
+			PRINTFORMDL [2] %CALLNAME:PLAYER%
+			PRINTFORMDL 
+			PRINTFORMDL [9] ※스스로 통칭을 입력한다（비추천）
+			INPUT
+			IF RESULT == 1
+				RESULTS = 언니;누님
+				MASTERNAME = %RESULTS%
+			ELSEIF RESULT == 2
+				MASTERNAME = %CALLNAME:PLAYER%
+			ELSEIF RESULT == 9
+				PRINTL ※례 【 타로 】(이)라고 입력했을 경우,
+				PRINTFORML 「타로…♪」
+				PRINTFORMDL 등으로 표시되는 개소가 발생합니다. 아행이라면 문제 없을지도.
+				PRINTL 　
+				$INPUT_LOOP_5
+				INPUTS
+				STRLENS RESULTS
+				IF RESULT > 14
+					PRINTFORML 「너무 길어 기억할 수 없어요」
+					GOTO INPUT_LOOP_5
+				ELSEIF RESULTS == ""
+					GOTO INPUT_LOOP_5
+				ELSE
+					IF RESULTS == "플랑"
+						PRINTFORML 「그것, 나의 애칭이지만」
+					ELSEIF RESULTS == "플랑드르"
+						PRINTFORML 「-응, 그렇구나, -응, 에―」
+						PRINTFORML 「으로, 그것 나의 이름이지만」
+					ELSEIF RESULTS == "레밀리아"
+						PRINTFORML 「…… 아하하 하! 에 네, 그렇구나, 아─, 재미있다」
+					ELSEIF RESULTS == "레이무"
+						PRINTFORML 「-응자, 당신의 이름은 사실은 마리사씨인 것」
+					ELSEIF RESULTS == "마리사"
+						PRINTFORML 「어머나, 정직하게 대답하다니 드물구나, 마리사씨?」
+					ELSEIF RESULTS == "사쿠야"
+						PRINTFORML 「그렇게 어머나, 정직하게 대답하다니 드물구나, 마리사씨?」
+					ELSEIF RESULTS == "파츄리"
+						PRINTFORML 「어머나, 어느새 그렇게 혈색 좋아졌는지 해들 」
+					ELSEIF RESULTS == "사쿠야"
+						PRINTFORML 「도―, 그렇다면 케이크 가져와. 배 고파졌어요」
+					ELSEIF RESULTS == "메이링"
+						PRINTFORML 「응과…… 이것은 하극상은 녀석?」
+					ELSE
+						PRINTFORML 「%RESULTS%?」
+					ENDIF
+					PRINTL [0] 네
+					PRINTL [1] 아니오
+					PRINTL 
+					PRINTL [9] 역시 그만둔다
+					$INPUT_LOOP_6
+					INPUT
+					IF RESULT == 0
+						MASTERNAME = %RESULTS%
+						PRINTFORMW %CALLNAME:MASTER%(은)는, 진정한 이름%MASTERNAME%(을)를 가르쳤다
+					ELSEIF RESULT == 1
+						GOTO INPUT_LOOP_5
+					ELSEIF RESULT == 9
+						GOTO INPUT_LOOP_2
+					ELSE
+						GOTO INPUT_LOOP_6
+					ENDIF
+				ENDIF
+			ELSE
+				GOTO INPUT_LOOP_2
+			ENDIF
+		ENDIF
+		PRINTFORML 
+	ENDIF
+RETURN RESULT

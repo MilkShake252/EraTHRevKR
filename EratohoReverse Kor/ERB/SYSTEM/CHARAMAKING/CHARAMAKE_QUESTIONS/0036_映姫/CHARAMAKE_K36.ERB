@@ -1,0 +1,56 @@
+﻿;映姫＠Crow
+@CHARAMAKE_K36(ARG)
+PRINTFORML 「눈을 떠 주세요」
+PRINTFORMW 「제가 보이시나요？　우후후、이 쪽이에요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그럼、저도 한가지 질문을 드리겠어요」
+PRINTFORML 「당신이 지금까지 범했던 가장 심한 악행을 떠올리세요」
+PRINTFORMW 「그 피해자의 입장이 되었을 경우、상대를 용서할 수 있습니까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 악행은 행한 기억이 없다
+PRINTFORMDL [2] 용서할 수 있다
+PRINTFORMDL [3] 아마 용서할 수 있다고 생각한다
+PRINTFORMDL [4] 절대로 용서할 수 없어
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……알겠습니다」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「당신은 거짓말이 과하네요」
+		CALLF CM_PROF("공격",      +5)
+		CALLF CM_PROF("프라이드", +10)
+		CALLF CM_PROF("솔직야",   -20)
+		CALLF CM_PROF("낙관",     +20)
+
+	CASE 2
+		PRINTFORML 「후후、좋겠죠」
+		PRINTFORML 「당신이 다시 이 땅에 왔을 때、어떤 대답을 할까요」
+		CALLF CM_PROF("모랄",   +20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("솔직야",   -10)
+		CALLF CM_PROF("낙관",     +10)
+
+	CASE 3
+		PRINTFORML 「가해자와 피해자는 받아들이는 방식이 매우 다릅니다」
+		PRINTFORML 「당신이 확언할 수 없다는 것은、분명 그런 것이겠죠」
+		CALLF CM_PROF("모랄",   +10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("솔직야",   +10)
+		CALLF CM_PROF("신경질",   +10)
+	CASE 4
+		PRINTFORML 「살아있는 한、범한 죄는 당신을 묶고、상대도 계속 속박합니다」
+		PRINTFORML 「사후에 우리들과 같은 존재가 필요해지는 이유입니다」
+		CALLF CM_PROF("프라이드",  20)
+		CALLF CM_PROF("솔직야",   +20)
+		CALLF CM_PROF("신경질",   +20)
+
+ENDSELECT
+PRINTFORMW 「자아、가세요」
+RETURN 1

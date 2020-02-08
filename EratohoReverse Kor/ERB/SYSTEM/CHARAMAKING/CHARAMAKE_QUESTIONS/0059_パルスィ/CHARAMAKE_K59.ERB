@@ -1,0 +1,68 @@
+﻿;파르시＠ぱ。
+@CHARAMAKE_K59(ARG)
+PRINTFORMW 「여길 지키는 건 나. 빨리 일어나, 가라앉힌다?」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질투는 사람을 추악하게 해、살인마저 해버려…하지만、무언가를 하는 에너지가 되기도하지」
+PRINTFORMW 「입술에서 피가 흐를 정도로, 부럽다. 당신에게 있어서 그건 어떤 것?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 행복한 애인들
+PRINTFORMDL [2] 각광받는 명성 있는 성공한 사람
+PRINTFORMDL [3] 매일을 풍요롭게 보내는 자산가
+PRINTFORMDL [4] 이렇게나 사랑스러운 너
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답하지 않는다、 아니, 인정하지 않는 거군. 불쌍하네」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「후후… 흔한 마음. 그렇기 때문에, 그 독도 강하지」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+	CASE 2
+		PRINTFORML 「힘을 얻어 보면?　노력, 할 수 있잖아」
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+	CASE 3
+		PRINTFORML 「풍족한 나태, 본인은 행복한 것일까... 그렇지만、부럽지」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+	CASE 4
+		PRINTFORML 「…하?　좀, 의미를 모르겠네. 그, 그만둬……크흠」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("프라이드", -30)
+ENDSELECT
+PRINTFORMW 「…그러면, 작별이네. 가능한 한, 건강하게――」
+RETURN 1
+

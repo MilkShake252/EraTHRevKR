@@ -1,0 +1,649 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	Module		:SELECT_CHARA.ERB
+;	Facility	:조건을 채우고 있는 캐릭터를 리스트업 해, 그 중에서 한사람을플레이야가선택 해 그 결과을반환
+;				 함수·@SELECT_CHARA_LIST와 그 관련 함수를 정리한 파일
+;
+;	Licence		:라이센스 프리.
+;
+;	Modification Data:
+;
+;	Edit	Date			Author					Reason
+;	001		20 XX/XX/XX		----					신규 작성
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;=============================================================================
+;캐릭터 리스트 표시＋입력 함수@SELECT_CHARA_LIST
+;
+;ARGS ==옵션
+;『<지정>내용』의 형태로 기술해, 실행을 제어합니다.
+;
+;<식별> 식별 캐릭터 라인.
+;	외와 중복 하지 않는 명칭을 지정해 두면 옵션을 기억해 둘 수 있습니다.
+;
+;<설명> 설명문
+;
+;<대상> 리스트에 표시하는 캐릭터의 분류
+;	"관계자"이미 등장했다캐릭터(디폴트)
+;		※등록번호로 처리를 실시한다
+;	"등장가능"향후 등장의 가능성이 있는 캐릭터
+;		※csv번호로 처리를 실시한다
+;
+;<조건> 표시의 가부를 판단하는 함수명
+;	제일 인수에번호("관계자"지정에서는등록번호, "등장가능"지정에서는 csv번호)를 건네주므로,
+;	특정의 조건을 만했다인가 어떤가를 판정해,
+;	표시 가능한 경우는 1, 표시 할 수 없는 경우는 0을반환함수를 별도로 만들어 주세요.
+;	지정했다함수가 존재하지 않는 경우는 무조건으로 모든 캐릭터를 표시합니다.
+;
+;<상부> 상부 추가 표시를 실시하는 함수명
+;<하부> 하부 추가 표시를 실시하는 함수명
+;	각각 리스트의 상부, 하부에 뭔가 특수한 표시를했다 있고 때로 지정합니다.
+;	단순한 표시 처리만을 상정하고 있어, 돌아가 값이 참조되는 일도 없습니다.
+;
+;<구상> 지정한다고 문자색을구상지정색으로 바꿉니다
+;	현재는"조교자"(조교자지정구상) 마셔 유효합니다
+;
+;<선택> 선택지를 추가하기 위한 함수명
+;	캐릭터선택, 페이지 보내, 취소 이외의선택지가필요인 경우로 지정합니다.
+;	이 함수는선택지의 표시시(인수=-1)와 INPUT 직후(인수=RESULT)의 2회 불려 갑니다.
+;	인수가-1때에선택지의 표시, 그 이외때에선택 후의 처리를 실시하도록(듯이) 설계해 주세요.
+;	또, 새롭게 함수를 CALL 하는 일로 RESULT의 값이변화 하는 일에 유의해 주세요.
+;	선택뒤로 불러 출했다뒤는 RESULT를 참조합니다.
+;	RESULT가 0이면 현재의 RESULT로 처리를 종료,
+;	-1이라면 RESTART, -2로 입력의 다시 해, 그 이외라면 속행합니다.
+;
+;<취소> "취소불가"를 지정하면취소처리가 무효화됩니다.
+;	또, 그 외의 캐릭터 라인을 지정하면취소선택지부분에 그것이 표시됩니다.
+;
+;<항목> 캐릭터 리스트에 표시하는 항목
+;	자세한 것은@SHOW_CHARA_LIST에서
+;<행 수> 캐릭터 리스트행수
+;<렬수> 캐릭터 리스트 최대렬수(표시가 넘쳐 나오는 경우는 자동으로 삭감됩니다)
+;
+;<고정> "표시변경불가"를 지정하면표시변경처리가 무효화됩니다.
+;
+;=============================================================================
+@SELECT_CHARA_LIST(C_ARGS)
+
+;범용 함수 선언
+#LOCALSSIZE 5
+#DIM LCOUNT
+
+;개시행 위치(재묘화용)
+#DIM LINE
+
+;최종 페이지
+#DIM MPAGE
+
+;옵션 변수
+#DIMS 설명
+#DIMS 조건
+#DIMS 상부
+#DIMS 하부
+#DIMS 선택
+#DIMS 취소
+#DIMS 고정
+
+;옵션 시작
+설명 = %SELECT_CHARA_LIST_CUT(C_ARGS, "설명")%
+조건 = %SELECT_CHARA_LIST_CUT(C_ARGS, "조건")%
+상부 = %SELECT_CHARA_LIST_CUT(C_ARGS, "상부")%
+하부 = %SELECT_CHARA_LIST_CUT(C_ARGS, "하부")%
+선택 = %SELECT_CHARA_LIST_CUT(C_ARGS, "선택")%
+취소 = %SELECT_CHARA_LIST_CUT(C_ARGS, "취소")%
+고정 = %SELECT_CHARA_LIST_CUT(C_ARGS, "고정")%
+C_LINM = TOINT(CHARA_LIST_R("행 수", C_G_LINM))
+C_ROWM = TOINT(CHARA_LIST_R("렬수", C_G_ROWM))
+C_IDES = %SELECT_CHARA_LIST_CUT(C_ARGS, "식별")%
+C_TARS = %SELECT_CHARA_LIST_CUT(C_ARGS, "대상")%
+C_KOJS = %SELECT_CHARA_LIST_CUT(C_ARGS, "구상")%
+
+;개시행 위치 기억
+REDRAW 0
+LINE = LINECOUNT
+
+;표시시킨다캐릭터를 추출
+;리스트 초기화
+VARSET CHARA_LIST, -1
+;조건 지정이 변경되고 있으면 현재 페이지를 초기화
+SIF LOCALS != 조건
+	C_PAGE = 0
+;현재의 조건 지정을 기억
+LOCALS = %조건%
+;대상가 되는 캐릭터로부터 조건에 들어맞는 것을 리스트에 추가
+LOCAL = 0
+FOR LCOUNT, 0, C_TARS == "등장가능" ? FLAG:Cha총수 + 1 # CHARANUM
+	;조건 함수 호출
+	TRYCCALLFORM %조건%, LCOUNT
+	;함수가 없으면 허용
+	CATCH
+		RESULT = 1
+	ENDCATCH
+	;거부당했다경우다음의 캐릭터에
+	SIF RESULT == 0
+		CONTINUE
+	;허용 되면 리스트에 추가
+	CHARA_LIST:LOCAL = LCOUNT
+	LOCAL++
+NEXT
+
+;행 수지정
+C_LINE = MIN(C_LINM, LOCAL)
+;필요문자수를취득
+C_CHAR = 0
+CALL SHOW_CHARA_LIST_ITEM(0)
+RESETCOLOR
+;개행을 실시하는 것으로 묘화 개시시에취득용 캐릭터 라인을 지운다
+PRINTL 
+;렬수지정
+C_ROW = MIN(C_ROWM, (WIDTH() + 2) / (C_CHAR + 2))
+C_ROW = MAX(C_ROW, 1)
+
+;최종 페이지를취득
+MPAGE = (LOCAL - 1) / C_LINE / C_ROW
+
+;현재 페이지를 페이지 범위내에 넣는다
+C_PAGE = LIMIT(C_PAGE, 0, MPAGE)
+
+;묘화 개시
+$PRINT_LIST
+;표를 소거
+REDRAW 0
+CLEARLINE LINECOUNT - LINE
+DRAWLINE
+;상부 함수 호출
+TRYCALLFORM %상부%
+;설명 표시
+SIF 설명 != ""
+	PRINTFORML %설명%
+SIF 상부 != "" || 설명 != ""
+	DRAWLINE
+;본체 표시 처리
+CALL SHOW_CHARA_LIST()
+DRAWLINE
+;페이지 수의 표시
+SIF LOCAL > C_LINE
+	PRINTFORML %" "*25%＜page.{C_PAGE}/{MPAGE}＞
+;취소용 캐릭터 라인이 존재하지 않으면돌아가기를 지정
+취소 = % 취소 == "" ? "돌아가기" # 취소 %
+;페이지 제어 버튼 표시
+LOCALS:1 = 　\@ MPAGE > 0 ? [-]전의 페이지 # \@
+LOCALS:2 = 　[/]\@ 취소 != "취소불가" ? %취소% # ---- \@
+LOCALS:3 = 　\@ MPAGE > 0 ? [+]다음의 페이지 # \@
+LOCALS:4 = 　[*]\@ 고정 != "표시변경불가" && C_IDES != "" && C_IDES != "" ? 표시변경 # ---- \@
+PRINTBUTTON @"%LOCALS:1 , 25 , LEFT%" , "-"
+PRINTBUTTON @"%LOCALS:2 , 25 , LEFT%" , "/"
+PRINTBUTTON @"%LOCALS:3 , 25 , LEFT%" , "+"
+PRINTBUTTON @"%LOCALS:4 , 25 , LEFT%" , "*"
+PRINTL
+;추가선택지표시
+TRYCALLFORM %선택%("-1")
+;하부 함수 호출
+TRYCALLFORM %하부%
+
+;입력 제어 개시
+$INPUT_LOOP_1
+REDRAW 1
+INPUTS
+;추가선택지처리
+TRYCCALLFORM %선택%(RESULTS)
+	;돌아가 값 0으로 처리 종료. TOINT(RESULTS)을반환
+	SIF RESULT == 0
+		RETURN TOINT(RESULTS)
+	;돌아가 값-1으로 RESTART
+	SIF RESULT == -1
+		RESTART
+	;돌아가 값-2로 입력의 재시도
+	SIF RESULT == -2
+		GOTO PRINT_LIST
+	;그 외의 돌아가 값으로 속행
+CATCH
+ENDCATCH
+;선택지처리
+SELECTCASE RESULTS
+	;무입력
+	CASE ""
+		GOTO INPUT_LOOP_1
+	;처리취소(취소불가의 경우 입력의 재시도)
+	CASE "/"
+		SIF 취소 != "취소불가"
+			RETURN -1
+		CLEARLINE 1
+		GOTO INPUT_LOOP_1
+	;전의 페이지(범위외가 되는 경우 최종 페이지로)
+	CASE "-"
+		C_PAGE = C_PAGE <= 0 ? MPAGE # C_PAGE - 1
+	;다음의 페이지(범위외가 되는 경우 최초의 페이지로)
+	CASE "+"
+		C_PAGE = C_PAGE >= MPAGE ? 0 # C_PAGE + 1
+	;표시변경
+	CASE "*"
+		SIF 고정 == "표시변경불가" || C_IDES == ""
+			GOTO INPUT_LOOP_1
+		CALL SELECT_CHARA_LIST_OPT()
+		RESTART
+	;캐릭터선택
+	CASEELSE
+		;캐릭터 지정이 부정하면 입력의 재시도
+		;해당 캐릭터의 부재
+		SIF MATCH(CHARA_LIST, TOINT(RESULTS), 0) == 0
+			GOTO INPUT_LOOP_1
+		;캐릭터선택성공
+		RETURN TOINT(RESULTS)
+ENDSELECT
+;재묘화
+GOTO PRINT_LIST
+
+;-------------------------------------------------
+;표시변경함수
+;-------------------------------------------------
+@SELECT_CHARA_LIST_OPT()
+#LOCALSSIZE 10
+#DIMS LTEMPS, 10
+#DIM LCOUNT
+#DIM SELECT
+#DIM LINE
+#DIM 항목수
+SELECT = -1
+;항목 호출/시작
+LOCALS = %CHARA_LIST_R("항목", C_G_ITES)%
+IF LOCALS == "하늘"
+	LOCALS = 
+	LOCAL = 0
+ELSE
+	SPLIT LOCALS, "/", LOCALS, LOCAL
+ENDIF
+;그 외 항목 시작
+SPLIT "←표시/이름/두명/체력·기력/경험치/성별", "/", LTEMPS, 항목수
+;그 외 항목을 배치
+FOR LCOUNT, 0, 항목수
+	IF FINDELEMENT(LOCALS, LTEMPS:LCOUNT, , , 1) == -1
+		LOCALS:LOCAL = %LTEMPS:LCOUNT%
+		LOCAL++
+	ENDIF
+NEXT
+;개시행 위치 기억
+LINE = LINECOUNT
+$PRINT_OPTION
+;기술을 소거
+REDRAW 0
+CLEARLINE LINECOUNT - LINE
+;설정을 표시
+DRAWLINE
+PRINTBUTTON @"[행수({C_LINM})]", 1001
+PRINTBUTTON @"[렬수({C_ROWM})]", 1002
+PRINTL
+DRAWLINE
+PRINTFORML <표시 항목>
+;항목 표시
+FOR LCOUNT, 0, 항목수
+	SIF LCOUNT == SELECT
+		SETCOLOR 0xC07070
+	PRINTBUTTON @"%"["+LOCALS:LCOUNT+"]",24,LEFT% > ", LCOUNT
+	SIF LCOUNT % 4 == 3
+		PRINTL 
+	RESETCOLOR
+NEXT
+PRINTL 
+DRAWLINE
+PRINTFORML [-1]돌아온다
+$INPUT_LOOP
+REDRAW 1
+INPUT
+SELECTCASE RESULT
+	;돌아가기
+	CASE -1
+		;표시 지정 포인터의 위치를취득
+		LOCAL = FINDELEMENT(LOCALS, "←표시", , , 1)
+		;표시 지정 부분을 쌓아올려 작성
+		LTEMPS = 
+		FOR LCOUNT, 0, LOCAL
+			SIF LCOUNT > 0
+				LTEMPS += "/"
+			LTEMPS += LOCALS:LCOUNT
+		NEXT
+		;내용이 없었던 경우 더미 캐릭터 라인을 기억
+		SIF LTEMPS == ""
+			LTEMPS = 하늘
+		;기억 처리
+		CALLF CHARA_LIST_W(C_G_ITES, LTEMPS)
+		RETURN 0
+	;표시 지정 정렬하고 처리
+	CASE 0 TO 항목수 - 1
+		;이미 어떤 것인지를선택 하고 있으면 교체를 실시한다
+		IF 0 <= SELECT && SELECT < 항목수
+			SWAP LOCALS:SELECT, LOCALS:RESULT
+			SELECT = -1
+		;아직선택 하고 있지 않으면선택상태로 한다
+		ELSE
+			SELECT = RESULT
+		ENDIF
+		GOTO PRINT_OPTION
+	;행 수지정
+	CASE 1001
+		CALL INPUT_MANY, 1, 20
+		C_LINM = RESULT
+		CALLF CHARA_LIST_W(C_G_LINM, TOSTR(RESULT))
+		GOTO PRINT_OPTION
+	;렬수지정
+	CASE 1002
+		CALL INPUT_MANY, 1, 4
+		C_ROWM = RESULT
+		CALLF CHARA_LIST_W(C_G_ROWM, TOSTR(RESULT))
+		GOTO PRINT_OPTION
+ENDSELECT
+GOTO INPUT_LOOP
+
+;-------------------------------------------------
+;캐릭터 일람표시 처리·기본
+;<항목>옵션……『/』단락으로 표시 항목을 지정
+;-------------------------------------------------
+@SHOW_CHARA_LIST(ARGS)
+#DIM LLINE
+#DIM LROW
+;행 루프
+FOR LLINE, 0, C_LINE
+	;열루프
+	FOR LROW, 0, C_ROW
+		;2행째 이후는 스페이스를 비운다
+		SIF LROW > 0
+;OriginalString : 　
+			PRINT 　
+		;현재행의 캐릭터를 읽어들여
+		LOCAL = CHARA_LIST:(C_LINE * C_ROW * C_PAGE + C_LINE * LROW + LLINE)
+		;캐릭터가 존재하지 않으면 공행을 출력
+		SIF LOCAL < 0
+			CONTINUE
+		;항목을 순서에 표시
+		CALL SHOW_CHARA_LIST_ITEM(LOCAL)
+		RESETCOLOR
+	NEXT
+	PRINTL 
+NEXT
+RESETCOLOR
+PRINTL 　　　　★:조교중☆:조수  ○:휴게중을 나타내고 있습니다
+PRINTL 　　　　또, 남편님은 적색으로 표시됩니다
+
+;항목을 순서에 표시한다
+@SHOW_CHARA_LIST_ITEM(ARG)
+#LOCALSSIZE 10
+#DIM LCOUNT
+;실제렬수초기화
+LOCALS = %CHARA_LIST_R("항목", C_G_ITES)%
+SPLIT LOCALS, "/", LOCALS, LOCAL
+;헤더 호출
+CALL SHOW_CHARA_LIST_HEADER(ARG)
+;옵션 항목을 순서에 호출해
+FOR LCOUNT, 0, LOCAL
+	CALL SHOW_CHARA_LIST_C(LOCALS:LCOUNT, ARG)
+NEXT
+
+;헤더 함수
+@SHOW_CHARA_LIST_HEADER(ARG)
+;조교자·조수등의 아이콘 표시
+CALL ARRANGE_TARGETSIGN, ARG
+;캐릭터번호를 표시
+CALL ARRANGE_CHARANUM, ARG
+
+;호출 처리
+@SHOW_CHARA_LIST_C(ARGS, ARG)
+;항목 추가시는@SELECT_CHARA_LIST_OPT에도 추가하는 것
+SELECTCASE ARGS
+	;캐릭터명을 표시
+	CASE "이름"
+		CALL ARRANGE_CHARANAME, ARG
+	;두명를 표시
+	CASE "두명"
+		CALL ARRANGE_AKA, ARG
+	;체력·기력표시
+	CASE "체력·기력"
+		CALL ARRANGE_CHARALIFE, ARG
+	;경험치표시
+	CASE "경험치"
+		CALL ARRANGE_EXP, ARG
+	;성별 표시
+	CASE "성별"
+		CALL ARRANGE_SEX, ARG
+ENDSELECT
+
+;=============================================================================
+;정보 표시 보조 처리
+;(※대상캐릭터에 의해 표시 문자수가변화 하지 않게 설정한다)
+;=============================================================================
+;-------------------------------------------------
+;조교자·조수등의 설정을 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_TARGETSIGN, ARG
+;표시 문자수가산
+C_CHAR += 2
+;csv번호에서의 지정이면등록번호를 산출한다
+SIF C_TARS == "등장가능"
+	ARG = GETCHARA(ARG)
+;등록번호로부터대상의 속성을 산출한다
+IF ARG == -1
+	LOCAL = 0
+ELSE
+	LOCAL = EQUALCHECK_TURN(1, ARG == TARGET, ARG != 0 && FINDELEMENT(ASSI, ARG) != -1, ARG != MASTER)
+ENDIF
+;속성을 출력한다
+CALL COLORPRINT(\@ ARG == FLAG:주인님 ? /0xFF0000/ # \@ + AUTO_SPLIT("　_★_☆_○", "_", LOCAL), "/")
+
+;-------------------------------------------------
+;캐릭터 일람표시시에 캐릭터번호를 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_CHARANUM, ARG
+;구상색으로 변경의 옵션이 있으면
+IF C_KOJS == "조교자"
+	;csv번호를 읽어들인다
+	LOCAL = C_TARS == "등장가능" ? ARG # NO:ARG
+	;구상색으로 한다
+	TRYCCALLFORM KOJO_COLOR_K{LOCAL}
+	CATCH
+		SETCOLOR 160, 160, 160
+	ENDCATCH
+ENDIF
+;캐릭터번호의 표시(캐릭터번호의 최대폭을취득 해, 거기에 맞춘다)
+LOCAL = STRLENS(@"{MAXARRAY(CHARA_LIST)}")
+PRINTFORM [{ARG, LOCAL}] 
+;표시 문자수가산
+C_CHAR += LOCAL
+
+;-------------------------------------------------
+;캐릭터 일람표시시에 캐릭터명을 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_CHARANAME, ARG
+#DIM LCOUNT
+;행 수취득
+LOCAL = 0
+FOR LCOUNT, 0, C_TARS == "등장가능" ? FLAG:Cha총수 + 1 # CHARANUM
+	LOCAL = MAX(LOCAL, STRLENS(\@ C_TARS == "등장가능" ? CSVNAME(LCOUNT) # CALLNAME:LCOUNT \@))
+NEXT
+;캐릭터 명칭의 read(csv번호의 경우는 캐릭터 csv로부터 읽어들여)
+IF C_TARS == "등장가능"
+	PRINTFORM %ARRANGE_STRLENS(CSVNAME(ARG), LOCAL), LOCAL, LEFT%
+ELSE
+	PRINTFORM %ARRANGE_STRLENS(CALLNAME:ARG, LOCAL), LOCAL, LEFT%
+ENDIF
+;OriginalString :  
+PRINT  
+;표시 문자수가산
+C_CHAR += LOCAL + 1
+
+;-------------------------------------------------
+;캐릭터 일람표시시에두명를 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_AKA, ARG
+#DIM LCOUNT
+;행 수취득
+LOCAL = 0
+FOR LCOUNT, 0, C_TARS == "등장가능" ? FLAG:Cha총수 + 1 # CHARANUM
+	LOCAL = MAX(LOCAL, STRLENS(C_TARS == "등장가능" ? CSVCSTR(LCOUNT, 10) # CSTR:LCOUNT:두명))
+NEXT
+;두명의 read(csv번호의 경우는 캐릭터 csv로부터 읽어들여)
+IF C_TARS == "등장가능"
+	PRINTFORM %ARRANGE_STRLENS(CSVCSTR(ARG, 10), LOCAL), LOCAL, LEFT%
+ELSE
+	PRINTFORM %ARRANGE_STRLENS(CSTR:ARG:두명, LOCAL), LOCAL, LEFT%
+ENDIF
+;OriginalString :  
+PRINT  
+;표시 문자수가산
+C_CHAR += LOCAL + 1
+
+;-------------------------------------------------
+;캐릭터 일람표시시에체력·기력를 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_CHARALIFE, ARG
+;표시 문자수가산
+C_CHAR += 16
+LOCAL = ARG
+;csv번호에서의 지정이면등록번호를 산출한다
+SIF C_TARS == "등장가능"
+	ARG = GETCHARA(ARG)
+;등록번호가 존재하지 않으면 전용의 표시를 실시한다
+IF ARG == -1
+	PRINTFORM 체력(----/{CSVBASE(LOCAL, 0), 4}) 
+	PRINTFORM 기력(----/{CSVBASE(LOCAL, 1), 4}) 
+ELSE
+	PRINTFORM 체력({BASE:ARG:체력, 4}/{MAXBASE:ARG:체력, 4}) 
+	PRINTFORM 기력({BASE:ARG:기력, 4}/{MAXBASE:ARG:기력, 4}) 
+ENDIF
+
+;-------------------------------------------------
+;캐릭터 일람표시시에 LV·필요경험치를 표시시킨다처리
+;-------------------------------------------------
+@ARRANGE_EXP, ARG
+;표시 문자수가산
+C_CHAR += 16
+LOCAL = ARG
+;csv번호에서의 지정이면등록번호를 산출한다
+SIF C_TARS == "등장가능"
+	ARG = GETCHARA(ARG)
+;등록번호가 존재하지 않으면 전용의 표시를 실시한다
+IF ARG == -1
+	PRINTFORM [LV -- 
+	PRINTFORM NEXT ------] 
+ELSE
+	PRINTFORM [LV {CFLAG:ARG:조교레벨, 2} 
+	PRINTFORM NEXT {CFLAG:ARG:필요경험치 - CFLAG:ARG:조교경험, 6}] 
+ENDIF
+
+;-------------------------------------------------
+;성별 표시
+;-------------------------------------------------
+@ARRANGE_SEX, ARG
+;표시 문자수가산
+C_CHAR += 2
+LOCAL = ARG
+;csv번호에서의 지정이면등록번호를 산출한다
+SIF C_TARS == "등장가능"
+	ARG = GETCHARA(ARG)
+;등록번호가 존재하지 않으면 전용의 표시를 실시한다
+IF ARG == -1
+	LOCAL = EQUALCHECK_TURN(1, CSVTALENT(LOCAL, 122))
+	PRINTFORM %AUTO_SPLIT("♀_♂","_",LOCAL)% 
+ELSE
+	LOCAL = EQUALCHECK_TURN(1, TALENT:ARG:남자)
+	PRINTFORM %AUTO_SPLIT("♀_♂","_",LOCAL)% 
+ENDIF
+
+;;-------------------------------------------------
+;;함락 소질 표시
+;;-------------------------------------------------
+;@ARRANGE_FALLTALENT, ARG
+;LOCAL = EQUALCHECK_TURN(1, TALENT:ARG:연모, TALENT:ARG:음란, TALENT:ARG:복종, TALENT:ARG:친애, TALENT:ARG:창녀, TALENT:ARG:예속, TALENT:ARG:붕괴)
+;PRINTFORM %AUTO_SPLIT("－ , 련, 음, 복, 친, 창, 례, 붕, ", ", ", LOCAL)%
+
+;-------------------------------------------------
+;옵션 시작 함수
+;-------------------------------------------------
+@SELECT_CHARA_LIST_CUT(ARGS:0 = "", ARGS:1 = "")
+#FUNCTIONS
+;옵션을 찾는다
+LOCAL:0 = STRFINDU(ARGS:0, "<" + ARGS:1 + ">")
+;없으면 공문자을반환
+SIF LOCAL:0 == -1
+	RETURNF ""
+;있으면 내용의 범위를 찾는다
+LOCAL:0 += STRLENSU(ARGS:1) + 2
+LOCAL:1 = STRFINDU(ARGS:0, "<", LOCAL:0)
+;내용을 자른다
+LOCALS = %SUBSTRINGU(ARGS:0, LOCAL:0, LOCAL:1 - LOCAL:0)%
+;내용을반환
+RETURNF LOCALS
+
+;-------------------------------------------------
+;옵션 기억 호출 함수
+;-------------------------------------------------
+@CHARA_LIST_R(ARGS, LREF)
+#FUNCTIONS
+#DIMS REF LREF
+;표시 항목을 생각해 낸다
+LOCALS = %SELECT_CHARA_LIST_CUT(LREF, C_IDES)%
+;기억하고 있는 표시 항목이 없는 경우, 함수 호출시 지정의 값에
+IF LOCALS == ""
+	LOCALS = %SELECT_CHARA_LIST_CUT(C_ARGS, ARGS)%
+	;무지정의 경우 디폴트의 설정에
+	SIF LOCALS == ""
+		LOCALS = %C_DEFAULT:FINDELEMENT(C_OPTION, ARGS, , , 1)%
+	;옵션을 기억
+	SIF C_IDES != ""
+		CALLF CHARA_LIST_W(LREF, LOCALS)
+ENDIF
+RETURNF LOCALS
+
+;-------------------------------------------------
+;옵션 기억 기입 함수
+;-------------------------------------------------
+@CHARA_LIST_W(LREF, ARGS)
+#FUNCTION
+#DIMS REF LREF
+;기억을 소거
+LOCAL:0 = STRFINDU(LREF, "<" + C_IDES + ">")
+LOCAL:1 = STRFINDU(LREF, "<", LOCAL:0 + 1)
+IF LOCAL:0 < LOCAL:1
+	LREF = %SUBSTRINGU(LREF, 0, LOCAL:0) + SUBSTRINGU(LREF, LOCAL:1)%
+ELSE
+	LREF = %SUBSTRINGU(LREF, 0, LOCAL:0)%
+ENDIF
+;옵션을 기억
+LREF += "<" + C_IDES + ">" + ARGS
+RETURNF 0
+
+;-------------------------------------------------
+;등치 체크 함수@EQUALCHECK_TURN
+;	인수 0:체크되는대상
+;	인수 1～20:체크에 이용되는 수치
+;@EQUALCHECK와 같습니다만, 일치했다경우에 돌려주는 값은 1은 아니고, 최초로 일치했다인수의번호가 됩니다.
+;-------------------------------------------------
+@EQUALCHECK_TURN(ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6, ARG:7, ARG:8, ARG:9, ARG:10, ARG:11, ARG:12, ARG:13, ARG:14, ARG:15, ARG:16, ARG:17, ARG:18, ARG:19, ARG:20)
+#FUNCTION
+#LOCALSIZE 2
+IF ARG
+	FOR LOCAL:1, 1, 20
+		SIF ARG == ARG:(LOCAL:1)
+			RETURNF LOCAL:1
+	NEXT
+ELSE
+	;지정의 변수가 0의 경우만 별거동
+	LOCAL = 0
+	FOR LOCAL:1, 0, 20
+		SIF ARG:(20-(LOCAL:1)) && !LOCAL
+			LOCAL = (LOCAL:1)
+	NEXT
+	FOR LOCAL:1, 1, 20-LOCAL
+		SIF ARG == ARG:(LOCAL:1)
+			RETURNF LOCAL:1
+	NEXT
+ENDIF
+RETURNF 0
+
+;-------------------------------------------------
+;ARGS의 길이가 ARG를 넘고 있는 경우, 마지막 3문자를... 로 해 돌려준다
+;-------------------------------------------------
+@ARRANGE_STRLENS(ARGS, ARG)
+#FUNCTIONS
+IF STRLENS(ARGS) > ARG
+	ARGS = %SUBSTRING(ARGS , 0 , ARG - 3)%...
+ENDIF
+RETURNF ARGS

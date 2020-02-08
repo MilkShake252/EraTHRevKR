@@ -1,0 +1,94 @@
+﻿;レイセン＠ぱ。
+@CHARAMAKE_K55(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「좋은 아침、꿈이여. 일어나세요」
+	CASE 9
+		PRINTFORMW 「내가 마지막이어도 되는걸까. 이 꿈도 이제 곧 끝나네요」
+	CASEELSE
+		PRINTFORMW 「좋은아침. 유감？　아직 꿈이에요」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「어떤 꿈을 꾸고 있습니까？　꿈…누군가에게 쫓기는 꿈、꿈 적 없나요？」
+PRINTFORMW 「죄를 범해 쫓긴다. 자아、당신은 누구에게 쫓기고 있습니까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 내가 배신한 동료
+PRINTFORMDL [2] 법을 집행하려는 경찰관
+PRINTFORMDL [3] 질투에 미친 여자
+PRINTFORMDL [4] 아무도 쫓아오지 않아
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「쫓겼던 적이 없는걸까」
+		PRINTFORMW 「…아니면、죄가 너무나 커서 돌아볼 수 없다던가？」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「이유 따윈 관계없이、배신은 죄에요. 맞대할수도 없이 쫓기는 거네」
+		PRINTFORMW 「가장 괴로운 건 그것을 쫓는 사람. 굉장히、슬프지요」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("수치", 30)
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", 20)
+	CASE 2
+		PRINTFORML 「법을 어기는 것은 죄. 모두가 결정한 모두를 위한 룰. 그야 올바르겠죠」
+		PRINTFORMW 「위반자는 엉망진창으로 해버리면 좋다는 거네요」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 3
+		PRINTFORML 「당신을 쫓는것인지、당신이 유혹한 사람을 쫓는 것인지. 어느 쪽이라도 말이죠」
+		PRINTFORMW 「결국、사람의 마음을 유혹한 당신이 그 죄를 짊어지고、도망치는 거네요」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「도망쳐도 신경쓰지 않는다. 없어져도 문제 없다、없는 편이 좋은 사람」
+		PRINTFORMW 「없어져도 죄가 되지 않는다는 것은、지금까지가 죄였다는 것이네요. 슬퍼요」
+		CALLF CM_PROF("공격", -30)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", -30)
+		CALLF CM_PROF("프라이드", -30)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+ENDSELECT
+RETURN 1
+

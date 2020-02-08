@@ -1,0 +1,110 @@
+﻿;妹紅＠Librarian
+@CHARAMAKE_K31(ARG)
+PRINTFORML 「이런 어두운 밤을 걷는 인간이 있다니. 당신도 담력시험인거지？」
+PRINTFORMW 「시험하는김에 내 이야기를 들어줘」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그러면、질문에라도 대답해줄래」
+PRINTFORMW 「죽이고 싶을 정도로 미운 녀석이 갑자기 죽어버렸어. 그럴 때는 어떻게 해？ 」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 그건 그거대로 좋다고 생각한다. 속이 후련해져
+PRINTFORMDL [2] 죽었다면、그걸 뒤쫓는다
+PRINTFORMDL [3] 죽이는 건 나였는데、분하다
+PRINTFORMDL [4] 어떻게 해서든 시체에 채찍을 내리친다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「엉뚱한 질문이니까、생각하기 귀찮다는 것도 무리는 아니려나」
+		PRINTFORMW 「다음이 있다면、좀 더 생각해야겠네」
+
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「인간은 죽어버리면 거기까지니까 말이지」
+		PRINTFORMW 「인생은 아직 포기한 것도 아니고」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+	CASE 2
+		PRINTFORML 「놀랐어、죽는다고 하는 거야？」
+		PRINTFORMW 「……아니、확실히 그 마음은 알겠지만말야」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", 30)
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("동성애", 30)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+	CASE 3
+		PRINTFORML 「쓸데없는 미움은 갖지 않는 게 좋아」
+		PRINTFORMW 「언젠가、수단과 목적이 바뀌어버릴지도 모르니까」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("신경질", 30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+	CASE 4
+		PRINTFORML 「히에에. 나로서도 생각하지 못했던 일이야」
+		PRINTFORMW 「정말、그런 일은 할 수 없고」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("동성애", -10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+ENDSELECT
+PRINTFORMW 「나는 쭉 여기에 있어. 기회가 있다면、또 만날 수 있을지도 모르겠네」
+RETURN 1
+

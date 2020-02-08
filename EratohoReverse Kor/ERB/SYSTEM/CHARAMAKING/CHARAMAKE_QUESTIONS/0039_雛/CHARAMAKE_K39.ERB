@@ -1,0 +1,62 @@
+﻿;히나＠/L
+@CHARAMAKE_K39(ARG)
+PRINTFORMW 「액신의 방에 어서오세요. 잠깐이지만 느긋하게 있다 가」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「참 그렇지、액불제에 대해 당신은 어떻게 생각하는지 알려주지 않을래？」
+PRINTFORMW 「저기、솔직하게 대답해」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 부적등으로 신불에 의지한다
+PRINTFORMDL [2] 향을 피우거나해서、액을 내쫓는다
+PRINTFORMDL [3] 종이 인형 같은 대역을 세운다
+PRINTFORMDL [4] 한 발 뽑게 해 주세요 액신님！
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「아、그래！ 대답하고 싶지 않다면 뭐 별로 상관없지만」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「무난하구나. 나름대로 효과도 있다고 생각해」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("충동", -30)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("공격", 10)
+	CASE 2
+		PRINTFORML 「향을 피우는 거구나. 나는 조금 의문이지만」
+		CALLF CM_PROF("호기심", 40)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("솔직야", -40)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("신경질", 40)
+	CASE 3
+		PRINTFORML 「좋은 판단이야. 그 효과는 내가 보증할게」
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("피학", 10)
+	CASE 4
+		PRINTFORML 「……무슨 농담？」
+		PRINTFORML 「액신을 화나게하면 심한 일을 당하지만、당신 그래도 괜찮은거야？」
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("모랄", -40)
+		CALLF CM_PROF("수치", -30)
+		CALLF CM_PROF("지성", -40)
+		CALLF CM_PROF("충동", 50)
+		CALLF CM_PROF("솔직야", 40)
+		CALLF CM_PROF("공격", 20)
+ENDSELECT
+PRINTFORML 「액불제가 필요해지면、나에게 와」
+PRINTFORMW 「그럼 조심해서 다녀와――」
+RETURN 1

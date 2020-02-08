@@ -1,0 +1,64 @@
+﻿;燐@Enter
+@CHARAMAKE_K62(ARG)
+PRINTFORMW 「이봐、일어나. 이봐 이봐、해가 져버려」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「지금부터 나 질문할 테니까、 \@ TALENT:MASTER:남자 ? 오빠 # 언니 \@는 솔직하게 대답해줘」
+PRINTFORMW 「네、\@ TALENT:MASTER:남자 ? 오빠 # 언니 \@는 죽어버렸습니다」
+PRINTFORMW 「그래서、 사후, 어디에 가고 싶어?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 천국
+PRINTFORMDL [2] 지옥
+PRINTFORMDL [3] 지저
+PRINTFORMDL [4] 나는 신이다　신은 죽지 않아
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「이런? 왜 그래?　죽는 걸 무서워하고 있어?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그야 천국에 가고 싶지. 그 때는 나에게 옮겨지지 않도록……」
+		PRINTFORMW 「\@ TALENT:MASTER:남자 ? 오빠 # 언니 \@가 사후까지 행복해 질 수 있길 바랄게♪」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+	CASE 2
+		PRINTFORML 「어머?　이건 또 별 일이구나. 스스로 지옥에 몸을 던지고 싶다니」
+		CALLF CM_PROF("피학", 40)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("지성", 10)
+	CASE 3
+		PRINTFORML 「헤에, \@ TALENT:MASTER:남자 ? 오빠 # 언니 \@도 위세 좋구나. 나도 기다리고 있을 테니까 마음껏 생을 즐기세요♪」
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「헤에, 그렇게 말하다니, \@ TALENT:MASTER:남자 ? 오빠 # 언니 \@가 옮겨지는 게 기다려져」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("도착", 20)
+ENDSELECT
+PRINTFORMW 「하♪　고마워. 그럼, 죽어 있는 것처럼 푹 자、\@ TALENT:MASTER:남자 ? 오빠 # 언니 \@. 바이바이」
+RETURN 1

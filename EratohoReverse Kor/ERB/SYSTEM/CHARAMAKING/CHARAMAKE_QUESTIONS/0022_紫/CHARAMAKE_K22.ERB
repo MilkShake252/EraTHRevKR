@@ -1,0 +1,55 @@
+﻿@CHARAMAKE_K22(ARG)
+PRINTFORMW 「몇 번째인지는 모르겠지만、좋은 아침」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「빨리 질문에 대답해 주실까」
+PRINTFORMW 「행복한 꿈의 세계、별이 가까운 우주、아무도 모르는 심해、자신의 방. 당신은 어디에 가고 싶어？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 꿈의 세계
+PRINTFORMDL [2] 우주
+PRINTFORMDL [3] 심해
+PRINTFORMDL [4] 자기 방
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「마감 시간、마음에 담아둬」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「꿈 속은 굉장히 멋진 장소야、돌아가는 게 싫어질 정도로 말이지……」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("충동",   10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관",   20)
+		CALLF CM_PROF("지성",  -10)
+		CALLF CM_PROF("모랄",   -10)
+	CASE 2
+		PRINTFORML 「별의 반짝임은 무척 아름다워、단 가까워지는 사람에겐 용서도 자비도 없지」
+		CALLF CM_PROF("피학",   10)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("지성",   30)
+	CASE 3
+		PRINTFORML 「바다의 밑의 밑、천조의 관활외인 장소에는 무엇이 잠들어있는걸까……」
+		CALLF CM_PROF("피학",   30)
+		CALLF CM_PROF("충동",   10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「……그래、당신은 영리하네. 자신을 잊어 버리면 마지막이지」
+		CALLF CM_PROF("솔직야",  -10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("호기심",  -20)
+		CALLF CM_PROF("낙관",     -20)
+		CALLF CM_PROF("지성",     20)
+		CALLF CM_PROF("모랄",   10)
+		CALLF CM_PROF("신경질",   10)
+ENDSELECT
+PRINTFORMW 「언젠가 데려가줄게. 기회가 있으면……」
+RETURN 1
+

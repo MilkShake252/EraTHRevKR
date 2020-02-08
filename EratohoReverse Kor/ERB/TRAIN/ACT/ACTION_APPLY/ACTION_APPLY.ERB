@@ -1,0 +1,135 @@
+﻿
+;────────────────────────────────────
+;조교자행동기본 처리(리액션전)
+;
+;조교자행동에 응해 파라미터를 변동시킨다
+;여기서 설정당했다치를 기본으로 한층 더보정를 하는 점에 주의
+;────────────────────────────────────
+@ACTION_APPLY
+
+;조교항목 마다의 기본 처리를 호출해
+TRYCALLFORM ACTION_APPLY_{TFLAG:ACT}
+
+;────────────────────────────────────
+;조교자행동기본 처리(리액션 후)
+;
+;지연당했다조교자행동의 실행. 조교대상의반항나 소원으로취소 되는행동도 여기서 처리
+;여기서 설정당했다치를 기본으로 한층 더보정를 하는 점에 주의
+;여기의 처리로 지문이 발생하지 않았으면 0을반환（뒤로 범용 지문이 불려 간다）
+;────────────────────────────────────
+@ACTION_APPLY2
+
+[SKIPSTART]
+;리액션이이루는대로이면 처리 중단
+SIF IS_NOWCOMNAME("이루는대로")
+	RETURN 0
+[SKIPEND]
+
+;LOCALS 초기화
+VARSET LOCALS
+
+;거절 처리 호출
+
+;ACT분류가성교계나성교중에, REACT분류가날뛴다계였던 경우
+IF (TFLAG:ACT분류 == 3 || TEQUIP:성교중) && IS_COMGRONAME("날뛴다")
+	;성교의취소처리를 호출해
+	LOCALS = CANCEL_INSERT_TO_M
+;ACT분류가성교봉사계나성교봉사중에, REACT분류가날뛴다계였던 경우		역레의 경우는 저항 할 수 없게@/L
+ELSEIF (TFLAG:ACT분류 == 10 || TEQUIP:성교봉사중) && IS_COMGRONAME("날뛴다") && !IS_NOWACTNAME("역강간")
+	;성교봉사의취소처리를 호출해
+	LOCALS = CANCEL_INSERT_TO_T
+;밧줄/눈가리개/볼개그장착중에, REACT분류가용서를 빌다계였던 경우
+ELSEIF (TEQUIP:밧줄 || TEQUIP:눈가리개 || TEQUIP:볼개그) && IS_COMGRONAME("용서를 빌다")
+	;구속취소처리를 호출해
+	LOCALS = CANCEL_TEQUIP_RESTRAINT
+;삼각목마사용중에, REACT분류가용서를 빌다계였던 경우
+ELSEIF TEQUIP:삼각목마 && IS_COMGRONAME("용서를 빌다")
+	;삼각목마취소처리를 호출해
+	LOCALS = CANCEL_TEQUIP_W_HORSE
+;--------------------------------------------------------------
+;부자연스러운 동작을 하기 위해(때문), 취소처리를 일부 말소
+;그 중 COM 「돌아가고 싶다」를 만들까하고 생각합니다. 만들면공중변소도 포함해도 좋네요
+
+[SKIPSTART]
+
+;야외플레이중에, REACT분류가용서를 빌다계였던 경우
+ELSEIF TEQUIP:야외플레이 && IS_COMGRONAME("용서를 빌다")
+	;야외플레이취소처리를 호출해
+	LOCALS = CANCEL_TEQUIP_OUTDOOR
+;거울사용중에, REACT분류가용서를 빌다계였던 경우
+ELSEIF TEQUIP:거울 && IS_COMGRONAME("용서를 빌다")
+	;거울취소처리를 호출해
+	LOCALS = CANCEL_TEQUIP_MIRROR
+;코스프레중에, REACT분류가용서를 빌다계였던 경우
+ELSEIF TEQUIP:MASTER:코스프레 && IS_COMGRONAME("용서를 빌다")
+	;코스프레취소처리를 호출해
+	LOCALS = CANCEL_TEQUIP_COSPLAY
+
+[SKIPEND]
+
+;말소 여기까지
+;--------------------------------------------------------------
+;특수 ACT 처리 호출
+;(특수상태변화처리를 실시하지 않는다)
+
+;ACT가공중육변기플레이의 경우
+ELSEIF IS_NOWACTNAME("공중육변기플레이")
+;ACT가 옷을 벗어/옷을 입은 경우
+ELSEIF IS_NOWACTNAME("의상 변경을 요구한다")
+;ACT가휴식시킨다의 경우
+ELSEIF IS_NOWACTNAME("휴식시킨다")
+;ACT가영양제를 먹인다의 경우
+ELSEIF IS_NOWACTNAME("영양제를 먹인다")
+;ACT가치료한다의 경우
+ELSEIF IS_NOWACTNAME("치료한다")
+
+;특수상태변화처리의 호출
+
+;조교대상자위중, 가버려상태로애태움종료/없음
+ELSEIF GETBIT(TEQUIP:자위중, 0) && TCVAR:MASTER:가버려 && TCVAR:MASTER:애태움도 < 2
+	;자위절정처리를 호출해
+	LOCALS = ONANIE_EX
+ENDIF
+
+;특수 처리가 존재하면
+IF LOCALS != ""
+	;특수 처리의 호출 처리
+	CALLFORM %LOCALS%
+	;특수 처리의 지문 호출
+	CALLFORM %LOCALS%_MESSAGE
+ENDIF
+
+;특수 처리가 거절 처리로 없으면
+IF !STRCOUNT(LOCALS, "CANCEL")
+	;거절 처리보정치 감쇠
+	CALLF CANCEL_TEQUIP_COUNT()
+	;조교항목 개별 처리의 호출 처리
+	TRYCALLFORM ACTION_APPLY2_{TFLAG:ACT}
+	;조교항목 마다의 지문을 호출해
+	CALL TRAIN_MESSAGE2
+ENDIF
+
+;리액션이날뛴다계였던 경우, 자세를기립, 위치를 리셋트
+IF IS_COMGRONAME("날뛴다")
+	TCVAR:MASTER:REACT자세변화 = 1
+	TCVAR:MASTER:전회의자세 = TCVAR:MASTER:자세
+	TCVAR:MASTER:전회의위치전후 = TCVAR:MASTER:위치전후
+	TCVAR:MASTER:전회의위치상하 = TCVAR:MASTER:위치상하
+	TCVAR:MASTER:자세 = 4
+	TCVAR:MASTER:위치전후 = 0
+	TCVAR:MASTER:위치상하 = 0
+ENDIF
+RETURN RESULT
+
+;────────────────────────────────────
+;조교자행동기본 처리(행동 마다)
+;
+;리액션전, 리액션 후의보정를 1개소에 정리했다
+;
+;메모
+;	강제탈의:조교자가조교대상를 벗긴다  자주탈의:조교자가 자신의 의복을 벗는다
+;	요강부디기:조교대상의 정력이 다한상태.
+;	　　　　　　금회발기플래그를 무시한다（통상의 조건에서는발기 하지 않는다）
+;	　　　　　　강부디기효과가 있는 경우, 발기도에 직접 가산한다
+;────────────────────────────────────
+;ACT분류 마다 파일을 분리. 개별의 파일은 ACT_APPLY 폴더에 이전@/L

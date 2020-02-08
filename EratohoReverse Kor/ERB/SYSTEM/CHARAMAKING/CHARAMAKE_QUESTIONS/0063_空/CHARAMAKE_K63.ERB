@@ -1,0 +1,135 @@
+﻿;霊烏路空 @Ies
+@CHARAMAKE_K63(ARG)
+SELECTCASE ARG
+	CASE 0 TO 1
+		PRINTFORMW 「에! 벌써 왔어? 아직 질문 생각하지 않았는데···」
+	CASE 7 TO 9
+		PRINTFORML 「좀 오는 거 늦지 않아? 기다리다 녹초가 됐다구」
+		PRINTFORMW 「뭐 좋아! 질문이야! 그러니까···」
+	CASEELSE
+		PRINTFORMW 「자、다음에는 내 질문에 답해 줘! 각오 해 주세요!」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+
+SELECTCASE ARG
+	CASE 7 TO 9
+		PRINTFORML 「잠깐만 기다려! 질문 잊어버렸어!」
+		PRINTFORMW 「으응~, 어쩔 수 없으니까 당신의 질문에 답해 줄게!」
+		PRINTL 
+		PRINTFORMDL [0] 특별히 없다
+		PRINTFORMDL [1] 오늘도 귀엽네
+		PRINTFORMDL [2] 퓨전은 기분 좋은거야?
+		PRINTFORMDL [3] 쓰리 사이즈 가르쳐 줘!
+		PRINTFORMDL [4] 오늘의 팬티 무슨색?
+		CALL INPUTINTD(0, 1, 2, 3, 4)
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORML 「으응~, 뭘 물으려고 했더라?라
+				CALLF CM_PROF("충동", -10)
+				CALLF CM_PROF("호기심", -10)
+				CALLF CM_PROF("수치", 10)
+				CALLF CM_PROF("신경질", 10)
+			CASE 1
+				PRINTFORML 「에, 그러니까、 질문은 아니지만 고마워!」
+				CALLF CM_PROF("솔직야",   -20)
+				CALLF CM_PROF("호기심",   +10)
+				CALLF CM_PROF("수치",     +20)
+				CALLF CM_PROF("도착",     -20)
+				CALLF CM_PROF("결벽",     +20)
+				CALLF CM_PROF("모랄",   +30)
+				CALLF CM_PROF("신경질",   +10)
+			CASE 2
+				PRINTFORML 「굉장히 기분 좋아! 그렇지만 시간이 없으니까 다음에!」
+				CALLF CM_PROF("공격",     +10)
+				CALLF CM_PROF("피학",     +10)
+				CALLF CM_PROF("충동",     +20)
+				CALLF CM_PROF("호기심",   +20)
+				CALLF CM_PROF("낙관",     -20)
+				CALLF CM_PROF("Ｖ를 좋아하는 사람",   +30)
+			CASE 3
+				PRINTFORML 「쓰리-마일?　어디선가 들은 적 있어!」
+				CALLF CM_PROF("공격",     +10)
+				CALLF CM_PROF("프라이드", -20)
+				CALLF CM_PROF("충동",     +20)
+				CALLF CM_PROF("호기심",   +20)
+				CALLF CM_PROF("수치",     -20)
+				CALLF CM_PROF("도착",     +10)
+				CALLF CM_PROF("결벽",     -20)
+				CALLF CM_PROF("모랄",   -20)
+				CALLF CM_PROF("Ｂ를 좋아하는 사람",   +30)
+			CASE 4
+				PRINTFORML 「오늘은 확실히··· 대답할 리가 없잖아!」
+				CALLF CM_PROF("공격",     +20)
+				CALLF CM_PROF("프라이드", -20)
+				CALLF CM_PROF("충동",     +30)
+				CALLF CM_PROF("호기심",   +20)
+				CALLF CM_PROF("수치",     -20)
+				CALLF CM_PROF("도착",     +10)
+				CALLF CM_PROF("결벽",     -20)
+				CALLF CM_PROF("모랄",   -30)
+				CALLF CM_PROF("Ｃ를 좋아하는 사람",   +30)
+				CALLF CM_PROF("Ａ를 좋아하는 사람",   +20)
+		ENDSELECT
+	CASEELSE
+		SELECTCASE ARG
+			CASE 0 TO 1
+				PRINTFORMW 「음 그러니까、 태양이란 거 어떻게 생각해?」
+			CASEELSE
+				PRINTFORML 「오늘도 눈부시게 빛나는 태양!」
+				PRINTFORMW 「당신에게 있어서 태양이란 뭐야?」
+		ENDSELECT
+		PRINTL 
+		PRINTFORMDL [0] 대답하지 않는다
+		PRINTFORMDL [1] 하늘의 은혜
+		PRINTFORMDL [2] 수소와 헬륨 덩어리
+		PRINTFORMDL [3] 우주 에너지
+		PRINTFORMDL [4] 그것은 너의 미소야!
+		CALL INPUTINTD(0, 1, 2, 3, 4)
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORML 「에? 모르는 거야? 혹시 바보?」
+				CALLF CM_PROF("충동", -10)
+				CALLF CM_PROF("호기심", -10)
+				CALLF CM_PROF("수치", 10)
+				CALLF CM_PROF("신경질", 10)
+			CASE 1
+				PRINTFORML 「태양은 은혜의 신님의 힘이야! 그러니까 너무 건방지게 굴면 천벌이 내려」
+				CALLF CM_PROF("모랄",   +20)
+				CALLF CM_PROF("결벽",     +20)
+				CALLF CM_PROF("솔직야",   +20)
+				CALLF CM_PROF("호기심",   -10)
+				CALLF CM_PROF("피학",     -20)
+
+			CASE 2
+				PRINTFORML 「수소들이 융합해 대폭발하지. 잘 알고 있네!」
+				CALLF CM_PROF("호기심",   +20)
+				CALLF CM_PROF("지성",     +20)
+				CALLF CM_PROF("프라이드", +10)
+				CALLF CM_PROF("신경질",   +10)
+				CALLF CM_PROF("충동",     +10)
+			CASE 3
+				PRINTFORML 「우후후、 그래! 태양은 궁극의 에너지야!」
+				CALLF CM_PROF("충동",     +30)
+				CALLF CM_PROF("신경질",   -20)
+				CALLF CM_PROF("도착",     +20)
+				CALLF CM_PROF("호기심",   +10)
+			CASE 4
+				PRINTFORML 「후후후、 기쁜 말을 해 주잖아!」
+				CALLF CM_PROF("충동",     +10)
+				CALLF CM_PROF("수치",     -20)
+				CALLF CM_PROF("솔직야",   +10)
+				CALLF CM_PROF("호기심",   +30)
+				CALLF CM_PROF("Ｂ를 좋아하는 사람",   +10)
+				
+		ENDSELECT
+ENDSELECT
+
+SELECTCASE ARG
+	CASE 9
+		PRINTFORMW 「아, 이제 다음으로 가도 돼! 엣? 이걸로 마지막?」
+	CASEELSE
+		PRINTFORMW 「아, 이제 다음으로 가도 돼」
+ENDSELECT
+RETURN 1

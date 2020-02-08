@@ -1,0 +1,401 @@
+﻿;상황에 관련되지 않고독심능력가 변경 가능했어를 수정. 외, 미조정과 수정@revkoishi(14/05/26)
+@CONFIGURE
+#DIMS CONST CONF_FUNC = "ANIMATION_EFFECT", "AI_FREEDOM", "PAD"
+#DIM LINE
+#DIM KOJO_CONF, 21
+LOCAL:1 = RESULT
+LOCAL:2 = CURRENTREDRAW()
+LINE = LINECOUNT
+;구상의 콘피그 설정을 참조
+VARSET RESULT, -1
+TRYCALLFORM KOJO_SETUP_K{NO:TARGET}
+ARRAYCOPY "RESULT", "KOJO_CONF"
+REDRAW 0
+DO
+	CLEARLINE LINECOUNT - LINE
+	PRINTL [ 0] 설정 종료
+	SIF KOJO_CONF:0 > 0					;추천 설정이 있다
+		PRINTL [ 1] 현재의 조교자 말이 추천 하는 콘피그 설정으로 한다
+	IF FLAG:디버그 || KOJO_CONF:1 > 0	;구상측이독심능력온으로 하고 있는지, 디버그모드이다
+		PRINTFORM %"[ 2] 분위기를 읽는 정도의 능력(DEBUG·구상한정기능)", 50, LEFT%
+		PRINTFORML %SIGNS(TALENT:MASTER:독심능력 - 1, "서로의 마음을 모르는", "다소 분위기를 읽을 수 있는", "궁예 관심법"), 30, RIGHT%
+	ENDIF
+	PRINTFORML %"[ 3] 소질을 성격이나 체질 등으로 분류", 50, LEFT%%\@ FLAG:소질표시방법 ? 분류한다 # 등록번호순 \@, 30, RIGHT%
+	PRINTFORML %"[ 4] 일상 생활의 묘사", 50, LEFT%%\@ FLAG:일상 ? ON # OFF \@, 30, RIGHT%
+	PRINTFORML %"[ 5] 조교자의 임신기능", 50, LEFT%%\@ FLAG:임신 ? ON # OFF \@, 30, RIGHT%
+	PRINTFORM %"[ 6] 조교대상의 임신기능", 50, LEFT%
+	PRINTFORML %SIGNS(FLAG:노예임신 - 1, "임신불가", "사랑하는만큼 임신이 쉬운", "사랑에 관계없이 임신"), 30, RIGHT%
+	PRINTL [ 7] 시각 애니메이션 효과의 표시 설정
+	IF FLAG:모드 == 1
+		PRINTFORM %"[ 8] AI자유도 설정(SANDBOX만)", 50, LEFT%
+		PRINTFORML %SIGNS(FLAG:AI자유도 ? FLAG:AI자유도 / 15 # -1, "OFF", "일부ON", "ON"), 30, RIGHT%
+	ENDIF
+	PRINTFORML %"[ 9] 조교중 인터페이스", 50, LEFT%%\@ FLAG:조교UI패드화 ? 패드 # 노멀 \@, 30, RIGHT%
+	
+	PRINTFORM %"[10] 항문 조교 옵션 설정", 50, LEFT%
+	SELECTCASE FLAG:항문조교옵션
+		CASE 0 
+			PRINTFORML %"피스팅까지 모두 허용", 30, RIGHT%
+		CASE 1 
+			PRINTFORML %"손가락, 혀, 도구, 애널성교 허용", 30, RIGHT%
+		CASE 2 
+			PRINTFORML %"손가락, 혀, 애널성교 허용", 30, RIGHT%
+		CASE 3 
+			PRINTFORML %"손가락, 혀, 도구 허용", 30, RIGHT%
+		CASE 4 
+			PRINTFORML %"손가락, 혀만 허용", 30, RIGHT%
+		CASE 5 
+			PRINTFORML %"혀만 허용", 30, RIGHT%
+		CASE 6 
+			PRINTFORML %"손가락만 허용", 30, RIGHT%
+		CASE 7 
+			PRINTFORML %"항문조교 불가", 30, RIGHT%
+	ENDSELECT
+	
+	PRINTFORM %"[11] 항문 봉사 옵션 설정", 50, LEFT%
+	SELECTCASE FLAG:항문봉사옵션
+		CASE 0
+			PRINTFORML %"애널성교까지 허용", 30, RIGHT%
+		CASE 1
+			PRINTFORML %"손가락, 혀만 허용", 30, RIGHT%
+		CASE 2
+			PRINTFORML %"혀만 허용", 30, RIGHT%
+		CASE 3
+			PRINTFORML %"손가락만 허용", 30, RIGHT%
+		CASE 4
+			PRINTFORML %"항문봉사 불가", 30, RIGHT%
+	ENDSELECT
+	
+	DO
+		INPUT
+		LOCAL:0 = !INRANGE(RESULT, 0, 11)								;범위 체크 ;범위체크
+		LOCAL:0 |= (RESULT == 1 && KOJO_CONF:0 <= 0)					;추천 설정이 없다
+		LOCAL:0 |= (RESULT == 2 && (FLAG:디버그 !| KOJO_CONF:1 > 0))	;디버그모드에서도독심능력온도 아니다
+		LOCAL:0 |= (RESULT == 8 && FLAG:모드 != 1)					;SANDBOX모드가 아니다
+		IF LOCAL:0
+			CLEARLINE 1
+			REUSELASTLINE 입력 값이 범위를 벗어났습니다
+		ENDIF
+	LOOP LOCAL:0
+	LOCAL:0 = RESULT
+	SELECTCASE LOCAL:0
+		CASE 1
+			CALL KOJO_CONFIG_SET(TARGET)
+			IF ANIME_CONFIG("USER2")	;낮밤의 효과를 리로드
+				SETBGCOLOR TIME ? 0x00001E # 0x140A00
+			ELSE
+				RESETBGCOLOR
+			ENDIF
+		CASE 2
+			PRINTFORML 공기를 읽는 정도의 능력을 설정합니다\n[ 0] 상대의 기분은 알 수 없다\n[ 1] 공기나 욕구를 읽을 수 있을 정도로\n[ 2] 마음을 읽을 수 있도록
+			CALL INPUT_RANGE(0, 2)
+			TALENT:MASTER:독심능력 = RESULT
+		CASE 3
+			PRINTFORMW 소질을 \@ FLAG:소질표시방법 ? 등록번호 표시제로 되돌립 # 성격이나 체질 등、종류별로 정돈해서 표시합 \@니다
+			FLAG:소질표시방법 ^= 1
+		CASE 4
+			FLAG:일상 ^= 1
+		CASE 5
+			FLAG:임신 ^= 1
+		CASE 6
+			PRINTFORML 조교대상이 임신할지에 대해 설정합니다\n[ 0] 임신하지 않는다\n[ 1] 사랑할수록 임신하기 쉽다\n[ 2] 노예에게 사랑따위 필요 없다！사랑에 관계없이 임신한다
+			CALL INPUT_RANGE(0, 2)
+			FLAG:노예임신 = RESULT
+		CASE 7 TO 9
+			CALLFORM CONFIG_%CONF_FUNC:(LOCAL:0 - 7)%
+		CASE 10
+			PRINTFORML 항문조교를 당할지의 여부를 설정합니다\n[ 0] 피스팅까지 모두 허용\n[ 1] 손가락, 혀, 도구, 애널성교 허용\n[ 2] 손가락, 혀, 애널성교 허용\n[ 3] 손가락, 혀, 도구 허용\n[ 4] 손가락, 혀만 허용\n[ 5] 혀만 허용\n[ 6] 손가락만 허용\n[ 7] 항문조교 불가
+			CALL INPUT_RANGE(0, 7)
+			FLAG:항문조교옵션 = RESULT
+		CASE 11
+			PRINTFORML 항문봉사를 시킬지의 여부를 설정합니다\n[ 0] 애널성교까지 허용\n[ 1] 손가락, 혀만 허용\n[ 2] 혀만 허용\n[ 3] 손가락만 허용\n[ 4] 항문봉사 불가
+			CALL INPUT_RANGE(0, 4)
+			FLAG:항문봉사옵션 = RESULT
+	ENDSELECT
+LOOP LOCAL:0
+REDRAW LOCAL:2
+RETURN LOCAL:1
+
+
+;@CONFIG_MASTER_PREGNACY	조교대상의임신설정	@CONFIGURE에 통합@revkoishi(14/05/26)
+;@CONFIG_MINDREADING		@CONFIGURE에 통합@revkoishi(14/05/26)
+;@CONFIG_SHOW_TALENT		@CONFIGURE에 통합@revkoishi(14/05/22)
+
+
+;미조정@revkoishi(14/05/22)
+@CONFIG_RENAME_MASTER
+LOCAL:0 = RESULT
+PRINTFORML 현재의 이름：%CALLNAME:MASTER%\n 이름을 변경하시겠습니까？\n[ 0] 네\n[ 1] 아니오
+CALL INPUT_RANGE
+IF !RESULT
+	PRINTL 새로운 이름을 입력해 주세요
+	INPUTS
+	CALLNAME:MASTER '= RESULTS
+	PRINTFORMW 이름을 %플레이어로% 변경했습니다
+ENDIF
+RETURN LOCAL:0
+
+
+;애니메효과의 설정
+;REDRAW가 변원하며 돌아오지 않는 것을 수정@revkoishi(14/05/19)
+@CONFIG_ANIMATION_EFFECT
+{
+#DIMS CONST CONF = "", "CHARA_CUTIN", "BGM_CUTIN", "USER1", "USER3", "USER2", "FULLCUTIN", "FLASH",
+                   "QUAKE", "SCROLLTEXT", "FADE"
+}
+{
+#DIMS CONST TEXT = "", "캐릭터　등장　컷인", "BGM　컷인", "BASE·PALAM바의  애니메이션",
+                   "탈의·착의시,   자세변경시  애니메이션", "점심　저녁의　배경색　변화", "전체　화면　컷인",
+                   "사정　시간　등의　화면　플래시　효과", "화면　진동　효과", "문자　슬라이드　애니메　효과",
+                   "문자의　페이드　아웃　효과"
+}
+LOCAL:1 = RESULT
+LOCAL:2 = CURRENTREDRAW()
+REDRAW 2
+DO
+	CALL SAVELINE
+	LOADGLOBAL	;만약을 위해 설정을 리로드
+	CALLF ANIME_CONFIG("SET", GLOBAL)
+	PRINTL 각종 시각 이펙트 표시를 설정합니다。체크 박스를 OFF 하면 비표시、또는 생략 표시합니다
+	PRINTL ※이 항목의 설정은 세이브 데이터 사이에 공유됩니다
+	PRINTFORML \n   [ 0] 돌아온다
+	FOR LOCAL:0, 1, VARSIZE("CONF")
+		PRINTFORML %UNICODE(ANIME_CONFIG(CONF:(LOCAL:0)) ? 0x2611 # 0x2610)% [{LOCAL:0, 2}] %TEXT:(LOCAL:0)%
+	NEXT
+	CALL INPUT_RANGE(0, 10)
+	LOCAL:0 = RESULT
+	IF LOCAL:0
+		CALLF ANIME_CONFIG(CONF:(LOCAL:0), 2)
+		GLOBAL = ANIME_CONFIG("SAVE")
+		SAVEGLOBAL
+		IF ANIME_CONFIG("USER2")	;낮밤의 효과를 리로드
+			SETBGCOLOR TIME ? 0x00001E # 0x140A00
+		ELSE
+			RESETBGCOLOR
+		ENDIF
+		CALL RETURNLINE
+	ENDIF
+LOOP LOCAL:0
+REDRAW LOCAL:2
+RETURN LOCAL:1
+
+
+;미조정@revkoishi(14/05/22)
+@CONFIG_AI_FREEDOM
+#DIMS CONST TEXT = "조교자추가(미구현)", "기교상승", "지식·기능취득", "도구연성"
+#DIM LINE
+LINE = LINECOUNT
+LOCAL:1 = RESULT
+DO
+	CLEARLINE LINECOUNT - LINE
+	PRINTFORML AI 자유도를 설정합니다\n   [ 0] 돌아간다
+	FOR LOCAL:0, 0, VARSIZE("TEXT")
+	{
+		CALL FPRINTL(@"%UNICODE(GETBIT(FLAG:AI자유도, LOCAL:0) ? 0x2611 # 0x2610)% [{LOCAL:0 + 1, 2}] %TEXT:(LOCAL:0)%", 
+                     GETBIT(FLAG:AI자유도, LOCAL:0) ? 0x70C070 # 0x969696)
+	}
+	NEXT
+	PRINTFORML    [ 8] 모두ON\n   [ 9] 모두OFF
+	DO
+		INPUT
+		LOCAL:0 = !GROUPMATCH(RESULT, 0, 1, 2, 3, 4, 8, 9)
+		IF LOCAL:0
+			CLEARLINE 1
+			REUSELASTLINE 범위외의 입력치입니다
+		ENDIF
+	LOOP LOCAL:0
+	LOCAL:0 = RESULT
+	SELECTCASE LOCAL:0
+		CASE 1 TO 7
+			INVERTBIT FLAG:AI자유도, LOCAL:0 - 1
+		CASE 8, 9
+			FLAG:AI자유도 = LOCAL:0 == 8 ? 15 # 0
+	ENDSELECT
+LOOP LOCAL:0
+RETURN LOCAL:1
+
+
+;함수명 변경, 미조정@revkoishi(14/05/26)
+@KOJO_CONFIG_SET(ARG:0)
+#DIMS CONST CONF = "CHARA_CUTIN", "BGM_CUTIN", "USER1", "USER3", "USER2", "FULLCUTIN", "FLASH", "QUAKE", "SCROLLTEXT", "FADE"
+LOCAL:1 = RESULT
+;구상의 콘피그 설정을 참조
+VARSET RESULT, -1
+TRYCALLFORM KOJO_SETUP_K{NO:ARG}
+IF RESULT:0 > 0
+;원본	CALL PRINT_DIALOG(@"구상추천의 콘피그 설정을 적용합니까?", 1, 1, 0)
+	CALL PRINT_DIALOG(@"구상 설정을 적용합니까??", 1, 1, 0)
+	CALL PRINT_DIALOG(@"（적용 후 옵션에서 변경할 수 있습니다）", 0, 1, 1)
+	CALL PRINT_CHOICE(, "네", 1, "아니오", 2, )
+	IF RESULT == 1
+		TALENT:MASTER:독심능력 = RESULT:1  >= 0 ? RESULT:1  # TALENT:MASTER:독심능력	;주인공의독심능력(0=읽을 수 없는, 1=공기가, 2=마음이)
+		FLAG:소질표시방법      = RESULT:2  >= 0 ? RESULT:2  # FLAG:소질표시방법			;소질의 표시 분류(0=번호 순서, 1=계통별)
+		FLAG:일상              = RESULT:3  >= 0 ? RESULT:3  # FLAG:일상					;일상이벤트(0=오프, 1=온)
+		FLAG:임신              = RESULT:4  >= 0 ? RESULT:4  # FLAG:임신					;조교자의임신판정(0=오프, 1=온)
+		FLAG:노예임신          = RESULT:5  >= 0 ? RESULT:5  # FLAG:노예임신				;조교대상의임신판정(0=오프, 1=사랑()이 있는 만큼임신 하기 쉬운, 2=보통으로 온)
+		FLAG:AI자유도          = RESULT:6  >= 0 ? RESULT:6  # FLAG:AI자유도				;AI자유도（SANDBOX용）(0=불필요한 일 하지 않는, 1=인원 추가, 2=기교상승, 4=기능취득, 8=도구연성, 15=모두를 자동으로 실시한다)
+		FLAG:구상              = RESULT:10 >= 0 ? RESULT:10 # FLAG:구상					;구상표시설정(0=표시하지 않는, 1=표시한다)
+		;애니메설정(0=오프, 1=온)
+		;11. 캐릭터 등장 컷인/12ＢＧＭ컷 인/13. PALAM 획득애니메/14. 탈의애니메/15. 밤낮의 키 경치변화/
+		;16. 전화면 컷 인/17. 플래시 효과/18. 진동 효과/19. 문자의 슬라이드/20. 문자의 페이드 인·아웃
+		FOR LOCAL:0, 11, 21
+			SIF RESULT:(LOCAL:0) >= 0
+				CALLF ANIME_CONFIG(CONF:(LOCAL:0 - 11), RESULT:(LOCAL:0))
+		NEXT
+		GLOBAL = ANIME_CONFIG("SAVE")
+		SAVEGLOBAL
+	ENDIF
+	PRINTFORMW 컨피그 설정을 변경\@ RESULT == 1 ? 했습니다 # 하지 않았습니다 \@
+ELSE
+	PRINTW 구상에서 추천하는 컨피그 설정은 없습니다
+ENDIF
+RETURN LOCAL:1
+
+
+;Enter를 새롭게 할당하는 것이 할 수 없었기 때문에 수정. 외, 미조정@revkoishi(14/05/26)
+@CONFIG_PAD
+#DIM LINE
+LOCAL:1 = RESULT
+LOCAL:2 = GETCOLOR()
+LINE = LINECOUNT
+DO
+	CLEARLINE LINECOUNT - LINE
+	SIF GROUPMATCH("", KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT) == 4
+		CALL SET_KEY_DEFAULT
+	DRAWLINE
+	PRINTL 패드 모드 설정
+	DRAWLINE
+	PRINTFORML   [ 0] \@FLAG:조교UI패드화 ? ＯＮ # ＯＦＦ \@
+	DRAWLINE
+	PRINTL 버튼 설정
+	PRINTL <> 안의 문자가 실제 버튼입니다。게임 패드를 사용할 경우는 표시한 <> 안의 문자를 각 버튼에 할당해 주십시오
+	PRINTL 키보드로 조작할 경우도、자유롭게 키를 할당해서 사용할 수 있습니다
+	PRINTL ※<> 안이 비어있을 경우(<>라고만 표시되어 있을 경우)는 Enter키가 할당됩니다
+	PRINTL 
+;OriginalString : ("  " + HTMLBUTTON(@"[ 1] L&lt
+	CALL HTMLPRINTL("  " + HTMLBUTTON(@"[ 1] L&lt;%KEY_L%&gt;", "1") + " " * 35 + HTMLBUTTON(@"[ 2] R&lt;%KEY_R%&gt;", "2") + "<BR><BR>")
+;OriginalString : (" " * 12 + HTMLBUTTON(@"[ 3] ↑&lt
+	CALL HTMLPRINTL(" " * 12 + HTMLBUTTON(@"[ 3] ↑&lt;%KEY_UP%&gt;", "3") + " " * 33 + HTMLBUTTON(@"[ 7] &lt;%KEY_X%&gt;", "7"))
+{
+;OriginalString : ("  " + HTMLBUTTON(@"[ 4] ←&lt
+	CALL HTMLPRINTL("  " + HTMLBUTTON(@"[ 4] ←&lt;%KEY_LEFT%&gt;", "4") + " " * 10 + HTMLBUTTON(@"[ 5] →&lt;%KEY_RIGHT%&gt;", "5") + 
+                    " " * 14 + HTMLBUTTON(@"[ 8] &lt;%KEY_Y%&gt;", "8") + " " * 10 + HTMLBUTTON(@"[ 9] &lt;%KEY_A%&gt;", "9"))
+}
+;OriginalString : (" " * 12 + HTMLBUTTON(@"[ 6] ↓&lt
+	CALL HTMLPRINTL(" " * 12 + HTMLBUTTON(@"[ 6] ↓&lt;%KEY_DOWN%&gt;", "6") + " " * 33 + HTMLBUTTON(@"[10] &lt;%KEY_B%&gt;", "10"))
+	DRAWLINE
+	PRINTL 표시 모드(화면에 버튼으로서 표시될 때의 모드입니다)
+	FOR LOCAL:0, 0, 3
+		SETCOLOR FLAG:조교UI패드표시모드 == LOCAL:0 ? 0x7070C0 # LOCAL:2
+		PRINTBUTTON @"[{LOCAL:0 + 11}] %AUTO_SPLIT("직접 표시_ＳＦＣ풍_ＰＳ풍　", "_", LOCAL:0)%", LOCAL:0 + 11
+		SETCOLOR LOCAL:2
+		PRINTFORML (%AUTO_SPLIT("실제로 동작하는 버튼과 동일한 것입니다_ＡＢＸＹ를 사용합니다 _ⓒ×□△를 사용합니다", "_", LOCAL:0)%)
+	NEXT
+	DRAWLINE
+	PRINTL [99] 돌아온다
+	DO
+		INPUT
+		LOCAL:0 = INRANGE(RESULT, 0, 13) !| RESULT == 99
+		IF LOCAL:0
+			CLEARLINE 1
+			REUSELASTLINE 입력치가 범위외입니다
+		ENDIF
+	LOOP LOCAL:0
+	LOCAL:0 = RESULT
+	SELECTCASE LOCAL:0
+		CASE 0
+			INVERTBIT FLAG:조교UI패드화, 0
+		CASE 1 TO 10
+			PRINTL 설정할 키를 눌러 주십시오
+			ONEINPUTS
+			SELECTCASE RESULT
+				CASE 1
+					KEY_L = %RESULTS%
+				CASE 2
+					KEY_R = %RESULTS%
+				CASE 3
+					KEY_UP    = %RESULTS%
+				CASE 4
+					KEY_LEFT  = %RESULTS%
+				CASE 5
+					KEY_RIGHT = %RESULTS%
+				CASE 6
+					KEY_DOWN  = %RESULTS%
+				CASE 7
+					KEY_X = %RESULTS%
+				CASE 8
+					KEY_Y = %RESULTS%
+				CASE 9
+					KEY_A = %RESULTS%
+				CASE 10
+					KEY_B = %RESULTS%
+			ENDSELECT
+			IF FLAG:조교UI패드표시모드 == 0
+				KEYMARK_UP    = %KEY_UP%
+				KEYMARK_DOWN  = %KEY_DOWN%
+				KEYMARK_LEFT  = %KEY_LEFT%
+				KEYMARK_RIGHT = %KEY_RIGHT%
+				KEYMARK_A = %KEY_A%
+				KEYMARK_B = %KEY_B%
+				KEYMARK_X = %KEY_X%
+				KEYMARK_Y = %KEY_Y%
+				KEYMARK_L = %KEY_L%
+				KEYMARK_R = %KEY_R%
+			ENDIF
+		CASE 11
+			FLAG:조교UI패드표시모드 = 0
+			KEYMARK_UP    = %KEY_UP%
+			KEYMARK_DOWN  = %KEY_DOWN%
+			KEYMARK_LEFT  = %KEY_LEFT%
+			KEYMARK_RIGHT = %KEY_RIGHT%
+			KEYMARK_A = %KEY_A%
+			KEYMARK_B = %KEY_B%
+			KEYMARK_X = %KEY_X%
+			KEYMARK_Y = %KEY_Y%
+			KEYMARK_L = %KEY_L%
+			KEYMARK_R = %KEY_R%
+		CASE 12
+			FLAG:조교UI패드표시모드 = 1
+			KEYMARK_A = A
+			KEYMARK_B = B
+			KEYMARK_X = X
+			KEYMARK_Y = Y
+			KEYMARK_L = L
+			KEYMARK_R = R
+		CASE 13
+			FLAG:조교UI패드표시모드 = 2
+			KEYMARK_A = ◯
+			KEYMARK_B = ×
+			KEYMARK_X = △
+			KEYMARK_Y = □
+			KEYMARK_L = Ｌ
+			KEYMARK_R = Ｒ
+	ENDSELECT
+LOOP LOCAL:0 != 99
+RETURN LOCAL:1
+
+
+;미조정@revkoishi(14/05/22)
+@SET_KEY_DEFAULT
+KEY_UP = 8
+KEY_DOWN = 2
+KEY_LEFT = 4
+KEY_RIGHT = 6
+KEY_A = 
+KEY_B = 9
+KEY_X = 1
+KEY_Y = 3
+KEY_L = +
+KEY_R = -
+
+KEYMARK_UP = 8
+KEYMARK_DOWN = 2
+KEYMARK_LEFT = 4
+KEYMARK_RIGHT = 6
+KEYMARK_A = En
+KEYMARK_B = 9
+KEYMARK_X = 1
+KEYMARK_Y = 3
+KEYMARK_L = +
+KEYMARK_R = -
+RETURN RESULT

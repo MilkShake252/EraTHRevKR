@@ -1,0 +1,52 @@
+﻿@CHARAMAKE_K2(ARG)
+PRINTFORMW 「자、내 차례군. 일어나주지 않을래」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「너에게 질문을 할게. 뭐얼、간단한 일이야」
+PRINTFORMW 「승패가 정해지는 무언가에서、상대가 손대중을 해줬어. 그럴 때는 어떻게 해？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 얕잡아보지 말라고 덤빈다
+PRINTFORMDL [2] 필사적으로 노력해 되돌려준다
+PRINTFORMDL [3] 신경 써 준 것을 기뻐한다
+PRINTFORMDL [4] 자신의 무력을 한탄한다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「침묵인가. 재미 없네」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그렇구나…그렇게 하고 싶은 마음도 알겠어」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("결벽", 10)
+	CASE 2
+		PRINTFORML 「…가능하다면、좋겠지만」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("모랄", 10)
+	CASE 3
+		PRINTFORML 「그래서 정말로 만족하는 거야？」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -30)
+		CALLF CM_PROF("호기심", -20)
+	CASE 4
+		PRINTFORML 「…그래선 아무것도 변하지 않아」
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("공격", -20)
+ENDSELECT
+PRINTFORMW 「뭐 좋아. 잘 자라구――」
+RETURN 1

@@ -1,0 +1,52 @@
+﻿;こーりん@Enter
+@CHARAMAKE_K56_2(ARG)
+PRINTFORMW 「오, 일어났니?　갑작스럽게 미안하지만、조금 질문에 대답해 줘」
+PRINTFORMDW 어째선지, 린노스케는 알몸이었다……
+PRINTL 
+CALL CHARA_CUTIN("動きすぎる原作レイパー", "こーりん", "Koooooooooorin")
+PRINTL 
+PRINTFORMW 「그런데、 나는 지금 이런 모습으로 너의 앞에 있는데말야……」
+PRINTFORMW 「어때?　어딘가 괴롭혀지고 싶어지는 부분은 없어?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 그 굵은 페니스
+PRINTFORMDL [2] 단련한 앞가슴
+PRINTFORMDL [3] 탄력있는 엉덩이
+PRINTFORMDL [4] 여자를 불러줘
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……후후후、 너는 당하는 쪽이 좋은 것 같구나」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그런가?　정력이 붙을만한 걸 많이 먹고 있으니까」
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("프라이드", -10)
+	CASE 2
+		PRINTFORML 「뭐、이래 봐도 매일 단련하고 있어. 만약의 때를 위해서」
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("프라이드", -10)
+	CASE 3
+		PRINTFORML 「뭐、뭐라고?　이 쪽 구멍은……아, 안된……다고……」
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", -10)
+	CASE 4
+		PRINTFORML 「엣?　나, 나로는 뭔가 부족한거야?」
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("솔직야", 10)
+ENDSELECT
+PRINTFORMW 「후후후、 좋은 꿈을 볼 수 있으면 좋겠네. 잘자」
+RETURN 1
+
+

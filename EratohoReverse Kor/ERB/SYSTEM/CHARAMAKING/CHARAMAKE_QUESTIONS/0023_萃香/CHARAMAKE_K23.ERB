@@ -1,0 +1,49 @@
+﻿@CHARAMAKE_K23(ARG)
+PRINTFORMW 「이런、일어났나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「뭐、간단한 질문이야、어렵게 생각할 필요는 없어」
+PRINTFORMW 「절대로 이길 수 없는 적을 만나면、당신은 어떻게 할거지？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 맞선다、도주 같은 건 없어！
+PRINTFORMDL [2] 전력으로 도망친다、도망칠 수밖에 없어！
+PRINTFORMDL [3] 용서해 주세요、저에게는 가족이！
+PRINTFORMDL [4] 단나！　저를 동생으로 삼아주십시오！
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「왜 거기서 입을 다무는 거야？」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「오、좋은 대답이구나！」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("지성", -20)
+	CASE 2
+		PRINTFORML 「흐ー응？　평범하구나」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("공격", -10)
+	CASE 3
+		PRINTFORML 「그래서 용서해 주는 상대라면 괜찮지 않을까？」
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("수치", -10)
+	CASE 4
+		PRINTFORML 「조금의 긍지조차 없는건가！」
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("프라이드", -30)
+ENDSELECT
+PRINTFORMW 「뭐 이런걸까、그럼、잘자」
+RETURN 1

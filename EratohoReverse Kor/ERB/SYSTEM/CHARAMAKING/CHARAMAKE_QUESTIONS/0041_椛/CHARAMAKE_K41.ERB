@@ -1,0 +1,50 @@
+﻿;椛@Enter
+@CHARAMAKE_K41(ARG)
+PRINTFORML 「아、좋은 아침입니다. 눈을 뜨셨네요」
+PRINTFORMW 「갑작스럽지만、잠깐、어울려주시지 않겠습니까？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「개는 귀여워요. 당신도 그렇게 생각하시나요？」
+PRINTFORMW 「그럼、개가 하는 행동중에 가장 좋아하는 건 무엇인가요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 앉아
+PRINTFORMDL [2] 손
+PRINTFORMDL [3] 두발로 서기
+PRINTFORMDL [4] 교미
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「개、싫어하시나요？　유감입니다……」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「앉아서、꼬리를 흔드는 거、귀여워요」
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 10)
+	CASE 2
+		PRINTFORML 「발이 동그랗고 폭신폭신해서 기분 좋죠」
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", 10)
+	CASE 3
+		PRINTFORML 「뭔가 조르는 것 같아서 귀여워요. 가끔、다리를 껴안아 노는 것도 귀엽습니다」
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("신경질", -10)
+	CASE 4
+		PRINTFORML 「후에에！　서、설마、수간이라던가、해버리는、건가……요……？」
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", -30)
+		CALLF CM_PROF("프라이드", -10)
+ENDSELECT
+PRINTFORMW 「음ー、어울려 주셔서 감사합니다. 그럼、안녕히 주무세요」
+RETURN 1

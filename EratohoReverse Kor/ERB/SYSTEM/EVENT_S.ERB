@@ -1,0 +1,277 @@
+﻿;추가 처리 및 서브이벤트
+
+@EVENTTURNEND
+#PRI
+#DIM 오토모드카운트
+IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
+	SKIPDISP 1
+ENDIF
+;최초로 회복 처리를 넣는다
+CALL BASE_RECOVERY
+
+;불끈불끈 플래그
+FOR LOCAL, 0, CHARANUM
+	CFLAG:LOCAL:무라무라 += 1
+NEXT
+
+;임신처리
+FOR LOCAL, 1, CHARANUM
+	CALL PREGNACY_CHECK(LOCAL)
+NEXT
+
+FOR LOCAL, 1, CHARANUM
+	CALL MASTER_PREGNACY_CHECK(LOCAL)
+NEXT
+
+SIF CFLAG:MASTER:임신
+	CFLAG:MASTER:임신 ++
+CALL MASTER_PREGNACY
+
+;현행판의 거동을 본 한계라면 CFLAG:TARGET:호의 > 3000에서는 문턱이 너무 낮은 느낌인 것로> 5000에. CFLAG:M호의 > 2000도 추가
+;한층 더 CFLAG:TARGET:얼라이먼트 < 0을 조건으로부터 제외해 본다@/L
+SIF TARGET > 0 && !CFLAG:TARGET:노예목걸이봉인 && CFLAG:TARGET:호의 > 5000 && CFLAG:M호의 > 2000 && TALENT:새드 && !ITEM:노예목걸이
+	CALL SLAVE_COLLAR
+
+;일상(비조교시)이벤트
+CALL DAILY_LIFE
+
+;────────────────────────────────────
+;약제의 쿨 다운
+;────────────────────────────────────
+IF TARGET > 0
+	;로션
+	FLAG:로션히트 -= FLAG:로션히트 / (5 - TALENT:배합지식 * 3) + GET_TRAINLV(TARGET) * (1 + ABL:기교) / 3
+	SIF FLAG:로션히트 < 0
+		FLAG:로션히트 = 0
+	;미약
+	FLAG:미약히트 -= FLAG:미약히트 / (5 - TALENT:배합지식 * 3) + GET_TRAINLV(TARGET) * (1 + ABL:욕망) / 3
+	SIF FLAG:미약히트 < 0
+		FLAG:미약히트 = 0
+	;영양제
+	FLAG:영양히트 -= FLAG:영양히트 / (6 - TALENT:배합지식 * 3) + GET_TRAINLV(TARGET) * (2 + TALENT:치료) / 2
+	SIF FLAG:영양히트 < 0
+		FLAG:영양히트 = 0
+	;치료
+	FLAG:치료히트 -= (BASE:체력 / 100) * (5 + GET_TRAINLV(TARGET)) / (10 - TALENT:치료 * 3)
+	SIF FLAG:치료히트 < 0
+		FLAG:치료히트 = 0
+ENDIF
+;────────────────────────────────────
+;여러 가지
+;────────────────────────────────────
+;CALL EVENTCHECK_M
+;FLAG:0 = 0
+
+;일시 갱신
+CALL NEXTTIME
+IF FLAG:오토모드 > 0
+	SKIPDISP 0
+	오토모드카운트++
+	IF FLAG:오토모드 == 오토모드카운트
+		오토모드카운트 = 0
+		BEGIN SHOP
+	ELSE
+		BEGIN TRAIN
+	ENDIF
+ELSE
+	BEGIN SHOP
+ENDIF
+
+
+@PREGNACY_CHECK(ARG)
+CFLAG:ARG:질정 = CFLAG:ARG:질정 * MIN(CFLAG:ARG:M호의 + CFLAG:ARG:호의 , 9000) / 10000
+SIF TALENT:ARG:임신 || CFLAG:ARG:임신
+	CFLAG:ARG:질정 = 0
+
+SIF CFLAG:ARG:질정 > 10000 && !CFLAG:ARG:임신
+	CFLAG:ARG:임신 = 1
+SIF CFLAG:ARG:임신
+	CFLAG:ARG:임신 ++
+IF CFLAG:ARG:임신 == 5
+		DRAWLINE
+;OriginalString : %CALLNAME:ARG%のお腹がわずかに膨らんでいる
+		PRINTFORMW %CALLNAME:ARG%의 배가 조금 부풀어 오르고 있다
+;OriginalString : どうやら%CALLNAME:MASTER%의 子を임신했다ようだ
+		PRINTFORMW 아무래도 %CALLNAME:MASTER%의 아이를 임신한 것 같다
+		CALL KOJO_EVENT(8, 0)
+		TALENT:ARG:임신 = 1
+		TALENT:ARG:모유체질 = 1
+		MAXBASE:ARG:모유 = 10000
+ENDIF
+IF TALENT:ARG:임신
+	IF CFLAG:ARG:임신 == 15
+		DRAWLINE
+		PRINTFORMW %CALLNAME:ARG%의 배가 많이 부풀어 올랐다
+		PRINTFORMW 이제 곧 태어날 것 같다
+		CALL KOJO_EVENT(8, 1)
+	ELSEIF  CFLAG:ARG:임신 >= 16 + RAND:3
+			LOCAL = 0
+			DRAWLINE
+			CALL KOJO_EVENT(8, 2)
+;OriginalString : %CALLNAME:ARG%が産気づいたようです。
+			PRINTFORMW %CALLNAME:ARG%에게 해산기가 있는 것 같습니다.
+;OriginalString : ………
+			PRINTFORMW ………
+;OriginalString : ……
+			PRINTFORMW ……
+;OriginalString : …
+			PRINTFORMW …
+;OriginalString : 
+			PRINTFORMW 
+			PRINTFORM %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%
+			PRINTFORM 에게 격려받으면서、
+		IF RAND:2 == 0
+;OriginalString : 母親似のかわいい여자
+			PRINTFORM 어머니와 닮은 꼴인 귀여운 여자아이
+			CFLAG:ARG:딸 ++
+			CFLAG:MASTER:딸 ++
+			LOCAL = 0
+		ELSE
+;OriginalString : 父親似の元気な男の子
+			PRINTFORM 아버지와 닮은 건강한 사내아이
+			CFLAG:ARG:아들 ++
+			CFLAG:MASTER:아들 ++
+			LOCAL = 1
+		ENDIF
+		CFLAG:ARG:아이가짐 ++
+		CFLAG:MASTER:아이가짐 ++
+		TALENT:ARG:임신 = 0
+		TALENT:ARG:모성 = 1
+		CFLAG:ARG:임신 = 0
+;OriginalString : を無事出産しま했다。
+		PRINTFORMW 를 무사히 출산했습니다.
+		CALL KOJO_EVENT(8, 3 + LOCAL)
+;OriginalString : 赤ん坊を抱っこ했다%CALLNAME:ARG%は、我が子と%CALLNAME:MASTER%に向けて微笑んでいます。
+		PRINTFORMW 아기를 안고 있는 %조사처리(CALLNAME:ARG,"는")%、아이와 %CALLNAME:MASTER%에게 미소짓고 있습니다.
+	ENDIF
+ENDIF
+
+IF !FLAG:임신
+	TALENT:ARG:임신 = 0
+	TALENT:ARG:모유체질 = 0
+	CFLAG:ARG:질정 = 0
+	CFLAG:ARG:임신 = 0
+ENDIF
+
+;아이가짐플래그는 양쪽 모두의임신기능 오프플래그가 있는 경우만 삭제
+IF !FLAG:임신 && FLAG:노예임신 == 0
+	CFLAG:ARG:아이가짐 = 0
+	CFLAG:MASTER:아이가짐 = 0
+	CFLAG:ARG:아들 = 0
+	CFLAG:MASTER:아들 = 0
+	CFLAG:ARG:딸 = 0
+	CFLAG:MASTER:딸 = 0
+ENDIF
+
+;주인님의임신체크
+;!!!!!!
+@MASTER_PREGNACY_CHECK(ARG)
+SIF !FLAG:노예임신
+	RETURN 0
+;콘피그로애정에 의해임신율 변동을 선택하고 있는 경우
+IF FLAG:노예임신 == 1
+	CFLAG:ARG:M질정 = CFLAG:ARG:M질정 * MIN(CFLAG:ARG:M호의 + CFLAG:ARG:호의 , 9000) / 10000
+;콘피그에 의해애정에 관계없이임신를 선택하고 있는 경우
+ELSEIF FLAG:노예임신 == 2
+	CFLAG:ARG:M질정 = CFLAG:ARG:M질정 * 7 / 10
+ENDIF
+
+SIF TALENT:MASTER:임신 || CFLAG:MASTER:임신
+	CFLAG:ARG:M질정 = 0
+
+IF RAND:(1 + CFLAG:ARG:M질정 / 10) > RAND:5000 && !CFLAG:MASTER:임신
+	;임신플래그
+	CFLAG:MASTER:임신 = 1
+	;부친의 캐릭터의 안내번호를 보존
+	CFLAG:MASTER:46 = CFLAG:ARG:91
+ENDIF
+
+@MASTER_PREGNACY
+;부친 불명의 관계로, 조교자가노예（주인공）를임신시켰다경우의구상는 아직 쓸 수 없습니다.
+;KOJO_EVENT(9)를 테두리로서 준비해 둡니다.
+IF CFLAG:MASTER:임신 == 5
+	DRAWLINE
+;OriginalString : %CALLNAME:MASTER%의 お腹がわずかに膨らんでいる
+	PRINTFORMW %CALLNAME:MASTER%의 배가 조금 부풀어 올랐다
+	;이 시점에서 부친 불명
+;OriginalString : どうやら임신してしまったようだ･･･
+	PRINTFORMW 아무래도 임신해버린 것 같다･･･
+	TALENT:MASTER:임신 = 1
+	TALENT:MASTER:모유체질 = 1
+	MAXBASE:MASTER:모유 = 10000
+ENDIF
+IF TALENT:MASTER:임신
+	IF CFLAG:MASTER:임신 == 15
+		DRAWLINE
+		PRINTFORMW %CALLNAME:MASTER%의 배가 많이 부풀어 올랐다
+		PRINTFORMW 이제 곧 태어날 것 같다
+	ELSEIF CFLAG:MASTER:임신 >= 16 + RAND:3
+			;부친 검색
+			LOCAL:1 = 0
+			FOR LOCAL,1,CHARANUM
+				IF CFLAG:MASTER:46 == CFLAG:LOCAL:91
+					LOCAL:1 = LOCAL
+					BREAK
+				ENDIF
+			NEXT
+			LOCAL = 0
+			DRAWLINE
+			PRINTFORMW %CALLNAME:MASTER%의 복부에서 격통이 전해졌다
+			PRINTFORMW 마침내 아이가 태어나는 것 같다
+;OriginalString : ………
+			PRINTFORMW ………
+;OriginalString : ……
+			PRINTFORMW ……
+;OriginalString : …
+			PRINTFORMW …
+;OriginalString : 
+			PRINTFORMW
+;OriginalString : %CALLNAME:MASTER%は
+			PRINTFORM %플레이어는% 
+			IF RAND:2 == 0
+;OriginalString : かわいい여자
+				PRINTFORM 귀여운 여자 아이
+				SIF LOCAL:1 > 0
+					CFLAG:(LOCAL:1):딸 ++
+				CFLAG:MASTER:딸 ++
+				LOCAL = 0
+			ELSE
+;OriginalString : 元気な男の子
+				PRINTFORM 건강한 사내 아이
+				SIF LOCAL:1 > 0
+					CFLAG:(LOCAL:1):아들 ++
+				CFLAG:MASTER:아들 ++
+				LOCAL = 1
+			ENDIF
+;OriginalString : を無事出産しま했다
+			PRINTFORMW 를 무사히 출산했습니다
+			SIF LOCAL:1
+;OriginalString : 生まれた子供はどことなく%CALLNAME:(LOCAL:1)%に似ている…
+				PRINTFORML 태어난 아이는 어딘지 %CALLNAME:(LOCAL:1)%를 닮은 것 같습니다…
+			LOCAL:2 = TARGET
+			TARGET = LOCAL:1
+			TARGET = LOCAL:2
+			SIF LOCAL:1 > 0
+				CFLAG:(LOCAL:1):아이가짐 ++
+			CFLAG:MASTER:아이가짐 ++
+			TALENT:MASTER:임신 = 0
+			TALENT:MASTER:모성 = 1
+			CFLAG:MASTER:임신 = 0
+	ENDIF
+ENDIF
+
+IF FLAG:노예임신 == 0
+	TALENT:MASTER:임신 = 0
+	TALENT:MASTER:모유체질 = 0
+	CFLAG:MASTER:M질정 = 0
+	CFLAG:MASTER:임신 = 0
+ENDIF
+
+@SLAVE_COLLAR
+DRAWLINE
+CALL KOJO_EVENT(7)
+CALL VOIDLINE_IF(RESULT)
+PRINTFORML 격렬한 조교때문에 축 늘어져 있는 %CALLNAME:MASTER%에게
+PRINTFORML %타겟은% 자신의 노예인 것을 나타내는 목걸이를 장착시켰다…
+PRINTFORMW 【노예의 목걸이】를 손에 넣었습니다.
+ITEM:노예목걸이 = 1

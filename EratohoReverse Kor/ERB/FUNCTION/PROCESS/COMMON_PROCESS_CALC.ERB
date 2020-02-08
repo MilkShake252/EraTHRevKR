@@ -1,0 +1,1191 @@
+﻿;-------------------------------------------------
+;범용 함수 두는 곳
+;표시 플로우, 계산 처리 따위를 잘라 출했다의.
+;또는 내부 처리적인 함수
+;-------------------------------------------------
+
+;-------------------------------------------------
+;계산 관련
+;-------------------------------------------------
+
+;────────────────────────────────────
+;조교대상행동에 의한 일괄 소스보정
+;────────────────────────────────────
+@REACT_TYPE_CHECK
+SELECTCASE COMGRONAME(TFLAG:REACT분류)
+	CASE "소극적으로 한다"
+		;쾌감 소스는 기준치로 한다
+		;비쾌감 소스의보정
+		;압력에 굴해 마지못해 따르는 내용
+		TIMES SOURCE:MASTER:접촉     , 0.90
+		TIMES SOURCE:MASTER:애정     , 1.00
+		TIMES SOURCE:MASTER:성행위   , 1.00
+		TIMES SOURCE:MASTER:고통     , 0.90
+		TIMES SOURCE:MASTER:구속     , 1.00
+		TIMES SOURCE:MASTER:노출     , 1.00
+		TIMES SOURCE:MASTER:불결     , 1.50
+		TIMES SOURCE:MASTER:이탈     , 1.00
+		TIMES SOURCE:MASTER:중독충족 , 1.00
+		TIMES SOURCE:MASTER:트라우마 , 1.00
+		TIMES SOURCE:MASTER:굴종     , 1.20
+		TIMES SOURCE:MASTER:달성     , 0.50
+		TIMES SOURCE:MASTER:열락     , 0.75
+		TIMES SOURCE:MASTER:반항     , 0.75
+		TIMES SOURCE:MASTER:공포     , 1.20
+	CASE "태연하게 한다"
+		;쾌감 소스의보정
+		;봉사계 ACT인가, 성교주도권이조교대상 때조교자쾌감 증가
+		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
+			TIMES SOURCE:쾌Ｃ , 2.00
+			TIMES SOURCE:쾌Ｖ , 2.00
+			TIMES SOURCE:쾌Ａ , 2.00
+			TIMES SOURCE:쾌Ｂ , 2.00
+		ENDIF
+		;자위 때조교대상쾌감 증가
+		IF GROUPMATCH(1, MC_PLAYER(), MV_PLAYER(), MA_PLAYER(), MB_PLAYER())
+			TIMES SOURCE:MASTER:쾌Ｃ , 1.20
+			TIMES SOURCE:MASTER:쾌Ｖ , 1.20
+			TIMES SOURCE:MASTER:쾌Ａ , 1.20
+			TIMES SOURCE:MASTER:쾌Ｂ , 1.20
+		ENDIF
+		;성교주도권이조교대상 때, 성교종에 응해조교대상쾌감 감소
+		IF SEX_INITIATIVE(MASTER)
+			IF TEQUIP:성교봉사중 || TEQUIP:조수성교봉사중
+				TIMES SOURCE:MASTER:쾌Ｃ , 0.75
+			ELSEIF TEQUIP:성교중 == 3
+				TIMES SOURCE:MASTER:쾌Ｖ , 0.75
+			ENDIF
+		ENDIF
+		;비쾌감 소스의보정
+		;자신을 유지하면서 홀연히 명령에 따라 보이는 내용
+		TIMES SOURCE:MASTER:접촉     , 1.50
+		TIMES SOURCE:MASTER:애정     , 0.50
+		TIMES SOURCE:MASTER:성행위   , 1.50
+		TIMES SOURCE:MASTER:고통     , 0.75
+		TIMES SOURCE:MASTER:구속     , 0.80
+		TIMES SOURCE:MASTER:노출     , 1.50
+		TIMES SOURCE:MASTER:불결     , 0.50
+		TIMES SOURCE:MASTER:이탈     , 2.00
+		TIMES SOURCE:MASTER:중독충족 , 1.20
+		TIMES SOURCE:MASTER:트라우마 , 0.75
+		TIMES SOURCE:MASTER:굴종     , 0.50
+		TIMES SOURCE:MASTER:달성     , 2.50
+		TIMES SOURCE:MASTER:열락     , 0.75
+		TIMES SOURCE:MASTER:반항     , 1.20
+		TIMES SOURCE:MASTER:공포     , 0.50
+	CASE "적극적으로 한다"
+		;쾌감 소스의보정
+		;봉사계 ACT인가, 성교주도권이조교대상 때조교자쾌감 증가
+		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
+			TIMES SOURCE:쾌Ｃ , 2.50
+			TIMES SOURCE:쾌Ｖ , 2.50
+			TIMES SOURCE:쾌Ａ , 2.50
+			TIMES SOURCE:쾌Ｂ , 2.50
+		ENDIF
+		;자위 때조교대상쾌감 증가
+		IF GROUPMATCH(1, MC_PLAYER(), MV_PLAYER(), MA_PLAYER(), MB_PLAYER())
+			TIMES SOURCE:MASTER:쾌Ｃ , 2.00
+			TIMES SOURCE:MASTER:쾌Ｖ , 2.00
+			TIMES SOURCE:MASTER:쾌Ａ , 2.00
+			TIMES SOURCE:MASTER:쾌Ｂ , 2.00
+		ENDIF
+		;비쾌감 소스의보정
+		;명령에 따라적극적으로봉사행동를 실시하는 내용
+		TIMES SOURCE:MASTER:접촉     , 2.00
+		TIMES SOURCE:MASTER:애정     , 2.00
+		TIMES SOURCE:MASTER:성행위   , 1.50
+		TIMES SOURCE:MASTER:고통     , 0.75
+		TIMES SOURCE:MASTER:구속     , 0.80
+		TIMES SOURCE:MASTER:노출     , 1.50
+		TIMES SOURCE:MASTER:불결     , 0.50
+		TIMES SOURCE:MASTER:이탈     , 1.20
+		TIMES SOURCE:MASTER:중독충족 , 2.00
+		TIMES SOURCE:MASTER:트라우마 , 0.50
+		TIMES SOURCE:MASTER:굴종     , 1.50
+		TIMES SOURCE:MASTER:달성     , 2.00
+		TIMES SOURCE:MASTER:열락     , 1.25
+		TIMES SOURCE:MASTER:반항     , 0.50
+		TIMES SOURCE:MASTER:공포     , 1.00
+	CASE "받아들인다"
+		;쾌감 소스의보정
+		;조교대상쾌감 증가
+		TIMES SOURCE:MASTER:쾌Ｃ , 2.50
+		TIMES SOURCE:MASTER:쾌Ｖ , 2.50
+		TIMES SOURCE:MASTER:쾌Ａ , 2.50
+		TIMES SOURCE:MASTER:쾌Ｂ , 2.50
+		;봉사계 ACT인가, 성교주도권이조교대상 때조교자쾌감 감소
+		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
+			TIMES SOURCE:쾌Ｃ , 0.75
+			TIMES SOURCE:쾌Ｖ , 0.75
+			TIMES SOURCE:쾌Ａ , 0.75
+			TIMES SOURCE:쾌Ｂ , 0.75
+		ENDIF
+		;비쾌감 소스의보정
+		;쾌락에 빠져 명령 수행보다 자신이 기분 좋아지는 (분)편에 중점이 있다
+		TIMES SOURCE:MASTER:접촉     , 2.00
+		TIMES SOURCE:MASTER:애정     , 2.00
+		TIMES SOURCE:MASTER:성행위   , 2.50
+		TIMES SOURCE:MASTER:고통     , 0.50
+		TIMES SOURCE:MASTER:구속     , 1.00
+		TIMES SOURCE:MASTER:노출     , 2.00
+		TIMES SOURCE:MASTER:불결     , 1.00
+		TIMES SOURCE:MASTER:이탈     , 1.00
+		TIMES SOURCE:MASTER:중독충족 , 2.50
+		TIMES SOURCE:MASTER:트라우마 , 0.75
+		TIMES SOURCE:MASTER:굴종     , 2.50
+		TIMES SOURCE:MASTER:달성     , 1.00
+		TIMES SOURCE:MASTER:열락     , 2.50
+		TIMES SOURCE:MASTER:반항     , 0.75
+		TIMES SOURCE:MASTER:공포     , 0.75
+	CASE "용서를 빌다"
+		;쾌감 소스의보정
+		;봉사계 ACT인가, 성교주도권이조교대상 때조교자쾌감 감소
+		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
+			TIMES SOURCE:쾌Ｃ , 0.50
+			TIMES SOURCE:쾌Ｖ , 0.50
+			TIMES SOURCE:쾌Ａ , 0.50
+			TIMES SOURCE:쾌Ｂ , 0.50
+		ENDIF
+		;성교주도권이조교대상 때, 성교종에 응해조교대상쾌감 감소
+		IF SEX_INITIATIVE(MASTER)
+			IF TEQUIP:성교봉사중 || TEQUIP:조수성교봉사중
+				TIMES SOURCE:MASTER:쾌Ｃ , 0.50
+			ELSEIF TEQUIP:성교중 == 3
+				TIMES SOURCE:MASTER:쾌Ｖ , 0.50
+			ENDIF
+		ENDIF
+		;자위 때조교대상쾌감 감소
+		IF GROUPMATCH(1, MC_PLAYER(), MV_PLAYER(), MA_PLAYER(), MB_PLAYER())
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.50
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.50
+			TIMES SOURCE:MASTER:쾌Ａ , 0.50
+			TIMES SOURCE:MASTER:쾌Ｂ , 0.50
+		ENDIF
+		;비쾌감 소스의보정
+		;무서워하거나 해 움츠려 버려만족에 명령에 따를 수 있지 않았다
+		TIMES SOURCE:MASTER:접촉     , 0.50
+		TIMES SOURCE:MASTER:애정     , 0.50
+		TIMES SOURCE:MASTER:성행위   , 1.00
+		TIMES SOURCE:MASTER:고통     , 2.00
+		TIMES SOURCE:MASTER:구속     , 1.25
+		TIMES SOURCE:MASTER:노출     , 0.50
+		TIMES SOURCE:MASTER:불결     , 1.50
+		TIMES SOURCE:MASTER:이탈     , 1.50
+		TIMES SOURCE:MASTER:중독충족 , 0.75
+		TIMES SOURCE:MASTER:트라우마 , 2.50
+		TIMES SOURCE:MASTER:굴종     , 2.00
+		TIMES SOURCE:MASTER:달성     , 0.50
+		TIMES SOURCE:MASTER:열락     , 0.50
+		TIMES SOURCE:MASTER:반항     , 0.50
+		TIMES SOURCE:MASTER:공포     , 2.00
+	;거부·날뛴다·도망친다·아무것도 없음
+	CASEELSE
+		;봉사계 ACT인가, 성교주도권이조교대상 때조교자쾌감 감소
+		IF MENUMATCH(TFLAG:ACT, "봉사") || SEX_INITIATIVE(MASTER)
+			TIMES SOURCE:쾌Ｃ , 0.30
+			TIMES SOURCE:쾌Ｖ , 0.30
+			TIMES SOURCE:쾌Ａ , 0.30
+			TIMES SOURCE:쾌Ｂ , 0.30
+		ENDIF
+		;성교주도권이조교대상 때, 성교종에 응해조교대상쾌감 감소
+		IF SEX_INITIATIVE(MASTER)
+			IF TEQUIP:성교봉사중 || TEQUIP:조수성교봉사중
+				TIMES SOURCE:MASTER:쾌Ｃ , 0.30
+			ELSEIF TEQUIP:성교중 == 3
+				TIMES SOURCE:MASTER:쾌Ｖ , 0.30
+			ENDIF
+		ENDIF
+		;비쾌감 소스의보정
+		;대체로 저항에 들른다
+		TIMES SOURCE:MASTER:접촉     , 0.50
+		TIMES SOURCE:MASTER:애정     , 0.50
+		TIMES SOURCE:MASTER:성행위   , 0.50
+		TIMES SOURCE:MASTER:고통     , 1.00
+		TIMES SOURCE:MASTER:구속     , 1.00
+		TIMES SOURCE:MASTER:노출     , 1.00
+		TIMES SOURCE:MASTER:불결     , 1.00
+		TIMES SOURCE:MASTER:이탈     , 1.00
+		TIMES SOURCE:MASTER:중독충족 , 1.00
+		TIMES SOURCE:MASTER:트라우마 , 1.00
+		TIMES SOURCE:MASTER:굴종     , 1.00
+		TIMES SOURCE:MASTER:달성     , 1.00
+		TIMES SOURCE:MASTER:열락     , 0.50
+		TIMES SOURCE:MASTER:반항     , 2.00
+		TIMES SOURCE:MASTER:공포     , 1.00
+ENDSELECT
+
+;────────────────────────────────────
+;의상의 소스보정
+;────────────────────────────────────
+@CLOTHES_CHECK
+;하반신속옷
+;팬티·팬티스타킹
+IF TEQUIP:MASTER:하반신속옷 == 2 || TEQUIP:MASTER:하반신속옷 == 4
+	;로터나조수의행동에도 걸려 버리지만 지금은 어쩔 수 없다
+	;잠정적인 것으로 합니다
+	IF !TALENT:벽통과
+		TIMES SOURCE:MASTER:쾌Ｃ , 0.95
+		TIMES SOURCE:MASTER:쾌Ｖ , 0.90
+		TIMES SOURCE:MASTER:쾌Ａ , 0.90
+	ENDIF
+	TIMES SOURCE:MASTER:노출 , 0.95
+;드로와·트렁크
+ELSEIF TEQUIP:MASTER:하반신속옷 == 1 || TEQUIP:MASTER:하반신속옷 == 3
+	IF !TALENT:벽통과
+		TIMES SOURCE:MASTER:쾌Ｃ , 0.90
+		TIMES SOURCE:MASTER:쾌Ｖ , 0.80
+		TIMES SOURCE:MASTER:쾌Ａ , 0.80
+	ENDIF
+	TIMES SOURCE:MASTER:노출 , 0.90
+ENDIF
+
+;상반신속옷
+;브라·붕대
+IF TEQUIP:MASTER:상반신속옷 == 1 || TEQUIP:MASTER:상반신속옷 == 3
+	SIF !TALENT:벽통과
+		TIMES SOURCE:MASTER:쾌Ｂ , 0.80
+	TIMES SOURCE:MASTER:노출 , 0.90
+;캐미·Ｔ셔츠
+ELSEIF TEQUIP:MASTER:상반신속옷 == 2 || TEQUIP:MASTER:상반신속옷 == 2
+	SIF !TALENT:벽통과
+		TIMES SOURCE:MASTER:쾌Ｂ , 0.95
+	TIMES SOURCE:MASTER:노출 , 0.80
+ENDIF
+
+;하반신겉옷
+;치마바지·바지
+IF TEQUIP:MASTER:하반신겉옷 > 1
+	IF TALENT:착의플레이선호 == 0
+		IF !TALENT:벽통과
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.60
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.70
+			TIMES SOURCE:MASTER:쾌Ａ , 0.70
+		ENDIF
+		TIMES SOURCE:MASTER:노출 , 0.60
+	ELSE
+		IF !TALENT:벽통과
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.80
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.90
+			TIMES SOURCE:MASTER:쾌Ａ , 0.90
+		ENDIF
+		TIMES SOURCE:MASTER:노출 , 0.70
+	ENDIF
+;스커트
+ELSEIF TEQUIP:MASTER:하반신겉옷 == 1
+	IF TALENT:착의플레이선호 == 0
+		IF !TALENT:벽통과
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.70
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.80
+			TIMES SOURCE:MASTER:쾌Ａ , 0.80
+		ENDIF
+		TIMES SOURCE:MASTER:노출 , 0.70
+	ELSE
+		TIMES SOURCE:MASTER:노출 , 0.90
+	ENDIF
+ENDIF
+
+;상반신겉옷
+;겉옷
+IF TEQUIP:MASTER:상반신겉옷 && TALENT:착의플레이선호 == 0
+	SIF !TALENT:벽통과
+		TIMES SOURCE:MASTER:쾌Ｂ , 0.60
+	TIMES SOURCE:MASTER:노출 , 0.60
+ENDIF
+
+;전신겉옷
+IF TALENT:착의플레이선호 == 0
+	;기모노, 도사복
+	IF TEQUIP:MASTER:전신겉옷 && TEQUIP:MASTER:전신겉옷 != 3
+		IF !TALENT:벽통과
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.60
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.70
+			TIMES SOURCE:MASTER:쾌Ａ , 0.70
+			TIMES SOURCE:MASTER:쾌Ｂ , 0.60
+		ENDIF
+		TIMES SOURCE:MASTER:노출 , 0.40
+	;원피스
+	ELSEIF TEQUIP:MASTER:전신겉옷 == 3
+		IF !TALENT:벽통과
+			TIMES SOURCE:MASTER:쾌Ｃ , 0.70
+			TIMES SOURCE:MASTER:쾌Ｖ , 0.80
+			TIMES SOURCE:MASTER:쾌Ａ , 0.80
+			TIMES SOURCE:MASTER:쾌Ｂ , 0.70
+		ENDIF
+		TIMES SOURCE:MASTER:노출 , 0.60
+	ENDIF
+ENDIF
+
+;커스텀 복장/코스프레
+;노예복
+IF TEQUIP:MASTER:코스프레 == 1
+	TIMES SOURCE:MASTER:접촉 , 1.05
+	TIMES SOURCE:MASTER:애정 , 0.80
+	TIMES SOURCE:MASTER:노출 , 1.40
+	SOURCE:MASTER:이탈 += 100
+	TIMES SOURCE:MASTER:이탈 , 1.10
+	SOURCE:MASTER:중독충족 += GET_ABL(MASTER, "마조끼") * GET_ABL(MASTER, "구속중독") * (GET_ABL(MASTER, "구속중독") + 10 + CFLAG:MASTER:조교레벨 * 5) / 1000
+	SIF ABL:MASTER:마조끼 + ABL:MASTER:구속중독 > 4
+		TIMES SOURCE:MASTER:중독충족 , 1.25
+	TIMES SOURCE:MASTER:트라우마 , 1.20
+	SOURCE:MASTER:굴종 += 50
+	TIMES SOURCE:MASTER:굴종 , 1.25
+	TIMES SOURCE:MASTER:반항 , 0.75
+ENDIF
+
+;-------------------------------------------------
+;함수명:SET_KISS
+;개  요점:임의의 개소에서키스의 처리를 실시한다
+;인  수:없음（MASTER-TARGET간만）
+;사용예 CALL SET_KISS
+;-------------------------------------------------
+@SET_KISS
+#LOCALSIZE 1
+;키스에 수반하는 일련의 처리 불결SOURCE에 대해서는 할애
+SOURCE:MASTER:접촉 = 150 + GET_TRAINLV(TARGET) * 5
+SOURCE:MASTER:애정 = 100 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "애무") * (GET_ABL(TARGET, "기교") / 10 + TALENT:혀기술 * 2) + GET_ABL(TARGET, "봉사정신") * 5
+SOURCE:MASTER:성행위 = 50 + SOURCE:MASTER:애정 / 15
+;더러움이 서로 이동
+CALL MOVE_STAIN("입", TARGET, "입", MASTER)
+;경험를 부여
+EXP:키스경험 += 1
+EXP:MASTER:키스경험 += 1
+
+;-------------------------------------------------
+;함수명:SUCKING_NIPPLES
+;개  요점:임의의 개소에서 ARG에 대한 유두흡 있고의 처리를 실시한다
+;인  수:0 행위의대상  생략 하면 TARGET. MASTER-TARGET간만
+;사용예 CALL SUCKING_NIPPLES
+;-------------------------------------------------
+@SUCKING_NIPPLES(ARG = -2)
+#LOCALSIZE 2
+ARG = ARG == MASTER ? MASTER # TARGET
+IF ARG == MASTER
+	SOURCE:MASTER:쾌Ｂ = 150 + ACT_FROM(TARGET, 4) * (3 + TALENT:혀기술) / 3
+	SOURCE:MASTER:접촉 = 75 + GET_TRAINLV(TARGET) * 10
+	SOURCE:MASTER:애정 = SOURCE:MASTER:접촉 / 2 + GET_ABL(TARGET, "봉사정신") * 5
+	SOURCE:MASTER:성행위 = 50 + SOURCE:MASTER:쾌Ｂ / 10
+	;더러움이 서로 이동
+	CALL MOVE_STAIN("입", TARGET, "가슴", MASTER)
+	EXP:MASTER:Ｂ경험 += 1
+ELSE
+	SOURCE:MASTER:접촉 = 50 + GET_TRAINLV(TARGET) * 5 + CFLAG:MASTER:조교레벨 * 5
+	SOURCE:MASTER:애정 = 50 + CFLAG:M호의 / 50 + GET_ABL(TARGET, "봉사정신") * 5
+	LOCAL:1 = ACT_TO(TARGET, 4) * (3 + TALENT:MASTER:손가락기술) / 10
+	;더러움이 서로 이동
+	CALL MOVE_STAIN("가슴", TARGET, "입", MASTER)
+	SOURCE:MASTER:성행위 += 50 + LOCAL:1 / 8
+	SOURCE:MASTER:달성 += LOCAL:1 / 4
+	SOURCE:쾌Ｂ += LOCAL:1
+	EXP:Ｂ경험 += 1
+ENDIF
+
+;-------------------------------------------------
+;함수명:ACT_FROM
+;개  요점:MASTER에 대해서애무를 실시할 때의 계산을 실시하는 함수
+;인  수:ARG:0…MASTER에애무를 실시하는 캐릭터의등록번호(TARGET/ASSI/ASSI:1/ASSI:2)
+;      :ARG:1… 실시하는애무의 종류
+;              (1Ｃ애무/2Ｖ애무/3Ａ애무/4Ｂ애무/5Ｖ성교/6Ａ성교/7Ｖ성교봉사/8Ａ성교봉사/11Ｃ도구/12Ｖ도구/13Ａ도구/14Ｂ도구)
+;반환값:계산 결과
+;비  고:식 안의 함수
+;@ABL_REVISION에 있어서의, S:1～S:8·S:11～S:14·S:21～S:27·S:31～S:34의 대체
+;
+;기교-감각:  0   1   2   3   4   5   6   7   8   9  10
+;   기본치:100 121 144 169 196 225 256 289 324 361 400
+;-------------------------------------------------
+@ACT_FROM(ARG:0, ARG:1)
+#FUNCTION
+#LOCALSIZE 1
+SELECTCASE ARG:1
+	;Ｃ애무/Ｖ애무/Ａ애무/Ｂ애무
+	CASE 1 TO 4
+		LOCAL = MAX(ABL:(ARG:0):기교 + ABL:(ARG:0):애무 - ABL:MASTER:(2 + ARG:1), MARK:(ARG:0):굴복각인)
+	;Ｖ성교/Ａ성교
+	CASE 5, 6
+		LOCAL = MAX(ABL:(ARG:0):기교 + ABL:(ARG:0):성교 - ABL:MASTER:(ARG:1 - 1), MARK:(ARG:0):굴복각인)
+	;Ｖ성교봉사/Ａ성교봉사
+	CASE 7, 8
+		LOCAL = MAX(ABL:(ARG:0):기교 + ABL:(ARG:0):성교 + ABL:(ARG:0):(ARG:1 - 3) - ABL:MASTER:Ｃ감각, MARK:(ARG:0):굴복각인)
+	;Ｃ도구/Ｖ도구/Ａ도구/Ｂ도구
+	CASE 11 TO 14
+		LOCAL = MAX(ABL:(ARG:0):기교 + ABL:(ARG:0):도구 - ABL:MASTER:(ARG:1 - 8), MARK:(ARG:0):굴복각인)
+	;정체 불명
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+RETURNF POWER(LOCAL + 10, 2) * LIMIT(MAX(CFLAG:(ARG:0):조교레벨 * 10 / (CFLAG:MASTER:조교레벨 + 1), MIN(CFLAG:(ARG:0):M호의 / 200, 30)), 10, 1000) / 10
+
+
+;-------------------------------------------------
+;함수명:ACT_TO
+;개  요점:MASTER가애무를 실시할 때의 계산을 실시하는 함수
+;인  수:ARG:0…MASTER가애무를 실시하는대상캐릭터의등록번호(TARGET/ASSI/ASSI:1/ASSI:2)
+;      :ARG:1… 실시하는애무의 종류
+;              (1Ｃ애무/2Ｖ애무/3Ａ애무/4Ｂ애무/5Ｖ성교/6Ａ성교/7Ｖ성교봉사/8Ａ성교봉사)
+;반환값:계산 결과
+;비  고:식 안의 함수
+;@ABL_REVISION에 있어서의, S:41·S:43～S:48·S:51·S:53～S:58의 대체
+;
+;기교-감각:  0   1   2   3   4   5   6   7   8   9  10
+;   기본치:100 121 144 169 196 225 256 289 324 361 400
+;-------------------------------------------------
+@ACT_TO(ARG:0, ARG:1)
+#FUNCTION
+#LOCALSIZE 1
+SELECTCASE ARG:1
+	;Ｃ애무/Ｖ애무/Ａ애무/Ｂ애무
+	CASE 1 TO 4
+		LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:(ARG:0):(2 + ARG:1), MARK:(ARG:0):굴복각인)
+	;Ｖ성교/Ａ성교
+	CASE 5, 6
+		LOCAL = MAX(ABL:MASTER:기교 + ABL:MASTER:(ARG:1 - 1) - ABL:(ARG:0):Ｃ감각, MARK:(ARG:0):굴복각인)
+	;Ｖ성교봉사/Ａ성교봉사
+	CASE 7, 8
+		LOCAL = MAX(2 * ABL:MASTER:기교 - ABL:(ARG:0):(ARG:1 - 3), MARK:(ARG:0):굴복각인)
+	;정체 불명
+	CASEELSE
+		RETURNF 0
+ENDSELECT
+RETURNF POWER(LOCAL + 10, 2) * LIMIT(MAX(CFLAG:MASTER:조교레벨 * 10 / (CFLAG:(ARG:0):조교레벨 + 1), MIN(CFLAG:(ARG:0):호의 / 200, 30)), 10, 1000) / 10
+
+
+;-------------------------------------------------
+;함수명:GET_ABL
+;개  요점:보정능력치취득함수
+;인  수:ARG:0… 캐릭터등록번호
+;       ARG:1…ABL 명칭
+;반환값:보정 후의 ABL치
+;비  고:식 안의 함수
+;@ABL_REVISION에 있어서의, A:1～A:29·B:1～B:30·C:1～C:29의 대체
+;-------------------------------------------------
+@GET_ABL(ARG, ARGS)
+#FUNCTION
+;ARGS가 하늘이라면 0을반환
+SIF ARGS == ""
+	RETURNF 0
+;지정이 잘못되어 있으면 에러 초월해 줄 것
+RETURNF 100 - 500 / (5 + ABL:ARG:ARGS)
+
+
+;-------------------------------------------------
+;함수명:GET_TRAINLV
+;개  요점:보정조교레벨취득함수
+;인  수:ARG… 캐릭터등록번호
+;반환값:보정 후의조교레벨
+;비  고:식 안의 함수
+;@ABL_REVISION에 있어서의, A:30·C:30의 대체
+;-------------------------------------------------
+@GET_TRAINLV(ARG)
+#FUNCTION
+RETURNF 50 - 2000 / (40 + CFLAG:ARG:조교레벨)
+
+
+;-------------------------------------------------
+;함수명:GET_REVISION
+;개  요점:범용보정치취득함수
+;인  수:ARG:0… 참조하는 수치
+;       ARG:1… 상한
+;       ARG:2… 상승률
+;반환값:보정 후의 값
+;비  고:식 안의 함수
+;있는 수치를, 상한치에 점근 해 나가는 수치에 변환했다실 나무에
+;ARG:2가 작으면 곧바로 상한에 이르는, 크면 반대로 좀처럼 상한까지 가까워지지 않는다
+;	. 주:사용하고 있는 형적이 없지만… 어떻게 사용할 생각이었을까
+;-------------------------------------------------
+@GET_REVISION(ARG:0, ARG:1, ARG:2)
+#FUNCTION
+RETURNF ARG:1 - ARG:2 * ARG:1 / (ARG:2 + ARG:0)
+
+
+;-------------------------------------------------
+;함수명:GET_REVISION_SQRT
+;개  요점:범용보정치취득함수·평방근법
+;인  수:ARG:0… 참조하는 수치
+;       (>=0의 경우는 그대로,<0의 경우는 ARG:0, 돌아가 값의 부호를 반전한다)
+;       ARG:1… 목표치(<0의 경우는 ARG:1, ARG:2의 부호를 반전해 취급하는, 초기치=100)
+;       ARG:2… 목표치에서의 돌아가 값(제한 없음, 초기치=100)
+;반환값:보정 후의 값
+;비  고:식 안의 함수
+;『ARG:0』가 0으로부터∞에 증가해 나갈 때,
+;『ARG:0 ==     0』때 『돌아가 값 =     0』
+;『ARG:0 == ARG:1』때 『돌아가 값 = ARG:2』
+;『ARG:0 ==    ∞』때 『돌아가 값 =  ±∞』라고 되도록(듯이) 변환한다
+;이 때, ARG:0이 커질 정도로 증가 속도는 작아진다
+;ARG:0(=X)으로 돌아가 값(=Y)과의 관계는 「Y=A√X」라고 된다
+;※이 때 A는 ARG:1, 2에 의해 정해진다
+;
+;※ARG:1이 0이라고, 어쩔 도리가 없기 때문에 0을반환
+;
+;계산 오차가 크기 때문에 주의!
+;-------------------------------------------------
+@GET_REVISION_SQRT(ARG:0, ARG:1 = 100, ARG:2 = 100)
+#FUNCTION
+;LOCAL 초기화
+VARSET LOCAL
+;ARG의 어떤 것인가가 0때는, 항상 0을반환
+SIF ARG:0 == 0 || ARG:1 == 0 || ARG:2 == 0
+	RETURNF 0
+;ARG:0이 부라면 정말로 해, 돌아가 값의 부호를 반전한다
+IF ARG:0 < 0
+	ARG:0 = -ARG:0
+	LOCAL:1 = 1
+ENDIF
+;ARG:1이 부라면 정말로 해, ARG:2의 부호를 반전한다
+IF ARG:1 < 0
+	ARG:1 = -ARG:1
+	ARG:2 = -ARG:2
+ENDIF
+;ARG:0의 평방근을 취해, ARG:1으로 ARG:2가 돌아가도록(듯이) 조정한다
+LOCAL = SQRT(ARG:0 * 10000) * ARG:2 / SQRT(ARG:1) / 100
+;ARG:0이 부였던 때의, 돌아가 값의 부호 반전
+SIF LOCAL:1
+	LOCAL = -LOCAL
+;치을반환
+RETURNF LOCAL
+
+
+;-------------------------------------------------
+;함수명:GET_REVISION_SQRT_PROP
+;개  요점:범용보정치취득함수·평방근/비례 혼합법
+;인  수:ARG:0… 참조하는 수치
+;       (>=0의 경우는 그대로,<0의 경우는 ARG:0, 돌아가 값의 부호를 반전한다)
+;       ARG:1… 목표치(<0의 경우는 ARG:1, ARG:2의 부호를 반전해 취급하는, 초기치=100)
+;       ARG:2… 목표치에서의 돌아가 값(제한 없음, 초기치=100)
+;       ARG:3… 제 2 목표치(<0의 경우는 ARG:3, ARG:4의 부호를 반전해 취급하는, 초기치=100)
+;       ARG:4… 제 2 목표치에서의 돌아가 값(제한 없음, 초기치=100)
+;반환값:보정 후의 값
+;비  고:식 안의 함수
+;『ARG:0』가 0으로부터∞에 증가해 나갈 때,
+;『ARG:0 ==     0』때 『돌아가 값 =     0』
+;『ARG:0 == ARG:1』때 『돌아가 값 = ARG:2』
+;『ARG:0 == ARG:3』때 『돌아가 값 = ARG:4』
+;『ARG:0 ==    ∞』때 『돌아가 값 =  ±∞』라고 되도록(듯이) 변환한다
+;이 때, ARG:0이 커질 정도로 증가 속도는 작아진다
+;ARG:0(=X)으로 돌아가 값(=Y)과의 관계는 「Y=B*A√X+(1-B) *A'X」라고 된다
+;※우선, 「Y=A√X, Y=A'X」가 함께 ARG:1, 2의 조건을만족 하도록(듯이) 설정해,
+;  그 후 ARG:3, 4의 조건을 채우는 B를 설정한다
+;
+;※ARG:1이 0이라고, 어쩔 도리가 없기 때문에 0을반환
+;※ARG:3이 0때, ARG:4도 0이라면 평방근법이용, 그 이외라면 0을반환
+;※ARG:3이 ARG:1으로 동일할 때, ARG:4도 ARG:2로 동일하면 평방근법이용, 그 이외라면 0을반환
+;
+;계산 오차가 크기 때문에 주의!
+;-------------------------------------------------
+@GET_REVISION_SQRT_PROP(ARG:0, ARG:1 = 100, ARG:2 = 100, ARG:3 = 100, ARG:4 = 100)
+#FUNCTION
+;LOCAL 초기화
+VARSET LOCAL
+;ARG, 0-2의 어떤 것인가가 0때는, 항상 0을반환
+SIF ARG:0 == 0 || ARG:1 == 0 || ARG:2 == 0
+	RETURNF 0
+;ARG:0이 부라면 정말로 해, 돌아가 값의 부호를 반전한다
+IF ARG:0 < 0
+	ARG:0 = -ARG:0
+	LOCAL:3 = 1
+ENDIF
+;ARG:1이 부라면 정말로 해, ARG:2의 부호를 반전한다
+IF ARG:1 < 0
+	ARG:1 = -ARG:1
+	ARG:2 = -ARG:2
+ENDIF
+;목표치와 제 2 목표치가 같음
+IF ARG:1 == ARG:3
+	;ARG:4가 ARG:2로 동일하지 않으면 0을반환
+	SIF ARG:4 != ARG:2
+		RETURNF 0
+	;평방근법이용
+	LOCAL = 0
+;제 2 목표치가 0
+ELSEIF ARG:3 == 0
+	;ARG:4가 0이 아니면 0을반환
+	SIF ARG:4 != 0
+		RETURNF 0
+	;평방근법이용
+	LOCAL = 0
+;문제 없음
+ELSE
+	;ARG:3이 부라면 정말로 해, ARG:4의 부호를 반전한다
+	IF ARG:3 < 0
+		ARG:3 = -ARG:1
+		ARG:4 = -ARG:2
+	ENDIF
+	;혼합비를 계산한다
+	LOCAL:1 = ARG:3 * ARG:2 * 100 / ARG:1
+	LOCAL:2 = SQRT(ARG:3 * 10000) * ARG:2 / SQRT(ARG:1)
+	LOCAL = (ARG:4 * 100 - LOCAL:2) * 100 / (LOCAL:1 - LOCAL:2)
+ENDIF
+;혼합비에 근거해,√ARG:0으로 ARG:0을 혼합한다
+LOCAL:1 = LOCAL * (ARG:0 * ARG:2 * 100 / ARG:1)
+LOCAL:2 = (100 - LOCAL) * (SQRT(ARG:0 * 10000) * ARG:2 / SQRT(ARG:1))
+LOCAL = (LOCAL:1 + LOCAL:2) / 10000
+;ARG:0이 부였던 때의, 돌아가 값의 부호 반전
+SIF LOCAL:3
+	LOCAL = -LOCAL
+;치을반환
+RETURNF LOCAL
+
+
+;-------------------------------------------------
+;함수명:GET_REVISION_SQRT_PROP_TEST
+;개  요점:범용보정치취득함수·평방근/비례 혼합법 『시험』
+;인  수:ARG:0  … 현재 불요
+;       ARG:1-4…GET_REVISION_SQRT_PROP에 건네준다
+;반환값:없음
+;비  고:함수(식 중간수는 아니다)
+;GET_REVISION_SQRT_PROP의 돌아가 값을 확인한다
+;
+;※디버그용!
+;  다 키손빼기 실장이 되어 있으므로 구문의 이용에는 주의!
+;
+;※※이런 함수를 외부부착으로 만들지 않으면 안 되는 시점에서
+;    불량품 함수인 것이라고 하는 설이 있습니다
+;
+;@이것 보고
+;-------------------------------------------------
+@GET_REVISION_SQRT_PROP_TEST(ARG:0, ARG:1 = 100, ARG:2 = 100, ARG:3 = 0, ARG:4 = 0)
+;LOCAL 초기화
+VARSET LOCAL
+;양인수가 동부호 혹은 어느 쪽인지가 0
+IF SIGN(ARG:1) == SIGN(ARG:3) || SIGN(ARG:1) == 0 || SIGN(ARG:3) == 0
+	;최대폭취득
+	LOCAL:3 = ABS(ARG:1) < ABS(ARG:3) ? ABS(ARG:3) # ABS(ARG:1)
+	;유효 1자리수로 처리
+	LOCAL:3 = ROUND(LOCAL:3, , 1)
+	;최저 10필요
+	SIF LOCAL:3 < 10
+		LOCAL:3 = 10
+	;기준을취득
+	LOCAL:4 = ARG:1 > ARG:3 ? ARG:3 # ARG:1
+	;기준이 정이라면 0에, 부라면 유효 1자리수로 처리
+	LOCAL:4 = LOCAL:4 < 0 ? ROUND(LOCAL:4, , 1) # 0
+;양인수가 이부호
+ELSE
+	;최대폭취득
+	LOCAL:3 = ABS(ARG:1) < ABS(ARG:3) ? ABS(ARG:3) # ABS(ARG:1)
+	;유효 1자리수로 처리 후배로 한다
+	LOCAL:3 = ROUND(LOCAL:3, , 1) * 2
+	;최저 10필요
+	SIF LOCAL:3 < 10
+		LOCAL:3 = 10
+	;기준을취득
+	LOCAL:4 = ARG:1 > ARG:3 ? ARG:3 # ARG:1
+	;유효 1자리수로 처리
+	LOCAL:4 = ROUND(LOCAL:4, , 1)
+ENDIF
+;-5개째로부터 표시를 시작한다
+LOCAL = -5
+;표시를 노랗게 한다
+SETCOLOR 255, 255, 0
+DO
+	;0에 이르면 원의 색에, 11으로부터는 노랗게 한다
+	SIF LOCAL == 0
+		RESETCOLOR
+	SIF LOCAL == 11
+		SETCOLOR 255, 255, 0
+	;이번 인수를 계산한다
+	LOCAL:1 = LOCAL:4 + LOCAL:3 * LOCAL / 10
+	;전회의인수와 같으면 표시하지 않는다
+	SIF LOCAL:1 == LOCAL:2
+		BREAK
+	;이번 분을 표시
+;OriginalString : {LOCAL:1, 10} = {GET_REVISION_SQRT_PROP(LOCAL:1, ARG:1, ARG:2, ARG:3, ARG:4), 20}
+	PRINTFORML {LOCAL:1, 10} = {GET_REVISION_SQRT_PROP(LOCAL:1, ARG:1, ARG:2, ARG:3, ARG:4), 20}
+	;이번 인수를기록 해 둔다
+	LOCAL:2 = LOCAL:1
+	;다음의 표시에 이행
+	LOCAL++
+;5개 여분으로 진행되면 종료
+LOOP LOCAL <= 15
+;색을 되돌린다
+RESETCOLOR
+;입력 대기를 한다
+WAIT
+;종료
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:LINE_CALC
+;개  요점:꺾인 선 그래프 함수
+;인  수:ARG … 참조하는 수치
+;       ARGS… 함수 형상 설정(, 단락으로 명령을 대입)
+;서  식:ARGS에 대입한다(정규 표현… 해설)
+;        \d→\d        …ARG→그 때의 돌아가 값
+;                        ※ARG는 작은 순서에 기술하는 것
+;        LIMIT/\d? ～\d? … 수치～수치의 범위에 돌아가 값을 낸다
+;                        ※복수 존재시는 마지막 것을 채용
+;        (NO) ADJUST    … 사사오입 조정 처리의 온 오프(디폴트는 온)
+;                        ※사사오입 조정:참조하는 수치를+0. 5로서 취급한다
+;비  고:식 중간수
+;-------------------------------------------------
+@LINE_CALC(ARG, ARGS)
+#FUNCTION
+#LOCALSIZE 1
+#LOCALSSIZE 10
+#DIM LCOUNT
+#DIM LRESULT
+#DIM LFIND
+#DIM LFLAG
+#DIM LVAR, 10
+#DIM LFUNC, 10
+#DIM LLIM, 3
+#DIM LADJ
+#DIMS LTEMPS
+;명령을 LOCALS에 순서에 대입
+SPLIT ARGS, ",", LOCALS, LRESULT
+;ARG 지정치 보존수플래그를 초기화
+VARSET LFLAG
+;LIMIT 지정 초기화
+VARSET LLIM
+;ADJUST 지정 초기화
+LADJ = 1
+;LOCALS의 수만큼 루프
+FOR LCOUNT, 0, LRESULT
+	;문중에"→"가 있으면 \d→\d명령이라고 본다
+	LFIND = STRFINDU(LOCALS:LCOUNT, "→")
+	IF LFIND != -1
+		;지정이 완결하고 있으면 처리하지 않는다
+		SIF LFLAG < 0
+			CONTINUE
+		;ARG 지정을 읽어내 보존
+		LTEMPS = %SUBSTRINGU(LOCALS:LCOUNT, 0, LFIND)%
+		LVAR:LFLAG = TOINT(LTEMPS)
+		;그 때의 돌아가 값을 읽어내 보존
+		LTEMPS = %SUBSTRINGU(LOCALS:LCOUNT, LFIND + 1)%
+		LFUNC:LFLAG = TOINT(LTEMPS)
+		;지정치 보존을 카운트
+		LFLAG++
+		;ARG 지정치가 참조하는 ARG 이상으로, 한편 지정치 보존이 2회 이상 행해지고 있으면
+		;지정을 완료했다라고 본다
+		SIF ARG >= LVAR:(LFLAG - 1) && LFLAG >= 2
+			LFLAG = -LFLAG
+	ENDIF
+	;문중에"LIMIT"가 있으면 LIMIT 명령이라고 본다
+	IF STRFINDU(LOCALS:LCOUNT, "LIMIT") != -1
+		;파선의 위치를 확인
+		LFIND = STRFINDU(LOCALS:LCOUNT, "～")
+		;LIMIT 지정 초기화
+		VARSET LLIM
+		;첫 번째의 값을 읽어낸다
+		LTEMPS = %SUBSTRINGU(LOCALS:LCOUNT, 6, LFIND - 6)%
+		;지정이 있으면 보존해기록
+		IF LTEMPS != ""
+			LLIM:1 = TOINT(LTEMPS)
+			LLIM |= 1
+		ENDIF
+		;2번째의 값을 읽어낸다
+		LTEMPS = %SUBSTRINGU(LOCALS:LCOUNT, LFIND + 1)%
+		;지정이 있으면 보존해기록
+		IF LTEMPS != ""
+			LLIM:2 = TOINT(LTEMPS)
+			LLIM |= 2
+		ENDIF
+	ENDIF
+	;문중에"ADJUST"가 있으면 ADJUST 명령이라고 본다
+	IF STRFINDU(LOCALS:LCOUNT, "ADJUST") != -1
+		;NOADJUST이면
+		IF STRFINDU(LOCALS:LCOUNT, "NO") != -1
+			;ADJUST 지정을 자른다
+			LADJ = 0
+		ELSE
+			;ADJUST 지정을 넣는다
+			LADJ = 1
+		ENDIF
+	ENDIF
+NEXT
+
+;\d→\d명령 처리
+;LFLAG를 정말로 고정
+LFLAG = ABS(LFLAG)
+;실제의 위치에 지정을 이동
+LFLAG--
+;명령이 없었던 경우
+IF LFLAG == -1
+	;0을반환
+	LOCAL = 0
+;명령이 1개 밖에 없었던 경우
+ELSEIF LFLAG == 0
+	;그 유일한 돌아가 값지정에 따른다
+	LOCAL = LFUNC
+;명령이 2개 이상 있었을 경우
+;ARG 지정이 동일
+ELSEIF LVAR:LFLAG == LVAR:(LFLAG - 1)
+	;후자의 돌아가 값지정에 따른다
+	LOCAL = LFUNC:LFLAG
+;ARG 지정이 다르다
+ELSE
+	;사용하는 부분의 지정을 이용해, 돌아가 값을 생성
+	LOCAL = (ARG - LVAR:(LFLAG - 1)) * 100 / (LVAR:LFLAG - LVAR:(LFLAG - 1))
+	LOCAL = ((LFUNC:LFLAG - LFUNC:(LFLAG - 1)) * LOCAL + LADJ * 50) / 100
+	LOCAL += LFUNC:(LFLAG - 1)
+ENDIF
+;LIMIT 명령 처리
+;존재하면 처리
+IF LLIM
+	;2개의 값 중(안)에서 존재하지 않는 것은 참조하는 ARG로 한다
+	SIF !(LLIM & 1)
+		LLIM:1 = ARG
+	SIF !(LLIM & 2)
+		LLIM:2 = ARG
+	;첫 번째가 2번째보다 크면 정렬한다
+	SIF LLIM:1 > LLIM:2
+		SWAP LLIM:1, LLIM:2
+	;LIMIT 처리
+	LOCAL = LIMIT(LOCAL, LLIM:1, LLIM:2)
+ENDIF
+;치을반환
+RETURNF LOCAL
+
+
+;-------------------------------------------------
+;함수명:GET_ASYMPTOTE
+;개  요:점근곡선취득함수
+;인  수:ARG:0… 참조하는 수치
+;       ARG:1… 목표치
+;       ARG:2… 접근 속도(정의 수, 큰 만큼 늦다)
+;반환값:없음
+;비  고:식 중간수
+;목표치에 향하여 0으로부터 단조 증가(감소)하는 함수입니다
+;접근 속도는 목표치에 의하지 않고 비율이 같게 됩니다
+;ARG:0, ARG:1에 너무 큰 값이 들어오면 오버플로우 합니다
+;@이것 보고
+;-------------------------------------------------
+@GET_ASYMPTOTE(ARG:0, ARG:1, ARG:2 = 0)
+#FUNCTION
+LOCAL = ARG:0 < 0 ? -1 # 1
+RETURNF LOCAL * (ARG:1 * ARG:0 * ARG:0) / (ARG:2 + ARG:0 * ARG:0)
+
+;-------------------------------------------------
+;함수명:ABSQSI
+;개  요점:정부 대응 평방근 함수
+;비  고:식 중간수
+;-------------------------------------------------
+@ABSQSI(ARG)
+#FUNCTION
+RETURNF SQRT(ABS(ARG))*SIGN(ARG)
+
+
+;-------------------------------------------------
+;함수명:ABCBSI
+;개  요점:정부 대응 입방근 함수
+;비  고:식 중간수
+;-------------------------------------------------
+@ABCBSI(ARG)
+#FUNCTION
+RETURNF CBRT(ABS(ARG))*SIGN(ARG)
+
+
+;-------------------------------------------------
+;함수명:ABLOSI_10
+;개  요점:정부 대응 상용대수 함수
+;비  고:식 중간수
+;-------------------------------------------------
+@ABLOSI_10(ARG)
+#FUNCTION
+RETURNF LOG10(ABS(ARG))*SIGN(ARG)
+
+
+;-------------------------------------------------
+;함수명:ABLOSI_E
+;개  요점:정부 대응 자연대수 함수
+;비  고:식 중간수
+;-------------------------------------------------
+@ABLOSI_E(ARG)
+#FUNCTION
+RETURNF LOG(ABS(ARG))*SIGN(ARG)
+
+
+;-------------------------------------------------
+;함수명:ROUND
+;개  요점:끝수 처리
+;인  수:ARG:0… 마는 수치
+;       ARG:1… 마는 방법
+;              0=RN최근접짝수에의 둥근(추천)
+;              1=RZ 잘라 버려, 2=RI절상
+;       ARG:2… 유효자리수(유효 숫자의 사고방식. 0이라면 이용하지 않는다)
+;       ARG:3… 절대자리수(소수점상n자리수라고 하는 사고방식. 0이라면 이용하지 않는다)
+;반환값:만 결과
+;비  고:식 중간수
+;
+;소수를 항상 잘라 버릴 수 있는 Emuera에서는
+;일정한 수요가 있는 것은 아닐까요@이것 보고
+;
+;※만약 이 함수를 빈번하게 이용하는 것 같으면
+;  마지막에 자리수를 되돌리지 않는 옵션 따위를 추가하면 좋다고 생각한다
+;-------------------------------------------------
+@ROUND(ARG, ARG:1 = 0, ARG:2 = 0, ARG:3 = 0)
+#FUNCTION
+;LOCAL 초기화
+VARSET LOCAL
+;ARG:1이후에 부의 값이 존재하면 처리는 실시하지 않는다
+SIF MIN(ARG:1, ARG:2, ARG:3) < 0
+	RETURNF ARG
+;유효자리수 지정을 절대자리수 지정으로 변환한다
+SIF ARG:2 != 0
+	LOCAL = LOG10(ABS(ARG)) + 1 - ARG:2
+;절대자리수 지정과 비교해, 큰 것을 채용
+LOCAL = MAX(LOCAL, ARG:3)
+;자리수 지정이 0 이하가 되면 그대로의 값을반환
+SIF LOCAL <= 0
+	RETURNF ARG
+;자리수 지정이 ARG를 초과했다경우 0을반환
+SIF LOCAL > LOG10(ABS(ARG)) + 1
+	RETURNF 0
+;최근접짝수에의 둥근 때, 배분 처리
+IF ARG:1 == 0
+	;처리하는 값을 뽑아낸다
+	LOCAL:1 = ABS(ARG) / POWER(10, LOCAL - 1) % 10
+	;하 1자리수가 4 이하라면 0에 접근
+	IF LOCAL:1 < 5
+		ARG:1 = 1
+	;하 1자리수가 6이상이라면+-∞에 접근
+	ELSEIF LOCAL:1 > 5
+		ARG:1 = 2
+	;정확히 5이면
+	ELSE
+		;처리하는 값의 1개 상에 대해우기를 판정한다
+		LOCAL:1 = ABS(ARG) / POWER(10, LOCAL) % 2
+		;짝수라면 0에 접근, 홀수라면+-∞에 접근
+		ARG:1 = LOCAL:1 + 1
+	ENDIF
+ENDIF
+;처리하는 값의 1개 위까지 일단 잘라 버린다
+LOCAL:1 = ABS(ARG) / POWER(10, LOCAL) % 10
+;절상이라면+-1을발
+SIF ARG:1 == 2
+	LOCAL:1++
+;자리수를 되돌려 결과을반환
+RETURNF SIGN(ARG) * LOCAL:1 * POWER(10, LOCAL)
+
+;-------------------------------------------------
+;그 외의 내부 처리
+;-------------------------------------------------
+;-------------------------------------------------
+;조수와 교대 함수@ASSISWAP
+;조교도중에 TARGET와 ASSI를 『일시적』, 『내부 처리적』에 교대시킨다때에 사용합니다
+;이 함수의 포인트는, TEQUIP나 EX등의 데이터는 이동하지 않는 점입니다（교대시켰다 이식하고로 데이터만 되돌리고 있다）
+;구상표시 때만 ASSI를 TARGET의 생각으로 호출한다, 라고 하는 용도에 사용합니다. 결코 그대로 하지 않는 것
+;반복하는 것 같습니다만, 『보통으로 교대했다 차면 SWAP TARGET, ASSI만 써 주세요』
+;교대중인 것은 ISSWAP 함수로 확인할 수 있습니다
+;-------------------------------------------------
+@ASSISWAP
+#LOCALSIZE 2
+;TARGET가관리 하고 있는 MASTER의 데이터를 이동
+;원래 MASTER의 데이터가 TARGET로관리 되고 있는 일자체가 저것인 생각도 들지만, 뭐 어쩔 수 없다
+;변수대이동으로 PALAM, SOURCE, EX, NOWEX의 각 변수는 각각의 캐릭터에게 이관이 끝난 상태인 것으로, 그것들의 SWAP 처리를 삭제@revkoishi(14/05/19)
+
+;조교대상가 장비 하고 있는 TEQUIP를 옮겨 바꿉니다
+FOR LOCAL:0, 10, 100
+	SWAP TEQUIP:TARGET:(LOCAL:0), TEQUIP:ASSI:(LOCAL:0)
+NEXT
+SWAP TARGET, ASSI
+LOCAL:1 = !LOCAL:1
+RETURN ISSWAP(1, LOCAL:1)
+
+@ISSWAP(ARG:0, ARG:1)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL:0 = ARG:0 ? ARG:1 # LOCAL:0
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;REACT분류설정 함수@SET_COMGRO
+;REACT분류를 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
+;-------------------------------------------------
+@SET_COMGRO(ARGS)
+TFLAG:REACT분류 = COMGRONUM(ARGS)
+IF TFLAG:REACT분류 == -1
+	CALLF PRINT_ERRORMESSAGE(@"@SET_COMGRO 에 무효인 지정(%ARGS%)가 도 사라질 수 있는 했다")
+	RETURN -1
+ENDIF
+RETURN RESULT
+
+;-------------------------------------------------
+;REACT인상설정 함수@SET_COMIMP
+;REACT인상를 캐릭터 라인으로 설정할 뿐(만큼)의 함수@이것 보고
+;-------------------------------------------------
+@SET_COMIMP(ARGS)
+IF 0
+ELSEIF ARGS == "영향없음" || ARGS == ""
+	TFLAG:REACT인상 = 0
+ELSEIF ARGS == "좋은인상"
+	TFLAG:REACT인상 = 1
+ELSEIF ARGS == "약간좋은인상"
+	TFLAG:REACT인상 = 2
+ELSEIF ARGS == "나쁜인상"
+	TFLAG:REACT인상 = 3
+ELSEIF ARGS == "악인상대"
+	TFLAG:REACT인상 = 4
+ELSEIF ARGS == "0에서멀어짐"
+	TFLAG:REACT인상 = 5
+ELSEIF ARGS == "0에가까워짐"
+	TFLAG:REACT인상 = 6
+ELSE
+;OriginalString : 
+	PRINTL 
+;OriginalString : @SET_COMIMP に無効な指定が渡されま했다
+	PRINTL @SET_COMIMP 에 무효인 지정이 건네받았습니다
+;OriginalString : 
+	PRINTL 
+ENDIF
+RETURN RESULT
+
+;-------------------------------------------------
+;의존도변화함수@ADD_DEPEND
+;상호의의존도를 동시에 가산합니다
+;인수는 TARGET·MASTER의 순서
+;-------------------------------------------------
+@ADD_DEPEND(ARG, ARG:1)
+CFLAG:TARGET:의존도 += ARG
+CFLAG:MASTER:의존도 += ARG:1
+RETURN RESULT
+
+;==================================================
+;
+;	더러운 관련 함수
+;
+;==================================================
+
+
+;-------------------------------------------------
+;함수명:SET_STAIN
+;개  요점:ARG의 ARGS에 ARGS:1의 더러움을 붙인다
+;인  수:0 더러움을 붙이는 개소
+;인  수:1 더러움의 종류
+;인  수:2 더러움을 붙이는대상
+;사용예 CALL SET_STAIN("입", "애액", TARGET)
+;-------------------------------------------------
+@SET_STAIN(ARGS, ARGS:1, ARG = -99)
+#LOCALSIZE 1
+SIF ARG == -99
+	ARG = TARGET
+SELECTCASE ARGS
+	CASE "입"
+		LOCAL = 0
+	CASE "손"
+		LOCAL = 1
+	CASE "페니스"
+		LOCAL = 2
+	CASE "보지"
+		LOCAL = 3
+	CASE "항문"
+		LOCAL = 4
+	CASE "가슴"
+		LOCAL = 5
+	CASE "발"
+		LOCAL = 6
+ENDSELECT
+SELECTCASE ARGS:1
+	CASE "애액"
+		SETBIT STAIN:ARG:LOCAL, 0
+	CASE "페니스"
+		SETBIT STAIN:ARG:LOCAL, 1
+	CASE "정액"
+		SETBIT STAIN:ARG:LOCAL, 2
+	CASE "항문"
+		SETBIT STAIN:ARG:LOCAL, 3
+	CASE "모유"
+		SETBIT STAIN:ARG:LOCAL, 4
+	CASE "피"
+		SETBIT STAIN:ARG:LOCAL, 5
+	CASE "점액"
+		SETBIT STAIN:ARG:LOCAL, 6
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:GET_STAIN
+;개  요점:ARG의 ARGS에 ARGS:1의 더러움이 붙어 있는지를 판정한다
+;인  수:0 더러움의 개소
+;인  수:1 더러움의 종류
+;인  수:2 더러움이 있는대상
+;사용예 GET_STAIN("보지", "정액", TARGET)
+;-------------------------------------------------
+@GET_STAIN(ARGS, ARGS:1, ARG = -99)
+#FUNCTION
+#LOCALSIZE 1
+SIF ARG == -99
+	ARG = TARGET
+SELECTCASE ARGS
+	CASE "입"
+		LOCAL = 0
+	CASE "손"
+		LOCAL = 1
+	CASE "페니스"
+		LOCAL = 2
+	CASE "보지"
+		LOCAL = 3
+	CASE "항문"
+		LOCAL = 4
+	CASE "가슴"
+		LOCAL = 5
+	CASE "발"
+		LOCAL = 6
+ENDSELECT
+SELECTCASE ARGS:1
+	CASE "애액"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 0)
+	CASE "페니스"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 1)
+	CASE "정액"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 2)
+	CASE "항문"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 3)
+	CASE "모유"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 4)
+	CASE "피"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 5)
+	CASE "점액"
+		RETURNF GETBIT(STAIN:ARG:LOCAL, 6)
+ENDSELECT
+
+;========================================
+;더러운 이동 함수
+;함수명:MOVE_STAIN
+;개  요점:ARG의 ARGS:1으로 ARG:1의 ARG:1의 ARGS의 사이의 더러움을 서로 이동한다
+;인  수:0 더러움이 옮기는 개소
+;인  수:1 더러움이 옮기는대상
+;인  수:2 더러움의 종류
+;인  수:3 더러움의 원의대상
+;사용예:CALL MOVE_STAIN("입", TARGET, "페니스", MASTER)
+;========================================
+@MOVE_STAIN(ARGS, ARG, ARGS:1, ARG:1)
+#LOCALSIZE 1
+SELECTCASE ARGS:1
+	CASE "입"
+		LOCAL = 0
+	CASE "손"
+		LOCAL = 1
+	CASE "페니스"
+		LOCAL = 2
+	CASE "보지"
+		LOCAL = 3
+	CASE "항문"
+		LOCAL = 4
+	CASE "가슴"
+		LOCAL = 5
+	CASE "발"
+		LOCAL = 6
+ENDSELECT
+SELECTCASE ARGS
+	CASE "입"
+		STAIN:ARG:입 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:입
+	CASE "손"
+		STAIN:ARG:손 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:손
+	CASE "페니스"
+		STAIN:ARG:페니스 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:페니스
+	CASE "보지"
+		STAIN:ARG:보지 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:보지
+	CASE "항문"
+		STAIN:ARG:항문 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:항문
+	CASE "가슴"
+		STAIN:ARG:가슴 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:가슴
+	CASE "발"
+		STAIN:ARG:발 |= STAIN:(ARG:1):LOCAL
+		STAIN:(ARG:1):LOCAL = STAIN:ARG:발
+ENDSELECT

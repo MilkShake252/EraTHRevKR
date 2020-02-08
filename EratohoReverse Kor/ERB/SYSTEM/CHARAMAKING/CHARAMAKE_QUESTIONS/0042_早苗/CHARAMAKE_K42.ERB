@@ -1,0 +1,54 @@
+﻿;早苗＠早苗様の人
+@CHARAMAKE_K42(ARG)
+PRINTFORMW 「죄송합니다、조금 묻고 싶은 게 있습니다만、괜찮을까요？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「신님은、가득 있다고 생각하시나요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 있다
+PRINTFORMDL [2] 신은 한 명 뿐
+PRINTFORMDL [3] 신 같은 건 존재하지 않아
+PRINTFORMDL [4] 내가 신이다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「무시인가요？　탈 나도 모른다구요！」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그렇네요、역시 신님은 많이 있는 게 떠득썩해서 좋지요ー」
+		PRINTFORML 「모리야 신사에는 ３명이 신님이 있어요、부디 참배하러 와주세요」
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("신경질", -10)
+	CASE 2
+		PRINTFORML 「하아 그렇습니까、현재는 일신교는 메이저하지요」
+		PRINTFORML 「우리들도 본받아서 좀 더 신자를 늘려야겠네요」
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 3
+		PRINTFORML 「인간의 힘을 대단히 높게 평가하는군요」
+		PRINTFORML 「아니면 과학이라는 신님을 깨닫지 못한 채로 신앙하고 있는 것 뿐인걸까」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("공격", 10)
+	CASE 4
+		PRINTFORML 「아、신님이셨습니까、죄송합니다 몰라뵈서」
+		PRINTFORML 「최근에는 잡다한 신님이 많아졌네요」
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+		CALLF CM_PROF("프라이드", 30)
+		
+ENDSELECT
+PRINTFORMW 「그럼、저는 제사가 있어서 이만」
+RETURN 1

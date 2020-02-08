@@ -1,0 +1,80 @@
+﻿@CHARAMAKE_K7(ARG)
+PRINTFORMW 「한참 꿈 속이겠지만、실례합니다」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「후후、좋은 꿈을 꾸고 있었던 것 같네요……」
+PRINTFORML 「조금 손을 대서 음란한 꿈을 꾸게 해드렸습니다만……」
+PRINTFORMW 「어떤 꿈이었는지 들려주시겠나요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 끝 쪽은 멋지지
+PRINTFORMDL [2] 젖가슴！젖가슴！
+PRINTFORMDL [3] 섹스는 좋아
+PRINTFORMDL [4] 엉덩이 갱장한걸ー
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……대답할 수 없을만큼 좋은 꿈이었다、는 것 같네요」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「안면 승마？상당히 좋은 꿈 아닙니까」
+		PRINTFORMDL 소악마는 가볍게 웃었다
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 60)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -20)
+	CASE 2
+		PRINTFORML 「어머나、파후파후 했던건가요？」
+		PRINTFORML 「그건 미안한 타이밍에 일으켜버린 것 같군요」
+		PRINTFORMDL 소악마는 능글능글 웃으며 당신을 보고 있다
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 60)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -20)
+	CASE 3
+		PRINTFORML 「우후후、즐기고 있었던 것 같네요」
+		PRINTFORMDL 소악마는 싱긋 웃었다
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("同性愛", -20)
+		IF TALENT:MASTER:남자
+			CALLF CM_PROF("Ｃ를 좋아하는 사람", 60)
+			CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		ELSEIF TALENT:MASTER:후타나리
+			CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+			CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+		ELSE
+			CALLF CM_PROF("Ｃ를 좋아하는 사람", -20)
+			CALLF CM_PROF("Ｖ를 좋아하는 사람", 60)
+		ENDIF
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -20)
+	CASE 4
+		PRINTFORML 「엉덩이……상당히 매니악하군요」
+		PRINTFORMDL 소악마는 조금 놀란 것 같다
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 60)
+ENDSELECT
+PRINTFORMW 「그러면 천천히、안녕히 주무세요」
+RETURN 1

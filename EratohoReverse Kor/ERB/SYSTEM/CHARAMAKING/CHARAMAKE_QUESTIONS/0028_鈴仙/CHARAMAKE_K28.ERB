@@ -1,0 +1,64 @@
+﻿@CHARAMAKE_K28(ARG)
+PRINTFORMW 「여보세ー요. 일어나셨나요ー？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「간신히 일어나주셨네요. 그럼、갑작스럽지만 질문입니다」
+PRINTFORMW 「당신이 광기에서 연상하는 것을 알려주세요」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 핑크・플로이트
+PRINTFORMDL [2] 좌약
+PRINTFORMDL [3] 광기의 눈동자
+PRINTFORMDL [4] 미셸・푸코
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「떠오르지 않으시나요？ 어쩔 수 없네요」
+		CALLF CM_PROF("지성", -30)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("프라이드", -10)
+	CASE 1
+		PRINTFORML 「뭔가요？ 그거」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("신경질", 40)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("낙관", -30)
+	CASE 2
+		PRINTFORML 「좀 의미를 모르겠네요……」
+		CALLF CM_PROF("공격", 40)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 20)
+	CASE 3
+		PRINTFORML 「우훗、꽤 좋은 말씀을 하시네요」
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("공격", -30)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「누군가요？ 들은 적 없네요」
+		CALLF CM_PROF("지성", 40)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", 30)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+ENDSELECT
+PRINTFORML 「그럼 몸 조심하세요――」
+PRINTFORMW 「상태가 좋지 않아지면 영원정으로 와주세요」
+RETURN 1
+

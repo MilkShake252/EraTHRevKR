@@ -1,0 +1,1104 @@
+﻿;────────────────────────────────────
+;애무 (손으로 10/가슴을 11/입으로 12/Ａ손 13/Ａ입 14/키스 15/Ｃ만짐 16/Ｂ만짐 17/발로 18/Ｖ손 19/로터 20/압도 27)
+;────────────────────────────────────
+@ACT_M1(ARG = 0)
+;1이상이라면 판정을 실시하지 않는다
+#DIM LCOUNT, 1
+
+;함수 초기화 ;함수 초기화
+CALL ACT_M_INIT(1)
+
+;처리 개시
+
+LOCALS = ACT_ACTM1
+
+CALL CHA_CRI_VAR, "기준치"
+CALLFORM %LOCALS%_REFERENCE
+
+CALL CHA_CRI_VAR, @"오늘의방침(%POLICY("금일")%)"
+CALLFORM %LOCALS%_POLYCY
+
+CALL CHA_CRI_VAR, "조교자의 소질"
+CALLFORM %LOCALS%_TALENT_T
+
+CALL CHA_CRI_VAR, "조교대상의 소질"
+CALLFORM %LOCALS%_TALENT_M
+
+CALL CHA_CRI_VAR, "성별에 의한보정"
+CALLFORM %LOCALS%_SEX
+
+CALL CHA_CRI_VAR, "조교자의기교"
+CALLFORM %LOCALS%_TECHNIQUE_T
+
+CALL CHA_CRI_VAR, "ABL에 의한 압도보정"
+CALLFORM %LOCALS%_PUSH_ABL
+
+CALL CHA_CRI_VAR, "LV에 의한 압도보정"
+CALLFORM %LOCALS%_ITEM_ABL_T
+
+CALL CHA_CRI_VAR, "ABL도구보정"
+CALLFORM %LOCALS%_PUSH_LV
+
+CALL CHA_CRI_VAR, "조교대상의Ｃ감각"
+CALLFORM %LOCALS%_C_M
+
+CALL CHA_CRI_VAR, "조교대상의Ａ감각"
+CALLFORM %LOCALS%_A_M
+
+CALL CHA_CRI_VAR, "조교대상의Ｂ감각"
+CALLFORM %LOCALS%_B_M
+
+CALL CHA_CRI_VAR, "조교대상의Ｖ감각"
+CALLFORM %LOCALS%_V_M
+
+CALL CHA_CRI_VAR, "조교자의죄책감"
+CALLFORM %LOCALS%_SIN_T
+
+CALL CHA_CRI_VAR, "조교자의 ALI"
+CALLFORM %LOCALS%_ALI_T
+
+CALL CHA_CRI_VAR, "조교자의체력"
+CALLFORM %LOCALS%_PHYSICAL_T
+
+CALL CHA_CRI_VAR, "조교자의기력"
+CALLFORM %LOCALS%_MENTAL_T
+
+CALL CHA_CRI_VAR, "조교자의이성"
+CALLFORM %LOCALS%_REASON_T
+
+CALL CHA_CRI_VAR, "배합지식의미약보정"
+CALLFORM %LOCALS%_DRUG
+
+CALL CHA_CRI_VAR, "바이브삽입중"
+CALLFORM %LOCALS%_VIBE
+
+CALL CHA_CRI_VAR, "A바이브비즈삽입중"
+CALLFORM %LOCALS%_AVIBE
+
+CALL CHA_CRI_VAR, "식스나인 유발"
+CALLFORM %LOCALS%_69
+
+CALL CHA_CRI_VAR, "밀어넘어짐보정"
+CALLFORM %LOCALS%_ONPUSH
+
+CALL CHA_CRI_VAR, "흥미에 의한 압도보정"
+CALLFORM %LOCALS%_INTEREST
+
+CALL CHA_CRI_VAR, "조교대상자위중"
+CALLFORM %LOCALS%_MASTURBATION_T
+
+CALL CHA_CRI_VAR, "조교자자위중"
+CALLFORM %LOCALS%_MASTURBATION_M
+
+CALL CHA_CRI_VAR, "조교자의 의복"
+CALLFORM %LOCALS%_CLOTH_T
+
+CALL CHA_CRI_VAR, "조교대상의 의복"
+CALLFORM %LOCALS%_CLOTH_M
+
+CALL CHA_CRI_VAR, "조교대상의 더러움"
+CALLFORM %LOCALS%_STAIN_M
+
+CALL CHA_CRI_VAR, "강제발기필요모드"
+CALLFORM %LOCALS%_ERECTION
+
+CALL CHA_CRI_VAR, "연속행동보정"
+CALLFORM %LOCALS%_PREV
+
+CALL CHA_CRI_VAR, "구상보정치"
+CALL ACT_ACTM_KOJO_CORRECTION_T, 1
+
+CALL CHA_CRI_VAR, "ACT보정치"
+CALLFORM %LOCALS%_CORRECTION(ARG)
+
+
+;ARG가 1이상이라면 처리 중단
+SIF ARG
+	RETURN RESULT
+
+;↓잠정
+CALL CHA_CRI_VAR, "도구커스텀 보너스"
+CALLFORM %LOCALS%_CUSTOM
+
+CALL CHA_CRI_VAR, "실행 판정"
+CALLFORM %LOCALS%_ABLE
+
+;────────────────────────────────────
+;최종판정
+;────────────────────────────────────
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
+IF LOCAL == -1
+	SIF FLAG:디버그
+;OriginalString : (애무ACT분류に実行可能なACTが存在しません)
+		PRINTL (애무ACT분류에 실행 가능한ACT가 존재하지 않습니다)
+	TFLAG:ACT = -1
+	CALL ACT_MENU_RESULT(2, "애무")
+ELSE
+	TFLAG:ACT = GET_ACTNUM(RESULTS)
+ENDIF
+CALL ANA_CRI_VAR()
+
+;-------------------------------------------
+;기준치
+;이 값은 고정
+;-------------------------------------------
+@ACT_ACTM1_REFERENCE
+
+	;실험 코드
+	SELECTCASE FLAG:항문조교옵션
+		CASE 0 ;피스팅까지 모두 허용
+			
+		CASE 1 ;손가락, 혀, 도구, 애널성교 허용
+			
+		CASE 2 ;손가락, 혀, 애널성교 허용
+			
+		CASE 3 ;손가락, 혀, 도구 허용
+			
+		CASE 4 ;손가락, 혀만 허용
+			
+		CASE 5 ;혀만 허용
+			CALL ADD_CRI_VAR("애널애무", -999)			
+		CASE 6 ;손가락만 허용
+			CALL ADD_CRI_VAR("항문펠라", -999)			
+		CASE 7 ;항문조교 불가
+			CALL ADD_CRI_VAR("애널애무", -999)
+			CALL ADD_CRI_VAR("항문펠라", -999)
+	ENDSELECT
+	
+	SELECTCASE FLAG:항문봉사옵션
+		CASE 0 ;애널성교까지 허용
+			
+		CASE 1 ;손가락, 혀만 허용
+			
+		CASE 2 ;혀만 허용
+			
+		CASE 3 ;손가락만 허용
+			
+		CASE 4 ;항문봉사 불가
+			
+	ENDSELECT
+	
+	
+;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
+[SKIPSTART]
+CALL ADD_CRI_VAR("손으로 애무", 14)
+CALL ADD_CRI_VAR("가슴애무", 14)
+CALL ADD_CRI_VAR("입으로 애무", 12)
+CALL ADD_CRI_VAR("애널애무", 10)
+CALL ADD_CRI_VAR("항문펠라", 10)
+CALL ADD_CRI_VAR("성기를 서로 비빈다", 10)
+CALL ADD_CRI_VAR("파이즈리한다", 10)
+CALL ADD_CRI_VAR("풋잡하기", 5)
+CALL ADD_CRI_VAR("로터", 0)
+CALL ADD_CRI_VAR("밀어 넘어트린다", 0)
+[SKIPEND]
+
+;-------------------------------------------------------------
+;오늘의방침
+;오늘의방침(0=언제나 대로/1=A개발/2=징계·/3=하드/4=노닥노닥/5=이상/6=야외/7=애만들기/8=휴식/9=안아/10= 봉사/11=귀여워해)
+;-------------------------------------------------------------
+@ACT_ACTM1_POLYCY
+SELECTCASE POLICY("금일")
+	CASE "항문"
+		CALL ADD_CRI_VAR("애널애무", 15)
+		CALL ADD_CRI_VAR("항문펠라", 15)
+	CASE "노닥노닥"
+		CALL ADD_CRI_VAR("키스", 15)
+	CASE "귀여워해"
+		CALL ADD_CRI_VAR("손으로 애무", -10)
+		CALL ADD_CRI_VAR("가슴애무", TALENT:MASTER:남자 ? 5 # 20)
+		CALL ADD_CRI_VAR("애널애무", -10)
+		CALL ADD_CRI_VAR("입으로 애무", 15)
+		CALL ADD_CRI_VAR("키스", 15)
+		CALL ADD_CRI_VAR("풋잡하기", -10)
+		SIF PENIS(MASTER)
+			CALL ADD_CRI_VAR("파이즈리한다", 15)
+	CASEELSE
+		;none
+ENDSELECT
+
+;-------------------------------------------------------------------------
+;조교자의 소질을 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM1_TALENT_T, ARG = -1, ARG:1 = -1
+#LOCALSIZE 2
+LOCAL = ARG == -1 ? TARGET # ARG
+LOCAL:1 = ARG:1 == -1 ? MASTER # ARG:1
+
+;조교자가겁쟁이/꿋꿋함
+IF TALENT:LOCAL:겁쟁이
+	CALL ADD_CRI_VAR("손으로 애무", -1)
+	CALL ADD_CRI_VAR("가슴애무", -1)
+	CALL ADD_CRI_VAR("입으로 애무", -3)
+	CALL ADD_CRI_VAR("애널애무", -5)
+	CALL ADD_CRI_VAR("항문펠라", -7)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -7)
+	CALL ADD_CRI_VAR("파이즈리한다", -5)
+	CALL ADD_CRI_VAR("풋잡하기", -3)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -5)
+	CALL ADD_CRI_VAR("손가락삽입", -3)
+ELSEIF TALENT:LOCAL:꿋꿋함
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 0, 2)
+ENDIF
+
+;조교자가얌전한/건방짐
+IF TALENT:LOCAL:얌전한
+	CALL ADD_CRI_VAR("키스", 3)
+	CALL ADD_CRI_VAR("풋잡하기", -2, -2)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3)
+ELSEIF TALENT:LOCAL:건방짐
+	CALL ADD_CRI_VAR("키스", -3)
+	CALL ADD_CRI_VAR("풋잡하기", 2, 2)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 3)
+ENDIF
+
+;조교자가프라이드높음/낮다
+IF TALENT:LOCAL:프라이드높음
+	CALL ADD_CRI_VAR("입으로 애무", -5)
+	CALL ADD_CRI_VAR("항문펠라", -7)
+	CALL ADD_CRI_VAR("파이즈리한다", -5)
+	CALL ADD_CRI_VAR("풋잡하기", 1, 6)
+ELSEIF TALENT:LOCAL:프라이드낮음
+	CALL ADD_CRI_VAR("입으로 애무", 5)
+	CALL ADD_CRI_VAR("항문펠라", TALENT:LOCAL:변태적 * 3, 3)
+	CALL ADD_CRI_VAR("파이즈리한다", 5)
+	CALL ADD_CRI_VAR("풋잡하기", -5)
+ENDIF
+
+;조교자가감정결여/정서적
+IF TALENT:LOCAL:감정결여
+	CALL ADD_CRI_VAR("키스", -5)
+	CALL ADD_CRI_VAR("로터", 0, 5)
+ELSEIF TALENT:LOCAL:정서적
+	CALL ADD_CRI_VAR("키스", 5)
+	CALL ADD_CRI_VAR("로터", 0, -5)
+ENDIF
+
+;조교자가일선을넘지않음
+IF TALENT:LOCAL:일선을넘지않음
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3)
+ENDIF
+
+;조교자가튀고싶어함
+IF TALENT:LOCAL:튀고싶어함
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 5)
+	CALL ADD_CRI_VAR("파이즈리한다", 5)
+	CALL ADD_CRI_VAR("풋잡하기", 3)
+ENDIF
+
+;조교자가억압/해방
+IF TALENT:LOCAL:억압
+	CALL ADD_CRI_VAR("애널애무", -5)
+	CALL ADD_CRI_VAR("항문펠라", -5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3)
+ELSEIF TALENT:LOCAL:해방
+	CALL ADD_CRI_VAR("애널애무", 3, 5)
+	CALL ADD_CRI_VAR("항문펠라", 3, 5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 3, 5)
+ENDIF
+
+;조교자가수줍음/수치없음
+IF TALENT:LOCAL:수줍음
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -7)
+	CALL ADD_CRI_VAR("파이즈리한다", -5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3)
+ELSEIF TALENT:LOCAL:수치없음
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 4, 4)
+	CALL ADD_CRI_VAR("파이즈리한다", 3, 3)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 2, 2)
+ENDIF
+
+;조교자가혀기술
+IF TALENT:LOCAL:혀기술
+	CALL ADD_CRI_VAR("입으로 애무", 3, 3)
+	CALL ADD_CRI_VAR("항문펠라", 2, 2)
+	CALL ADD_CRI_VAR("키스", 2)
+ENDIF
+;조교자가거친혀
+IF TALENT:LOCAL:거친혀
+	CALL ADD_CRI_VAR("입으로 애무", 0, 2)
+	CALL ADD_CRI_VAR("항문펠라", 0, 2)
+	CALL ADD_CRI_VAR("키스", 0, 4)
+ENDIF
+
+;조교자가 요령 있는 손가락
+IF TALENT:LOCAL:손가락기술
+	CALL ADD_CRI_VAR("손으로 애무", 3, 3)
+	CALL ADD_CRI_VAR("애널애무", 2, 2)
+	CALL ADD_CRI_VAR("손가락삽입", 5, 5)
+ENDIF
+
+;조교자가도구능숙
+SIF TALENT:LOCAL:도구능숙
+	CALL ADD_CRI_VAR("로터", 3, 3)
+
+;조교자가충동적/자제심
+IF TALENT:LOCAL:자제심
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3, 6)
+ELSEIF TALENT:LOCAL:충동적
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -7, 14)
+ELSE
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -5, 10) 
+ENDIF
+
+;조교자가더러움무시/냄새둔감/냄새민감
+IF 0
+ELSEIF TALENT:LOCAL:더러움무시
+	CALL ADD_CRI_VAR("입으로 애무", , 8)
+	CALL ADD_CRI_VAR("애널애무", , 8)
+	CALL ADD_CRI_VAR("항문펠라", , 8)
+ELSEIF TALENT:LOCAL:냄새둔감
+	CALL ADD_CRI_VAR("입으로 애무", , 6)
+	CALL ADD_CRI_VAR("애널애무", , 6)
+	CALL ADD_CRI_VAR("항문펠라", , 6)
+ELSEIF TALENT:LOCAL:냄새민감
+	CALL ADD_CRI_VAR("입으로 애무", -3)
+	CALL ADD_CRI_VAR("애널애무", -5)
+	CALL ADD_CRI_VAR("항문펠라", -7)
+ENDIF
+
+;조교자가헌신적/수동적
+IF TALENT:LOCAL:헌신적
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 3, 4)
+	CALL ADD_CRI_VAR("파이즈리한다", 3, 4)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 3, 4)
+ELSEIF TALENT:LOCAL:수동적
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -3, -4)
+	CALL ADD_CRI_VAR("파이즈리한다", -3, -4)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3, -4)
+ENDIF
+
+;조교자가쾌감에솔직/부정
+IF TALENT:LOCAL:쾌감에솔직
+	CALL ADD_CRI_VAR("키스", 1)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 3)
+	CALL ADD_CRI_VAR("파이즈리한다", 2)
+ELSEIF TALENT:LOCAL:쾌감을부정
+	CALL ADD_CRI_VAR("키스", -1)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -3)
+	CALL ADD_CRI_VAR("파이즈리한다", -2)
+ENDIF
+
+;조교자가음핵／음경
+SIF TALENT:LOCAL:음핵／음경
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 0, 12)
+
+;조교자가음유
+SIF TALENT:LOCAL:음유
+	CALL ADD_CRI_VAR("파이즈리한다", 0, 12)
+
+;조교자가변태적
+SIF TALENT:LOCAL:변태적
+	CALL ADD_CRI_VAR("풋잡하기", 3, 6)
+
+;조교자가심술궂음
+SIF TALENT:LOCAL:심술궂음
+	CALL ADD_CRI_VAR("풋잡하기", 0, 3)
+
+;조교자가유치
+SIF TALENT:LOCAL:유치
+	CALL ADD_CRI_VAR("가슴애무", 1, 5)
+
+;조교자가Ｃ민감/둔감
+IF TALENT:LOCAL:Ｃ민감
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 2, 4)
+ELSEIF TALENT:LOCAL:Ｃ둔감
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -2, -4)
+ENDIF
+
+;조교자가Ｂ민감/둔감
+IF TALENT:LOCAL:Ｂ민감
+	CALL ADD_CRI_VAR("파이즈리한다",  TALENT:(LOCAL:1):남자 ? 0 # 2, 4)
+ELSEIF TALENT:LOCAL:Ｂ둔감
+	CALL ADD_CRI_VAR("파이즈리한다",  TALENT:(LOCAL:1):남자 ? 0 # -2, -4)
+ENDIF
+
+;조교자가빈유/거유
+IF TALENT:LOCAL:빈유
+	CALL ADD_CRI_VAR("파이즈리한다", -5)
+ELSEIF TALENT:LOCAL:거유
+	CALL ADD_CRI_VAR("파이즈리한다", 5)
+ENDIF
+
+;조교자가모유체질
+IF TALENT:LOCAL:모유체질
+	CALL ADD_CRI_VAR("파이즈리한다", 0, 5)
+	CALL ADD_CRI_VAR("가슴애무", TALENT:(LOCAL:1):남자 ? 0 # 1, 5)
+ENDIF
+
+;조교자가각선미
+SIF TALENT:LOCAL:각선미
+	CALL ADD_CRI_VAR("풋잡하기", 0, 5)
+
+
+;-------------------------------------------------------------------------
+;조교대상의 소질을 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM1_TALENT_M, ARG = -1, ARG:1 = -1
+#LOCALSIZE 2
+LOCAL = ARG == -1 ? TARGET # ARG
+LOCAL:1 = ARG:1 == -1 ? MASTER # ARG:1
+;조교대상가젖기어려움
+IF TALENT:(LOCAL:1):젖기어려움
+	CALL ADD_CRI_VAR("입으로 애무", 3, 3)
+	CALL ADD_CRI_VAR("항문펠라", 3, 3)
+ENDIF
+
+;조교대상가혀기술
+SIF TALENT:(LOCAL:1):혀기술
+	CALL ADD_CRI_VAR("키스", 3, 6)
+
+;조교대상가처녀
+SIF TALENT:(LOCAL:1):처녀
+	CALL ADD_CRI_VAR("손가락삽입", -2, -2)
+
+;조교대상가음핵／음경
+IF TALENT:(LOCAL:1):음핵／음경
+	CALL ADD_CRI_VAR("손으로 애무", 0, 7)
+	CALL ADD_CRI_VAR("입으로 애무", 0, 9)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 0, 8)
+	CALL ADD_CRI_VAR("파이즈리한다", 0, 6)
+	CALL ADD_CRI_VAR("풋잡하기", 0, 8)
+	CALL ADD_CRI_VAR("로터", 0, 11)
+ENDIF
+
+;조교대상가음고
+IF TALENT:(LOCAL:1):음고
+	CALL ADD_CRI_VAR("애널애무", 0, 9)
+	CALL ADD_CRI_VAR("항문펠라", 0, 9)
+ENDIF
+
+;조교대상가음유
+IF TALENT:(LOCAL:1):음유
+	CALL ADD_CRI_VAR("손으로 애무", 0, 7)
+	CALL ADD_CRI_VAR("가슴애무", 0, 11)
+ENDIF
+
+;조교대상가음호
+IF TALENT:(LOCAL:1):음호
+	CALL ADD_CRI_VAR("손가락삽입", 0, 11)
+ENDIF
+
+;조교대상가위압감
+SIF TALENT:(LOCAL:1):위압감
+	CALL ADD_CRI_VAR("풋잡하기", -5)
+
+;조교대상가매혹
+IF TALENT:(LOCAL:1):매혹
+	CALL ADD_CRI_VAR("키스", 2, 5)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 0, 5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 0, 5)
+ENDIF
+
+;조교대상가친절함/까다로움
+IF TALENT:(LOCAL:1):친절함
+	CALL ADD_CRI_VAR("키스", 5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 3)
+ELSEIF TALENT:(LOCAL:1):까다로움
+	CALL ADD_CRI_VAR("키스", -5)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", -3)
+ENDIF
+
+;조교대상가Ｃ민감/둔감
+IF TALENT:(LOCAL:1):Ｃ민감
+	CALL ADD_CRI_VAR("손으로 애무", 3, 4)
+	CALL ADD_CRI_VAR("입으로 애무", 4, 3)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", 1, 6)
+	CALL ADD_CRI_VAR("파이즈리한다", 2, 5)
+	CALL ADD_CRI_VAR("풋잡하기", 0, 7)
+	CALL ADD_CRI_VAR("로터", 5, 2)
+ELSEIF TALENT:(LOCAL:1):Ｃ둔감
+	CALL ADD_CRI_VAR("손으로 애무", -3, -4)
+	CALL ADD_CRI_VAR("입으로 애무", -4, -3)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -1, -6)
+	CALL ADD_CRI_VAR("파이즈리한다", -2, -5)
+	CALL ADD_CRI_VAR("풋잡하기", 0, -7)
+	CALL ADD_CRI_VAR("로터", -5, -2)
+ENDIF
+
+;조교대상가Ａ민감/둔감
+IF TALENT:(LOCAL:1):Ａ민감
+	CALL ADD_CRI_VAR("애널애무", 3, 6)
+	CALL ADD_CRI_VAR("항문펠라", 1, 8)
+ELSEIF TALENT:(LOCAL:1):Ａ둔감
+	CALL ADD_CRI_VAR("애널애무", -3, -6)
+	CALL ADD_CRI_VAR("항문펠라", -1, -8)
+ENDIF
+
+;조교대상가Ｂ민감/둔감
+IF TALENT:(LOCAL:1):Ｂ민감
+	CALL ADD_CRI_VAR("손으로 애무", 1, 5)
+	CALL ADD_CRI_VAR("가슴애무", 5, 4)
+ELSEIF TALENT:(LOCAL:1):Ｂ둔감
+	CALL ADD_CRI_VAR("손으로 애무", -1, -4)
+	CALL ADD_CRI_VAR("가슴애무", -5, -4)
+ENDIF
+
+;조교대상가Ｖ민감/둔감
+IF TALENT:(LOCAL:1):Ｖ민감
+	CALL ADD_CRI_VAR("손가락삽입", 5, 4)
+ELSEIF TALENT:(LOCAL:1):Ｖ둔감
+	CALL ADD_CRI_VAR("손가락삽입", -5, -4)
+ENDIF
+
+;조교대상가빈유/거유
+IF TALENT:(LOCAL:1):빈유
+	CALL ADD_CRI_VAR("가슴애무", 0, -5)
+ELSEIF TALENT:(LOCAL:1):거유
+	CALL ADD_CRI_VAR("가슴애무", 3, 3)
+ENDIF
+
+;조교대상가후타나리
+IF TALENT:(LOCAL:1):후타나리
+	CALL ADD_CRI_VAR("손으로 애무", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 2)
+	CALL ADD_CRI_VAR("입으로 애무", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 4)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 4)
+	CALL ADD_CRI_VAR("파이즈리한다", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 2)
+	CALL ADD_CRI_VAR("풋잡하기", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 4)
+	CALL ADD_CRI_VAR("손가락삽입", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, 4)
+	CALL ADD_CRI_VAR("애널애무", TALENT:LOCAL:호기심 * 3 - TALENT:LOCAL:무관심, -2)
+ENDIF
+
+;조교대상이남자
+SIF TALENT:(LOCAL:1):남자
+	CALL ADD_CRI_VAR("가슴애무", -3)
+
+;-------------------------------------------------------------------------
+;성별 관계를 참조 ;성별 관계를 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM1_SEX, ARG = -1, ARG:1 = -1
+#LOCALSIZE 2
+LOCAL = ARG == -1 ? TARGET # ARG
+LOCAL:1 = ARG:1 == -1 ? MASTER # ARG:1
+
+;조교자에바이가 없고, 여자끼리
+IF !TALENT:LOCAL:남자 && !TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:바이
+	;조교자의레즈끼가[0→-2, 1→-1, 2→0]을 가산(-2～0)
+	CALL ADD_CRI_VAR("키스", LINE_CALC(ABL:LOCAL:레즈끼, "0→-2, 2→0, LIMIT/-2～0"))
+	;조교자의레즈끼가[0→-3, 1→-2, 2→-1, 3→0]을 가산(-3～0)
+	CALL ADD_CRI_VAR("입으로 애무", LINE_CALC(ABL:LOCAL:레즈끼, "0→-3, 3→0, LIMIT/-3～0"))
+	CALL ADD_CRI_VAR("파이즈리한다", LINE_CALC(ABL:LOCAL:레즈끼, "0→-3, 3→0, LIMIT/-3～0"))
+	CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(ABL:LOCAL:레즈끼, "0→-3, 3→0, LIMIT/-3～0"))
+	;조교자의레즈끼가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
+	CALL ADD_CRI_VAR("애널애무", LINE_CALC(ABL:LOCAL:레즈끼, "0→-4, 4→0, LIMIT/-4～0"))
+	;조교자의레즈끼가[0→-5, 1→-4, 2→-3, 3→-2, 4→-1]을 가산(-5～0)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", LINE_CALC(ABL:LOCAL:레즈끼, "0→-5, 4→-1, LIMIT/-5～0"))
+	;조교자의레즈끼가[0→-6, 1→-5, 2→-4, 3→-3, 4→-2]를 가산(-6～0)
+	CALL ADD_CRI_VAR("항문펠라", LINE_CALC(ABL:LOCAL:레즈끼, "0→-6, 4→-2, LIMIT/-6～0"))
+	
+	;조교자의레즈중독가[0→0, 1→0～2, 2→0～4, 3→0～6, 4→0～8]을 가산(0～8)
+	CALL ADD_CRI_VAR("가슴애무", , LINE_CALC(ABL:LOCAL:레즈중독, "0→0, 4→8, LIMIT/0～8"))
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", , LINE_CALC(ABL:LOCAL:레즈중독, "0→0, 4→8, LIMIT/0～8"))
+	CALL ADD_CRI_VAR("파이즈리한다", , LINE_CALC(ABL:LOCAL:레즈중독, "0→0, 4→8, LIMIT/0～8"))
+	CALL ADD_CRI_VAR("손가락삽입", , LINE_CALC(ABL:LOCAL:레즈중독, "0→0, 4→8, LIMIT/0～8"))
+ENDIF
+
+;조교자에바이가 없고, 남자끼리
+IF TALENT:LOCAL:남자 && TALENT:(LOCAL:1):남자 && !TALENT:LOCAL:바이
+	;조교자의ＢＬ끼가[0→-3, 1→-2, 2→-1, 3→0]을 가산(-3～0)
+	CALL ADD_CRI_VAR("키스", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-3, 3→0, LIMIT/-3～0"))
+	;조교자의ＢＬ끼가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
+	CALL ADD_CRI_VAR("애널애무", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
+	CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
+	CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-4, 4→0, LIMIT/-4～0"))
+	;조교자의ＢＬ끼가[0→-5, 1→-4, 2→-3, 3→-2, 4→-1]을 가산(-5～0)
+	CALL ADD_CRI_VAR("항문펠라", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-5, 4→-1, LIMIT/-5～0"))
+	;조교자의ＢＬ끼가[0→-6, 1→-5, 2→-4, 3→-3, 4→-2]를 가산(-6～0)
+	CALL ADD_CRI_VAR("입으로 애무", LINE_CALC(ABL:LOCAL:ＢＬ끼, "0→-6, 4→-2, LIMIT/-6～0"))
+ENDIF
+
+;조교자가남성혐오로, 조교대상이남자. 진전도에 응해-보정를 약간 완화
+IF TALENT:LOCAL:남성혐오 && TALENT:(LOCAL:1):남자
+	CALL ADD_CRI_VAR("손으로 애무", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+	CALL ADD_CRI_VAR("입으로 애무", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -3 # -5)
+	CALL ADD_CRI_VAR("애널애무", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+	CALL ADD_CRI_VAR("항문펠라", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+	CALL ADD_CRI_VAR("키스", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -3 # -5)
+	CALL ADD_CRI_VAR("파이즈리한다", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -3 # -5)
+	CALL ADD_CRI_VAR("풋잡하기", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+	CALL ADD_CRI_VAR("밀어 넘어트린다", CFLAG:M호의 + CFLAG:호의 >= 10000 ? -1 # -3)
+ENDIF
+
+;────────────────────────────────────
+;능력에 의한 변동 ;능력에의한변동
+;────────────────────────────────────
+@ACT_ACTM1_TECHNIQUE_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+
+;조교자의기교가[1→0, 2→0～2, 3→0～4, 4→0～6, 5→0～8]을 가산(0～8)
+CALL ADD_CRI_VAR("밀어 넘어트린다", , LINE_CALC(ABL:LOCAL:기교, "1→0, 5→8, LIMIT/0～8"))
+;조교자의기교가[0→-4, 1→-3～-2, 2→-2～0, 3→-1～2, 4→0～4, 5→0～5]를 가산(-4～5)
+CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(ABL:LOCAL:기교, "0→-4, 4→0, LIMIT/-4～0"), LINE_CALC(ABL:LOCAL:기교, "0→0, 5→5, LIMIT/0～5"))
+;조교자의기교가[0→-4, 1→-3, 2→-2, 3→-1, 4→0]을 가산(-4～0)
+CALL ADD_CRI_VAR("성기를 서로 비빈다", LINE_CALC(ABL:LOCAL:기교, "0→-4, 4→0, LIMIT/-4～0"))
+CALL ADD_CRI_VAR("파이즈리한다", LINE_CALC(ABL:LOCAL:기교, "0→-4, 4→0, LIMIT/-4～0"))
+CALL ADD_CRI_VAR("손가락삽입", LINE_CALC(ABL:LOCAL:기교, "0→-4, 4→0, LIMIT/-4～0"))
+
+;-------------------------------------------------------------------------
+;압했다벙어리 ABL보정
+;-------------------------------------------------------------------------
+@ACT_ACTM1_PUSH_ABL, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+
+;조교자의 능력치가 크면밀어 넘어트린다
+;욕망 4 이상
+IF ABL:LOCAL:욕망 > 3
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 7, 4)
+;Ｖ감각 3 이상
+ELSEIF ABL:LOCAL:Ｖ감각 > 2
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 5, 4)
+;Ｃ감각 2 이상
+ELSEIF ABL:LOCAL:Ｃ감각 > 1
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 3, 4)
+;기교 1 이상
+ELSEIF ABL:LOCAL:기교 > 0
+	CALL ADD_CRI_VAR("밀어 넘어트린다", 0, 4)
+ENDIF
+
+;-------------------------------------------------------------------------
+;압했다벙어리 LV보정
+;-------------------------------------------------------------------------
+@ACT_ACTM1_PUSH_LV, ARG = -1, ARG:1 = -1
+#LOCALSIZE 3
+LOCAL = ARG == -1 ? TARGET # ARG
+LOCAL:1 = ARG:1 == -1 ? MASTER # ARG:1
+
+;조교자와조교대상의조교Lv의 합계. 값이 크면밀어 넘어트린다
+LOCAL:2 = CFLAG:LOCAL:조교레벨 + CFLAG:(LOCAL:1):조교레벨
+;가[0→-5, 4→0～1, 8→5～8, 12→10～15]를 가산(-5～15)
+CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(LOCAL:2, "0→-5, 12→10, LIMIT/-5～10"), LINE_CALC(LOCAL:2, "4→1, 12→5, LIMIT/0～5"))
+
+@ACT_ACTM1_ITEM_ABL_T, ARG = -1
+;조교자의도구가[0→0, 1→1, 2→1～2, 3→2～3, 4→2～4, 5→3～5]를 가산(0～5)
+CALL ADD_CRI_VAR("로터", LINE_CALC(ABL:LOCAL:도구, "1→1, 3→2, LIMIT/0～3"), LINE_CALC(ABL:LOCAL:도구, "2→1, 4→2, LIMIT/0～2"))
+
+;조교대상의Ｃ감각. 조교가 진행된상태로 보통애무는 물건발리나구 되겠지요
+@ACT_ACTM1_C_M, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? MASTER # ARG
+;가[0→0, 1→3, 2→6, 3→9, 4→6, 5→2]를 가산(0～9)
+CALL ADD_CRI_VAR("손으로 애무", LINE_CALC(ABL:LOCAL:Ｃ감각, "0→0, 3→9, 5→2, LIMIT/0～9"))
+;가[0→0, 1→0～1, 2→0～2, 3→3, 4→0～4, 5→7]을 가산(0～7)
+CALL ADD_CRI_VAR("입으로 애무", , LINE_CALC(ABL:LOCAL:Ｃ감각, "0→0, 3→3, 5→7, LIMIT/0～7"))
+;가[0→0, 1→0～1, 2→0～3, 3→5]를 가산(0～5)
+CALL ADD_CRI_VAR("성기를 서로 비빈다", , LINE_CALC(ABL:LOCAL:Ｃ감각, "1→1, 3→5, LIMIT/0～5"))
+;가[0→0, 1→0～1, 2→0～3, 3→0～5, 4→7]을 가산(0～7)
+CALL ADD_CRI_VAR("파이즈리한다", , LINE_CALC(ABL:LOCAL:Ｃ감각, "1→1, 4→7, LIMIT/0～7"))
+;가[3→0, 4→3, 5→6]을 가산(0～6)
+CALL ADD_CRI_VAR("풋잡하기", , LINE_CALC(ABL:LOCAL:Ｃ감각, "3→0, 4→3, 5→6, LIMIT/0～6"))
+
+;조교대상의Ａ감각
+@ACT_ACTM1_A_M, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? MASTER # ARG
+;가[0→0～2, 1→0～4, 2→1～7, 3→2～10, 4→1～7, 5→0～4]를 가산(0～10)
+CALL ADD_CRI_VAR("애널애무", LINE_CALC(ABL:LOCAL:Ａ감각, "1→0, 3→2, 5→0, LIMIT/0～2"), LINE_CALC(ABL:LOCAL:Ａ감각, "1→4, 3→8, 5→4, LIMIT/2～8"))
+CALL ADD_CRI_VAR("항문펠라", LINE_CALC(ABL:LOCAL:Ａ감각, "1→0, 3→2, 5→0, LIMIT/0～2"), LINE_CALC(ABL:LOCAL:Ａ감각, "1→4, 3→8, 5→4, LIMIT/2～8"))
+
+;조교대상의Ｂ감각
+@ACT_ACTM1_B_M, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? MASTER # ARG
+;가[0→0～1, 1→1～3, 2→2～5, 3→3～7, 4→2～5, 5→1～3]을 가산(0～7)
+CALL ADD_CRI_VAR("손으로 애무", LINE_CALC(ABL:LOCAL:Ｂ감각, "0→0, 3→3, 5→1, LIMIT/0～3"), LINE_CALC(ABL:LOCAL:Ｂ감각, "0→1, 3→4, 5→2, LIMIT/1～4"))
+;가[0→0～3, 1→1～5, 2→2～7, 3→3～9, 4→2～7, 5→1～5]를 가산(0～9)
+CALL ADD_CRI_VAR("가슴애무", LINE_CALC(ABL:LOCAL:Ｂ감각, "0→0, 3→3, 5→1, LIMIT/0～3"), LINE_CALC(ABL:LOCAL:Ｂ감각, "0→3, 3→6, 5→4, LIMIT/3～6"))
+
+;조교대상의Ｖ감각
+@ACT_ACTM1_V_M, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? MASTER # ARG
+;가[0→0～3, 1→1～5, 2→2～7, 3→3～9, 4→2～7, 5→1～5]를 가산(0～9)
+CALL ADD_CRI_VAR("손가락삽입", LINE_CALC(ABL:LOCAL:Ｖ감각, "0→0, 3→3, 5→1, LIMIT/0～3"), LINE_CALC(ABL:LOCAL:Ｖ감각, "0→3, 3→6, 5→4, LIMIT/3～6"))
+
+;조교자의죄책감
+@ACT_ACTM1_SIN_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;죄책감가[60→0, 100→-2]를 가산(-2～0)
+CALL ADD_CRI_VAR("애널애무", LINE_CALC(CFLAG:LOCAL:죄책감, "60→0, 100→-2, LIMIT/-2～0"))
+;죄책감가[40→0, 100→-3]을 가산(-3～0)
+CALL ADD_CRI_VAR("항문펠라", LINE_CALC(CFLAG:LOCAL:죄책감, "40→0, 100→-3, LIMIT/-3～0"))
+;죄책감가[0→0, 100→-5]를 가산(-5～0)
+CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(CFLAG:LOCAL:죄책감, "0→0, 100→-5, LIMIT/-5～0"))
+
+;얼라이먼트
+@ACT_ACTM1_ALI_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;가[-50→-3, 50→3]을 가산(-3～3)
+CALL ADD_CRI_VAR("키스", LINE_CALC(CFLAG:LOCAL:얼라이먼트, "-50→-3, 50→3, LIMIT/-3～3"))
+;가[-50→3, 50→-3]을 가산(-3～3)
+CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(CFLAG:LOCAL:얼라이먼트, "-50→3, 50→-3, LIMIT/-3～3"))
+
+;────────────────────────────────────
+;게이지나상태에 의한 변동
+;────────────────────────────────────
+;-------------------------------------
+;조교자의체력
+;-------------------------------------
+@ACT_ACTM1_PHYSICAL_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+
+;조교자의체력가[0→-1, 500→0]을 가산(-1～0)
+CALL ADD_CRI_VAR("손으로 애무", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("손가락삽입", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("가슴애무", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("입으로 애무", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("애널애무", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("항문펠라", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(BASE:LOCAL:체력, "0→-1, 500→0, LIMIT/-1～0"))
+;조교자의체력가[0→-2, 1000→0]을 가산(-2～0)
+CALL ADD_CRI_VAR("파이즈리한다", LINE_CALC(BASE:LOCAL:체력, "0→-2, 1000→0, LIMIT/-2～0"))
+;조교자의체력가[0→-3, 1500→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("성기를 서로 비빈다", LINE_CALC(BASE:LOCAL:체력, "0→-3, 1500→0, LIMIT/-3～0"))
+CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(BASE:LOCAL:체력, "0→-3, 1500→0, LIMIT/-3～0"))
+
+;-------------------------------------
+;조교자의기력
+;-------------------------------------
+@ACT_ACTM1_MENTAL_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+
+;조교자의기력가[0→-2, 500→0]을 가산(-2～0)
+CALL ADD_CRI_VAR("입으로 애무", LINE_CALC(BASE:LOCAL:기력, "0→-2, 500→0, LIMIT/-2～0"))
+CALL ADD_CRI_VAR("애널애무", LINE_CALC(BASE:LOCAL:기력, "0→-2, 500→0, LIMIT/-2～0"))
+CALL ADD_CRI_VAR("항문펠라", LINE_CALC(BASE:LOCAL:기력, "0→-2, 500→0, LIMIT/-2～0"))
+CALL ADD_CRI_VAR("풋잡하기", LINE_CALC(BASE:LOCAL:기력, "0→-2, 500→0, LIMIT/-2～0"))
+CALL ADD_CRI_VAR("손가락삽입", LINE_CALC(BASE:LOCAL:기력, "0→-2, 500→0, LIMIT/-2～0"))
+;조교자의기력가[0→-3, 750→0]을 가산(-3～0)
+CALL ADD_CRI_VAR("성기를 서로 비빈다", LINE_CALC(BASE:LOCAL:기력, "0→-3, 750→0, LIMIT/-3～0"))
+CALL ADD_CRI_VAR("파이즈리한다", LINE_CALC(BASE:LOCAL:기력, "0→-3, 750→0, LIMIT/-3～0"))
+CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(BASE:LOCAL:기력, "0→-3, 750→0, LIMIT/-3～0"))
+
+
+;-------------------------------------
+;조교자의이성
+;-------------------------------------
+@ACT_ACTM1_REASON_T, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+
+;조교자의상태(0=통상/1=피폐/2=쇠약/3=무기력/4=몽롱/5=정욕/6=분노/7=싫증/8=울상)
+SELECTCASE GET_CONDITION(TARGET)
+	CASE "몽롱"
+		CALL ADD_CRI_VAR("손으로 애무", 0, -8)
+		CALL ADD_CRI_VAR("가슴애무", 0, -8)
+		CALL ADD_CRI_VAR("입으로 애무", 0, -8)
+		CALL ADD_CRI_VAR("애널애무", 0, -12)
+		CALL ADD_CRI_VAR("항문펠라", 0, -12)
+		CALL ADD_CRI_VAR("손가락삽입", 0, -8)
+		CALL ADD_CRI_VAR("키스", 0, -5)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", 0, -12)
+		CALL ADD_CRI_VAR("파이즈리한다", 0, -12)
+		CALL ADD_CRI_VAR("풋잡하기", 0, -10)
+		CALL ADD_CRI_VAR("로터", -5, -5)
+		CALL ADD_CRI_VAR("밀어 넘어트린다", 0, -12)
+	CASE "정욕"
+		CALL ADD_CRI_VAR("입으로 애무", 5, 3)
+		CALL ADD_CRI_VAR("항문펠라", 4, 2)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", 5, 3)
+		CALL ADD_CRI_VAR("밀어 넘어트린다", 5, 3)
+	CASE "싫증"
+		CALL ADD_CRI_VAR("풋잡하기", 0, 10)
+ENDSELECT
+
+
+;────────────────────────────────────
+;전회의행동나 상황에 의한 변동
+;────────────────────────────────────
+;미약입옮기기의 실행
+;미약효과중이 아니고, 조교자가배합지식
+@ACT_ACTM1_DRUG, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+SIF !TEQUIP:미약 && TALENT:LOCAL:배합지식
+	CALL ADD_CRI_VAR("키스", 5, 8)
+
+@ACT_ACTM1_VIBE, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;장착기구를 작동시킨다
+;바이브
+SIF TEQUIP:바이브
+	CALL ADD_CRI_VAR("손으로 애무", 3, 5)
+
+@ACT_ACTM1_AVIBE, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;애널바이브/애널비즈
+SIF TEQUIP:애널바이브 || TEQUIP:애널비즈
+	CALL ADD_CRI_VAR("애널애무", 3 + TEQUIP:애널비즈 * 5, 5)
+
+@ACT_ACTM1_69, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;식스나인에의경향
+SIF IS_PREVACTNAME("손으로 애무를 강요/입으로 애무를 강요")
+	CALL ADD_CRI_VAR("입으로 애무", 5, 4)
+
+@ACT_ACTM1_ONPUSH, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;압도중
+IF TEQUIP:밀어넘어지는중
+	;오늘의방침 마다의보정
+	SELECTCASE POLICY("금일")
+		CASE "항문"
+			CALL ADD_CRI_VAR("입으로 애무", 15)
+			CALL ADD_CRI_VAR("애널애무", 15)
+		CASE "노닥노닥"
+			CALL ADD_CRI_VAR("키스", 15)
+			CALL ADD_CRI_VAR("가슴애무강제", 15)
+	ENDSELECT
+	;CALL ADD_CRI_VAR("키스", -5) <<-------이니까 minus보정 하고 있던 것일 것이다…?
+	;강부디기모드가 아니다
+	IF !TCVAR:MASTER:강제발기필요
+		SELECTCASE TFLAG:전ACT
+			CASE 10
+				CALL ADD_CRI_VAR("손으로 애무", 15)
+			CASE 11
+				SIF !TALENT:LOCAL:남자
+					CALL ADD_CRI_VAR("가슴애무", 15)
+			CASE 12
+				CALL ADD_CRI_VAR("입으로 애무", 15)
+			CASE 13
+				CALL ADD_CRI_VAR("애널애무", 15)
+			CASE 14
+				CALL ADD_CRI_VAR("항문펠라", 15)
+			CASE 16
+				CALL ADD_CRI_VAR("성기를 서로 비빈다", 15)
+			CASE 17
+				CALL ADD_CRI_VAR("파이즈리한다", 15)
+			CASE 18
+				CALL ADD_CRI_VAR("풋잡하기", 15)
+			CASE 19
+				CALL ADD_CRI_VAR("손가락삽입", 15)
+			CASE 20
+				CALL ADD_CRI_VAR("로터", 15)
+		ENDSELECT
+	ENDIF
+ENDIF
+
+@ACT_ACTM1_INTEREST, ARG = -1
+#LOCALSIZE 1
+LOCAL = ARG == -1 ? TARGET # ARG
+;조교자의흥미(흥미가 없으면 밀어 넘어뜨리지 않도록)
+;가[0→-30, 600→0]을 가산(-30～0)
+CALL ADD_CRI_VAR("밀어 넘어트린다", LINE_CALC(BASE:LOCAL:흥미, "0→-30, 600→0, LIMIT/-30～0"))
+
+@ACT_ACTM1_MASTURBATION_T
+;조교대상가자위중
+IF GETBIT(TEQUIP:자위중, 0)
+	CALL ADD_CRI_VAR("손으로 애무", -10)
+	CALL ADD_CRI_VAR("입으로 애무", -10)
+	CALL ADD_CRI_VAR("애널애무", 1, 2)
+	CALL ADD_CRI_VAR("항문펠라", 0, 1)
+	CALL ADD_CRI_VAR("손가락삽입", 0, 1)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", -10)
+	CALL ADD_CRI_VAR("파이즈리한다", -10)
+	CALL ADD_CRI_VAR("풋잡하기", -10)
+	CALL ADD_CRI_VAR("로터", 3)
+ENDIF
+
+@ACT_ACTM1_MASTURBATION_M
+;조교자가자위중
+IF GETBIT(TEQUIP:자위중, 1)
+	CALL ADD_CRI_VAR("성기를 서로 비빈다", TEQUIP:자위중 == 3 ? 5 # 0)
+	CALL ADD_CRI_VAR("파이즈리한다", -3)
+	CALL ADD_CRI_VAR("풋잡하기", -3)
+ENDIF
+
+;애무계는, 조교대상의의상패널티를벽통과로 무시할 수 있다
+;현상 청아 전용입니다만. 유카리와 라든지도 할 수 있을 것 같지만 말야
+;머지않아, 의상를 찢거나 하는 처리에 유용할 수 있을지도 몰라?
+
+@ACT_ACTM1_CLOTH_T
+;조교자에벽통과가 없다
+IF !TALENT:벽통과
+	;조교대상의하반신겉옷로 방해될 때
+	IF CLOTHESTYPE(1, 1) == 2
+		CALL ADD_CRI_VAR("손으로 애무", -3)
+		CALL ADD_CRI_VAR("입으로 애무", -3)
+		CALL ADD_CRI_VAR("애널애무", -3)
+		CALL ADD_CRI_VAR("항문펠라", -3)
+		CALL ADD_CRI_VAR("풋잡하기", -3)
+	;조교대상의하반신겉옷가 있을 때
+	ELSEIF CLOTHESTYPE(1, 1)
+		CALL ADD_CRI_VAR("손으로 애무", -2)
+		CALL ADD_CRI_VAR("입으로 애무", -2)
+		CALL ADD_CRI_VAR("애널애무", -2)
+		CALL ADD_CRI_VAR("항문펠라", -2)
+		CALL ADD_CRI_VAR("풋잡하기", -2)
+	ENDIF
+
+	;조교대상의상반신겉옷가 있을 때
+	SIF CLOTHESTYPE(1, 3)
+		CALL ADD_CRI_VAR("가슴애무", -3)
+
+	;조교대상의하반신속옷가 있을 때
+	IF CLOTHESTYPE(1, 0)
+		CALL ADD_CRI_VAR("손으로 애무", -1)
+		CALL ADD_CRI_VAR("입으로 애무", -2)
+		CALL ADD_CRI_VAR("애널애무", -2)
+		CALL ADD_CRI_VAR("항문펠라", -2)
+		CALL ADD_CRI_VAR("풋잡하기", -1)
+		CALL ADD_CRI_VAR("로터", -1)
+	ENDIF
+
+	;조교대상의상반신속옷가 있을 때
+	SIF CLOTHESTYPE(1, 2)
+		CALL ADD_CRI_VAR("가슴애무", -2)
+ENDIF
+
+@ACT_ACTM1_CLOTH_M
+;조교자가악세서리가장갑
+IF TEQUIP:악세서리 == 1
+	CALL ADD_CRI_VAR("손으로 애무", 2 + TALENT:냄새민감 * 2, 4)
+	CALL ADD_CRI_VAR("손가락삽입", 2 + TALENT:냄새민감 * 2, 4)
+ENDIF
+
+;조교자가양말류를 몸에 익히고 있다
+SIF TEQUIP:양말
+	CALL ADD_CRI_VAR("풋잡하기", 2 + TEQUIP:양말, 3)
+
+@ACT_ACTM1_STAIN_M
+;더러운 따위의 처리(조교자에더러움무시가 없는 경우)
+IF !TALENT:더러움무시
+	;조교대상의입
+	;<Ｖ><Ｐ><정액><Ａ><피><점액>의 몇개의 더러움이 있다
+	SIF STAIN:MASTER:입 & 0b01101111
+		CALL ADD_CRI_VAR("키스", -3)
+	;<정액><Ａ><피>의 몇개의 더러움이 있다
+	SIF STAIN:MASTER:입 & 0b00101100
+		CALL ADD_CRI_VAR("키스", -2)
+	;<점액>더러움이 있다
+	SIF STAIN:MASTER:입 & 0b01000000
+		CALL ADD_CRI_VAR("키스", -3)
+	;조교대상의Ｐ
+	;<정액><Ａ><피>의 몇개의 더러움이 있다
+	IF STAIN:MASTER:페니스 & 0b00101100
+		CALL ADD_CRI_VAR("손으로 애무", -2)
+		CALL ADD_CRI_VAR("입으로 애무", -3)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", -3)
+		CALL ADD_CRI_VAR("파이즈리한다", -2)
+		CALL ADD_CRI_VAR("풋잡하기", -1)
+	ENDIF
+	;<점액>더러움이 있다
+	IF STAIN:MASTER:페니스 & 0b01000000
+		CALL ADD_CRI_VAR("손으로 애무", -3)
+		CALL ADD_CRI_VAR("입으로 애무", -6)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", -4)
+		CALL ADD_CRI_VAR("파이즈리한다", -5)
+		CALL ADD_CRI_VAR("풋잡하기", -2)
+	ENDIF
+	;조교대상의Ｖ
+	;<정액><Ａ><피>의 몇개의 더러움이 있다
+	IF STAIN:MASTER:보지 & 0b00101100
+		CALL ADD_CRI_VAR("손으로 애무", -2)
+		CALL ADD_CRI_VAR("손가락삽입", -2)
+		CALL ADD_CRI_VAR("입으로 애무", -3)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", -3)
+		CALL ADD_CRI_VAR("파이즈리한다", -4)
+		CALL ADD_CRI_VAR("풋잡하기", -1)
+	ENDIF
+	;<점액>더러움이 있다
+	IF STAIN:MASTER:보지 & 0b01000000
+		CALL ADD_CRI_VAR("손으로 애무", -3)
+		CALL ADD_CRI_VAR("손가락삽입", -3)
+		CALL ADD_CRI_VAR("입으로 애무", -6)
+		CALL ADD_CRI_VAR("성기를 서로 비빈다", -4)
+		CALL ADD_CRI_VAR("파이즈리한다", -5)
+		CALL ADD_CRI_VAR("풋잡하기", -2)
+	ENDIF
+	;조교대상의Ａ
+	;<정><혈>의 몇개의 더러움이 있다
+	IF STAIN:MASTER:항문 & 0b00100100
+		CALL ADD_CRI_VAR("애널애무", -2)
+		CALL ADD_CRI_VAR("항문펠라", -3)
+	ENDIF
+	;<점액>더러움이 있다
+	IF STAIN:MASTER:항문 & 0b01000000
+		CALL ADD_CRI_VAR("애널애무", -4)
+		CALL ADD_CRI_VAR("항문펠라", -6)
+	ENDIF
+	;조교대상의Ｂ
+	;<Ｖ><Ｐ><정액><Ａ><피><점액>의 몇개의 더러움이 있다
+	SIF STAIN:MASTER:가슴 & 0b01101111
+		CALL ADD_CRI_VAR("가슴애무", -2)
+	;<Ｐ><피>의 몇개의 더러움이 있다
+	SIF STAIN:MASTER:가슴 & 0b00100010
+		CALL ADD_CRI_VAR("가슴애무", -1)
+	;<정액><Ａ>의 몇개의 더러움이 있다
+	SIF STAIN:MASTER:가슴 & 0b00001100
+		CALL ADD_CRI_VAR("가슴애무", -2)
+	;<점액>더러움이 있다
+	SIF STAIN:MASTER:가슴 & 0b01000000
+		CALL ADD_CRI_VAR("가슴애무", -3)
+ENDIF
+
+@ACT_ACTM1_ERECTION
+;강부디기모드(조교대상에페니스가 있는 경우만)
+IF TCVAR:MASTER:강제발기필요 && TALENT:MASTER:남자
+	;발기도가[200→5, 1000→0]을 가산(0～5)
+	CALL ADD_CRI_VAR("애널애무", LINE_CALC(BASE:LOCAL:기력, "200→5, 1000→0, LIMIT/0～5"))
+ELSEIF TCVAR:MASTER:강제발기필요 && TALENT:MASTER:후타나리
+	;발기도가[200→5, 1000→0]을 가산(0～5)
+	CALL ADD_CRI_VAR("손가락삽입", LINE_CALC(BASE:LOCAL:기력, "200→5, 1000→0, LIMIT/0～5"))
+ENDIF
+
+;────────────────────────────────────
+;같은행동연속실행의 확률을 다운합니다
+;────────────────────────────────────
+@ACT_ACTM1_PREV
+#LOCALSIZE 200
+;압도중이 아닌 경우만
+;※시험적으로밀어넘어지는중에서도연속실행제한을 걸치도록(듯이)해 보았다@이것 보고
+;IF ! TEQUIP:밀어넘어지는중
+	SELECTCASE TFLAG:전ACT
+		CASE 10 TO 18, 20
+			CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:동일행동보너스, -4 * TFLAG:동일행동보너스)
+	ENDSELECT
+;ENDIF
+
+;-----------------------------------------------------------
+;ACT보정치 처리
+;-----------------------------------------------------------
+@ACT_ACTM1_CORRECTION(ARG)
+#DIM LCOUNT
+
+;ARG가 0이외라면보정치를 계산한다
+IF ARG
+	FOR LCOUNT, 10, 20
+		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "누계"))
+	NEXT
+	CALL ACT_M_RES_CALC(27, GET_CRI_VAR("밀어 넘어트린다누계"))
+;ARG가 0이라면보정치를 판정치에 가산한다
+ELSE
+	;보정치를 판정치에 가산한다  ; 보정 값을 판정 값에 가산한다
+	CALL ACT_ACTM_CORRECTION(1)
+ENDIF
+
+;────────────────────────────────────
+;그 외 변동이나 실행 불가능의 판정
+;────────────────────────────────────
+@ACT_ACTM1_CUSTOM
+
+;커스텀도구
+SIF ITEM:9
+	CALL ADD_CRI_VAR("로터", 5)
+
+;불가능 판정
+@ACT_ACTM1_ABLE
+#DIM LCOUNT
+
+;불가능 판정
+CALL ACT_ACTM_ABLE(1)
+

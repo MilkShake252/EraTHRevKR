@@ -1,0 +1,64 @@
+﻿;文＠YMayaya
+@CHARAMAKE_K32(ARG)
+PRINTFORMW 「아、일어났네요. 좋은 아침입니다ー」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「일어나자마자 죄송하지만、1장 찍게 해 주세요」
+PRINTFORMW 「뭔가 포즈를 취해 주시면 기쁘겠지만…？」
+PRINTL 
+PRINTFORMDL [0] 아무것도 하지 않는다
+PRINTFORMDL [1] 그대로 잔다
+PRINTFORMDL [2] 브이한다
+PRINTFORMDL [3] Ｍ자로 다리를 벌린다
+PRINTFORMDL [4] 아헤가오 더블피스 한다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「뭔가 포즈를 취해 주세요、재미 없는 사람이네요…」
+		PRINTFORMW 「뭐、눈 뜬지 얼마 안 됐고 어쩔 수 없으려나 안녕히 주무세요」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동",   -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치",    10)
+		CALLF CM_PROF("신경질",  10)
+	CASE 1
+		PRINTFORML 「어머、자는 얼굴인가요」
+		PRINTFORMW 「꽤 좋네요、안심하고 있는 표정이 좋아요」
+		CALLF CM_PROF("솔직야",    10)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("낙관",      10)
+		CALLF CM_PROF("신경질",   -10)
+	CASE 2
+		PRINTFORML 「으ー응…、너무 평범하네요」
+		PRINTFORMW 「뭐 일단 １장、찍었습니다ー」
+		CALLF CM_PROF("솔직야",    10)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("수치",      10)
+	CASE 3
+		PRINTFORML 「이건 상당히…」
+		PRINTFORMW 「설마 일어난지 얼마 되지 않아서 이 정도까지 해 주실거라고는 생각 못했어요、그럼 １장ー」
+		CALLF CM_PROF("솔직야",    20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동",      20)
+		CALLF CM_PROF("호기심",    20)
+		CALLF CM_PROF("지성",     -10)
+		CALLF CM_PROF("모랄",   -10)
+		CALLF CM_PROF("도착",      10)
+		CALLF CM_PROF("수치",      10)
+	CASE 4
+		PRINTFORML 「엉뚱한 변태씨를 붙잡아버린 것 같네요…」
+		CALLF CM_PROF("솔직야",   30)
+		CALLF CM_PROF("프라이드",  -30)
+		CALLF CM_PROF("충동",      30)
+		CALLF CM_PROF("호기심",    30)
+		CALLF CM_PROF("수치",     -30)
+		CALLF CM_PROF("지성",     -30)
+		CALLF CM_PROF("결벽",     -30)
+		CALLF CM_PROF("모랄",   -30)
+		CALLF CM_PROF("도착",      30)
+ENDSELECT
+RETURN 1
+

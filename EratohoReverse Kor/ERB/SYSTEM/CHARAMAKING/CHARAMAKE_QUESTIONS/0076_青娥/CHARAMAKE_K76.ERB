@@ -1,0 +1,64 @@
+﻿;青娥＠ぱ。
+@CHARAMAKE_K76(ARG)
+PRINTFORMW 「우후후、 잠꾸러기씨. 자、일어나 일어나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질문할게요. 깊게 생각하지 말고 대답해 주세요」
+PRINTFORMW 「타인이 가지고 있는 것을 어떻게해서든 갖고 싶어지면, 어떻게 합니까?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 단념한다
+PRINTFORMDL [2] 대신할 것을 찾는다
+PRINTFORMDL [3] 빼앗는다
+PRINTFORMDL [4] 교섭한다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「입다물고 있어도, 욕구가 없어지거나 하지는 않아요」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「어머어머…후후후、 귀여운 사람이군요」
+		CALLF CM_PROF("공격", -30)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("모랄", 30)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("도착", -10)
+	CASE 2
+		PRINTFORML 「계속 그런식으로 속여서…… 후후、 인간은 재미있구나」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「그래. 당신도, 나와 비슷하구나……함께 타오를 배워볼래?」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「돈?　아니면 인정이라는 녀석?　그런 걸로 해결하는 것일까…」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("도착", -10)
+ENDSELECT
+PRINTFORMW 「참고가 되었습니다. 그러면, 좋은 꿈을――」
+RETURN 1

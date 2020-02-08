@@ -1,0 +1,472 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+;	히나구상  그 외이벤트구상파일
+
+;	대만족보너스, 오늘의방침이벤트구상를 정리한 파일
+
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+
+
+;EV16, 대만족보너스구상
+;            
+[SKIPSTART]
+	·@EVENTTRAIN로부터 불려 간다
+	·대만족보너스를 얻고 있는 경우, 조교개시시에 표시된다
+	·타이밍은조교개시구상(EV11)의 뒤, 조교자행동 전구상(EV12)의 전
+[SKIPEND]
+
+@KOJO_MALE_EVENT_K39_16(ARG) ;인수 내역…ARG=(0. 선택전/1. 선택 후)
+#DIM  DYNAMIC FAVRATING
+#DIMS DYNAMIC RHEART
+FAVRATING = GET_KFLAG_K39("상사상애")
+RHEART '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+
+;주인님가 아니면 여기서 RETURN ┐ 
+;SIF TALENT:TARGET:주인님    이 부분들 때문에 대사 출력이 안되더라??
+;	RETURN 0                ┘
+
+;//////////
+;선택 전구상
+;//////////
+[SKIPSTART]
+	·매우 기분이 좋은 모습으로, 금일는 무엇을당했다 있고일까하고 방문한다
+	·구상표시전에 지문(%CALLNAME:TARGET%님 대만족 보너스)
+	·구상표시의 뒤로 지문(%CALLNAME:TARGET%는 매우 기분이 좋은 모습으로, 금일는 무엇을당했다 있고일까하고 방문해 왔다)이 계속된다
+	·지문의 뒤로선택지가 표시된다
+[SKIPEND]
+IF ARG == 0
+	IF FAVRATING
+;OriginalString : 「今回はご褒美として何でもシてあげる」
+		PRINTFORML 「이번에는 포상으로서 뭐든지 하게 해 줄게.」
+;OriginalString : 「ねぇ,%CNAME(MASTER, TARGET)%は何を望むの?」
+		PRINTFORMW 「있지, %CNAME(MASTER, TARGET)%은 뭘 하고 싶어?」
+	ELSE
+;OriginalString : 「今回はお望みの事を何でもしてあげますよ」
+		PRINTFORML 「이번에는 바라시는 건 뭐든지 들어 드릴게요.」
+;OriginalString : 「遠慮なく言ってくださいね」
+		PRINTFORMW 「사양하지 말고 말해 주세요.」
+	ENDIF
+	RETURN 1
+ENDIF
+
+
+;//////////
+;선택 후구상
+;//////////
+[SKIPSTART]
+	·조교대상의 대답에 대해서, 한 마디
+	·구상표시에 뒤로 지문(%CALLNAME:TARGET%는 %CALLNAME:MASTER%의 대답을 (들)물으면조교의 준비를 시작했다)이 계속된다
+	·상기의 지문을 표시했다뒤로, 선택지 마다의 지문이 표시된다
+	·휴식가선택당했다경우는 EV12, 포상에 의한 중지에 계속된다
+
+	관련 변수…
+		·TCVAR:금일만족보너스(0=언제나 대로/1=A개발/2=징계·/3=하드/4=노닥노닥
+	                               5=이상/6=야외/7=애만들기/8=휴식)
+	관련 함수…
+		·IS_SATIS_BONUS          (통상/항문/징계·/하드/노닥노닥/이상/야외/애만들기/휴식)
+[SKIPEND]
+IF ARG == 1
+	;보너스[0] 언제나처럼
+	;======================
+	IF IS_SATIS_BONUS("통상")
+		IF FAVRATING
+;OriginalString : 「언제나처럼でいいの?」
+			PRINTFORML 「평소대로가 좋은 거야?」
+			CALL HTMLPRINTW(@"「뭐어, %CNAME(MASTER, TARGET)%이 그렇게 말한다면%RHEART%」")
+		ELSE
+;OriginalString : 「언제나처럼,ですか」
+			PRINTFORML 「평소처럼 인가요.」
+;OriginalString : 「欲が無いんですね?」
+			PRINTFORMW 「욕구가 없으시네요?」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[1] 항문을괴롭혀
+	;============================
+	IF IS_SATIS_BONUS("항문")
+		IF FAVRATING
+;OriginalString : 「本当におしりでいいの?」
+			PRINTFORML 「정말 엉덩이로 좋은 거야?」
+;OriginalString : 「うふっ,イヤラシイ人」
+			PRINTFORMW 「후후, 음란한 사람.」
+		ELSE
+;OriginalString : 「本当にいいんでしょうか?」
+			PRINTFORML 「정말로 괜찮으시겠나요?」
+;OriginalString : 「うふっ,イヤラシイんですね」
+			PRINTFORMW 「후훗, 음란하시네요.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[2] 징계해//선택 하는 일에 의해(TFLAG:징계·플래그)가 선다
+	;========================
+	IF IS_SATIS_BONUS("징계·")
+		IF FAVRATING
+;OriginalString : 「징계・とかあまり好きじゃないんだけど?」
+			PRINTFORML 「벌을 주는 건 그다지 좋아하지 않는걸?」
+;OriginalString : 「どうしてもって言うなら仕方ないわね…」
+			PRINTFORMW 「그렇게까지 말한다면 어쩔 수 없네…」
+		ELSE
+;OriginalString : 「징계・,ですか…」 
+			PRINTFORML 「징계, 인가요…」 
+;OriginalString : 「お望みとあれば仕方ありませんね」
+			PRINTFORMW 「그걸 바라신다면 하는 수 없네요.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[3] 격렬하게
+	;======================
+	IF IS_SATIS_BONUS("하드")
+		IF FAVRATING
+;OriginalString : 「どうせいつも激しいと思うんだけど?」
+			PRINTFORML 「어차피 언제나 격렬하다고 생각하는데?」
+;OriginalString : 「それとはまた違うの? うふっ」
+			PRINTFORMW 「그거랑은 또 다르다고? 후훗」
+		ELSE
+;OriginalString : 「うふっ,偶にはそういうのもいいかも知れませんね」
+			PRINTFORML 「후후, 가끔은 그런 것도 좋을 것 같네요.」
+;OriginalString : 「お望み通り,厄をたっぷり搾り取ってあげます」
+			PRINTFORMW 「바라시는 대로, 액을 듬뿍 짜내 드릴게요.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[4] 응석부리게
+	;======================
+	IF IS_SATIS_BONUS("노닥노닥")
+		IF FAVRATING
+;OriginalString : 「もうっ,子供じゃないんだから…でも」
+			PRINTFORML 「정말이지, 아이도 아니고…그렇지만」
+			CALL HTMLPRINTW(@"「좋아…마음껏 응석부리게 해줄게%RHEART%」")
+		ELSE
+;OriginalString : 「ふふ,可愛い事を言いますね」
+			PRINTFORML 「후훗, 귀여운 걸 말씀하시네요.」
+			CALL HTMLPRINTW(@"「좋아요, 마음껏 응석부려 주세요%RHEART%」")
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[5] 망가질때까지
+	;==========================
+	IF IS_SATIS_BONUS("이상")
+		IF FAVRATING
+;OriginalString : 「壊れるまでって…本当にそんなのがいいの?」
+			PRINTFORML 「망가질 때까지라니…정말 그런 게 좋은 거야?」
+;OriginalString : 「まぁ,どうしてもって言うなら仕方ないけど……」
+			PRINTFORMW 「뭐, 그렇게까지 말한다면 어쩔 수 없지만……」
+		ELSE
+;OriginalString : 「壊れるまで,ですか…」
+			PRINTFORML 「망가질 때까지, 인가요…」
+;OriginalString : 「気は進みませんが,仕方ありませんね」
+			PRINTFORMW 「내키지는 않지만, 어쩔 수 없네요.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[6] 밖에서해//개목걸이의 소지가 조건
+	;======================
+	IF IS_SATIS_BONUS("야외") && FLAG:오토모드표시설정 < 1 ;//오토모드간략표시라면 연주한다
+		;히나가주인님 또한 특정의 조건을 채우고 있는 경우
+		IF FAVRATING
+;OriginalString : 「外ね.気晴らしにはいいかも
+			PRINTFORM 「밖으로? 기분 전환으로는 좋을 듯하네
+			CALL PRINT_SYMBOL_K39
+;OriginalString : 「ねぇ,何処か行きたいところはある?」
+			PRINTFORMW 「저기, 어디 가고 싶은 곳은 있어?」
+;OriginalString : 
+			PRINTL
+;OriginalString : [ 0] 霧の湖
+			PRINTFORMDL [ 0] 안개의 호수
+;OriginalString : [ 1] 守矢神社
+			PRINTFORMDL [ 1] 모리야 신사
+;OriginalString : [ 2] 하쿠레이神社
+			PRINTFORMDL [ 2] 하쿠레이 신사
+;OriginalString : [ 3] 迷いの竹林
+			PRINTFORMDL [ 3] 미혹의 죽림
+;OriginalString : [ 4] 人里
+			PRINTFORMDL [ 4] 마을
+			CALL INPUTINTD(0, 1, 2, 3, 4)
+			;오토라면 멈춘다
+			SIF FLAG:오토모드 > 0
+				FORCEWAIT
+			SELECTCASE RESULT      ;RESULT에 의해 파생
+				CASE 0
+;OriginalString : 「霧の湖ね?　いいわよ」
+					PRINTFORMW 「안개의 호수 말이지? 좋아.」
+					SELECTCASE FLAG:계절
+						CASE 1     ;여름
+							CALL HTMLPRINTW(@"「이 더운 계절에는 딱 맞는 장소일지도 모르겠네%RHEART%」")
+						CASE 3     ;동
+;OriginalString : 「でも,行っても寒いだけのような気もするけど…」
+							PRINTFORMW 「그렇지만, 가도 춥기만 할 것 같은 느낌이 드는데…」
+						CASEELSE   ;봄 또는 가을
+							CALL HTMLPRINTW(@"「지금의 계절이라면 덥지도 춥지도 않으니, 적당한 시기일지도 모르겠네%RHEART%」")
+					ENDSELECT
+				CASE 1
+;OriginalString : 「守矢神社!? …って,%CNAME(MASTER, TARGET)%ねぇ」
+					PRINTFORML 「모리야 신사!? …저기, %CNAME(MASTER, TARGET)%.」
+;OriginalString : 「あそこで変な事してて見つかったら,色々とまずいと思うん%RAND_SPLIT("だけど/ですけど")%…?」
+					PRINTFORMW 「거기에서 이상한 짓을 하다가 들켜 버리면, 여러가지로 곤란 %RAND_SPLIT("하다고 생각하는데/할거라 느껴지는데")%…?」
+					SIF !RAND:2
+						CALL HTMLPRINTW(@"「그래도, 조금 두근두근거려서 흥분될지도\@ RAND:2 ? %RHEART% # … \@」")
+				CASE 2
+;OriginalString : 「하쿠레이神社に行きたいの?」
+					PRINTFORMW 「하쿠레이 신사에 가고 싶은 거야?」
+					CALL HTMLPRINTW(@"「그럼, 그 무녀한테 과시하는 것도 재밌을 것 같네%RHEART%」")
+				CASE 3
+;OriginalString : 「あんな所に行っても何も,って…」
+					PRINTFORMW 「그런 곳에 가도 아무것도, 설마…」
+;OriginalString : 「兎達に見せつけるつもり?」
+					PRINTFORMW 「토끼들한테 과시할 생각?」
+				CASE 4
+					CALL FADE_TO_CLEARLINE(15, "「…………」")
+					{
+;OriginalString : 「%RAND_SPLIT(
+					PRINTFORMW 「%RAND_SPLIT(
+					"나, 이래뵈도 인간의 아군을 자칭하고 있는 신인데/" + 
+					"저기 말이야, 나도 입장이라는 게 있지만─")%?」
+					}
+;OriginalString : 「%CNAME(MASTER, TARGET)%がどうしてもって言うならまぁ,仕方ないけど……」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%이 그렇게까지 말한다면 뭐어, 어쩔 수 없는데……」
+			ENDSELECT
+		;그 외
+		ELSE
+;OriginalString : 「外,ですか.たまには良いかも知れませんね」
+			PRINTFORMW 「밖, 인가요. 가끔씩은 좋을지도 모르겠네요.」
+;OriginalString : 「では,何処か行きたいところはありますか?」
+			PRINTFORMW 「그래서, 어딘가 가고 싶은 곳이 있으신가요?」
+;OriginalString : 
+			PRINTL
+;OriginalString : [ 0] 妖怪の山
+			PRINTFORMDL [ 0] 요괴의 산
+;OriginalString : [ 1] 玄武の沢
+			PRINTFORMDL [ 1] 현무의 늪
+;OriginalString : [ 2] 無縁塚
+			PRINTFORMDL [ 2] 무연총
+;OriginalString : [ 3] 三途の川
+			PRINTFORMDL [ 3] 삼도천
+;OriginalString : [ 4] 人里
+			PRINTFORMDL [ 4] 마을
+			CALL INPUTINTD(0, 1, 2, 3, 4)
+			;오토라면 멈춘다
+			SIF FLAG:오토모드 > 0
+				FORCEWAIT
+			SELECTCASE RESULT
+				CASE 0
+;OriginalString : 「妖怪の山ですか.いいですよ」
+					PRINTFORML 「요괴의 산인가요. 좋아요.」
+;OriginalString : 「私と一緒なら天狗達も손荒な事はしないでしょうし」
+					PRINTFORMW 「저와 함께라면 텐구들도 난폭한 짓은 하지 않겠죠.」
+					SIF AFFECTION("익애")
+						CALL HTMLPRINTW(@"「또, 초계 텐구한테 과시하는 것도 즐거울 것 같네요%RHEART%」")
+				CASE 1
+;OriginalString : 「玄武の沢ですか.それもいいかも知れませんね」
+					PRINTFORMW 「현무의 늪인가요. 그것도 괜찮을지도 모르겠네요.」
+					{
+					CALL HTMLPRINTW(@"「그곳의 주상절리는 다른 곳에서는 볼 수 없기도 하니\@ 
+					AFFECTION("익애") ? ,꼭 보는 게 좋아요%RHEART% # . \@」")
+					}
+				CASE 2
+;OriginalString : 「無縁塚,ですか…?」
+					PRINTFORMW 「무연총, 인가요…?」
+;OriginalString : 「何か思うところがあるのでしょうか……」
+					PRINTFORMW 「무언가 집히는 곳이 있는 건가요……」
+				CASE 3
+;OriginalString : 「三途の川,ですか…」
+					PRINTFORMW 「삼도천, 인가요…」
+;OriginalString : 「先に言っておきますけど,あそこに居る魚は釣れませんよ?」
+					PRINTFORMW 「우선 말해 두겠지만, 거기 있는 물고기는 잡히지 않는다고요?」
+				CASE 4
+;OriginalString : 「人里って……そんなに人に見られたいのですか?」
+					PRINTFORMW 「마을이라니……그렇게나 사람에게 보여지고 싶으신가요?」
+;OriginalString : 「それは流石に私もちょっと恥ずかしいのですが…」
+					PRINTFORMW 「그건 역시 저도 조금 부끄러운데요…」
+			ENDSELECT
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[7] 임신해//호의+호감도가 10000이상으로 가능하게 된다
+	;======================
+	IF IS_SATIS_BONUS("애만들기")
+		;처음
+		;====
+		IF FIRSTEVENT(70)
+			IF FAVRATING
+;OriginalString : 「厄神である私を임신해なんて言う人がいるなんてね」
+				PRINTFORMW 「액신인 나를 임신시키고 싶다고 말하는 사람이 있다니.」
+;OriginalString : 「酔狂にも程がある,というか……%CNAME(MASTER, TARGET)%,本気で言ってる?」
+				PRINTFORMW 「별난 것도 정도가 있지, 라고 할까……%CNAME(MASTER, TARGET)%, 진심으로 하는 소리야?」
+;OriginalString : 「まあでも,そんな事言い出했다からには……ちゃんと責任はとってもらうからね.いい?」
+				PRINTFORMW 「뭐 그렇지만, 그런 걸 말해 버린 이상……제대로 책임지게 할테니까. 알겠지?」
+			ELSE
+;OriginalString : 「私をからかってるという訳でもなさそうですが…」
+				PRINTFORMW 「저를 놀리는 건 아닌 것 않지만…」
+;OriginalString : 「%CNAME(MASTER, TARGET)%がどこまで本気なのか,正直…図りかねます」
+				PRINTFORMW 「%CNAME(MASTER, TARGET)%이 어디까지 진심인지, 솔직히…파악하기 어렵네요.」
+;OriginalString : 「……でもそうですね.そう言われて,あまり悪い気はしませんけど.ふふ」
+				PRINTFORMW 「……그래도 그렇네요. 그런 말을 들어도, 그다지 나쁜 기분은 아니네요. 후후.」
+			ENDIF
+			RETURN 1
+		ENDIF
+
+		;처음 이외//이벤트경과에 의해 분기
+		;========
+		IF FAVRATING
+			SELECTCASE RANDEVENT(3, 70)
+				CASE 0
+;OriginalString : 「ふーん.そんな言い出했다からには,それなりの覚悟があるって訳?」
+					PRINTFORMW 「흐응─. 그렇게 말했다는 건, 그만한 각오가 있다는 뜻?」
+;OriginalString : 「厄神と言っても私,女なんだから…,そんな事言われたら本気になっちゃうかも知れないわよ?」
+					PRINTFORMW 「액신이라고 해도 나, 여자니까… 그런 말을 들어 버리면 진심이 되어버릴지도 모른다고?」
+				CASE 1
+					;WAIT는 물게 하지 않는다
+					CALL FADEIN(10, "「액신을 임신시키고 싶다니…… 정말이지.」")
+;OriginalString : 「身の程知らずというか,怖いもの知らずというか.でも私…」
+					PRINTFORMW 「분수를 알지 못한다고 할까, 무서운 게 없다고 할까. 하지만 나…」
+;OriginalString : 「%CNAME(MASTER, TARGET)%のそんなところに,どうしようもなく惹かれちゃってるのは確かなのよね」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%의 그런 모습에, 어쩔 수 없이 끌려 버린다는 건 확실하네.」
+;OriginalString : 「まあ,こういう事は입に出して言うべきじゃないのかも知れないけど.ふふっ」
+					PRINTFORMW 「뭐, 이런 일은 입 밖으로 내서는 안될지도 모르겠지만. 후훗」
+				CASE 2
+;OriginalString : 「임신해とか言い出했다からには,しっかりと頑張ってもらわないとね? こう見えたって私…」
+					PRINTFORMW 「임신시키고 싶다고 말한 이상, 제대로 노력해야 해? 이렇게 보여도 나…」
+;OriginalString : 「%CNAME(MASTER, TARGET)%にそんなこと言われて,ちょっとその気になっちゃってるんだから……」
+					PRINTFORMW 「%CNAME(MASTER, TARGET)%의 그 말에, 조금은 그럴 기분이 들어 버렸으니까……」
+			ENDSELECT
+		ELSE
+			IF RAND:2
+;OriginalString : 「ふふ,なかなか言ってくれますね」
+				PRINTFORMW 「후후, 어지간히도 말씀해 주시네요.」
+;OriginalString : 「あまりハッキリ言われると,ちょっと恥ずかしいですけど…」
+				PRINTFORMW 「너무 직선적으로 말하시면, 조금 부끄럽지만요…」
+			ELSE
+;OriginalString : 「こちらから聞いた손前,거부한다訳にもいかないですね」
+				PRINTFORMW 「그쪽에서 말하신 이상, 거부할 수도 없겠네요.」
+				CALL HTMLPRINTW(@"「라고는 말했지만 저도… 완전히 싫은 건 아니지만요\@ RAND:2 ? %RHEART% # . \@」")
+			ENDIF
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[8] 쉬게//조교대상의소모에 관련되지 않고선택가능
+	;====================
+	IF IS_SATIS_BONUS("휴식")
+		IF FAVRATING
+;OriginalString : 「いいわよ?　금일はのんびり過ごしましょう.でもそうね…」
+			PRINTFORMW 「좋아, 오늘은 한가롭게 보내자. 그렇지만 그러네…」
+			;EV12를 만지작거렸으므로 이치를 대면시킨다
+;OriginalString : 「%RAND_SPLIT("何もしない/家でじっとしてる")%より,ちょっと出かけてみるのもいいかも%RAND_SPLIT("知れないわ/")%」
+			PRINTFORMW 「%RAND_SPLIT("아무것도 하지 않기/집에서 가만히 있기")%보단, 살짝 나가보는 게 좋을지도%RAND_SPLIT(" 모르겠네/")%.」
+			;CALL HTMLPRINTW(@" 「차라도 마시면서, 기다리거나라고 하는 것도 나쁘지 않기도 하고%HTML_PS_K39()%」")
+		ELSE
+;OriginalString : 「そうですね,時には休む事も필요でしょうし」
+			PRINTFORMW 「그렇네요, 가끔은 휴식도 필요하니까요.」
+;OriginalString : 「금일はゆっくり休んでくださいね」
+			PRINTFORMW 「오늘은 느긋하게 쉬어 주세요.」
+		ENDIF
+		RETURN 1
+	ENDIF
+
+	;보너스[9] 안아줬으면
+	;========================
+	;IF IS_SATIS_BONUS("안아")
+	;ENDIF
+
+	;보너스[10] 봉사하게
+	;=========================
+	IF IS_SATIS_BONUS("봉사")
+		SELECTCASE RANDEVENT(5, 100)
+			CASE 0
+				CALL HTMLPRINTW(@"「어머%RHEART%, 이건 또 꽤나 사랑스러운 제의\@ GET_KFLAG_K39("상사상애") ? 네 # 네요 \@. 우후훗…」")
+			CASE 1
+				CALL HTMLPRINTW(@"「좋아\@ FAVRATING ? # 요 \@%RHEART%, %CNAME(MASTER, TARGET)%\@ FAVRATING ? 그렇게 바란다면 # 그렇게 바라신다면 \@.」")
+			CASE 2
+				CALL HTMLPRINTW(@"「그\@ FAVRATING ? 래 # 런가요 \@. %CNAME(MASTER, TARGET)%이 그렇게 말\@ FAVRATING ? 한다면 # 하신다면\@%RHEART%」")
+			CASE 3
+				CALL HTMLPRINTW(@"「후후%RHEART%, 기쁜 걸\@ FAVRATING ? 말해 주네 # 말씀해 주시네요 \@.」")
+			CASE 4
+				CALL HTMLPRINTW(@"「\@ FAVRATING ? 그렇게 말한다면 # 그렇게 말씀하신다면 \@… 부탁\@ FAVRATING ? 해볼까 # 드려 볼까요 \@. 후훗%RHEART%」")
+		ENDSELECT
+		RETURN 1
+	ENDIF
+ENDIF
+
+
+;EV17, 오늘의방침구상
+;          
+[SKIPSTART]
+	·@EVENTTRAIN로부터 불려 간다
+	·타이밍은조교개시구상(EV11)의 뒤, 조교자행동 전구상(EV12)의 전
+	·대만족보너스를 얻고 있는 경우는 그 쪽이우선 된다(즉, 이 개소가 불려 가는 일은 없다)
+	·조교자에 의해 오늘의방침가 결정당했다경우에 표시
+	·구상표시의 뒤로 PRINTL를 사이에 두어 지문. 지문은방침 마다 전용의 것이 된다
+	·애만들기, 휴식는 포상으로 밖에 나오지 않기 때문에 이 개소에서는 불요. 방침가통상의 경우는 처리되지 않기 때문에통상도 불요
+	·Ａ감각가 4까지는 확률（Ａ감각, 0으로 1/3）로 TFLAG:금일의방침 == 1（Ａ개발）가 되어 1/5의 확률로 다른방침에 의해 덧쓰기된다
+	·Ａ감각가 5이후가 되면금일의방침 == 1（Ａ개발）가 될 가능성은 없어진다（감각가 상승하면Ａ개발의필요는 없는, 이라고 하는 사양? ）
+[SKIPEND]
+
+@KOJO_MALE_EVENT_K39_17(ARG)
+VARSET LOCALS
+LOCALS:0 '= RAND_SPLIT("후후/후후훗/쿡쿡/킥킥")
+
+;OriginalString : 「さて,今回はどう\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? しようかしら # しましょうか \@」
+PRINTFORMW 「자아, 이번엔 어떻게 \@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 할까 # 할까요 \@.」
+SELECTCASE POLICY("금일")
+	CASE "항문"
+		{
+;OriginalString : 「ちょっとおしりを虐めてあげるのも\@ 
+		PRINTFORMW 「엉덩이를 조금 \@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 괴롭혀주는 게 좋을 지도 
+		# 괴롭혀보는 것도 재미있겠네요 \@. %LOCALS:0%」
+		}
+	CASE "징계·", "하드", "이상"
+;OriginalString : 「なんとなく,ちょっと
+		PRINT 「어째선지, 조금 
+		SELECTCASE POLICY("금일")
+			CASE "징계·"
+;OriginalString : 虐めてあげ
+				PRINT 괴롭히고
+			CASE "하드"
+;OriginalString : 激しくし
+				PRINT 격렬하게 하고
+			CASE "이상"
+;OriginalString : %CNAME(MASTER, TARGET)%をめちゃめちゃにし
+				PRINTFORM %CNAME(MASTER, TARGET)%엉망으로 만들고
+		ENDSELECT
+;OriginalString : たい気分\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? なのよね # なんですよね \@…
+		PRINTFORM  싶은 기분\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ?이야 # 이네요 \@…
+		CALL PRINT_SYMBOL_K39
+	;CASE "하드"
+	CASE "노닥노닥"
+		{
+;OriginalString : 「そう\@ 
+		PRINTFORMW 「\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 그렇네 # 그렇네요 \@. 조금 상냥하게 \@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 해주면 어떨까 # 해드리면 어떨까요 \@?」
+		}
+		{
+		CALL HTMLPRINTW(@"「\@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 자… 멍하니 있지 말고, 이쪽으로 
+		# 자아, 부디 이쪽으로 \@…%HTML_PS_K39()%」")
+		}
+	;CASE "이상"
+	CASE "야외"
+;OriginalString : 「偶には外に出掛けて\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? みる # みましょうか \@?」
+		PRINTFORMW 「가끔은 밖으로 나가\@ GET_KFLAG_K39("상사상애", (FLAG:주인님)) ? 볼까 # 볼까요 \@?」
+		{
+;OriginalString : 「とりあえず,この개목걸이を付けてもらう事に\@ 
+		PRINTFORMW 「우선, 이 목걸이를 \@ 
+		GET_KFLAG_K39("상사상애", (FLAG:주인님)) 
+		? 차야 하지만 말이야 # 착용하셔야 하지만요 \@%LOCALS:0%…」
+		}
+	CASEELSE
+		;//CASEELSE는 비워 둔다
+ENDSELECT
+RETURN 1

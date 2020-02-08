@@ -1,0 +1,474 @@
+﻿;==================================================
+;
+;			조교관련 함수 두는 곳
+;
+;	조교시의 각종 참조, 판정, 날조용 함수류
+;
+;version		Reason
+;1. 62			본체의 변수 사양 변경에 대응. 일부 불편을 수정
+;1. 61			참조하고 있던 함수의 잘못을 수정
+;
+;==================================================
+
+;-------------------------------------------------
+;함수명:GET_EX_K14
+;개  요점:캐릭터 라인으로 EX관련을 참조한다
+;인  수:ARGS… 절정의 종류
+;반환값:지정했다캐릭터 라인에 준한 NOWEX
+;사용예:GET_EX_K14("MC절정")
+;-------------------------------------------------
+@GET_EX_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 30
+SPLIT ARGS, "/", LOCALS
+
+LOCAL:0 = NOWEX:MASTER:Ｃ절정
+LOCAL:1 = NOWEX:MASTER:Ｖ절정
+LOCAL:2 = NOWEX:MASTER:Ａ절정
+LOCAL:3 = NOWEX:MASTER:Ｂ절정
+LOCAL:4 = NOWEX:MASTER:분유
+LOCAL:5 = NOWEX:MASTER:사정
+LOCAL:6 = NOWEX:MASTER:방뇨
+LOCAL:7 = NOWEX:Ｃ절정
+LOCAL:8 = NOWEX:Ｖ절정
+LOCAL:9 = NOWEX:Ａ절정
+LOCAL:10 = NOWEX:Ｂ절정
+LOCAL:11 = NOWEX:분유
+LOCAL:12 = NOWEX:사정
+LOCAL:13 = NOWEX:MASTER:시오후키
+
+;시오후키가 추가당했다지만번호 바꿔 넣는 것 귀찮아서 우선 LOCAL:13으로
+SELECTCASE ARGS
+	CASE "MC절정"
+		RETURNF LOCAL:0
+	CASE "MV절정"
+		RETURNF LOCAL:1
+	CASE "MA절정"
+		RETURNF LOCAL:2
+	CASE "MB절정"
+		RETURNF LOCAL:3
+	CASE "M분유"
+		RETURNF LOCAL:4
+	CASE "M사정"
+		RETURNF LOCAL:5
+	CASE "M드라이사정"
+		RETURNF LOCAL:5 == 1
+	CASE "M대량사정"
+		RETURNF LOCAL:5 == 3
+	CASE "M조루사정"
+		RETURNF LOCAL:5 == 4
+	CASE "MA고문사정"
+		RETURNF LOCAL:5 == 5
+	CASE "M통상사정"
+		RETURNF LOCAL:5 == 2
+	CASE "M방뇨"
+		RETURNF LOCAL:6
+	CASE "TC절정"
+		RETURNF LOCAL:7
+	CASE "TV절정"
+		RETURNF LOCAL:8
+	CASE "TA절정"
+		RETURNF LOCAL:9
+	CASE "TB절정"
+		RETURNF LOCAL:10
+	CASE "T분유"
+		RETURNF LOCAL:11
+	CASE "T사정"
+		RETURNF LOCAL:12
+	CASE "T드라이사정"
+		RETURNF LOCAL:12 == 1
+	CASE "T대량사정"
+		RETURNF LOCAL:12 == 3
+	CASE "T통상사정"
+		RETURNF LOCAL:12 == 2
+	CASE "M시오후키"
+		RETURNF LOCAL:13
+	CASE "M_CVAB절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:1 > 0 && LOCAL:2 > 0 && LOCAL:3 > 0
+	CASE "M_CVA절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:1 > 0 && LOCAL:2 > 0
+	CASE "M_VAB절정"
+		RETURNF LOCAL:1 > 0 && LOCAL:2 > 0 && LOCAL:3 > 0
+	CASE "M_CVB절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:1 > 0 && LOCAL:3 > 0
+	CASE "M_CV절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:1 > 0
+	CASE "M_CA절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:2 > 0
+	CASE "M_CB절정"
+		RETURNF LOCAL:0 > 0 && LOCAL:3 > 0
+	CASE "M_VA절정"
+		RETURNF LOCAL:1 > 0 && LOCAL:2 > 0
+	CASE "M_VB절정"
+		RETURNF LOCAL:1 > 0 && LOCAL:3 > 0
+	CASE "M_AB절정"
+		RETURNF LOCAL:2 > 0 && LOCAL:3 > 0
+	CASE "T_CVAB절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:8 > 0 && LOCAL:9 > 0 && LOCAL:10 > 0
+	CASE "T_CVA절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:8 > 0 && LOCAL:9 > 0
+	CASE "T_CVB절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:8 > 0 && LOCAL:10 > 0
+	CASE "T_VAB절정"
+		RETURNF LOCAL:8 > 0 && LOCAL:9 > 0 && LOCAL:10 > 0
+	CASE "T_CV절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:8 > 0
+	CASE "T_CA절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:9 > 0
+	CASE "T_CB절정"
+		RETURNF LOCAL:7 > 0 && LOCAL:10 > 0
+	CASE "T_VA절정"
+		RETURNF LOCAL:8 > 0 && LOCAL:9 > 0
+	CASE "T_VB절정"
+		RETURNF LOCAL:8 > 0 && LOCAL:10 > 0
+	CASE "T_AB절정"
+		RETURNF LOCAL:9 > 0 && LOCAL:10 > 0
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@GET_EX_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+RETURNF 0
+
+;=================================================
+;부위별애무물 판정 함수류
+;=================================================
+;MC_PLAYER라든지 알기 어렵기 때문에 캐릭터 라인으로 돌려주는 일로 해 본다
+;기본적으로 EV20 절정구상에서의 사용을 상정
+;용도를 짜 XX_PLAYER의 인수가 진정한 경우만 상정
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:MC_CHECK_K14
+;개  요점:MASTER용Ｃ애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:MC_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@MC_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = MC_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "질입"
+		RETURNF LOCAL == 8
+	CASE "로터"
+		RETURNF LOCAL == 100
+	CASE "페니스밴드"
+		RETURNF LOCAL == 103
+	CASE "클리캡"
+		RETURNF LOCAL == 112
+	CASE "오나홀"
+		RETURNF LOCAL == 114
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@MC_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:MV_CHECK_K14
+;개  요점:MASTER용Ｖ애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:MV_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@MV_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = MV_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "팔"
+		RETURNF LOCAL == 10
+	CASE "로터"
+		RETURNF LOCAL == 100
+	CASE "바이브"
+		RETURNF LOCAL == 101
+	CASE "페니스밴드"
+		RETURNF LOCAL == 103
+	CASE "삼각목마"
+		RETURNF LOCAL == 133
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@MV_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:MA_CHECK_K14
+;개  요점:MASTER용Ａ애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:MA_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@MA_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = MA_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "팔"
+		RETURNF LOCAL == 10
+	CASE "로터"
+		RETURNF LOCAL == 100
+	CASE "애널비즈"
+		RETURNF LOCAL == 102
+	CASE "페니스밴드"
+		RETURNF LOCAL == 103
+	CASE "애널바이브"
+		RETURNF LOCAL == 111
+	CASE "관장기＋플러그"
+		RETURNF LOCAL == 132
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@MA_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:MB_CHECK_K14
+;개  요점:MASTER용Ｂ애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:MB_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@MB_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = MB_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "팔"
+		RETURNF LOCAL == 10
+	CASE "로터"
+		RETURNF LOCAL == 100
+	CASE "유두캡"
+		RETURNF LOCAL == 113
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@MB_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:TC_CHECK_K14
+;개  요점:TARGET용 c애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:TC_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@TC_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = TC_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "질입"
+		RETURNF LOCAL == 8
+	CASE "페니스밴드"
+		RETURNF LOCAL == 103
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@TC_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:TV_CHECK_K14
+;개  요점:TARGET용 v애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:TV_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@TV_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = TV_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASE "팔"
+		RETURNF LOCAL == 10
+	CASE "로터"
+		RETURNF LOCAL == 100
+	CASE "바이브"
+		RETURNF LOCAL == 101
+	CASE "페니스밴드"
+		RETURNF LOCAL == 103
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@TV_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:TA_CHECK_K14
+;개  요점:TARGET용 a애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:TA_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@TA_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = TA_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@TA_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;-------------------------------------------------
+;함수명:TB_CHECK_K14
+;개  요점:TARGET용 b애무물 판정 함수
+;인  수:ARGS… 해당 개소의애무물을 나타내는 캐릭터 라인
+;반환값:TB_PLAYER의 인수가 가짜인 경우에 준거했다의
+;비  고:식 안의 함수
+;-------------------------------------------------
+@TB_CHECK_K14(ARGS)
+#FUNCTION
+#LOCALSIZE 10
+LOCAL = TB_PLAYER(1)
+SPLIT ARGS, "/", LOCALS
+
+SELECTCASE ARGS
+	CASE "입"
+		RETURNF LOCAL == 1
+	CASE "손"
+		RETURNF LOCAL == 2
+	CASE "페니스"
+		RETURNF LOCAL == 3
+	CASE "보지"
+		RETURNF LOCAL == 4
+	CASE "항문"
+		RETURNF LOCAL == 5
+	CASE "가슴"
+		RETURNF LOCAL == 6
+	CASE "발"
+		RETURNF LOCAL == 7
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE(@"@TB_CHECK_K14에 무효인 정의가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+;=================================================
+;날조계 함수
+;=================================================
+;-------------------------------------------------
+;함수명:SET_FINGERING_K14
+;개  요점:임의의 개소에서손에 의한다Ｖ애무의 처리를 실시해경험를 부여한다
+;인  수:없음
+;사용예 CALL SET_FINGERING_K14
+;-------------------------------------------------
+@SET_FINGERING_K14
+#LOCALSIZE 1
+;손가락삽입에 수반하는 일련의 처리 불결SOURCE에 대해서는 할애
+SOURCE:MASTER:쾌Ｖ = 90 + ACT_FROM(TARGET, 3) * (2 + TALENT:손가락기술) / 2
+;조교레벨에 응해접촉SOURCE 증가
+SOURCE:MASTER:접촉 = 80 + GET_TRAINLV(TARGET) * 5
+;쾌ＶSOURCE에 응해성행위SOURCE 증가
+SOURCE:MASTER:성행위 = 80 + SOURCE:MASTER:쾌Ｖ / 10
+;더러움이 서로 이동
+CALL MOVE_STAIN("손", TARGET, "보지", MASTER)
+;경험를 부여
+EXP:수음경험 += 1

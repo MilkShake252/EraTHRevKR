@@ -1,0 +1,71 @@
+﻿
+;衣玖＠空っぽ
+@CHARAMAKE_K51(ARG)
+PRINTFORMW 「좋은 아침입니다、잠시 실례할게요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질문、입니다만……」
+PRINTFORMW 「당신은 지금、무엇을 하고 싶습니까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 여자아이와 야한 일 하고 싶다
+PRINTFORMDL [2] 너와 이야기하고 싶다
+PRINTFORMDL [3] 너의 몸을 만지고 싶다
+PRINTFORMDL [4] 가슴을 만진다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「별로 대답하고 싶지 않으면、좋아요」
+		PRINTFORMW 「그러면……안녕히 주무세요」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「솔직하네요、호감이 가요」
+		PRINTFORMW 「그러면……안녕히 주무세요」
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("프라이드", 15)
+		CALLF CM_PROF("충동",     -20)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("수치",     10)
+		CALLF CM_PROF("낙관",     -10)
+		CALLF CM_PROF("지성",     15)
+		CALLF CM_PROF("신경질",   10)
+	CASE 2
+		PRINTFORML 「저와 말인가요？……후후、기회가 있으면 기꺼이」
+		PRINTFORMW 「그러면……안녕히 주무세요」
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("낙관",     -10)
+		CALLF CM_PROF("지성",     10)
+		CALLF CM_PROF("모랄",   10)
+	CASE 3
+		PRINTFORML 「솔직하네요、지금은 안 돼요」
+		PRINTFORMW 「그러면……안녕히 주무세요」
+		CALLF CM_PROF("솔직야",   20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("호기심",   10)
+		CALLF CM_PROF("지성",     -10)
+		CALLF CM_PROF("동성애",   -10)
+	CASE 4
+		PRINTFORMW 「그대로 자는 게 좋겠네요」
+		CALLF CM_PROF("솔직야",   30)
+		CALLF CM_PROF("프라이드", -30)
+		CALLF CM_PROF("충동",     30)
+		CALLF CM_PROF("호기심",   20)
+		CALLF CM_PROF("수치",     -30)
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("지성",     -30)
+		CALLF CM_PROF("동성애",   -30)
+		CALLF CM_PROF("결벽",     -30)
+		CALLF CM_PROF("모랄",   -30)
+		CALLF CM_PROF("신경질",   -30)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",   30)
+ENDSELECT
+RETURN 1
+

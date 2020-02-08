@@ -1,0 +1,59 @@
+﻿;ヤマメ＠ぱ。
+@CHARAMAKE_K58(ARG)
+PRINTFORMW 「이런, 일어났나. 미안해、일으켜 버려서」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그런데、 질문하는 게 여기의 룰이었지」
+PRINTFORMW 「그렇네…당신은 갑자기 병이 들었을 때, 어떻게 해?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 이불에 드러눕는다
+PRINTFORMDL [2] 의사에게 간다
+PRINTFORMDL [3] 병은 마음에서 온다, 평소대로 활동
+PRINTFORMDL [4] 기도사를 부른다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그 약한 마음은 병을 부를거야. 당신、 살해당한다고?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「자연치유력이라는 녀석. 인간에게 갖춰진 강함이네」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+	CASE 2
+		PRINTFORML 「영리해. 하지만、그런식으로 몸은 약해져버려. 그거야말로 진정한 병이지」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「당신은 한 번 괴로운 일을 당하는 편이 좋을지도. 결핵  같은거라던가?」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("피학", 30)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("솔직야", -20)
+	CASE 4
+		PRINTFORML 「…재미있는 말을 하네. 후후、 나에게 그런 건 효과 없다구?」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 10)
+ENDSELECT
+PRINTFORMW 「그러면 잘자. 부디 몸 조심 하길――」
+RETURN 1

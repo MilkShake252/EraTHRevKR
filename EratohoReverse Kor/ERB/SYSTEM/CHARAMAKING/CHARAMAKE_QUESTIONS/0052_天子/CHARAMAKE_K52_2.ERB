@@ -1,0 +1,98 @@
+﻿;ブロン子さん＠ふらさな
+@CHARAMAKE_K52_2(ARG)
+PRINTFORMW 
+PRINTL 
+CALL CHARA_CUTIN("일급천인", "부론코씨", "Dame Bronko")
+PRINTL 
+PRINTFORML 「어이이？ 언제까지 자는 거야…？　빨리 일어나야한다구」
+PRINTFORMW 「지금부터 내가 질MOON 할테니 확실하게 대답해우엣」
+PRINTFORML 「나는 비상의 검을 사용하는 자이지만 상대가 유감스럽게도 용궁의 수를 사용해와서 「너 그걸로 좋은건가？」라고 말하자 「갑자기 말을 걸어서 뭔 소리를 하는 거야？」라는 대답을 들었다.」
+PRINTFORML 나의 남동생이 소데의 숙련자인데 언제나 내가 이기기만해서 상대가 되지 않기 때문에 물었을 뿐인데 화가나서 「너 비상의 검으로 북ｺ・・」라고
+PRINTFORML 말하며 개시 직후에 힘을 모아 전 하이스라 했으면 아마도 리얼하게 놀랐을거다、、가드를 취하고 있었으므로 캔슬해서 파팟 타앗하면서 킥하면 상당히 새파란 얼굴을 하고 있었다
+PRINTFORML 나는 단번에 공중으로 뛰어올랐지만 이쿠가 경직된채로 내 움직임을 놓쳤는지 움직이지 않았으므로 죽순으로 가드를 무너트린 후 추격해 천계에서 한층 더 데미지는 가속했다.
+PRINTFORML 일부러 거리를 벌리고 「나는 이대로 기다려줄 수도 있는데？」라고 말하자 간신히 필사적인 얼굴을 하고 소맷자락에서 뭔가 얼음을 꺼냈다.
+PRINTFORML 나는 바꿔쓰는 비상의 검으로 회피, 이것은 한 번만 실수해도 카운터로 큰 데미지를 받는 은폐기술이었으므로 뒤쪽의 갤러리들이 박수를 치기 시작했다.
+PRINTFORML 나는 「시끄러워、집중이 안 돼. 한 순간의 방심이 생명의 위기를 부른다」고 말했고 갤러리가 입을 다물었다
+PRINTFORML 이쿠는 필사적으로 덤벼오지만、이미 마감시간, 하단 가드를 취하고 있는 나에게 빈틈은 없었다.
+PRINTFORML 가끔 하단 가드로는 막을 수 없는 공격이 와도 박치기로 격퇴, 끝날 무렵에는 너덜너덜해져 심해어가 되어버린 송사리가 있었다
+PRINTFORML 「언제라도 스펠카드로 끝은 낼 수 있었어、그 때 얼음을 꺼내려고 했을때도 실은 엉망진창으로 만들 수 있었어、」라던가 말했다
+PRINTFORML （중략）
+PRINTFORMW 이상한 공간이 되어버렸으므로 나는 미스테리를 남기기 위해 승리 화면이 된 동시에 회선을 끊었지만 아마 했다면 업계에서 전설이 됐을지도？
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 갑자기 말을 걸어서 뭔 소리를 하는 거야？
+PRINTFORMDL [2] 어이？ 너네들 지금 질문 들었어？
+PRINTFORMDL [3] 역시 비상의 검을 가지고 있어야하는건가ー　굉장하네ー 동경해버릴 것 같아ー
+PRINTFORMDL [4] 바보 취급하는 거야？ 그럼 너도 소(牛)야！
+PRINTFORMDL [5] 하ー？ 무슨 시대착오적인 얘기 하고 있어
+PRINTFORMDL [6] 부론코씨 츗츄＾＾
+PRINTFORMDL [9] ９문제면 돼（겸허）
+CALL INPUTINT(0, 1, 2, 3, 4 ,5, 6, 9)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어이？　너 얘기 제대로 듣고 있지 않아? 그런가？」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「너 기염만재의 검으로 산산조각으로 베어버려…」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("지성", -20)
+	CASE 2
+		PRINTFORML 「들었다」／「분명히 말했군」／「내 로그에 확실히 보존 완료」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 3
+		PRINTFORML 「호오 너 제법 알고 있는 것 같군　피치를 한 턱 내주지」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("모랄", 10)
+	CASE 4
+		PRINTFORML 「어이　바보자식　이 스레드는 이미 종료입니다」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("동성애", 50)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("신경질", 20)
+	CASE 5
+		PRINTFORML 「이 놈 절대로 텐구야…더럽구나 역시나 더러운 텐구 더러워」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 6
+		PRINTFORML 「야한 얘기는 그만둬라 원숭이!!」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+	CASE 9
+		PRINTFORML 「그 정도까지는 아냐（겸허）」
+		CALLF CM_PROF("공격", -9)
+		CALLF CM_PROF("피학", -9)
+		CALLF CM_PROF("솔직야", 9)
+		CALLF CM_PROF("프라이드", 9)
+		CALLF CM_PROF("낙관", -9)
+		CALLF CM_PROF("지성", 9)
+		CALLF CM_PROF("결벽", 9)
+		CALLF CM_PROF("모랄", 9)
+		CALLF CM_PROF("신경질", 9)
+
+ENDSELECT
+PRINTFORMW 「이 질문에 대답해서 리얼 월드보다 충실한 환상향에서의 생활이 인가되었어　너 전력으로 자도 좋다구」
+RETURN 1

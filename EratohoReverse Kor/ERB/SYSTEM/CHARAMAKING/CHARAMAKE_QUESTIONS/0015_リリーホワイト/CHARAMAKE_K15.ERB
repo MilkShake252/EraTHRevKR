@@ -1,0 +1,52 @@
+﻿;リリーホワイト@咲の人
+@CHARAMAKE_K15(ARG)
+PRINTFORMW 「일어나주세요～。제 질문、갑니다아ー」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「봄은 어떤 계절이라고 생각하세요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 만남과 이별의 계절
+PRINTFORMDL [2] 벚꽃떡이라던가 술이 맛있는 계절
+PRINTFORMDL [3] 어떤 계절이라던가 아무래도 좋아、봄을 팔아라
+PRINTFORMDL [4] 봄、사□시○프
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어째서 입다무는건가요…？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「연분홍색 만남과 이별…로맨티스트군요」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("신경질", -10)
+	CASE 2
+		PRINTFORML 「연회라던가 좋아하나요？　환상향의 모두도 좋아한답니다～」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("지성", -10)
+	CASE 3
+		PRINTFORML 「에、잠、그건…조금 다르다고 생각하는데…요」
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+		CALLF CM_PROF("프라이드", -30)
+	CASE 4
+		PRINTFORML 「그거、질문의 대답이 되지 않아요」
+		CALLF CM_PROF("지성", -30)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("낙관", 20)
+ENDSELECT
+PRINTFORMW 「봄의 잠결을 기억해…안녕히 주무세요～」
+RETURN 1
+

@@ -1,0 +1,157 @@
+﻿;==================================================
+;
+;	범용 함수 두는 곳＠참조편
+;		참조에 이용해 특정의 수치나 명칭 따위를반환의
+;		혹은, 상황에 따른 접두어 따위를반환의
+;
+;		구상전용의 것도 있거나 않기도 하고.
+;
+;==================================================
+
+;==================================================
+;
+;	굴복실적의 참조
+;	(핀 포인트 지나므로 그 중 Str.csv등의 캐릭터 라인 처리계가 모일지도)
+;
+;==================================================
+;굴복실적 관련 함수의 기본방침는 생각보다는 노우 가드
+;반복해 불리므로 처리 속도우선(수수께끼
+;신규 작성@revkoishi(14/05/28)
+;-------------------------------------------------
+;함수의 개요
+;·GET_SURRENDER_LV   … 굴복실적 Lv취득함수
+;·GET_SURRENDER_NUM  … 굴복실적번호취득함수
+;·GET_SURRENDER_POINT… 굴복실적 포인트취득함수
+;·GET_SURRENDER_STR_M… 굴복실적 문언취득함수(조교대상시점)
+;·GET_SURRENDER_STR_T… 굴복실적 문언취득함수(조교자시점)
+;·IS_SURRENDER_ENABLE… 굴복실적 표시 가부 판정 함수
+;·SURRENDER_LV2POINT … 굴복실적 Lv→포인트 변환 함수
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:GET_SURRENDER_LV
+;개  요점:굴복실적 Lv취득함수
+;인  수:ARG:0… 굴복실적번호(0～127)
+;　　　 ARG:1…[생략가능]등록번호. 생략했다경우는 TARGET
+;반환값:굴복실적 Lv(1～5). 미정도리나 부정한 경우는 0이 돌아간다
+;비  고:식 안의 함수
+;-------------------------------------------------
+@GET_SURRENDER_LV(ARG:0, ARG:1 = -2)
+#FUNCTION
+ARG:1 = ARG:1 == -2 ? TARGET # ARG:1
+SWAP TARGET, ARG:1
+LOCAL:0 = TOINT(CHARATU(STRFORM(STR:(1300 + ARG:0)), 0))
+SWAP TARGET, ARG:1
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:GET_SURRENDER_NUM
+;개  요점:굴복실적번호취득함수
+;인  수:ARGS:0… 굴복실적의 약칭 캐릭터 라인(Strname.csv로 정의)
+;반환값:굴복실적번호(0～127). 미정도리나 부정한 경우는-1301이 돌아간다
+;비  고:식 안의 함수
+;-------------------------------------------------
+@GET_SURRENDER_NUM(ARGS:0)
+#FUNCTION
+RETURNF GETNUM(STR, ARGS:0) - 1300
+
+
+;-------------------------------------------------
+;함수명:GET_SURRENDER_POINT
+;개  요점:굴복실적 포인트취득함수
+;인  수:ARG:0… 굴복실적번호(0～127)
+;　　　 ARG:1…[생략가능]등록번호. 생략했다경우는 TARGET
+;반환값:굴복실적 Lv에 응한 포인트(1～10). 미정도리나 부정한 경우는 0이 돌아간다
+;비  고:식 안의 함수
+;-------------------------------------------------
+@GET_SURRENDER_POINT(ARG:0, ARG:1 = -2)
+#FUNCTION
+ARG:1 = ARG:1 == -2 ? TARGET # ARG:1
+SWAP TARGET, ARG:1
+LOCAL:0 = SURRENDER_LV2POINT(TOINT(CHARATU(STRFORM(STR:(1300 + ARG:0)), 0)))
+SWAP TARGET, ARG:1
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:GET_SURRENDER_STR_M
+;개  요점:굴복실적 문언취득함수(조교대상시점)
+;인  수:ARG:0… 굴복실적번호(0～127)
+;　　　 ARG:1…[생략가능]등록번호. 생략했다경우는 TARGET
+;반환값:굴복실적 문언(조교대상시점)
+;비  고:식 안의 함수
+;-------------------------------------------------
+@GET_SURRENDER_STR_M(ARG:0, ARG:1 = -2)
+#FUNCTIONS
+#LOCALSSIZE 3
+VARSET LOCALS
+ARG:1 = ARG:1 == -2 ? TARGET # ARG:1
+SWAP TARGET, ARG:1
+SPLIT STRFORM(STR:(1300 + ARG:0)), "___", LOCALS, LOCAL:0
+SWAP TARGET, ARG:1
+RETURNF LOCALS:2
+
+
+;-------------------------------------------------
+;함수명:GET_SURRENDER_STR_T
+;개  요점:굴복실적 문언취득함수(조교자시점)
+;인  수:ARG:0… 굴복실적번호(0～127)
+;　　　 ARG:1…[생략가능]등록번호. 생략했다경우는 TARGET
+;반환값:굴복실적 문언
+;비  고:식 안의 함수
+;-------------------------------------------------
+@GET_SURRENDER_STR_T(ARG:0, ARG:1 = -2)
+#FUNCTIONS
+#LOCALSSIZE 3
+VARSET LOCALS
+ARG:1 = ARG:1 == -2 ? TARGET # ARG:1
+SWAP TARGET, ARG:1
+SPLIT STRFORM(STR:(1300 + ARG:0)), "___", LOCALS, LOCAL:0
+SWAP TARGET, ARG:1
+RETURNF LOCALS:1
+
+
+;-------------------------------------------------
+;함수명:IS_SURRENDER_ENABLE
+;개  요점:굴복실적 유효 판정 함수
+;인  수:ARG:0… 굴복실적번호(0～127)
+;　　　 ARG:1…[생략가능]등록번호. 생략했다경우는 TARGET
+;반환값:유효/무효를 나타내는 진위치(0이나 1). 유효의 경우는 1(진), 무효의 경우는 0(가짜)이 돌아간다
+;비  고:식 안의 함수
+;함수명 변경. 다른 장소에서도 사용할 수 있도록(듯이)@revkoishi(14/06/01)
+;-------------------------------------------------
+@IS_SURRENDER_ENABLE(ARG:0, ARG:1 = -2)
+#FUNCTION
+ARG:1 = ARG:1 == -2 ? TARGET # ARG:1
+LOCAL:0 = 0
+SELECTCASE CHARATU(STRFORM(STR:(1300 + ARG:0)), 1)
+	CASE "A"	;ALL(♂♀쌍)
+		LOCAL:0 = 1
+	CASE "F"	;FEMALE(♀)
+		LOCAL:0 = TALENT:MASTER:후타나리 !| TALENT:MASTER:남자
+	CASE "M"	;MALE(♂)
+		LOCAL:0 = TALENT:MASTER:남자
+	CASE "P"	;PENIS(♂쌍)
+		LOCAL:0 = TALENT:MASTER:후타나리 || TALENT:MASTER:남자
+	CASE "S"	;SINGLE(♂♀)
+		LOCAL:0 = !TALENT:MASTER:후타나리
+	CASE "T"	;TWIN(쌍)
+		LOCAL:0 = TALENT:MASTER:후타나리
+	CASE "V"	;VAGINA(♀쌍)
+		LOCAL:0 = !TALENT:MASTER:남자
+ENDSELECT
+RETURNF LOCAL:0
+
+
+;-------------------------------------------------
+;함수명:SURRENDER_LV2POINT
+;개  요점:굴복실적 Lv→포인트 변환 함수
+;인  수:ARG:0… 굴복실적 Lv(1～5)
+;반환값:굴복실적 포인트(1～10). Lv0의 경우는 0이 돌아간다
+;비  고:식 안의 함수
+;-------------------------------------------------
+@SURRENDER_LV2POINT(ARG:0)
+#DIM CONST POINT = 0, 1, 2, 3, 5, 10
+#FUNCTION
+RETURNF POINT:(ARG:0)

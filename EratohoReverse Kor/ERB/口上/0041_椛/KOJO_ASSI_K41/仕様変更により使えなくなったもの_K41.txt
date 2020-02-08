@@ -1,0 +1,268 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	모미지구상 조수액션구상파일
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+사양의 변경에 의해 사용할 수 없게 되어 버린 것을 테키스트파일에 모아 둡니다
+하가이지메[羽交い絞め] 따위는 언제의 날이나 부활시켰다 있고 의향@/L
+
+;-------------------------------------------------
+;ASSI1, 하가이지메[羽交い絞め]
+;-------------------------------------------------
+
+@KOJO_ACT_ASSI_K41_
+;-------------------------------------------------
+;기입 체크
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;파생·소분기
+	;-------------------------------------------------
+	;귀에 한숨을 내뿜는다
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 1
+		;구상주가주인님
+		IF TALENT:ASSI:주인님
+			PRINTFORMW 「훗……」
+			PRINTFORMDW 모미지가 뒤에서 귀에 바람을 불어넣었다
+			PRINTFORMDW %CALLNAME:MASTER%는 귓속을 간질이는 감각에 몸을 떨었다
+			PRINTFORMW 「귀는 약한건가요？」
+			PRINTFORMW 「그러고보니 제가 조교할때엔」
+			PRINTFORMW 「귀는 별로 신경쓰지 않았군요」
+		;보통조수
+		ELSE
+			PRINTFORMW 
+			PRINTFORMW 
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+	
+	;-------------------------------------------------
+	;귀를 핥아
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 2
+		;구상주가주인님
+		IF TALENT:ASSI:주인님
+			PRINTFORMW 「하읍……」
+			PRINTFORMDW 모미지가 뒤에서 귀를 살짝 짓씹어왔다
+			PRINTFORMDW %CALLNAME:MASTER%는 마치 감전된것처럼 몸을 떨었다
+			PRINTFORMW 「귀는 약한건가요？」
+			PRINTFORMW 「그러고보니 제가 조교할때엔」
+			PRINTFORMW 「귀는 별로 신경쓰지 않았군요」
+		;普通の助손
+		;보통조수
+		ELSE
+			PRINTFORMW 
+			PRINTFORMW 
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+	
+;일반
+	;구상주가주인님
+	IF TALENT:ASSI:주인님
+		PRINTFORMW 「너무 나쁘게 생각하지 말아주세요」
+		PRINTFORMW 모미지는 뒤에서부터 %CALLNAME:MASTER%를 껴안았다……
+		PRINTFORMW （아……잘 보면 이 자세）
+		PRINTFORMW （뒤에서부터 밀착하고있어）
+		PRINTFORMW （살짝……뜻 밖……일지도）
+	;普通の助손
+	ELSE
+		PRINTFORMW 「너무 나쁘게 생각하지 말아주세요」
+		PRINTFORMW 모미지는 뒤에서부터 %CALLNAME:MASTER%를 껴안았다……
+		PRINTFORMW （아……잘 보면 이 자세）
+		PRINTFORMW （뒤에서부터 밀착하고있어）
+		PRINTFORMW （살짝……뜻 밖……일지도）
+	ENDIF
+	RETURN LOCAL
+ENDIF
+
+	;-------------------------------------------------
+	;애널비즈추가
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 2
+		;구상주가주인님
+		IF TALENT:ASSI:주인님
+			PRINTFORMW 「아직 들어가는거네요？」
+			PRINTFORMW 「그럼 하나더 추가할께요」
+		;普通の助손
+		ELSE
+			PRINTFORMW 「하나 시도해볼까요？」
+			PRINTFORMW 「뭐든 일단 경험이니까」
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+
+
+;-------------------------------------------------
+;ASSI10, 조교자에봉사
+;-------------------------------------------------
+;·구상주가 솔선해조교자에봉사 해 보인다
+;-------------------------------------------------
+@KOJO_ACT_ASSI_K41_10
+;-------------------------------------------------
+;기입 체크
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+
+	;구상주가주인님
+	IF TALENT:ASSI:주인님
+		PRINTFORMW 「그럼, 조금 초조하게 해볼까요」
+		PRINTFORMW 「%CNAME(MASTER, ASSI)%도 참가하고 싶으세요？　우후후」
+	;普通の助손
+	ELSE
+		PRINTFORMW 「주인님되시는 분께 봉사입니까？」
+		PRINTFORMW 「알겠습니다. 그럼 실례하겠습니다」
+	ENDIF
+	RETURN LOCAL
+ENDIF
+
+	;-------------------------------------------------
+	;도구를 움직여 준다
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 4
+		;오나홀
+		IF TEQUIP:클리캡 && (TALENT:MASTER:후타나리 || TALENT:MASTER:남자)
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 
+				PRINTFORMW 
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+			RETURN LOCAL
+		;바이브
+		ELSEIF TEQUIP:바이브
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 
+				PRINTFORMW 
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+			RETURN LOCAL
+		;애널바이브
+		ELSEIF TEQUIP:애널바이브
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 「이대로라면 괴로울것 같으니」
+				PRINTFORMW 「좀 더 안쪽까지 넣어드릴께요」
+			;普通の助손
+			ELSE
+				PRINTFORMW 「어, 엄청 괴로울것 같은데 움직이는건가요……」
+				PRINTFORMW 「괘, 괜찮다고요？」
+			ENDIF
+			RETURN LOCAL
+		ENDIF
+	ENDIF
+	
+	;-------------------------------------------------
+	;입에 찔러 넣는다
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 3
+		;구상주가주인님
+		IF TALENT:ASSI:주인님
+			PRINTFORMW 「입이 비어있네요」
+			PRINTFORMW 「죄송합니다, 저, 더이상 참을 수 없어요」
+			PRINTFORMW 「%CALLNAME:MASTER%의 입, 실례하겠습니다」
+		;보통조수
+		ELSE
+			PRINTFORMW 
+			PRINTFORMW 
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ASSI7, 봉사를 강요
+;-------------------------------------------------
+@KOJO_ACT_ASSI_K41_7
+;-------------------------------------------------
+;기입 체크
+LOCAL = 1
+;-------------------------------------------------
+IF LOCAL
+	;-------------------------------------------------
+	;파생·소분기
+	;-------------------------------------------------
+	;애무·수음강제
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && ! TFLAG:111
+		;구상주가후타나리
+		IF TALENT:ASSI:후타나리
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 「손이 빈다면, 저의 것도 해주세요」
+				PRINTFORMW 「앗……역시, %CNAME(MASTER, ASSI)%에게, 자지 만져지면, 기분좋아욧」
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+		;통상
+		ELSE
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 「손이 빈다면, 저의 것도 해주세요」
+				PRINTFORMW 「앗……역시, %CNAME(MASTER, ASSI)%에게, 소중한 곳 만져지면, 기분좋아욧」
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+	
+	;-------------------------------------------------
+	;쿤닐링구스·펠라강제
+	;기입 체크
+	LOCAL:1 = 1
+	;-------------------------------------------------
+	IF LOCAL:1 && TFLAG:111 == 1
+		;구상주가후타나리
+		IF TALENT:ASSI:후타나리
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 「입이 비어있다면, 저의 것도 해주세요」
+				PRINTFORMW 「후앗……！ 역시, %CNAME(MASTER, ASSI)%에게 자지 핥아지면, 기분 좋아욧！」
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+		;통상
+		ELSE
+			;구상주가주인님
+			IF TALENT:ASSI:주인님
+				PRINTFORMW 「입이 비어있다면, 저의 것도 해주세요」
+				PRINTFORMW 「후앗……！ 역시, %CNAME(MASTER, ASSI)%에게 자지 핥아지면, 기분 좋아욧！」
+			;보통조수
+			ELSE
+				PRINTFORMW 
+				PRINTFORMW 
+			ENDIF
+		ENDIF
+		RETURN LOCAL
+	ENDIF
+ENDIF

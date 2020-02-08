@@ -1,0 +1,50 @@
+﻿;メリー＠CPMの人
+@CHARAMAKE_K50(ARG)
+PRINTFORMW 「나 메리씨. 당신의 눈 앞에 있어」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「일어났어？　그럼、질문이야」
+PRINTFORMW 「당신은 어두운 터널 안을 걷고 있습니다. 터널 끝에는 무엇이 있는걸까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 내가 사는 마을
+PRINTFORMDL [2] 또 터널
+PRINTFORMDL [3] 이세계
+PRINTFORMDL [4] 설국(雪国)
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「돌아가는 길이었구나」
+		CALLF CM_PROF("도착",     -10)
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("호기심",   -10)
+		CALLF CM_PROF("충동",     -10)
+	CASE 2
+		PRINTFORML 「장난치고 있는 거야？　아니면……？」
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("도착",     10)
+		CALLF CM_PROF("피학",     10)
+	CASE 3
+		PRINTFORML 「터널이란 즉 경계. 밟아 넘으면 그 곳은 다른 세계……」
+		CALLF CM_PROF("호기심",   20)
+		CALLF CM_PROF("솔직야",   -10)
+		CALLF CM_PROF("도착",     20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람",   10)
+	CASE 4
+		PRINTFORML 「야스나리구나！」 ※주 : 가와바타 야스나리(川端康成)
+		CALLF CM_PROF("동성애",   20)
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("솔직야",   20)
+		CALLF CM_PROF("지성",     20)
+ENDSELECT
+PRINTFORMW 「그럼、메리씨는 돌아갈게. 안녕히 주무세요」
+RETURN 1

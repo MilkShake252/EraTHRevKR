@@ -1,0 +1,2248 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;			표시 관련 함수 두는 곳
+;
+;사용할 것 같은 것으로부터, 무엇에 사용하는지 모르는 것까지 일단
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;-------------------------------------------------
+;스페이드
+;SPADEB_K39:검은 칠 스페이드
+;SPADE_K39:솎아내기 스페이드
+;-------------------------------------------------
+@SPADEB_K39
+#FUNCTIONS
+LOCALS = %UNICODE(0x2660)%
+RETURNF LOCALS
+
+@SPADE_K39
+#FUNCTIONS
+LOCALS = %UNICODE(0x2664)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;하트
+;HEARTB_K39:검은 칠 HEART
+;HEART_K39:솎아내기 HEART
+;-------------------------------------------------
+@HEARTB_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2665)%
+RETURNF LOCALS
+
+@HEART_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2661)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;클럽
+;CLUBB_K39:검은 칠 클럽
+;CLUB_K39:솎아내기 클럽
+;-------------------------------------------------
+@CLUBB_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2663)%
+RETURNF LOCALS
+
+@CLUB_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2667)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;다이어
+;DIAMONDB_K39:검은 칠 다이어
+;DIAMOND_K39:솎아내기 다이어
+;-------------------------------------------------
+@DIAMONDB_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2666)%
+RETURNF LOCALS
+
+@DIAMOND_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2662)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;8분 음표
+;-------------------------------------------------
+@EIGHTHNOTE_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266A)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;련 8분 음표
+;-------------------------------------------------
+@W8NOTE_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266B)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;련 16분 음표
+;-------------------------------------------------
+@W16NOTE_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266C)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;플랫
+;-------------------------------------------------
+@FLAT_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266D)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;내츄럴
+;-------------------------------------------------
+@NATURAL_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266E)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;샤프
+;-------------------------------------------------
+@SHARP_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x266F)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;맑음
+;-------------------------------------------------
+@SUNNY_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2600)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;흐림
+;-------------------------------------------------
+@CLOUDY_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2601)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;비
+;-------------------------------------------------
+@RAINY_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2602)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;눈
+;-------------------------------------------------
+@SNOW_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2603)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;유성
+;-------------------------------------------------
+@SHOOTING_STAR_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2604)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;별
+;STARB_K39:검은 칠 스타
+;STARW_K39:솎아내기 스타
+;-------------------------------------------------
+@STARB_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2605)%
+RETURNF LOCALS
+
+@STAR_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2606)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;드크로
+;-------------------------------------------------
+@SKULL_K39()
+#FUNCTIONS
+LOCALS = %UNICODE(0x2620)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;기호 표시 함수@SYMBOLPRINT_K39
+;-------------------------------------------------
+@SYMBOLPRINT_K39(ARG, ARGS)
+#LOCALSIZE 1
+FOR LOCAL, 0, ARG
+;OriginalString : ARGS
+	PRINTS ARGS
+NEXT
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_HEARTCBW_K39
+;개  요점:HEARTB를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 하트색지정. 생략 하면 세키로 표시
+;인  수:1 하트의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면나눔고딕）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_HEARTCBW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "나눔고딕", ARG:2 = 0x36a6ff, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL HEARTB(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;스페이드 마크 함수@SPADE2_K39
+;	인수 0:스페이드의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;솎아내기의 스페이드 마크를 표시합니다
+;-------------------------------------------------
+@SPADE2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2664))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 스페이드 마크 함수@SPADE2W_K39
+;	인수 0:스페이드의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;솎아내기 스페이드 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다.
+;인수 2에 캐릭터 라인을 넣으면, 대신에 그것을 표시합니다.
+;-------------------------------------------------
+@SPADE2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL SPADE2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;흑스페이드 마크 함수@SPADEB_K39
+;	인수 0:스페이드의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Verdana）
+;
+;모두 칠함의 스페이드 마크를 표시합니다
+;-------------------------------------------------
+@SPADE2B_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x2660))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기흑스페이드 마크 함수@SPADE2BW_K39
+;	인수 0:스페이드의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;모두 칠해 스페이드 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SPADE2BW_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL SPADE2B_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;스페이드 마크계 칼라 바리에이션 함수@SPADE2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SPADE2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SPADE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SPADE2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SPADE2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SPADE2CB_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SPADE2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SPADE2CBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SPADE2BW_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SPADECBW_K39
+;개  요점:SPADE2B_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 스페이드색지정. 생략 하면 디폴트 칼라
+;인  수:1 스페이드의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SPADECBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36a6ff, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SPADE2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;클럽 마크 함수@CLUB2_K39
+;	인수 0:클럽의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;솎아내기의 클럽 마크를 표시합니다
+;-------------------------------------------------
+@CLUB2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2667))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 클럽 마크 함수@CLUB2W_K39
+;	인수 0:클럽의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;솎아내기 클럽 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다.
+;인수 2에 캐릭터 라인을 넣으면, 대신에 그것을 표시합니다.
+;-------------------------------------------------
+@CLUB2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL CLUB2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;흑클럽 마크 함수@CLUB2B_K39
+;	인수 0:클럽의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;모두 칠함의 클럽 마크를 표시합니다
+;-------------------------------------------------
+@CLUB2B_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x2663))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기흑클럽 마크 함수@CLUB2BW_K39
+;	인수 0:클럽의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;모두 칠해 클럽 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@CLUB2BW_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL CLUB2B_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;클럽 마크계 칼라 바리에이션 함수@CLUB2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@CLUB2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLUB2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@CLUB2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLUB2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@CLUB2CB_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLUB2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@CLUB2CBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLUB2BW_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_CLUBCBW_K39
+;개  요점:CLUB2B_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 클럽색지정. 생략 하면 디폴트 칼라
+;인  수:1 클럽의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_CLUBCBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36a6ff, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLUB2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;다이어 마크 함수@DIAMOND2_K39
+;	인수 0:다이어의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;솎아내기의 다이어 마크를 표시합니다
+;-------------------------------------------------
+@DIAMOND2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2662))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 다이어 마크 함수@DIAMOND2W_K39
+;	인수 0:다이어의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;솎아내기 다이어 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다.
+;인수 2에 캐릭터 라인을 넣으면, 대신에 그것을 표시합니다.
+;-------------------------------------------------
+@DIAMOND2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL DIAMOND2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;석탄 마크 함수@DIAMOND2B_K39
+;	인수 0:다이어의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;모두 칠함의 다이어 마크를 표시합니다
+;-------------------------------------------------
+@DIAMOND2B_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x2666))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 석탄 마크 함수@DIAMOND2BW_K39
+;	인수 0:다이어의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;모두 칠해 다이어 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@DIAMOND2BW_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL DIAMOND2B_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;다이어 마크계 칼라 바리에이션 함수@DIAMOND2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 세키로 표시합니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@DIAMOND2C_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL DIAMOND2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@DIAMOND2CW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL DIAMOND2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@DIAMOND2CB_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL DIAMOND2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@DIAMOND2CBW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL DIAMOND2BW_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_DIAMONDCBW_K39
+;개  요점:SPADE2B_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 다이어색지정. 생략 하면 디폴트 칼라
+;인  수:1 다이어의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_DIAMONDCBW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL DIAMOND2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;8분 음표 마크 함수@EIGHTHNOTE2_K39
+;	인수 0:8분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;8분 음표 마크를 표시합니다
+;-------------------------------------------------
+@EIGHTHNOTE2_K39(ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x266A))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 8분 음표 마크 함수@EIGHTHNOTE2W_K39
+;	인수 0:8분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;8분 음표를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@EIGHTHNOTE2W_K39(ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:1)
+CALL EIGHTHNOTE2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;8분 음표 마크계 칼라 바리에이션 함수@EIGHTHNOTE2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@EIGHTHNOTE2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL EIGHTHNOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@EIGHTHNOTE2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL EIGHTHNOTE2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_8THNOTECW_K39
+;개  요점:EIGHTHNOTE2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 8분 음표색지정. 생략 하면 디폴트 칼라.
+;인  수:1 8분 음표의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_8THNOTECW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Symbol", ARG:2 = 0x36a6ff, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL EIGHTHNOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;련 8분 음표 마크 함수@W8NOTE2_K39
+;	인수 0:련 8분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;련 8분 음표 마크를 표시합니다
+;-------------------------------------------------
+@W8NOTE2_K39(ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x266B))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기련분음표 마크 함수@W8NOTE2W_K39
+;	인수 0:련 8분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;련 8분 음표를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@W8NOTE2W_K39(ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:1)
+CALL W8NOTE2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;련 8분 음표 마크계 칼라 바리에이션 함수@W8NOTE2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@W8NOTE2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W8NOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@W8NOTE2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W8NOTE2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_W8NOTECW_K39
+;개  요점:W8NOTE2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0련 8분 음표색지정. 생략 하면 디폴트 칼라
+;인  수:1련 8분 음표의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_W8NOTECW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Symbol", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W8NOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;련 16분 음표 마크 함수@W16NOTE2_K39
+;	인수 0:련 16분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;련 16분 음표 마크를 표시합니다
+;-------------------------------------------------
+@W16NOTE2_K39(ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x266C))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기련 16분 음표 마크 함수@W8NOTE2W_K39
+;	인수 0:련 16분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;련 16분 음표를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@W16NOTE2W_K39(ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:1)
+CALL W16NOTE2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;련 16분 음표 마크계 칼라 바리에이션 함수@EIGHTHNOTE2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라로 표시합니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@W16NOTE2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W16NOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@W16NOTE2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Symbol", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W16NOTE2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_W16NOTECW_K39
+;개  요점:W16NOTE2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0련 16분 음표색지정. 생략 하면 디폴트 칼라로 표시
+;인  수:1련 16분 음표의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_W16NOTECW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Symbol", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL W16NOTE2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;플랫 마크 함수@FLAT2_K39
+;	인수 0:련 16분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;플랫 마크를 표시합니다
+;-------------------------------------------------
+@FLAT2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x266D))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 플랫 마크 함수@FLAT2W_K39
+;	인수 0:플랫의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;플랫을 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@FLAT2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL FLAT2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;플랫 마크계 칼라 바리에이션 함수@FLAT2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 핑크가 산 밝은 세키가 됩니다
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@FLAT2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL FLAT2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@FLAT2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL FLAT2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_FLATCW_K39
+;개  요점:FLAT2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 플랫색지정. 생략 하면 디폴트 칼라로 표시
+;인  수:1 플랫의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_FLATCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL FLAT2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;내츄럴 마크 함수@NATURAL2_K39
+;	인수 0:련 16분 음표의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;내츄럴 마크를 표시합니다
+;-------------------------------------------------
+@NATURAL2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x266E))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 내츄럴 마크 함수@NATURAL2W_K39
+;	인수 0:내츄럴의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;내츄럴을 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@NATURAL2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL NATURAL2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;내츄럴 마크계 칼라 바리에이션 함수@FLAT2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@NATURAL2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL NATURAL2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@NATURAL2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL NATURAL2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_NATURALCW_K39
+;개  요점:NATURAL2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 내츄럴색지정. 생략 하면 디폴트 칼라로 표시
+;인  수:1 내츄럴의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_NATURALCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL NATURAL2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;샤프 마크 함수@NATURAL2_K39
+;	인수 0:샤프 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;샤프 마크를 표시합니다
+;-------------------------------------------------
+@SHARP2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x266F))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 샤프 마크 함수@SHARP2W_K39
+;	인수 0:샤프의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;샤프를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SHARP2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL SHARP2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;샤프 마크계 칼라 바리에이션 함수@SHARP2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SHARP2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHARP2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SHARP2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHARP2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SHARPCW_K39
+;개  요점:SHARP2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 샤프색지정. 생략 하면 디폴트 칼라로 표시
+;인  수:1 샤프의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SHARPCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHARP2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;개이고 마크 함수@SUNNY2_K39
+;	인수 0:개이고 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;개이고 마크를 표시합니다
+;-------------------------------------------------
+@SUNNY2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2600))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 기다려 개이고 마크 함수@SUNNY2W_K39
+;	인수 0:개이고 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;개이고를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SUNNY2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL SUNNY2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;개이고 마크계 칼라 바리에이션 함수@SUNNY2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 세키로 표시합니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SUNNY2C_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SUNNY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SUNNY2CW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SUNNY2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SUNNYCW_K39
+;개  요점:SUNNY2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0개이고 마크색지정
+;인  수:1개이고 마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SUNNYCW_K39(ARG:1 = 0xA8142F, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SUNNY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;흐림 마크 함수@CLOUDY2_K39
+;	인수 0:흐림 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;흐림 마크를 표시합니다
+;-------------------------------------------------
+@CLOUDY2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2601))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 기다려 흐림 마크 함수@CLOUDY2W_K39
+;	인수 0:흐림 마크수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;흐림 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@CLOUDY2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL CLOUDY2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;흐림 마크계 칼라 바리에이션 함수@CLOUDY2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 핑크가 산 밝은 세키가 됩니다
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@CLOUDY2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLOUDY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@CLOUDY2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLOUDY2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_CLOUDYCW_K39
+;개  요점:CLOUDY2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 흐림 마크색지정
+;인  수:1 흐림 마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_CLOUDYCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL CLOUDY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;비마크 함수@RAINY2_K39
+;	인수 0:비마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;비마크를 표시합니다
+;-------------------------------------------------
+@RAINY2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2602))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기비마크 함수@RAINY2W_K39
+;	인수 0:비마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;비마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@RAINY2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL RAINY2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;비마크계 칼라 바리에이션 함수@RAINY2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@RAINY2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL RAINY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@RAINY2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL RAINY2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_RAINYCW_K39
+;개  요점:RAINY2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0비마크색지정
+;인  수:1비마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_RAINYCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL RAINY2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;눈마크 함수@SNOW2_K39
+;	인수 0:눈마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;비마크를 표시합니다
+;-------------------------------------------------
+@SNOW2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2603))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기눈마크 함수@SNOW2W_K39
+;	인수 0:눈마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;눈마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SNOW2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL RAINY2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;눈마크계 칼라 바리에이션 함수@SNOW2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 핑크가 산 밝은 세키가 됩니다
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SNOW2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SNOW2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SNOW2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL RAINY2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SNOWCW_K39
+;개  요점:SNOW2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0눈마크색지정
+;인  수:1눈마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SNOWCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SNOW2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;유성 마크 함수@SHOOTING_STAR2_K39
+;	인수 0:유성 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;유성 마크를 표시합니다
+;-------------------------------------------------
+@SHOOTING_STAR2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2604))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 유성 마크 함수@SHOOTING_STAR2W_K39
+;	인수 0:유성 마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;유성 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SHOOTING_STAR2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL RAINY2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;유성 마크계 칼라 바리에이션 함수@SHOOTING_STAR2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 핑크가 산 밝은 세키가 됩니다
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SHOOTING_STAR2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHOOTING_STAR2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SHOOTING_STAR2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHOOTING_STAR2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SHOOTING_STARCW_K39
+;개  요점:SHOOTING_STAR2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 유성 마크색지정
+;인  수:1 유성 마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SHOOTING_STARCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SHOOTING_STAR2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;호시 마크 함수@STARD2_K39
+;	인수 0:별의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;솎아내기의 호시 마크를 표시합니다
+;-------------------------------------------------
+@STAR2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2606))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기호시 마크 함수@STAR2W_K39
+;	인수 0:별의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;솎아내기호시 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다.
+;인수 2에 캐릭터 라인을 넣으면, 대신에 그것을 표시합니다.
+;-------------------------------------------------
+@STAR2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL STAR2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;검은 칠호시 마크 함수@STAR2B_K39
+;	인수 0:별의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;모두 칠함의 호시 마크를 표시합니다
+;-------------------------------------------------
+@STAR2B_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT(ARG, UNICODE(0x2605))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 검은 칠호시 마크 함수@STAR2BW_K39
+;	인수 0:별의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;모두 칠해 호시 마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@STAR2BW_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL STAR2B_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;호시 마크계 칼라 바리에이션 함수@STAR2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라가 됩니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@STAR2C_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL STAR2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@STAR2CW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL STAR2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@STAR2CB_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL STAR2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@STAR2CBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL STAR2BW_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_STARCBW_K39
+;개  요점:STAR2B_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0별의 색지정
+;인  수:1별의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_STARCBW_K39(ARG:1 = 0xC07070, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL STAR2B_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;드크로마크 함수@SKULL2_K39
+;	인수 0:드크로마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;
+;드크로마크를 표시합니다
+;-------------------------------------------------
+@SKULL2_K39(ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = RESULT
+LOCALS = %GETFONT()%
+
+SETFONT CHKFONT(ARGS) ? ARGS # LOCALS
+
+CALL SYMBOLPRINT_K39(ARG, UNICODE(0x2620))
+
+SETFONT LOCALS
+RETURN LOCAL
+
+;-------------------------------------------------
+;입력 대기 드크로마크 함수@SKULL2W_K39
+;	인수 0:드크로마크의 수（생략 하면 1개）
+;	인수 1:사용하는 폰트명（생략 하면 Courier New）
+;	인수 2:『」』대신에 표시하는 캐릭터 라인
+;	인수 3:실로 하면, 『」』를 표시하지 않는다
+;
+;드크로마크를 표시하고 나서 『」』를 표시해, 입력 대기·개행을 합니다
+;-------------------------------------------------
+@SKULL2W_K39(ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:1)
+CALL SKULL2_K39(ARG, ARGS)
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+RETURN RESULT
+
+;-------------------------------------------------
+;드크로마크계 칼라 바리에이션 함수@SKULL2C～계
+;
+;상기와 같은 바리에이션이 있습니다만, 최초의 인수로 지정했다문자색으로 표시합니다. 생략 하면 디폴트 칼라로 표시합니다.
+;문자색지정에 대해서는 RGBCOLOR 함수를 사용할 수 있습니다.
+;-------------------------------------------------
+@SKULL2C_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New")
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SKULL2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+RETURN RESULT
+
+@SSKULL2CW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARGS:1 = "」", ARG:2)
+#LOCALSIZE 1
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SKULL2W_K39(ARG, ARGS, ARGS:1, ARG:1)
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:PRINT_SKULLCW_K39
+;개  요점:SKULL2C_K39를 CALL했다 후, 『」』를 지정색으로 표시해 입력 기다려 한다
+;인  수:0 드크로마크색지정
+;인  수:1 드크로마크의 수(생략 하면 1개)
+;인  수:2 사용하는 폰트명（생략 하면 Courier New）
+;인  수:3 『」』색지정 생략 하면 파랑(구상지정색)으로 표시
+;인  수:4 『」』대신에 표시하는 캐릭터 라인
+;-------------------------------------------------
+@PRINT_SKULLCW_K39(ARG:1 = 0xC0C0C0, ARG = 1, ARGS = "Courier New", ARG:2 = 0x36A6FF, ARGS:1 = "」")
+#LOCALSIZE 10
+LOCAL = GETCOLOR()
+SETCOLOR ARG:1
+CALL SKULL2_K39(ARG, ARGS)
+SETCOLOR LOCAL
+LOCAL = GETCOLOR()
+SETCOLOR ARG:2
+;OriginalString : ARGS:1
+PRINTSW ARGS:1
+SETCOLOR LOCAL
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:COLOR_K39
+;개  요점:@RGBCOLOR에 대신해, 캐릭터 라인에 의한 색지정을 실시한다
+;인  수:ARGS… 지정하는 색의 이름, 또는 해당 문자색의 캐릭터명
+;반환값:RGBCOLOR 지정의 값
+;비  고:식 안의 함수
+;사용예:CALL PRINTCOLORW(COLOR2_K39("white"), " 『이 캐릭터 라인은 흰색으로 표시되고 개행 기다려 한다』")
+;-------------------------------------------------
+@COLOR_K39(ARGS)
+#FUNCTION
+SELECTCASE ARGS
+	;HEART용. 조교자의만족도에 응해 색을 5% 잘게 썰기로변화시킨다
+	CASE "핑크", "pink"
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "높다"
+				RETURNF RGBCOLOR(255, 179, 222)
+			CASE "일반"
+				RETURNF RGBCOLOR(255, 191, 235)
+			CASE "낮다"
+				RETURNF RGBCOLOR(255, 204, 247)
+		ENDSELECT
+	CASE "히나", "HINA", "red", "세키"
+		RETURNF RGBCOLOR(181, 33, 59)
+	CASE "흰색", "white"
+		RETURNF RGBCOLOR(192, 192, 192)
+	CASE "흑", "black"
+		RETURNF RGBCOLOR(0, 0, 0)
+	CASE "유카리", "YUKARI"
+		RETURNF RGBCOLOR(204, 153, 255)
+	CASE "앨리스", "ALICE"
+		RETURNF RGBCOLOR(54, 166, 255)
+	CASE "사쿠야", "SAKUYA"
+		RETURNF RGBCOLOR(172, 175, 210)
+	CASE "샹하이", "test"
+		RETURNF RGBCOLOR(150,200,150)
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE("@COLOR_K39에 무효인 정의(%ARGS%)가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+@COLOR2_K39(ARGS)
+#FUNCTION
+SELECTCASE ARGS
+	CASE "앨리스", "ALICE"
+		RETURNF 0x36A6FF
+	CASE "사쿠야", "SAKUYA"
+		RETURNF 0xACAFD2
+	CASE "세키", "red", "히나", "HINA", "RED"
+		RETURNF 0xA8142F
+	CASE "흰색", "white", "WHITE"
+		RETURNF 0xFFFFFF
+	CASE "핑크", "pink", "PINK"
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "높다"
+				RETURNF 0xFFB3DE
+			CASE "일반"
+				RETURNF 0xFFBFBE
+			CASE "낮다"
+				RETURNF 0xFFCCF7
+		ENDSELECT
+	CASE "흑", "black", "BLACK"
+		RETURNF 0x000000
+	CASE "레미", "파체", "orchild", "ORCHILD"
+		RETURNF 0xDA70D6
+	CASE "샹하이", "test"
+		RETURNF 0x96C896
+	CASE "유카리", "YUKARI"
+		RETURNF 0xCC99FF
+	CASEELSE
+		CALLF PRINT_ERRORMESSAGE("@COLOR2_K39에 무효인 정의(%ARGS%)가 도 사라질 수 있는 했다")
+		RETURNF -1
+ENDSELECT
+
+@COLOR3_K39, ARGS, ARG = -1
+#FUNCTION
+#LOCALSIZE 1
+#DIM PREV
+IF ARGS == "PREV"
+	RETURNF PREV
+ELSE
+	PREV = GETCOLOR()
+ENDIF
+SELECTCASE TOUPPER(ARGS)
+	CASE "RESET", "DEFAULT", "DEF"
+		LOCAL = GETDEFCOLOR()
+	CASE "BG"
+		LOCAL = GETBGCOLOR()
+	CASE "DEFBG"
+		LOCAL = GETDEFBGCOLOR()
+	CASE "ALICE"
+		LOCAL = 0x36A6FF
+	CASE "SAKUYA"
+		LOCAL = 0xACAFD2
+	CASE "RED", "HINA"
+		LOCAL = 0xA8142F
+	CASE "WHITE"
+		LOCAL = 0xFFFFFF
+	CASE "PINK"
+		LOCAL = 0xFFB3DE
+	CASE "BLACK"
+		LOCAL = 0x000000
+	CASE "ORCHILD"
+		LOCAL = 0xDA70D6
+	CASE "GOLD"
+		LOCAL = 0x96C896
+	CASE "YUKARI"
+		LOCAL = 0xCC99FF
+	CASEELSE
+		IF ISNUMERIC(ARGS)
+			LOCAL = TOINT(ARGS)
+		ELSE
+			THROW @COLOR3_K39에등록되어 있지 않은 명칭[%ARGS%]가 지정했다.
+		ENDIF
+ENDSELECT
+SIF ARG >= 0
+	LOCAL = BRIGHTCOLORF(ARG, LOCAL)
+RETURNF LOCAL
+
+;-------------------------------------------------
+;함수명:PRINTFONTSTYLE_K39
+;개  요점:@PRINTCOLOR를 지정의 FONTSTYLE로 표시했다 후, 원래에 되돌린다. 개행, 개행 기다리는 바리에이션 있어.
+;인  수:0문자색
+;인  수:1 1으로 굵은 글씨 2로 굵은 글씨 이탤릭
+;사용예:CALL PRINTFONTSTYLE_W_K39(RGBCOLOR(255, 0, 0), "이 캐릭터 라인은 세키의 굵은 글씨로 표시되고 개행 기다려 한다", 1)
+;-------------------------------------------------
+@PRINTFONTSTYLE_K39(ARG, ARGS, ARG:1)
+IF ARG:1 == 1
+	FONTSTYLE 1
+	CALL PRINTCOLOR(ARG, ARGS)
+ELSEIF ARG:1 == 2
+	FONTSTYLE 3
+	CALL PRINTCOLOR(ARG, ARGS)
+ENDIF
+FONTREGULAR
+RETURN RESULT
+
+@PRINTFONTSTYLE_L_K39(ARG, ARGS, ARG:1)
+IF ARG:1 == 1
+	FONTSTYLE 1
+	CALL PRINTCOLORL(ARG, ARGS)
+ELSEIF ARG:1 == 2
+	FONTSTYLE 3
+	CALL PRINTCOLORL(ARG, ARGS)
+ENDIF
+FONTREGULAR
+RETURN RESULT
+
+@PRINTFONTSTYLE_W_K39(ARG, ARGS, ARG:1)
+IF ARG:1 == 1
+	FONTSTYLE 1
+	CALL PRINTCOLORW(ARG, ARGS)
+ELSEIF ARG:1 == 2
+	FONTSTYLE 3
+	CALL PRINTCOLORW(ARG, ARGS)
+ENDIF
+FONTREGULAR
+RETURN RESULT
+
+;-------------------------------------------------
+;PRINT_SYMBOL/AUTOHEART～계
+;
+;호감도, 혹은 BASE:8만족에 응한 심볼을 표시한다
+;문자색지정에 대해서는 COLOR_KX함수를 사용
+;
+;PRINT_SYMBOL	문말에서의 사용을 상정. 하트, 혹은 8분 음표를 표시해 괄호를 닫아 입력 기다려 한다
+;PRINT_SYMBOL2	문말에서의 사용을 상정. 하트, 혹은 느낌표를 표시해 괄호를 닫아 입력 기다려 한다
+;(M계는대상한정구상로 MASTER에 사용)
+;
+;AUTOHEARTCB	문중에서의 사용을 상정. 하트, 혹은 느낌표를 표시한다
+;AUTOHEARTCB2	문중에서의 사용을 상정. 하트, 혹은 8분 음표를 표시한다
+;-------------------------------------------------
+@PRINT_SYMBOL_K39
+#LOCALSIZE 1
+IF GET_KFLAG_K39("상사상애")
+	SELECTCASE TENSION(TARGET, 8)
+		CASE "높다"
+			IF !RAND:4 ;1/4의 확률로 하트 2개
+				CALL HEARTCB(COLOR2_K39("pink"), 2, "나눔고딕")
+;OriginalString : 」
+				PRINTW 」
+			ELSE
+				CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+;OriginalString : 」
+				PRINTW 」
+			ENDIF
+		CASE "일반"
+;OriginalString : ♪」
+			PRINTW ♪」
+		CASE "낮다"
+;OriginalString : 」
+			PRINTW .」
+	ENDSELECT
+ELSEIF AFFECTION("익애")
+	SELECTCASE TENSION(TARGET, 8)
+		CASE "높다"
+			IF !RAND:4 ;1/4로 HEART
+				CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+;OriginalString : 」
+				PRINTW 」
+			ELSE
+;OriginalString : ♪」
+				PRINTW ♪」
+			ENDIF
+		CASE "일반"
+;OriginalString : ♪」
+			PRINTW ♪」
+		CASE "낮다"
+;OriginalString : 」
+			PRINTW .」
+	ENDSELECT
+ELSE
+	SELECTCASE TENSION(TARGET, 8)
+		CASE "높다"
+;OriginalString : ♪」
+			PRINTW ♪」
+		CASEELSE
+;OriginalString : 」
+			PRINTW .」
+	ENDSELECT
+ENDIF
+
+@PRINT_SYMBOL2_K39
+#LOCALSIZE 1
+IF GET_KFLAG_K39("상사상애")
+	IF !RAND:4 ;1/4의 확률로 하트 2개
+		CALL HEARTCB(COLOR2_K39("pink"), 2, "나눔고딕")
+;OriginalString : 」
+		PRINTW 」
+	ELSE
+		CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+;OriginalString : 」
+		PRINTW 」
+	ENDIF
+ELSEIF AFFECTION("익애")
+	IF !RAND:4 ;1/4로 HEART
+		CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+;OriginalString : 」
+		PRINTW 」
+	ELSE
+;OriginalString : !」
+		PRINTW !」
+	ENDIF
+ELSE
+;OriginalString : !」
+	PRINTW !」
+ENDIF
+
+@AUTOHEARTCB_K39
+#LOCALSIZE 1
+IF AFFECTION("상사상애")
+	IF RAND:3
+		CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+	ELSE
+;OriginalString : !
+		PRINT !
+	ENDIF
+ELSEIF AFFECTION("익애") || AFFECTION("조교완료")
+	IF RAND:3
+;OriginalString : !
+		PRINT !
+	ELSE
+		CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+	ENDIF
+ELSE
+;OriginalString : !
+	PRINT !
+ENDIF
+
+@AUTOHEARTCB2_K39
+#LOCALSIZE 1
+IF AFFECTION("상사상애")
+	CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+ELSEIF AFFECTION("익애") || AFFECTION("조교완료")
+	IF RAND:3
+;OriginalString : ♪
+		PRINT ♪
+	ELSE
+		CALL HEARTCB(COLOR2_K39("pink"), 1, "나눔고딕")
+	ENDIF
+ELSE
+;OriginalString : ♪
+	PRINT ♪
+ENDIF
+;-------------------------------------------------
+@QUAKE_W_K39(ARG = 4)
+CALL QUAKE(ARG)
+WAIT
+
+;--------------------------------------------------
+;TWAIT3_K39
+;캐릭터 라인 인수는 바 기호. 생략 하면 「…」
+;캐릭터 라인 인수 1은 footer. 「.」든지 넣으면 좋다고 생각해. (이)다, 그렇습니다…
+;--------------------------------------------------
+@TWAIT3_K39(ARGS = "…", ARGS:1)
+;OriginalString : 
+PRINTL
+;OriginalString : %ARGS*3 + ARGS:1%
+PRINTFORMDL %ARGS*3 + ARGS:1%
+TWAIT 500, 0
+;OriginalString : %ARGS*2 + ARGS:1%
+PRINTFORMDL %ARGS*2 + ARGS:1%
+TWAIT 500, 0
+;OriginalString : %ARGS + ARGS:1%
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 500, 0
+;OriginalString : 
+PRINTL
+
+;--------------------------------------------------
+;TWAIT3_ZWEI_K39
+;캐릭터 라인 인수는 바 기호. 생략 하면 「·」
+;캐릭터 라인 인수 1은 footer. 사용하지 않는 생각은 든다
+;기본적으로 DIGEST, 또는 OP/ED등으로 ALIGNMENT CENTER시에서의 사용을 상정
+;--------------------------------------------------
+@TWAIT3_ZWEI_K39(ARGS = "·", ARGS:1)
+;OriginalString : 
+PRINTL
+FONTSTYLE 1
+;OriginalString : %ARGS + ARGS:1%
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 800, 0
+;OriginalString : 
+PRINTL
+;OriginalString : %ARGS + ARGS:1%
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 800, 0
+;OriginalString : 
+PRINTL
+;OriginalString : %ARGS + ARGS:1%
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 900, 0
+FONTSTYLE 0
+;OriginalString : 
+PRINTL
+
+;--------------------------------------------------
+;TWAIT1_K39
+;캐릭터 라인 인수는 바 기호. 생략 하면 「-」
+;캐릭터 라인 인수 1은 footer. 생략 하면 「.」
+;--------------------------------------------------
+@TWAIT1_K39(ARGS = "―", ARGS:1 = "。")
+;OriginalString : 
+PRINTL
+TWAIT 500, 0
+;OriginalString : %ARGS*2 + ARGS:1%
+PRINTFORMDL %ARGS*2 + ARGS:1%
+TWAIT 500, 0
+;OriginalString : 
+PRINTL
+
+;-------------------------------------------------
+;RESETFONT_K39
+;폰트를 디폴트에, 폰트 스타일을통상에 되돌린다
+;-------------------------------------------------
+@RESETFONT_K39
+#DIMS DEFONT, 1
+DEFONT = %GETFONT()%
+SETFONT
+FONTSTYLE 0
+
+;-------------------------------------------------
+;SETFONT_K39
+;폰트를나눔명조, 폰트 스타일을 굵은 글씨, 이탤릭으로 한다
+;현상, 용도가 한정되기 때문에 1대의 비행기노우에 사무치는 일에. 확장했다구 되면 생각한다
+;-------------------------------------------------
+@SETFONT_K39
+SIF CHKFONT("나눔명조")
+	SETFONT "나눔명조"
+FONTSTYLE 3
+
+;-------------------------------------------------
+;CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39
+;인  수:ARG:0 =시색, 생략 하면히나의 문자색
+;인  수:ARG:1 =종색, 생략 하면 흑
+;인  수:ARG:2 = 1으로 TARGET, 2로 MASTER의상태변화를 참조한다
+;인  수:ARG:3 = -2이외라면 FADE가 OFF인 경우에 RESETCOLOR로 PRINT를 출력했다 후, 구상주의 문자색에 되돌린다
+;인  수:ARGS  = @KOJO_RAND_K39의 행위의 분류를 지정한다. 캐릭터 라인 인수
+;
+;	FADEOUT로서의 사용이 주로 된다고 생각되므로 pre-set는 FADEOUT용. FADEIN라고 해도 아무튼 사용할 수 있다.
+;	이런 응범용화해도 아무도 사용하지 않을 것 같다(용도도 없는 것 같다)이니까, 다른 일은 상정하지 않는다. 자신의 사용승손우선.
+;	원래@KOJO_RAND_KX의 존재가 전제이고w
+;-------------------------------------------------
+@CHK_FADECONFIG_OUTPUT_OF_KOJORAND_K39(ARG:0 = 0xA8142F, ARG:1 = 0x000000, ARGS, ARG:2 = 1, ARG:3 = -2)
+IF ANIME_CONFIG("FADE")
+	CALL FADE(20, ARG:0, ARG:1, @"　　　　　%KOJO_RAND_K39((ARGS), ARG:2)%")
+ELSE
+	SIF ARG:3 != -2
+		RESETCOLOR
+;OriginalString : \@ ARG:3 == -2 ? 「 # （ \@%KOJO_RAND_K39((ARGS), ARG:2)%\@ ARG:3 == -2 ? 」 # ） \@
+	PRINTFORMW \@ ARG:3 == -2 ? 「 # （ \@%KOJO_RAND_K39((ARGS), ARG:2)%\@ ARG:3 == -2 ? 」 # ） \@
+	SIF ARG:3 != -2
+		CALL KOJO_COLOR(TARGET)
+ENDIF
+CALL FADE_CLINE(1)
+
+
+;히나님은 텐션 높을 때는 일인칭이"히나"가 된다든가 말하는 나설정 함수
+;==============================================================
+@TNAME_K39(ARG:0 = -2) ;//인수를 생략 하면 TARGET
+#FUNCTIONS
+#LOCALSSIZE 1
+VARSET LOCALS
+ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
+LOCALS:0 '= IS_CONDITION(ARG:0, "정욕") || TENSION(ARG:0, 8) == "높다" ?"히나" # "나" 
+RETURNF LOCALS:0
+
+
+;PRINT_SYMBOL의 HTMLFONT판
+;========================
+@HTML_PS_K39(ARG:0 = -2) ;//인수를 생략 하면 TARGET
+#FUNCTIONS
+#LOCALSSIZE 1
+VARSET LOCALS
+ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
+;//기본적으로 행말에서의 사용을 상정
+
+[SKIPSTART]
+호의, 호감도로 파생한다
+하트계의 출력은 2/3으로 HEARTB, 1/3그리고 HEART를 출력한다
+음표계의 출력은 2/3으로 8분 음표, 1/3그리고 련 8분 음표를 출력한다
+[SKIPEND]
+IF GET_KFLAG_K39("상사상애", ARG:0)
+	;BASE:만족로 파생한다
+	SELECTCASE TENSION(ARG:0, 8)
+		;BASE:만족가 50%이상
+		CASE "높다"
+			;1/4로 하트 2개를 출력
+			IF PERCENT(25)
+				LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK"), 2) # HTML_HEART(, COLOR2_K39("PINK"), 2)
+			;그 외라면 하트 1개
+			ELSE
+				LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+			ENDIF
+		;BASE:만족가 25%이상
+		CASE "일반"
+			LOCALS:0 '= RAND:3 ? HTML_EIGHTHNOTE() # HTML_W8NOTE()
+		;BASE:만족가 25% 미만
+		CASE "낮다"
+			;아무것도 출력하지 않는다
+			LOCALS:0 '= ""
+	ENDSELECT
+ELSEIF AFFECTION("익애", ARG:0)
+	SELECTCASE TENSION(ARG:0, 8)
+		CASE "높다"
+			;1/4로 하트계를 출력
+			IF PERCENT(25)
+				LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+			;그 외라면 음표계를 출력
+			ELSE
+				LOCALS:0 '= RAND:3 ? HTML_EIGHTHNOTE() # HTML_W8NOTE()
+			ENDIF
+		CASE "일반"
+				LOCALS:0 '= RAND:3 ? HTML_EIGHTHNOTE() # HTML_W8NOTE()
+		CASE "낮다"
+			LOCALS:0 '= ""
+	ENDSELECT
+ELSE
+	SELECTCASE TENSION(ARG:0, 8)
+		CASE "높다"
+			LOCALS:0 '= HTML_EIGHTHNOTE()
+		CASEELSE
+			LOCALS:0 '= ""
+	ENDSELECT
+ENDIF
+RETURNF LOCALS:0
+
+
+;PRINT_SYMBOL2의 HTMLFONT판
+;=========================
+@HTML_PS2_K39(ARG:0 = -2) ;//인수를 생략 하면 TARGET
+#FUNCTIONS
+VARSET LOCALS
+ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
+;//기본적으로 행말에서의 사용을 상정
+
+;호의, 호감도로 파생한다
+;하트계의 출력은 2/3으로 HEARTB, 1/3그리고 HEART를 출력한다
+IF GET_KFLAG_K39("상사상애", ARG:0)
+	;1/4로 하트 2개를 출력
+	IF PERCENT(25)
+		LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK"), 2) # HTML_HEART(, COLOR2_K39("PINK"), 2)
+	;그 외라면 하트 1개
+	ELSE
+		LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+	ENDIF
+ELSEIF AFFECTION("익애", ARG:0)
+	;1/4로 하트계를 출력
+	IF PERCENT(25)
+		LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+	;그 외라면 exclamation
+	ELSE
+		LOCALS:0 '= "!"
+	ENDIF
+ELSE
+	LOCALS:0 '= "!"
+ENDIF
+RETURNF LOCALS:0
+
+
+;AUTOHEARTCB의 HTMLFONT판
+;=======================
+@HTML_AH_K39(ARG:0 = -2) ;//인수를 생략 하면 TARGET
+#FUNCTIONS
+VARSET LOCALS
+ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
+;//기본적으로 행중에서의 사용을 상정
+
+;호의, 호감도로 파생한다
+;하트계의 출력은 2/3으로 HEARTB, 1/3그리고 HEART를 출력한다
+IF GET_KFLAG_K39("상사상애", ARG:0)
+	;2/3로 하트를 출력
+	IF RAND:3
+		;BASE:만족가 50%이상이라면 하트 2개를 출력
+		IF TENSION(ARG:0, 8) == "높다"
+			LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK"), 2) # HTML_HEART(, COLOR2_K39("PINK"), 2)
+		;그 외라면 하트 1개
+		ELSE
+			LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+		ENDIF
+	;1/3로 exclamation
+	ELSE
+		LOCALS:0 '= "!"
+	ENDIF
+ELSEIF AFFECTION("익애", ARG:0) || AFFECTION("조교완료", ARG:0)
+	;BASE:만족가 50%이상시 1/3의 확률로 하트를 출력
+	IF TENSION(ARG:0, 8) == "높다" && !RAND:3
+		LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+	;그렇지 않으면 exclamation
+	ELSE
+		LOCALS:0 '= "!"
+	ENDIF
+ELSE
+	LOCALS:0 '= "!"
+ENDIF
+RETURNF LOCALS:0
+
+
+;AUTOHEARTCB2의 HTMLFONT판
+;========================
+@HTML_AH2_K39(ARG:0 = -2) ;//인수를 생략 하면 TARGET
+#FUNCTIONS
+VARSET LOCALS
+ARG:0 = ARG:0 != -2 ? ARG:0 # TARGET
+;//기본적으로 행중에서의 사용을 상정
+
+[SKIPSTART]
+호의, 호감도로 파생한다
+하트계의 출력은 2/3으로 HEARTB, 1/3그리고 HEART를 출력한다
+음표계의 출력은 2/3으로 8분 음표, 1/3그리고 련 8분 음표를 출력한다
+[SKIPEND]
+IF GET_KFLAG_K39("상사상애", ARG:0)
+	LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+ELSEIF AFFECTION("익애", ARG:0) || AFFECTION("조교완료", ARG:0)
+	;2/3의 확률
+	IF RAND:3
+		LOCALS:0 '= RAND:3 ? HTML_EIGHTHNOTE() # HTML_W8NOTE()
+	;1/3의 확률
+	ELSE
+		LOCALS:0 '= RAND:3 ? HTML_HEARTB(, COLOR2_K39("PINK")) # HTML_HEART(, COLOR2_K39("PINK"))
+	ENDIF
+ELSE
+	LOCALS:0 '= RAND:3 ? HTML_EIGHTHNOTE() # HTML_W8NOTE()
+ENDIF
+RETURNF LOCALS:0

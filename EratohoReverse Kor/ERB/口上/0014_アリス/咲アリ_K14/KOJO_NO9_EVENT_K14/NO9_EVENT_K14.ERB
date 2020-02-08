@@ -1,0 +1,109 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;		앨리스구상(대상한정) 기본이벤트구상파일
+;
+;	오프닝, 엔딩, 조교개시 따위이벤트구상의 파일
+;
+;		EXTRA모드로 N09사쿠야를 MASTER에선택했다경우만 표시
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+;-------------------------------------------------
+;색지정 관계…
+;@HEART용 SETCOLOR 168, 20, 47
+;구상지정 SETCOLOR 54, 166, 255
+;MASTER용 SETCOLOR 172, 175, 210
+;-------------------------------------------------
+;사용 KFLAG…
+;KFLAG:(FLAG:주인님):0  ;KFLAG:(FLAG:주인님):1  KFLAG:(FLAG:주인님):2  KFLAG:(FLAG:주인님):3  KFLAG:(FLAG:주인님):4  KFLAG:(FLAG:주인님):5
+;KFLAG:(FLAG:주인님):6  ;KFLAG:(FLAG:주인님):7  KFLAG:(FLAG:주인님):8  KFLAG:(FLAG:주인님):9  KFLAG:(FLAG:주인님):10  KFLAG:(FLAG:주인님):11
+;-------------------------------------------------
+;관련 변수…
+;FIRSTEVENT
+;처음EVENT 판정 함수  TFLAG:이벤트번호（TFLAG:10）를 자동으로 참조해,
+;현재 발생하고 있는 EVENT 마다번호가 독립해 보존된다
+;-------------------------------------------------
+;FIRSTTIME, RANDEVENT 사용 상황
+;및 KFLAG 대입 개소…
+;
+;EV1
+;	KFLAG:(FLAG:주인님):51(OP경과판정)
+;EV11 FIRSTTIME(0) ～ (15), RANDEVENT(0) ～ (15)
+;	엔딩 호출 FIRSTTIME(0)
+;	서로 사모함（호의 3000 이상·호감도 3000 이상） FIRSTTIME(1)
+;		선택지에 의한 루트 분기
+;			선택지Ａ 루트 분기용 KFLAG:(FLAG:주인님):0
+;			선택지Ｂ 루트 분기용 KFLAG:(FLAG:주인님):1
+;		이벤트경과판정 KFLAG:(FLAG:주인님):11 = 1
+;		선택지Ａ의 경우 FIRSTTIME(2)
+;			루트Ａ경과판정 KFLAG:(FLAG:주인님):2
+;		선택지Ｂ의 경우 FIRSTTIME(3)
+;			루트Ｂ경과판정 KFLAG:(FLAG:주인님):3
+;		루트ＢI  이 개소에서 첫회 FIRSTTIME(4)
+;			RANDEVENT(0)(1)
+;		루트ＡI  이 개소에서 첫회 FIRSTTIME(5)
+;			RANDEVENT(2)(3)(4)
+;	호의 2500 FIRSTTIME(6)
+;		RANDEVENT(5)
+;	조교완료（호의 2000 이상） FIRSTTIME(7)
+;		RANDEVENT(6)
+;	익애（호감도 2000 이상） FIRSTTIME(8)
+;		RANDEVENT(7)
+;	조교가 끝난 상태（호의 1000 이상） FIRSTTIME(9)
+;		RANDEVENT(8)
+;	불구대천（호의-300 미만） FIRSTTIME(10)
+;	공포（호의 200 미만·트라우마Lv5 이상） FIRSTTIME(11)
+;		RANDEVENT(9)
+;	반항（호의 0 이하·반항각인Lv3 이상） FIRSTTIME(12)
+;		RANDEVENT(10)
+;	눈을 뜨고（호의 500 이상） FIRSTTIME(13)
+;		RANDEVENT(11)
+;	순응（호의 100 이상·호감도 100 이상） FIRSTTIME(14)
+;		RANDEVENT(12)
+;	초반（조건 없음） FIRSTTIME(15)
+;		RANDEVENT(13)
+;EV12 FIRSTTIME(0) ～ (11)
+;	조교중지
+;		포상에 의한 중지
+;			루트Ａ FIRSTTIME(0)(1)(2)(3)
+;				TRUE END 해제용 KFLAG:(FLAG:주인님):10
+;			루트Ｂ
+;		조교대상의 피로에 의한 중지
+;	조교개시 직후 FIRSTTIME(10)
+;	징계·개시 FIRSTTIME(11)
+;EV13 FIRSTTIME(0) ～ (16), RANDEVENT(0) ～ (19)
+;	조교대상가실신했다 FIRSTTIME(0)
+;	엔딩 종료후 FIRSTTIME(1)(2)
+;	서로 사모함（호의 3000 이상·호감도 3000 이상）
+;		루트ＢII  첫회 FIRSTTIME(3)
+;		루트ＡII  첫회 FIRSTTIME(4)
+;		루트ＢIII FIRSTTIME(5)
+;			루트Ｂ엔딩 해제 판정 KFLAG:(FLAG:주인님):9
+;		루트ＡIII FIRSTTIME(6)
+;			루트Ａ엔딩 해제 판정 KFLAG:(FLAG:주인님):8
+;		루트Ｂ, FIRSTTIME 이외
+;			RANDEVENT(0)(1)
+;		루트Ａ, FIRSTTIME 이외
+;			RANDEVENT(2)(3)(4)(5)(6)(7)
+;			내부 분기용 KFLAG:(FLAG:주인님):6
+;	대만족보너스를 얻고 있는 FIRSTTIME(7)
+;	조교완료（호의 2000 이상） FIRSTTIME(8)
+;	익애（호감도 2000 이상） FIRSTTIME(9)
+;	조교가 끝난 상태（호의 1000 이상） FIRSTTIME(10)
+;	불구대천（호의-300 미만） FIRSTTIME(11)
+;	공포（호의 200 미만·트라우마Lv5 이상） FIRSTTIME(12)
+;	반항（호의 0 이하·반항각인Lv3 이상） FIRSTTIME(13)
+;	눈을 뜨고（호의 300 이상） FIRSTTIME(14)
+;	순응（호의 100 이상·호감도 100 이상） FIRSTTIME(15)
+;	초반（조건 없음） FIRSTTIME(16)
+;EV16
+;	미사용
+;EV17
+;	미사용
+;EV2
+;	엔딩 루트Ａ(TRUE END)
+;		ED경과판정 KFLAG:(FLAG:주인님):4
+;	엔딩 루트Ａ(GOOD END)
+;		내부 분기, KFLAG:(FLAG:주인님):7
+;		ED경과판정, KFLAG:(FLAG:주인님):5
+;-------------------------------------------------

@@ -1,0 +1,64 @@
+﻿;メディスン＠kapnaluqa
+@CHARAMAKE_K33(ARG)
+PRINTFORMW 「이봐、인간. 일어나、일어나라구」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「일어났어？　그럼、조금 참고로 할거니까 알려줘」
+PRINTFORML 「스ー씨한테도 알려줄거니까 착실하게 대답해」
+PRINTFORMW 「독이라고 하면 뭐？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 투구꽃
+PRINTFORMDL [2] 산소
+PRINTFORMDL [3] 사랑
+PRINTFORMDL [4] 독 같은 건 잘 모른다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「무시하다니、내가 인간형이라고 바보 취급하는 거야？」
+		PRINTFORMW 「역시 인형의 지위 향상을 위해서는 인간과 싸워야하는 거구나」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「굉장히 굉장히 대단한 스ー씨의 대 선배구나！」
+		PRINTFORML 「하지만、인간은 이 대선배조차 약으로 만들어버렸어」
+		PRINTFORMW 「요컨대 사용법 나름이라는 거 알겠어？」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심",20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+	CASE 2
+		PRINTFORML 「산소도 확실히 독. 인간을 전부 태워 부수는 맹독」
+		PRINTFORML 「당신、하지만 그 독 없이는、인간은 살아갈 수 없어」
+		PRINTFORMW 「인간 주제에 중요한 걸 알고 잇구나. 훌륭해」
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「사랑？　사랑은 즐겁고 멋진 거 아냐？」
+		PRINTFORML 「그런데도 독인거야？　즉 독이 될정도로 즐겁고 멋진것？」
+		PRINTFORMW 「그런 식으로 생각하는 사람도 있는 거구나……」
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("프라이드", -10)
+	CASE 4
+		PRINTFORML 「어리석은 인간！　자신의 주위에 독이 가득 있다고 하는데도」
+		PRINTFORMW 「매일의 음식、길가의 꽃、전부 전부 독인데、그걸 모르다니」
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+ENDSELECT
+PRINTFORMW 「잘 알았어. 그럼 스ー씨가 기다리고 있을 테니까、잘 자」
+RETURN 1
+

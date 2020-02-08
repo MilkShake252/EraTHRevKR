@@ -1,0 +1,53 @@
+﻿;幽々子@咲の人
+@CHARAMAKE_K20(ARG)
+PRINTFORMW 「후후、일어난 것 같네」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「자세를 가다듬지 않아도 괜찮아요、질문을 하나 할 뿐이니까」
+PRINTFORMW 「당신은 어떤 벚꽃을 좋아해？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 거의 핀～만개한 아름다운 벚꽃
+PRINTFORMDL [2] 피기 시작한 벚꽃
+PRINTFORMDL [3] 시체가 가득 차 있을 것 같은、미스테리 벚꽃
+PRINTFORMDL [4] 꽃보다 경단. 벚꽃보다 체리가 좋아
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답해 주지 않는구나…아니면、벚꽃이 싫어？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「역시 벚꽃은 만개했을때가 제일이지」
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("공격", -20)
+	CASE 2
+		PRINTFORML 「피기 시작할때가 좋다니 드무네」
+		PRINTFORML 「그렇지만 벚꽃은 벚꽃、좋아한다는 건 마찬가지야」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("솔직야", -20)
+	CASE 3
+		PRINTFORML 「불근신한 일이지만、그것도 또 벚꽃의 매력일지도 모르겠네…」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("모랄", -20)
+	CASE 4
+		PRINTFORML 「어머나、식탐이 지나치구나」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「그러면 질문은 끝이야、또 만날 수 있다면 만나요…？」
+RETURN 1
+

@@ -1,0 +1,68 @@
+﻿;スターサファイア＠kouhei
+@CHARAMAKE_K47(ARG)
+PRINTFORMW 「내 질문에 대답할 사람은 당신일까？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그럼、곧바로 주제로 들어갈게」
+PRINTFORMW 「당신이 가장 좋아하는 별이나 별자리는 이 중에서라면 어떤 거？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 빛나는 일등성
+;PRINTFORMDL [] 희미한 육등성
+PRINTFORMDL [2] 웅대한 성단
+PRINTFORMDL [3] 움직임을 읽을 수 없는 혹성
+PRINTFORMDL [4] 너의 눈동자
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「밤하늘에 흥미 없는 거야？　아니면 별이 보이지 않아？」
+		PRINTFORML 「도시인은 슬프구나」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「강한 빛은 저절로 모두를 사로잡아、당신도 그런 사람들 중의 한 명」
+		PRINTFORML 「당신도 저절로 사람을 끄는、태양 같은 사람이 되는 게 좋아」
+		PRINTFORML 「하지만 잊지 마、빛나는 별 곁에는、그 외에 많은 희미한 별들이 있는 거야」
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("신경질", -10)
+	;CASE 
+		;PRINTFORML 「……별나구나」
+		;PRINTFORML 「하지만、당신 같은 사람이 사막에 떨어진 하나의 돌을 찾아낼 수 있는 거 아닐까」
+		;CALLF CM_PROF("도착", 20)
+		;CALLF CM_PROF("신경질", 10)
+		;CALLF CM_PROF("호기심", 10)
+		;CALLF CM_PROF("솔직야", -10)
+	CASE 2
+		PRINTFORML 「하나 하나의 별의 빛남은 덧없어도、모두의 힘을 합하면 대단한 것이 돼」
+		PRINTFORML 「우리들도、그런식으로 협력하면 많은 가능성이 생길거야」
+		PRINTFORML 「그 결과、나 혼자는 눈에 띄지 않게 된다고해도、분명 그 쪽이 좋은거겠지」
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("피학", 10)
+	CASE 3
+		PRINTFORML 「생각했던대로 되지 않기 때문에 재밌다、그런 생각도 있는 거네」
+		PRINTFORML 「하지만 혹성은 혼자서는 빛나지 않아. 빛나는 항성이 곁에 있지 않으면」
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("피학", 10)
+	CASE 4
+		PRINTFORML 「에？　잠까、기」
+		PRINTFORML 「……로리콘？」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("결벽", -10)
+ENDSELECT
+PRINTFORML 「……내 이야기 듣고 있는 거야？　아직 졸린 것 같네」
+PRINTFORMW 「잘자. 또 언젠가 만나자」
+RETURN 1

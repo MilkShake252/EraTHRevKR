@@ -1,0 +1,57 @@
+﻿;屠自古＠ぱ。
+@CHARAMAKE_K77(ARG)
+PRINTFORMW 「이런이런. 자 일어나 일어나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질문할게. 대답하고 싶지 않으면 뭐、상관없어」
+PRINTFORMW 「당신은 목욕할 때, 몸의 어디부터 씻어?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 어깨나 팔
+PRINTFORMDL [2] 다리
+PRINTFORMDL [3] 머리
+PRINTFORMDL [4] \@ PENIS(MASTER) ? 자지 # 보지 \@
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「무회답,이라. 네, 수고하셨습니다」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「별로 재미 없는 대답이군요」
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -20)
+	CASE 2
+		PRINTFORML 「그래. 다리, 다리라 ……감각을 잊었어」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+	CASE 3
+		PRINTFORML 「머리……말하기 좀 망설여지지만、조금 이상하다고 생각해요」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「…뭐、중요한 부분이고」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「그럼 이걸로 끝. 잘자――」
+RETURN 1
+
+

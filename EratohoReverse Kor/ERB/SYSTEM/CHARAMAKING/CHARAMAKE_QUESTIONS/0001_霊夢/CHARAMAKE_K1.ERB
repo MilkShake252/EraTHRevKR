@@ -1,0 +1,75 @@
+﻿;레이무＠.
+@CHARAMAKE_K1(ARG)
+SELECTCASE ARG
+	CASE 0
+	CASE 0
+		PRINTFORMW 「좋은 아침. 다행이야. 처음의 방은、나야」
+	CASE 9
+		PRINTFORMW 「지쳤어？　마지막은 나야」
+	CASEELSE
+		PRINTFORMW 「안녕. 다음은 나야」
+ENDSELECT
+;OriginalString : 
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「질문할게. 지금부터 당신은 환상향에 오게 되는 것 같지만」
+PRINTFORMW 「당신에게 있어 환상이란、어떤 것？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 봄의 아침처럼 따뜻한 것
+PRINTFORMDL [2] 여름의 낮처럼 뜨거운 것
+PRINTFORMDL [3] 가을의 저녁처럼 허무한 것
+PRINTFORMDL [4] 겨울밤처럼 차가운 것
+SELECTCASE RESULT
+	CASE 0
+;OriginalString : 「答えられない。それも仕方ないかもね」
+		PRINTFORML 「대답하지 않는구나. 그것도 좋을지도」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+;OriginalString : 「優しい人なのかしら？　わかったわ」
+		PRINTFORML 「상냥한 사람일걸까？　알겠어」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("낙관", 10)
+	CASE 2
+;OriginalString : 「…暑苦しいわね」
+		PRINTFORML 「…열정적이구나」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("충동", 10)
+	CASE 3
+;OriginalString : 「…幻想っぽいかもね。どうだか知らないけど」
+		PRINTFORML 「…환상 같을지도. 어떨지는 모르겠지만」
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("솔직야", 10)
+	CASE 4
+;OriginalString : 「…ずいぶん悲しいこと言うのね？」
+		PRINTFORML 「…상당히 슬픈 말을 하는구나？」
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", 10)
+ENDSELECT
+;OriginalString : 「それじゃ、おやすみなさい――」
+PRINTFORMW 「그럼、안녕히 주무세요――」
+RETURN 1

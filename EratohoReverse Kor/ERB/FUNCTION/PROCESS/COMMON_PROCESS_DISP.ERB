@@ -1,0 +1,874 @@
+﻿;-------------------------------------------------
+;범용 함수 두는 곳
+;표시 플로우, 계산 처리 따위를 잘라 출했다의.
+;또는 내부 처리적인 함수
+;-------------------------------------------------
+
+;-------------------------------------------------
+;표시 관련
+;-------------------------------------------------
+
+;-------------------------------------------------
+;일자 효과의 표시 플로우
+;-------------------------------------------------
+@DAY_EFFECT
+REDRAW 0
+SETFONT "나눔명조"
+FONTSTYLE 3
+;낮밤의 효과（오른쪽 클릭에서도 묘화 하기 위해(때문), 에 째─실마리응을 우회 해 콘피그 참조）
+IF !GETBIT(GLOBAL, 52)
+	IF TIME
+		SETBGCOLOR 0, 0, 30
+	ELSE
+		SETBGCOLOR 20, 10, 0
+	ENDIF
+ENDIF
+;OriginalString : 2(40, 17, @"%TOKANJI(FLAG:일수+1)%일째――","　","　",@"　　　　　　　　――\@ TIME ? 밤 # 낮\@。")
+CALL FULLCUTIN2(40, 17, @"%TOKANJI(FLAG:일수+1)%일째――"," "," ",@"        ――\@ TIME ? 밤 # 낮\@")
+FONTSTYLE 0
+SETFONT "나눔바른고딕"
+REDRAW 1
+RETURN RESULT
+
+;-------------------------------------------------
+;함수명:HTML_BASE
+;개  요점:BASE 표시용 함수
+;인  수:ARGS …BASE의 이름
+;　　　 ARG:0… 캐릭터등록번호
+;       ARG:1… 표시하는 BASE
+;       ARG:2…BAR의 길이(생략했다경우 32)
+;       ARG:3… 진이라면 BASE의 값을 0이상으로보정 한다
+;              (생략했다경우, 보정 하지 않는다)
+;반환값:없음
+;-------------------------------------------------
+@HTML_BASE(ARGS, ARG:0, ARG:1, ARG:2 = 32, ARG:3)
+#FUNCTIONS
+#LOCALSIZE 2
+#LOCALSSIZE 1
+#DIM BAR_COLOR,2
+LOCALS '= ""
+;BASE에 의한 색의 지정
+;BAR_COLOR에 색을 대입
+SELECTCASE ARG:1
+	;세키:체력·초조함
+	CASE 0, 7
+		BAR_COLOR = 0xC07070
+		BAR_COLOR:1 = 0x502020
+	;파랑:이성
+	CASE 5
+		BAR_COLOR = 0x7070C0
+		BAR_COLOR:1 = 0x202050
+	;초록:기력
+	CASE 1
+		BAR_COLOR = 0x70C070
+		;저항불능의조교대상의 경우, 세키초록
+		SIF ARG == MASTER && TFLAG:저항불능
+			BAR_COLOR = 0xC0A040
+		BAR_COLOR:1 = 0x205020
+	;유카리:흥미
+	CASE 6
+		BAR_COLOR = 0xC070C0
+		BAR_COLOR:1 = 0x502050
+	;노랑:소변
+	CASE 4
+		BAR_COLOR = 0xC0C070
+		BAR_COLOR:1 = 0x505020
+	;청록색:만족
+	CASE 8
+		BAR_COLOR = 0x70C0C0
+		BAR_COLOR:1 = 0x205050
+	;흰색:모유·사정
+	CASEELSE
+		BAR_COLOR = 0xC0C0C0
+		BAR_COLOR:1 = 0x202020
+ENDSELECT
+;BASE명 표시
+LOCALS += ARGS
+LOCAL:0 = ARG:3 ? MAX(BASE:(ARG:0):(ARG:1), 0) # BASE:(ARG:0):(ARG:1)
+LOCAL:1 = MAXBASE:(ARG:0):(ARG:1)
+LOCALS += LAYER_RECTBAR(LOCAL, LOCAL:1, ARG:2 / 2, BAR_COLOR, BAR_COLOR:1, , , 30)
+LOCALS += @"({LOCAL:0, 5}/{LOCAL:1, 5})　"
+RETURNF LOCALS
+;-------------------------------------------------
+;함수명:PRINT_BASE
+;개  요점:BASE 표시용 함수
+;인  수:ARGS …BASE의 이름
+;　　　 ARG:0… 캐릭터등록번호
+;       ARG:1… 표시하는 BASE
+;       ARG:2…BAR의 길이(생략했다경우 32)
+;       ARG:3… 진이라면 BASE의 값을 0이상으로보정 한다
+;              (생략했다경우, 보정 하지 않는다)
+;반환값:없음
+;-------------------------------------------------
+@PRINT_BASE (ARGS, ARG:0, ARG:1, ARG:2 = 32, ARG:3)
+HTML_PRINT HTML_BASE(ARGS, ARG:0, ARG:1, ARG:2, ARG:3)
+
+@PRINT_BASEL(ARGS, ARG:0, ARG:1, ARG:2 = 32, ARG:3)
+CALL PRINT_BASE(ARGS, ARG:0, ARG:1, ARG:2, ARG:3)
+PRINTL 
+
+@PRINT_BASEW(ARGS, ARG:0, ARG:1, ARG:2 = 32, ARG:3)
+CALL PRINT_BASE(ARGS, ARG:0, ARG:1, ARG:2, ARG:3)
+WAIT
+
+
+;-------------------------------------------------
+;함수명:CLOTHE_SHOW
+;개  요점:탈의애니메─숀 함수
+;인  수:ARG:0… 캐릭터등록번호(MASTER나 TARGET. 생략했다묘한 수치가 들어가면 TARGET)
+;　　　:ARG:1… 생략 하면탈의. 정말로 하면 착의.
+;비  고:통상함수
+;보존해 둔 복장과 현재의 복장의 차이를 봐, 벗거나 입거나했다부위를 페이드 표시한다
+;좀 더 효율적인 짜는 방법이 할 수 있을 생각이 들지만, 이른 아침에 머리 돌지 않기 때문에 범용화하지 않고 해 버리자…
+;-------------------------------------------------
+@CLOTHE_SHOW(ARG:0 = -1, ARG:1)
+#LOCALSIZE 20
+#DIM LCOUNT, 2
+#DIM PRICOLOR, 1
+#DIM RED,2
+#DIM GREEN,2
+#DIM BLUE,2
+VARSET RED
+VARSET GREEN
+VARSET BLUE
+VARSET LOCAL
+
+;비표시의 경우
+IF !ANIME_CONFIG("USER3")
+	CALL SHOW_EQUIP_3(1+(ARG == MASTER))
+	PRINTL
+	PRINTL
+	RETURN 0
+ENDIF
+
+LOCAL:10 = CURRENTREDRAW()
+REDRAW 0
+
+;디폴트색이 아니면 안 된다
+RESETCOLOR
+PRICOLOR = GETCOLOR()
+
+;RGB 각각의 베이스치, 감소치를 각 색:0으로 1에 대입
+RED = GETRED()
+GREEN = GETGREEN()
+BLUE = GETBLUE()
+RED:1 = MAX(1, (RED-GETRED(0x0000))/4)
+GREEN:1 = MAX(1, (GREEN-GETGREEN(0x0000))/4)
+BLUE:1 = MAX(1, (BLUE-GETBLUE(0x0000))/4)
+
+SIF ARG != MASTER
+	ARG = TARGET
+;벗은·입은 위치를 LOCAL에 보존
+FOR LCOUNT, 0, 10
+	LOCAL:LCOUNT = CLOTHE_SAVE(ARG, LCOUNT)
+NEXT
+
+;탈의의 경우
+IF !ARG:1
+	;벗기 전의복장을 표시해, 벗은 위치는 그 착의의 문자수를 LOCAL에 넣는다
+	PRINTFORMD %CALLNAME:ARG%의 의상:
+	;전신겉옷
+	IF TEQUIP:ARG:전신겉옷
+		PRINTFORMD [%DRESS(ARG)%]
+	ELSEIF LOCAL:6
+		PRINTFORM [%DRESS(ARG)%]
+		LOCAL:6 = STRLENS(@"[%DRESS(ARG)%]")
+	ENDIF
+	;상반신겉옷
+	IF TEQUIP:ARG:상반신겉옷
+		PRINTFORMD [%OUTER_T(ARG)%]
+	ELSEIF LOCAL:5
+		PRINTFORM [%OUTER_T(ARG)%]
+		LOCAL:5 = STRLENS(@"[%OUTER_T(ARG)%]")
+	ENDIF
+	;하반신겉옷
+	IF TEQUIP:ARG:하반신겉옷
+		PRINTFORMD [%OUTER_B(ARG)%]
+	ELSEIF LOCAL:4
+		PRINTFORM [%OUTER_B(ARG)%]
+		LOCAL:4 = STRLENS(@"[%OUTER_B(ARG)%]")
+	ENDIF
+	;상반신속옷
+	IF TEQUIP:ARG:상반신속옷
+		PRINTFORMD [%INNER_T(ARG)%]
+	ELSEIF LOCAL:3
+		PRINTFORM [%INNER_T(ARG)%]
+		LOCAL:3 = STRLENS(@"[%INNER_T(ARG)%]")
+	ENDIF
+	;하반신속옷
+	IF TEQUIP:ARG:하반신속옷
+		PRINTFORMD [%INNER_B(ARG)%]
+	ELSEIF LOCAL:2
+		PRINTFORM [%INNER_B(ARG)%]
+		LOCAL:2 = STRLENS(@"[%INNER_B(ARG)%]")
+	ENDIF
+	;양말
+	IF TEQUIP:ARG:양말
+		PRINTFORMD [%SOCKS(ARG)%]
+	ELSEIF LOCAL:1
+		PRINTFORM [%SOCKS(ARG)%]
+		LOCAL:1 = STRLENS(@"[%SOCKS(ARG)%]")
+	ENDIF
+	;장갑
+	IF TEQUIP:ARG:악세서리
+		PRINTFORMD [%GLOVES(ARG)%]
+	ELSEIF LOCAL:0
+		PRINTFORM [%GLOVES(ARG)%]
+		LOCAL:0 = STRLENS(@"[%GLOVES(ARG)%]")
+	ENDIF
+	;코스프레
+	IF TEQUIP:ARG:코스프레
+		PRINTFORMD [%COSPLAY(ARG)%]
+	ELSEIF LOCAL:9
+		PRINTFORM [%COSPLAY(ARG)%]
+		LOCAL:9 = STRLENS(@"[%COSPLAY(ARG)%]")
+	ENDIF
+	PRINTL
+	PRINTL
+	TWAIT 100, 0
+	FOR LCOUNT, 0, 4
+		RED = MAX(0, RED-RED:1)
+		GREEN = MAX(0, GREEN-GREEN:1)
+		BLUE = MAX(0, BLUE-BLUE:1)
+		SETCOLOR RED, GREEN, BLUE
+		CLEARLINE 2
+		PRINTFORMD %CALLNAME:ARG%의 의상:
+		;전신겉옷
+		IF TEQUIP:ARG:전신겉옷
+			PRINTFORMD [%DRESS(ARG)%]
+		ELSEIF LOCAL:6
+			PRINTFORM [%DRESS(ARG)%]
+		ENDIF
+		;상반신겉옷
+		IF TEQUIP:ARG:상반신겉옷
+			PRINTFORMD [%OUTER_T(ARG)%]
+		ELSEIF LOCAL:5
+			PRINTFORM [%OUTER_T(ARG)%]
+		ENDIF
+		;하반신겉옷
+		IF TEQUIP:ARG:하반신겉옷
+			PRINTFORMD [%OUTER_B(ARG)%]
+		ELSEIF LOCAL:4
+			PRINTFORM [%OUTER_B(ARG)%]
+		ENDIF
+		;상반신속옷
+		IF TEQUIP:ARG:상반신속옷
+			PRINTFORMD [%INNER_T(ARG)%]
+		ELSEIF LOCAL:3
+			PRINTFORM [%INNER_T(ARG)%]
+		ENDIF
+		;하반신속옷
+		IF TEQUIP:ARG:하반신속옷
+			PRINTFORMD [%INNER_B(ARG)%]
+		ELSEIF LOCAL:2
+			PRINTFORM [%INNER_B(ARG)%]
+		ENDIF
+		;양말
+		IF TEQUIP:ARG:양말
+			PRINTFORMD [%SOCKS(ARG)%]
+		ELSEIF LOCAL:1
+			PRINTFORM [%SOCKS(ARG)%]
+		ENDIF
+		;장갑
+		IF TEQUIP:ARG:악세서리
+			PRINTFORMD [%GLOVES(ARG)%]
+		ELSEIF LOCAL:0
+			PRINTFORM [%GLOVES(ARG)%]
+		ENDIF
+		;코스프레
+		IF TEQUIP:ARG:코스프레
+			PRINTFORMD [%COSPLAY(ARG)%]
+		ELSEIF LOCAL:9
+			PRINTFORM [%COSPLAY(ARG)%]
+		ENDIF
+		PRINTL
+		PRINTL
+		TWAIT 100, 0
+	NEXT
+	FOR LCOUNT, 0, MAXARRAY(LOCAL)/2
+		CLEARLINE 2
+		PRINTFORMD %CALLNAME:ARG%의 의상:
+		;전신겉옷
+		IF TEQUIP:ARG:전신겉옷
+			PRINTFORMD [%DRESS(ARG)%]
+		ELSEIF LOCAL:6
+			LOCAL:6 = MAX(0, LOCAL:6-2)
+			PRINTFORM %" "*LOCAL:6%
+		ENDIF
+		;상반신겉옷
+		IF TEQUIP:ARG:상반신겉옷
+			PRINTFORMD [%OUTER_T(ARG)%]
+		ELSEIF LOCAL:5
+			LOCAL:5 = MAX(0, LOCAL:5-2)
+			PRINTFORM %" "*LOCAL:5%
+		ENDIF
+		;하반신겉옷
+		IF TEQUIP:ARG:하반신겉옷
+			PRINTFORMD [%OUTER_B(ARG)%]
+		ELSEIF LOCAL:4
+			LOCAL:4 = MAX(0, LOCAL:4-2)
+			PRINTFORM %" "*LOCAL:4%
+		ENDIF
+		;상반신속옷
+		IF TEQUIP:ARG:상반신속옷
+			PRINTFORMD [%INNER_T(ARG)%]
+		ELSEIF LOCAL:3
+			LOCAL:3 = MAX(0, LOCAL:3-2)
+			PRINTFORM %" "*LOCAL:3%
+		ENDIF
+		;하반신속옷
+		IF TEQUIP:ARG:하반신속옷
+			PRINTFORMD [%INNER_B(ARG)%]
+		ELSEIF LOCAL:2
+			LOCAL:2 = MAX(0, LOCAL:2-2)
+			PRINTFORM %" "*LOCAL:2%
+		ENDIF
+		;양말
+		IF TEQUIP:ARG:양말
+			PRINTFORMD [%SOCKS(ARG)%]
+		ELSEIF LOCAL:1
+			LOCAL:1 = MAX(0, LOCAL:1-2)
+			PRINTFORM %" "*LOCAL:1%
+		ENDIF
+		;장갑
+		IF TEQUIP:ARG:악세서리
+			PRINTFORMD [%GLOVES(ARG)%]
+		ELSEIF LOCAL:0
+			LOCAL:0 = MAX(0, LOCAL:0-2)
+			PRINTFORM %" "*LOCAL:0%
+		ENDIF
+		;코스프레
+		IF TEQUIP:ARG:코스프레
+			PRINTFORMD [%COSPLAY(ARG)%]
+		ELSEIF LOCAL:9
+			LOCAL:9 = MAX(0, LOCAL:9-2)
+			PRINTFORM %" "*LOCAL:9%
+		ENDIF
+		PRINTL
+		PRINTL
+		TWAIT 100, 0
+	NEXT
+;착의의 경우
+ELSE
+	;입기 전의복장을 표시해, 벗은 위치는 그 착의의 문자수를 LOCAL에 넣는다
+	PRINTFORMD %CALLNAME:ARG%의 의상:
+	;전신겉옷
+	IF LOCAL:6
+		LOCAL:6 = STRLENS(@"[%DRESS(ARG)%]")
+	ELSEIF TEQUIP:ARG:전신겉옷 
+		PRINTFORMD [%DRESS(ARG)%]
+	ENDIF
+	;상반신겉옷
+	IF LOCAL:5
+		LOCAL:5 = STRLENS(@"[%OUTER_T(ARG)%]")
+	ELSEIF TEQUIP:ARG:상반신겉옷
+		PRINTFORMD [%OUTER_T(ARG)%]
+	ENDIF
+	;하반신겉옷
+	IF LOCAL:4
+		LOCAL:4 = STRLENS(@"[%OUTER_B(ARG)%]")
+	ELSEIF TEQUIP:ARG:하반신겉옷
+		PRINTFORMD [%OUTER_B(ARG)%]
+	ENDIF
+	;상반신속옷
+	IF LOCAL:3
+		LOCAL:3 = STRLENS(@"[%INNER_T(ARG)%]")
+	ELSEIF TEQUIP:ARG:상반신속옷
+		PRINTFORMD [%INNER_T(ARG)%]
+	ENDIF
+	;하반신속옷
+	IF LOCAL:2
+		LOCAL:2 = STRLENS(@"[%INNER_B(ARG)%]")
+	ELSEIF TEQUIP:ARG:하반신속옷
+		PRINTFORMD [%INNER_B(ARG)%]
+	ENDIF
+	;양말
+	IF LOCAL:1
+		LOCAL:1 = STRLENS(@"[%SOCKS(ARG)%]")
+	ELSEIF TEQUIP:ARG:양말
+		PRINTFORMD [%SOCKS(ARG)%]
+	ENDIF
+	;장갑
+	IF LOCAL:0
+		LOCAL:0 = STRLENS(@"[%GLOVES(ARG)%]")
+	ELSEIF TEQUIP:ARG:악세서리
+		PRINTFORMD [%GLOVES(ARG)%]
+	ENDIF
+	;코스프레
+	IF LOCAL:9
+		LOCAL:9 = STRLENS(@"[%COSPLAY(ARG)%]")
+	ELSEIF TEQUIP:ARG:코스프레
+		PRINTFORMD [%COSPLAY(ARG)%]
+	ENDIF
+	PRINTL
+	PRINTL
+	TWAIT 100, 0
+	FOR LCOUNT, 0, MAXARRAY(LOCAL)/2
+		CLEARLINE 2
+		PRINTFORMD %CALLNAME:ARG%의 의상:
+		;전신겉옷
+		IF LOCAL:6
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:6)%
+		ELSEIF TEQUIP:ARG:전신겉옷 
+			PRINTFORMD [%DRESS(ARG)%]
+		ENDIF
+		;상반신겉옷
+		IF LOCAL:5
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:5)%
+		ELSEIF TEQUIP:ARG:상반신겉옷
+			PRINTFORMD [%OUTER_T(ARG)%]
+		ENDIF
+		;하반신겉옷
+		IF LOCAL:4
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:4)%
+		ELSEIF TEQUIP:ARG:하반신겉옷
+			PRINTFORMD [%OUTER_B(ARG)%]
+		ENDIF
+		;상반신속옷
+		IF LOCAL:3
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:3)%
+		ELSEIF TEQUIP:ARG:상반신속옷
+			PRINTFORMD [%INNER_T(ARG)%]
+		ENDIF
+		;하반신속옷
+		IF LOCAL:2
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:2)%
+		ELSEIF TEQUIP:ARG:하반신속옷
+			PRINTFORMD [%INNER_B(ARG)%]
+		ENDIF
+		;양말
+		IF LOCAL:1
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:1)%
+		ELSEIF TEQUIP:ARG:양말
+			PRINTFORMD [%SOCKS(ARG)%]
+		ENDIF
+		;장갑
+		IF LOCAL:0
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:0)%
+		ELSEIF TEQUIP:ARG:악세서리
+			PRINTFORMD [%GLOVES(ARG)%]
+		ENDIF
+		;코스프레
+		IF LOCAL:9
+			PRINTFORM %" "*MIN(LCOUNT*2, LOCAL:9)%
+		ELSEIF TEQUIP:ARG:코스프레
+			PRINTFORMD [%COSPLAY(ARG)%]
+		ENDIF
+		PRINTL
+		PRINTL
+		TWAIT 100, 0
+	NEXT
+	SETCOLOR 0x000000
+	RED = GETRED()
+	GREEN = GETGREEN()
+	BLUE = GETBLUE()
+	FOR LCOUNT, 0, 4
+		RED = MIN(GETRED(PRICOLOR), RED+RED:1)
+		GREEN = MIN(GETGREEN(PRICOLOR), GREEN+GREEN:1)
+		BLUE = MIN(GETBLUE(PRICOLOR), BLUE+BLUE:1)
+		SETCOLOR RED, GREEN, BLUE
+		CLEARLINE 2
+		PRINTFORMD %CALLNAME:ARG%의 의상:
+		;전신겉옷
+		IF LOCAL:6
+			PRINTFORM [%DRESS(ARG)%]
+		ELSEIF TEQUIP:ARG:전신겉옷 
+			PRINTFORMD [%DRESS(ARG)%]
+		ENDIF
+		;상반신겉옷
+		IF LOCAL:5
+			PRINTFORM [%OUTER_T(ARG)%]
+		ELSEIF TEQUIP:ARG:상반신겉옷
+			PRINTFORMD [%OUTER_T(ARG)%]
+		ENDIF
+		;하반신겉옷
+		IF LOCAL:4
+			PRINTFORM [%OUTER_B(ARG)%]
+		ELSEIF TEQUIP:ARG:하반신겉옷
+			PRINTFORMD [%OUTER_B(ARG)%]
+		ENDIF
+		;상반신속옷
+		IF LOCAL:3
+			PRINTFORM [%INNER_T(ARG)%]
+		ELSEIF TEQUIP:ARG:상반신속옷
+			PRINTFORMD [%INNER_T(ARG)%]
+		ENDIF
+		;하반신속옷
+		IF LOCAL:2
+			PRINTFORM [%INNER_B(ARG)%]
+		ELSEIF TEQUIP:ARG:하반신속옷
+			PRINTFORMD [%INNER_B(ARG)%]
+		ENDIF
+		;양말
+		IF LOCAL:1
+			PRINTFORM [%SOCKS(ARG)%]
+		ELSEIF TEQUIP:ARG:양말
+			PRINTFORMD [%SOCKS(ARG)%]
+		ENDIF
+		;장갑
+		IF LOCAL:0
+			PRINTFORM [%GLOVES(ARG)%]
+		ELSEIF TEQUIP:ARG:악세서리
+			PRINTFORMD [%GLOVES(ARG)%]
+		ENDIF
+		;코스프레
+		IF LOCAL:9
+			PRINTFORM [%COSPLAY(ARG)%]
+		ELSEIF TEQUIP:ARG:코스프레
+			PRINTFORMD [%COSPLAY(ARG)%]
+		ENDIF
+		;전신겉옷
+		IF TEQUIP:ARG:전신겉옷
+			PRINTFORMD [%DRESS(ARG)%]
+		ELSEIF LOCAL:6
+			PRINTFORM [%DRESS(ARG)%]
+		ENDIF
+		PRINTL
+		PRINTL
+		TWAIT 100, 0
+	NEXT
+ENDIF
+CLEARLINE 2
+;결과, 현재의 복장
+PRINTFORMD %CALLNAME:ARG%의 의상:
+;전신겉옷
+IF TEQUIP:ARG:전신겉옷 
+	PRINTFORMD [%DRESS(ARG)%]
+ENDIF
+;상반신겉옷
+IF TEQUIP:ARG:상반신겉옷
+	PRINTFORMD [%OUTER_T(ARG)%]
+ENDIF
+;하반신겉옷
+IF TEQUIP:ARG:하반신겉옷
+	PRINTFORMD [%OUTER_B(ARG)%]
+ENDIF
+;상반신속옷
+IF TEQUIP:ARG:상반신속옷
+	PRINTFORMD [%INNER_T(ARG)%]
+ENDIF
+;하반신속옷
+IF TEQUIP:ARG:하반신속옷
+	PRINTFORMD [%INNER_B(ARG)%]
+ENDIF
+;양말
+IF TEQUIP:ARG:양말
+	PRINTFORMD [%SOCKS(ARG)%]
+ENDIF
+;장갑
+IF TEQUIP:ARG:악세서리
+	PRINTFORMD [%GLOVES(ARG)%]
+ENDIF
+;코스프레
+IF TEQUIP:ARG:코스프레
+	PRINTFORMD [%COSPLAY(ARG)%]
+ENDIF
+REDRAW LOCAL:10
+PRINTL
+PRINTL
+RESETCOLOR
+
+
+;-------------------------------------------------
+;함수명:POSE_SHOW
+;개  요점:자세변화애니메─숀 함수
+;인  수:
+;비  고:통상함수
+;보존해 둔 복장과 현재의 복장의 차이를 봐, 벗거나 입거나했다부위를 페이드 표시한다
+;좀 더 효율적인 짜는 방법이 할 수 있을 생각이 들지만, 이른 아침에 머리 돌지 않기 때문에 범용화하지 않고 해 버리자…
+;-------------------------------------------------
+@POSE_SHOW
+#LOCALSIZE 20
+#DIM LCOUNT, 2
+#DIM PRICOLOR, 1
+#DIM RED,2
+#DIM GREEN,2
+#DIM BLUE,2
+#DIMS M전회의자세, 1
+#DIMS M이번자세, 1
+#DIMS T전회의자세, 1
+#DIMS T이번자세, 1
+VARSET RED
+VARSET GREEN
+VARSET BLUE
+VARSET LOCAL
+
+
+;조교대상
+SELECTCASE TCVAR:MASTER:자세
+	CASE 1
+		M이번자세 = 누움
+	CASE 2
+		M이번자세 = 앉아있다
+	CASE 3
+		M이번자세 = 네발로 엎드림
+	CASE 4
+		M이번자세 = 직립
+	CASE 10
+		M이번자세 = 무릎으로 서있다
+	CASEELSE
+		M이번자세 = 편하게 하고있다
+ENDSELECT
+SELECTCASE TCVAR:MASTER:전회의자세
+	CASE 1
+		M전회의자세 = 누움
+	CASE 2
+		M전회의자세 = 앉아있다
+	CASE 3
+		M전회의자세 = 네발로 엎드림
+	CASE 4
+		M전회의자세 = 직립
+	CASE 10
+		M전회의자세 = 무릎으로 서있다
+	CASEELSE
+		M전회의자세 = 편하게 하고있다
+ENDSELECT
+;주인
+SELECTCASE TCVAR:MASTER:위치상하
+	CASE 1
+		T이번자세 = %CALLNAME:MASTER%의 위
+	CASE 2
+		T이번자세 = %CALLNAME:MASTER%의 아래
+	CASEELSE
+		SELECTCASE TCVAR:MASTER:위치전후
+			CASE 1
+				T이번자세 = %CALLNAME:MASTER%의 정면
+			CASE 2
+				T이번자세 = %CALLNAME:MASTER%의 배후
+			CASE 3
+				T이번자세 = %CALLNAME:MASTER%에 등을 돌리고 있다
+			CASEELSE
+				T이번자세 = %CALLNAME:MASTER%를 관찰
+		ENDSELECT
+ENDSELECT
+SELECTCASE TCVAR:MASTER:전회의위치상하
+	CASE 1
+		T전회의자세 = %CALLNAME:MASTER%의 위
+	CASE 2
+		T전회의자세 = %CALLNAME:MASTER%의 아래
+	CASEELSE
+		SELECTCASE TCVAR:MASTER:전회의위치전후
+			CASE 1
+				T전회의자세 = %CALLNAME:MASTER%의 정면
+			CASE 2
+				T전회의자세 = %CALLNAME:MASTER%의 배후
+			CASE 3
+				T전회의자세 = %CALLNAME:MASTER%에 등을 돌리고 있다
+			CASEELSE
+				T전회의자세 = %CALLNAME:MASTER%를 관찰
+		ENDSELECT
+ENDSELECT
+
+;비표시의 경우
+IF !ANIME_CONFIG("USER3")
+	PRINTFORMDL 현재의 자세:[%CALLNAME:MASTER%:%M이번자세%][%CALLNAME%:%T이번자세%]
+	PRINTL
+	RETURN 0
+ENDIF
+
+LOCAL:12 = CURRENTREDRAW()
+REDRAW 0
+
+;디폴트색이 아니면 안 된다
+RESETCOLOR
+PRICOLOR = GETCOLOR()
+
+;RGB 각각의 베이스치, 감소치를 각 색:0으로 1에 대입
+RED = GETRED()
+GREEN = GETGREEN()
+BLUE = GETBLUE()
+RED:1 = MAX(1, (RED-GETRED(0x0000))/4)
+GREEN:1 = MAX(1, (GREEN-GETGREEN(0x0000))/4)
+BLUE:1 = MAX(1, (BLUE-GETBLUE(0x0000))/4)
+
+;원래의자세를 표시한다
+PRINTFORMDL 현재의 자세:[%CALLNAME:MASTER%:%M전회의자세%][%CALLNAME%:%T전회의자세%]
+PRINTL 
+
+;자세의변화가 있는지 없는지를 LOCAL:0~1
+;변화했다문자수를 LOCAL:10~11에 보존한다
+IF M전회의자세 != M이번자세
+	LOCAL:0 = 1
+	LOCAL:10 = STRLENS(M이번자세)-STRLENS(M전회의자세)
+ENDIF
+IF T전회의자세 != T이번자세
+	LOCAL:1 = 1
+	LOCAL:11 = STRLENS(T이번자세)-STRLENS(T전회의자세)
+ENDIF
+;어느쪽이나 변함없으면돌아가기. 만약을 위해
+IF !LOCAL:0 && !LOCAL:1
+	RETURN 0
+ENDIF
+TWAIT 300, 0
+
+;변화가 있던 부위를 페이드 아웃시킨다
+FOR LCOUNT, 0, 4
+	RED = MAX(0, RED-RED:1)
+	GREEN = MAX(0, GREEN-GREEN:1)
+	BLUE = MAX(0, BLUE-BLUE:1)
+	SETCOLOR RED, GREEN, BLUE
+	CLEARLINE 2
+	PRINTFORMD 현재의 자세:[%CALLNAME:MASTER%:
+	;조교대상
+	IF LOCAL:0
+		PRINTFORM %M전회의자세%
+	ELSE
+		PRINTFORMD %M전회의자세%
+	ENDIF
+	PRINTFORMD ][%CALLNAME%:
+	;조교자
+	IF LOCAL:1
+		PRINTFORM %T전회의자세%
+	ELSE
+		PRINTFORMD %T전회의자세%
+	ENDIF
+	PRINTDL ]
+	PRINTL
+	TWAIT 100, 0
+NEXT
+;범위의 성형
+FOR LCOUNT, 0, MAX(ABS(LOCAL:10), ABS(LOCAL:11))
+	CLEARLINE 2
+	PRINTFORMD 현재의 자세:[%CALLNAME:MASTER%:
+	;조교대상
+	IF !LOCAL:0
+		PRINTFORMD %M이번자세%
+	ELSEIF ABS(LOCAL:10) <= LCOUNT
+		PRINTFORMD %" "*(STRLENS(M이번자세))%
+	ELSEIF LOCAL:10 < 0
+		PRINTFORMD %" "*(STRLENS(M전회의자세)-LCOUNT-1)%
+	ELSE
+		PRINTFORMD %" "*(STRLENS(M전회의자세)+LCOUNT+1)%
+	ENDIF
+	PRINTFORMD ][%CALLNAME%:
+	;조교자
+	IF !LOCAL:1
+		PRINTFORMD %T이번자세%
+	ELSEIF ABS(LOCAL:11) <= LCOUNT
+		PRINTFORMD %" "*(STRLENS(T이번자세))%
+	ELSEIF LOCAL:11 < 0
+		PRINTFORMD %" "*(STRLENS(T전회의자세)-LCOUNT-1)%
+	ELSE
+		PRINTFORMD %" "*(STRLENS(T전회의자세)+LCOUNT+1)%
+	ENDIF
+	PRINTDL ]
+	PRINTL
+	TWAIT 100, 0
+NEXT
+;이번자세를 표시
+SETCOLOR 0x000000
+RED = GETRED()
+GREEN = GETGREEN()
+BLUE = GETBLUE()
+FOR LCOUNT, 0, 4
+	RED = MIN(GETRED(PRICOLOR), RED+RED:1)
+	GREEN = MIN(GETGREEN(PRICOLOR), GREEN+GREEN:1)
+	BLUE = MIN(GETBLUE(PRICOLOR), BLUE+BLUE:1)
+	SETCOLOR RED, GREEN, BLUE
+	CLEARLINE 2
+	PRINTFORMD 현재의 자세:[%CALLNAME:MASTER%:
+	;조교대상
+	IF LOCAL:0
+		PRINTFORM %M이번자세%
+	ELSE
+		PRINTFORMD %M이번자세%
+	ENDIF
+	PRINTFORMD ][%CALLNAME%:
+	;조교자
+	IF LOCAL:1
+		PRINTFORM %T이번자세%
+	ELSE
+		PRINTFORMD %T이번자세%
+	ENDIF
+	PRINTDL ]
+	PRINTL
+	TWAIT 100, 0
+NEXT
+CLEARLINE 2
+;결과, 현재의자세
+PRINTFORMDL 현재의 자세:[%CALLNAME:MASTER%:%M이번자세%][%CALLNAME%:%T이번자세%]
+REDRAW LOCAL:12
+PRINTW
+RESETCOLOR
+
+;--------------------------------------------------
+;3클릭대기@WAIT_3
+;캐릭터 라인 인수는 바 기호. 생략 하면 「…」
+;캐릭터 라인 인수 1은 footer. 「.」든지 넣으면 좋다고 생각해
+;--------------------------------------------------
+@WAIT_3(ARGS = "…", ARGS:1)
+PRINTL  
+PRINTFORMDW 　%ARGS*3+ARGS:1%
+PRINTFORMDW 　%ARGS*2+ARGS:1%
+PRINTFORMDW 　%ARGS+ARGS:1%
+PRINTL  
+
+;WAIT_3의 TWAIT판
+@TWAIT_3(ARGS = "…", ARGS:1)
+PRINTL
+PRINTFORMDL 　%ARGS*3+ARGS:1%
+TWAIT 500, 0
+PRINTFORMDL 　%ARGS*2+ARGS:1%
+TWAIT 500, 0
+PRINTFORMDL 　%ARGS+ARGS:1%
+TWAIT 500, 0
+PRINTL
+
+;--------------------------------------------------
+;WAIT3_ZWEI
+;ARG는 생략가능. 가짜로 하면 사이의 공행 없음
+;캐릭터 라인 인수는 바 기호. 생략 하면 「·」
+;캐릭터 라인 인수 1은 footer. 사용하지 않는 생각은 든다
+;기본적으로 DIGEST, 또는 OP/ED등으로 ALIGNMENT CENTER시에서의 사용을 상정
+;--------------------------------------------------
+@WAIT3_ZWEI(ARG = 1, ARGS = "·", ARGS:1)
+PRINTL
+FONTSTYLE 1
+PRINTFORMDW %ARGS + ARGS:1%
+SIF ARG
+	PRINTL
+PRINTFORMDW %ARGS + ARGS:1%
+SIF ARG
+	PRINTL
+PRINTFORMDW %ARGS + ARGS:1%
+FONTSTYLE 0
+PRINTL
+
+;WAIT_3_ZWEI의 TWAIT판
+@TWAIT3_ZWEI(ARG = 1, ARGS = "·", ARGS:1)
+PRINTL
+FONTSTYLE 1
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 800, 0
+SIF ARG
+	PRINTL
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 800, 0
+SIF ARG
+	PRINTL
+PRINTFORMDL %ARGS + ARGS:1%
+TWAIT 900, 0
+FONTSTYLE 0
+PRINTL
+
+;--------------------------------------------------
+;TWAIT1
+;캐릭터 라인 인수는 바 기호. 생략 하면 「-」
+;캐릭터 라인 인수 1은 footer. 생략 하면 「.」
+;--------------------------------------------------
+@TWAIT1(ARGS = "―", ARGS:1 = "。")
+PRINTL
+TWAIT 500, 0
+PRINTFORMDL %ARGS*2 + ARGS:1%
+TWAIT 500, 0
+PRINTL
+
+
+;-------------------------------------------------------------------------------
+;	KOMEIJI_FUNCTIONS 유래 함수군은 최신의 함수와 교환했다.
+;	최신의 함수는 KOMEIJI_FUNCTIONS 폴더에 있습니다.
+;	
+;	PRINT_CR계			→	HTMLPRINT계를 사용해 주세요
+;	PRINT_HEART계		→	HTMLPRINT계를 사용해 주세요
+;	PRINT_RAINBOW계		→	새로운 PRINT_RAINBOW계를 사용해 주세요
+;-------------------------------------------------------------------------------

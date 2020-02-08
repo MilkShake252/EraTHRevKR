@@ -1,0 +1,172 @@
+﻿@ASSI_TRAIN_VARIATION, ARG, ARG:1
+TCVAR:ARG:조수ACT파생 = 0
+SELECTCASE GET_ASSIACTNAME(ARG:1)
+	;애무→수음
+	CASE "손으로 애무"
+		SIF PENIS(MASTER)
+			TCVAR:ARG:조수ACT파생 = 1
+	;쿤닐링구스→펠라
+	CASE "입으로 애무"
+		SIF PENIS(MASTER)
+			TCVAR:ARG:조수ACT파생 = 1
+	;조개 우려라→스마타
+	CASE "스마타"
+		SIF PENIS(MASTER)
+			TCVAR:ARG:조수ACT파생 = 1
+	;로터, 오나홀
+	CASE "Ｃ도구"
+		SIF PENIS(MASTER) && ITEM:오나홀 > 0
+			TCVAR:ARG:조수ACT파생 = 1
+	;연속교합
+	CASE "역강간"
+		SIF TFLAG:조수연속교합 == 1
+			TCVAR:ARG:조수ACT파생 = 1
+	;가슴애무
+	CASE "가슴애무"
+		SIF TALENT:MASTER:남자
+			TCVAR:ARG:조수ACT파생 = 1
+	;유두핥기→유두 살짝 깨물기		우선 테두리만 마련한다. 조건은 어떻게 하지@/L
+	;CASE "유두핥기"
+	;	SIF 0
+	;		TCVAR:ARG:조수ACT파생 = 1
+ENDSELECT
+
+
+;조수행동가 정해지면 여기로부터행동의 메세지를 호출합니다.
+@ASSI_TRAIN_MESSAGE, ARG
+SELECTCASE NOWASSIACTNAME(ARG)
+	;애무→수음
+	CASE "손으로 애무"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %CALLNAME:ARG%(은)는 %PENIS_DESCRIPTION()% %CALLNAME:MASTER%의 남성기를 애무하기 시작했다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 몸을 애무하기 시작했다…
+		ENDIF
+	;쿤닐링구스→펠라
+	CASE "입으로 애무"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %CALLNAME:ARG%(은)는 %PENIS_DESCRIPTION()% %CALLNAME:MASTER%의 남성기를 입으로 애무하기 시작했다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 비순을 입으로 애무하기 시작했다…
+		ENDIF
+	;조개 우려라→스마타
+	CASE "스마타"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %CALLNAME:ARG%는 %PENIS_DESCRIPTION()% %CALLNAME:MASTER%의 남성기를 자신의 사타구니 사이에 두고 비비기 시작했다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%는 두 명의 성기를 함께 문지르기 시작했다…
+		ENDIF
+	;파이즈리
+	CASE "파이즈리한다"
+		PRINTFORML %CALLNAME:ARG%(은)는 %PENIS_DESCRIPTION()% %CALLNAME:MASTER%의 남성기를 자신의 가슴 사이에 두고 문지르기 시작했다…
+	;발코키
+	CASE "풋잡하기"
+		PRINTFORML %CALLNAME:ARG%(은)는 %PENIS_DESCRIPTION()% %CALLNAME:MASTER%의 남성기를 자신의 다리로 문지르기 시작했다…
+	;로터, 오나홀
+	CASE "Ｃ도구"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 남성기에 오나홀를 씌우고 상하시켰다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 비순에 진동하는 로터를 꽉 눌렀다…
+		ENDIF
+	;역강간
+	CASE "역강간"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 위에서 허덕이고 있다…
+		ELSE
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 페니스를 억지로、보지의 안쪽까지 삼키고 허리를 흔들었다…
+		ENDIF
+	;애널애무
+	CASE "애널애무"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 애널을 애무하기 시작했다…
+	;항문펠라
+	CASE "항문펠라"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 애널을 정중하게 빨기 시작했다…
+	;항문로터
+	CASE "항문로터"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 애널에 진동하는 로터를 꽉 눌렀다…
+	;애널바이브
+	CASE "애널바이브"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 애널바이브를 삽입해 움직이기 시작했다…
+	;항문섹스
+	CASE "항문섹스"
+	PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 애널에 삽입해 허리를 움직이기 시작했다…
+	;가슴애무
+	CASE "가슴애무"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 유두를 손가락으로 만지기 시작했다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 가슴을 애무하기 시작했다…
+		ENDIF
+	;유두핥기
+	CASE "유두핥기"
+		IF TFLAG:조수ACT파생 == 1
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 유두를 깨물기 시작했다…
+		ELSE
+			PRINTFORML %CALLNAME:ARG%은(는) %CALLNAME:MASTER%의 유두를 빨기 시작했다…
+		ENDIF
+	;유두로터
+	CASE "유두로터"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 유두에 진동하는 로터를 꽉 눌렀다…
+	;손가락삽입
+	CASE "손가락삽입"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 비순에 손가락을 삽입해、안을 휘저었다…
+	;바이브
+	CASE "바이브"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 바이브를 삽입해 움직이기 시작했다…
+	;성교
+	CASE "성교"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 삽입해 허리를 움직이기 시작했다…
+	;키스
+	CASE "키스"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %플레이어와% 입술을 겹쳤다…
+	;안면승마
+	CASE "안면승마"
+		IF TEQUIP:성교봉사중 == 3
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 얼굴에 올라다 음순을 문지르면서 %타겟과% 혀를 섞었다…
+		ELSE
+			PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 얼굴에 올라타 음순을 문질렀다…
+		ENDIF
+	;발을핥게한다
+	CASE "발을핥게한다"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 자신의 발을 핥으라고 명령했다…
+	;자위를과시한다
+	CASE "자위를과시한다"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 보란듯이、눈 앞에서 자위를 시작했다…
+	;매도
+	CASE "매도"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% 도발하는 것처럼 %CALLNAME:MASTER%의 치태를 입에 담았다…
+	;사진촬영
+	CASE "사진촬영"
+		PRINTFORM %조사처리(CALLNAME:ARG,"는")% 카메라를 준비해、%CALLNAME:MASTER%의 
+		IF PALAM:MASTER:쾌Ｃ + PALAM:MASTER:쾌Ｖ + PALAM:MASTER:쾌Ａ + PALAM:MASTER:쾌Ｂ + PALAM:MASTER:욕정 > 1500
+;OriginalString : 乱れる
+			PRINT 흐트러진
+		ELSEIF PALAM:MASTER:공포 + PALAM:MASTER:고통 + PALAM:MASTER:불쾌 + PALAM:MASTER:억울 > 1000
+;OriginalString : 惨めな
+			PRINT 비참한
+		ELSEIF !(TEQUIP:MASTER:하반신겉옷 || TEQUIP:MASTER:상반신겉옷 || TEQUIP:MASTER:전신겉옷)
+;OriginalString : は했다ない
+			PRINT 상스러운
+		ENDIF
+		PRINTL  모습을 확실히 기록했다…
+	;조교자와키스
+	CASE "조교자와키스"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%에게 보란듯이 %타겟과% 혀를 섞었다…
+	;치태를보인다
+	CASE "치태를보인다"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 치태를 응시하고 있다…
+	;머리를짓밟는다
+	CASE "머리를짓밟는다"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%의 머리를 짓밟았다…
+	;------------------------------
+	;SP액션
+	;------------------------------
+	CASE "신문 기사로 한다"
+		PRINTFORML %조사처리(CALLNAME:ARG,"는")% 카메라로 %CALLNAME:MASTER%의 모습을 찍어、
+		PRINTFORML 그것을 바탕으로 기사를 쓰기 시작했다...
+ENDSELECT
+WAIT
+RESULT = 0
+CALL KOJO_ACT_ASSI
+RETURN RESULT

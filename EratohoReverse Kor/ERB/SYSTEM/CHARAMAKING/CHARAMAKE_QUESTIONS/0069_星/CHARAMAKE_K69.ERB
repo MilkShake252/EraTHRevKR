@@ -1,0 +1,60 @@
+﻿;星＠CPMの人
+@CHARAMAKE_K69(ARG)
+PRINTFORMW 「일어나세요……일어나 주세요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「일어났습니까?　그럼, 한가지 묻겠습니다」
+PRINTFORMW 「소중히 하고 있는 것이 사라져버렸을 때, 당신은 어디를 찾습니까?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 책상의 서랍안
+PRINTFORMDL [2] 부엌
+PRINTFORMDL [3] 길
+PRINTFORMDL [4] 그런 것보다 춤춥시다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답해 주시지 않는 것입니까. 유감입니다」
+		PRINTFORM 「그럼 또 봅시다. 
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「등잔 밑이 어둡다. 의외로 그런 곳에 있는 거에요」
+		PRINTFORM 「자 질문은 끝났습니다. 
+		CALLF CM_PROF("낙관",     20)
+		CALLF CM_PROF("솔직야",   20)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("수치",     10)
+	CASE 2
+		PRINTFORML 「배고픕니까?　저는 조금 배가 비었는데요」
+		PRINTFORM 「뭐、아무튼 
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("수치",     -10)
+		CALLF CM_PROF("호기심",   10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람",   10)
+	CASE 3
+		PRINTFORML 「갑작스럽게 밖이라니……」
+		PRINTFORM 「아, 질문은 끝입니다.
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("도착",     20)
+		CALLF CM_PROF("지성",     -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람",   10)
+	CASE 4
+		PRINTFORML 「아직 잠에 취해있으신건가요?」
+		PRINTFORM 「이만 
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("모랄",   -20)
+		CALLF CM_PROF("결벽",     -20)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("호기심",   10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람",   10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",   20)
+ENDSELECT
+PRINTFORMW 안녕히 주무세요」
+RETURN 1
+

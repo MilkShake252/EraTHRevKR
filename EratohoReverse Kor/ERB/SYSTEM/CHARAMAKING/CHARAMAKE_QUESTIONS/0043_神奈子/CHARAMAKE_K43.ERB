@@ -1,0 +1,99 @@
+﻿;神奈子＠Librarian
+@CHARAMAKE_K43(ARG)
+PRINTFORMW 「나를 부르는 건 어디의 누구인가」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「라고、말하고 싶지만、이번에는 질문에 대답해줘」
+PRINTFORMW 「당신은 나를 뭐라고 부르지. 신인가、부처인가、아니면 요괴？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 누구라도 좋다
+PRINTFORMDL [2] 신님
+PRINTFORMDL [3] 부처님
+PRINTFORMDL [4] 요괴
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「이런이런、가까이 가지 않는 신에게 저주는 없다、라는 것인가」
+		PRINTFORMW 「실제로、이런 정도로 저주하지는 않을테니、안심해」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORMW 「그런 대답도 싫지는 않아. 약간 별난 사람이군、당신도」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+	CASE 2
+		PRINTFORMW 「그것은 바른 인식이야. 산을 보고、기원이라도 하나 하면 좋아」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+	CASE 3
+		PRINTFORML 「유감이지만、수행이라고 하는 것은 취미가 아냐」
+		PRINTFORMW 「고행을 통해 깨닫는다는 것은、결국 그것으로는 부처가 될 수 없다고 하는 것이니까」
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「잘못된 것은 아니지만、조금 다르지」
+		PRINTFORMW 「내가 신앙을 잃는다면、일시적으로는 그 안에 들어갈지도 모르겠지만」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+ENDSELECT
+PRINTFORML 「그런데、진짜 얼굴을 보여 미안하지만、이제 가야할 것 같네」
+PRINTFORMW 「또 마주칠 일이 있으면 좋겠지만、조금 신앙해 주었으면 좋겠군」
+RETURN 1
+

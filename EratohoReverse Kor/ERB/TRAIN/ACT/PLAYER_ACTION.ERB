@@ -1,0 +1,276 @@
+﻿;────────────────────────────────────
+;조교자의행동를선택
+;────────────────────────────────────
+@PLAYER_ACT
+#DIM LCOUNT, 1
+TFLAG:턴방침 = 0
+TFLAG:ACT분류 = 0
+
+;우선은 이번방침를 결정
+;(조교강도에 대한방침)
+CALL ACT_COURSE
+;조교방침예약의 처리
+IF TFLAG:방침예약
+	TFLAG:턴방침 = TFLAG:방침예약
+	TFLAG:방침예약 = 0
+	SIF FLAG:디버그
+		CALL PRINT_DIALOG(@"방침 예약에 의해 방침을 %POLICY("지금")%로 변경했습니다", 2, 2, 2)
+ENDIF
+
+;ACT분류미결정을 대입
+TFLAG:ACT분류 = -1
+
+;휴식가 아니면 계속되어 이번조교유별을 결정
+IF TFLAG:턴방침 != 1
+	;ACT 개별보정치를 조정
+	CALL ACT_M_RESEARCH
+	;조교종별을 결정
+	CALL ACT_MENU
+ELSE
+	TFLAG:ACT분류 = 9
+ENDIF
+
+;조교메뉴별 처리
+;ACT 미결정을 대입
+TFLAG:ACT = -1
+
+;조교메뉴예약의 처리
+IF TFLAG:ACT분류예약 >= 0
+	;예약를 채용
+	TFLAG:ACT분류 = TFLAG:ACT분류예약
+	;실행 가부 판정
+	CALLFORM ACT_M{TFLAG:ACT분류}
+	IF FLAG:디버그
+		IF TFLAG:ACT == -1
+			CALL PRINT_DIALOG(@"메뉴 예약에 따라 메뉴를 %MENU(TFLAG:ACT분류예약)%로 변경했습니다만、실행할 수 없습니다", 2, 2, 2)
+		ELSE
+			CALL PRINT_DIALOG(@"메뉴 예약에 따라 메뉴를 %MENU(TFLAG:ACT분류예약)%로 변경했습니다", 2, 2, 2)
+		ENDIF
+	ENDIF
+	;예약를 해제
+	TFLAG:ACT분류예약 = -1
+ENDIF
+
+;ACT 미결정이라면
+WHILE TFLAG:ACT == -1
+	;ACT분류를 지정한다(지정이 끝난 상태라면 날린다) ;ACT 분류 지정 (지정되어 있다면 비행)
+	SIF TFLAG:ACT분류 == -1
+		CALL ACT_MENU_RESULT(1)
+	;그런데도 지정 할 수 없으면 『지금 기분을 물어본다』ACT로 결정 ;그래도 지정할 수 없으면"지금 기분을 물어본다"ACT 결정
+	IF TFLAG:ACT분류 == -1
+		TFLAG:ACT = 0
+		TFLAG:ACT분류 = 0
+		SIF FLAG:디버그
+			PRINTL (채용가능ACT, ACT분류가 존재하지않아、『지금의 기분을 물어본다』ACT를 채용했습니다)
+	;실행 가부 판정
+	ELSE
+		CALLFORM ACT_M{TFLAG:ACT분류}
+	ENDIF
+WEND
+
+;행동예약의 처리
+IF TCVAR:행동예약 >= 0
+	TFLAG:ACT = TCVAR:행동예약
+	TCVAR:행동예약 = -1
+	SIF FLAG:디버그
+		CALL PRINT_DIALOG(@"행동 예약에 의해 행동을 %STR:(TFLAG:ACT)%로 변경했습니다", 2, 2, 2)
+	;변경 후의 ACT와 ACT분류가 다른 경우
+	IF TFLAG:ACT분류 != GET_ACTM(TFLAG:ACT)
+		TFLAG:ACT분류 = GET_ACTM(TFLAG:ACT)
+		SIF FLAG:디버그
+			CALL PRINT_DIALOG(@"그에 따라、메뉴를 %MENU(TFLAG:ACT분류)%로 변경했습니다", 2, 2, 2)
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;ACT 개별보정치 조정 ;ACT 개별 보정 값 조정
+;────────────────────────────────────
+@ACT_M_RESEARCH
+#DIM LCOUNT, 1
+
+;디버그표시를 오프로 해 ACT_M를 실시해, 보정치를 계산
+FLAG:디버그표시끄기 = 1
+FOR LCOUNT, 0, 11
+	CALLFORM ACT_M{LCOUNT}(1)
+NEXT
+;디버그표시를 온에 되돌린다
+FLAG:디버그표시끄기 = 0
+;디버그시, 보정치 표시
+[SKIPSTART]
+IF FLAG:디버그
+	;LOCAL 초기화
+	LOCAL = 0
+	LOCAL:1 = GETCOLOR()
+	;전보정치에 대해
+	FOR LCOUNT, 0, 200
+		;대응 ACT가 존재하면
+		IF STR:LCOUNT != ""
+			;문자수카운트
+			LOCAL += 10
+			;일행을 돌파하면 개행
+			IF LOCAL >= WIDTH()
+				PRINTL 
+				LOCAL = 0
+			ENDIF
+			;보정치취득
+			LOCAL:2 = CFLAG:(400 + LCOUNT)
+			;보정치의 표시 상하한으로 거두어, 색을 바꾼다
+			IF LOCAL:2 < -99
+				LOCAL:2 = -99
+				SETCOLOR 0xC07070
+			ELSEIF LOCAL:2 > 999
+				LOCAL:2 = 999
+				SETCOLOR 0x66FFFF
+			ENDIF
+			;보정치 표시
+			PRINTFORM %GET_ACTABBNAME(LCOUNT), 4%({LOCAL:2, 3}) 
+			;문자색리셋트
+			SETCOLOR LOCAL:1
+		ENDIF
+	NEXT
+;OriginalString : 
+	PRINTW 
+ENDIF
+[SKIPEND]
+;RESULT 보유
+RETURN RESULT
+
+;보정치 가감(상태)산처리
+@ACT_M_RES_CALC(ARG, ARG:1)
+;현재가가 0이라면 그대로 채용
+IF CFLAG:(400 + ARG) == 0
+	CFLAG:(400 + ARG) = ARG:1
+;현재가와 가감(상태)산치의 정부가 역이라면 그대로 가감(상태)산
+ELSEIF (CFLAG:(400 + ARG) > 0) == (ARG:1 < 0)
+	CFLAG:(400 + ARG) += ARG:1
+;현재가와 가감(상태)산치의 정부가 같으면 서서히 가감(상태)산량을 0에 접근한다
+ELSE
+	CFLAG:(400 + ARG) += (ARG:1 * LIMIT(ARG:1 * 100 / CFLAG:(400 + ARG), 0, 100)) / 100
+ENDIF
+;RESULT 보유
+RETURN RESULT
+
+;계열별보정치취득함수
+;ARG, 또는 ARGS에 계열을 지정
+@ACT_M_RES_MENU(ARG = -1, ARGS)
+#DIM LCOUNT
+;계열번호를취득
+IF ARG == -1
+	LOCAL = MENUNUM(ARGS)
+ELSE
+	LOCAL = ARG
+ENDIF
+;계열 존재를 확인
+SIF MENU(LOCAL) == ""
+	RETURN -999
+;소속 ACT 모두에 대해 개별보정치를 계산해, 최대의 물건을반환
+CALL ACT_M_RES_FETCH(ACTM_NUM(LOCAL, 0))
+LOCAL:1 = RESULT
+FOR LCOUNT, 1, ACTM_NUM(LOCAL, -1)
+	CALL ACT_M_RES_FETCH(ACTM_NUM(LOCAL, LCOUNT))
+	LOCAL:1 = MAX(LOCAL:1, RESULT)
+NEXT
+;보정치을반환
+RETURN LOCAL:1
+
+;개별보정치취득함수
+@ACT_M_RES_FETCH(ARG = -1, ARGS)
+;계열번호를취득
+IF ARG == -1
+	LOCAL = GET_ACTNUM(ARGS)
+ELSE
+	LOCAL = ARG
+ENDIF
+;ACT 존재를 확인
+SIF GET_ACTNAME(LOCAL) == "" || GET_ACTNAME(LOCAL) == "ＮＯＮＥ"
+	RETURN -999
+;실행 불가시, 보정치를-999 고정
+CALLFORM ACT_ABLE{LOCAL}
+SIF !RESULT
+	RETURN -999
+;보정치를 초기화
+LOCAL:1 = 0
+;단기보정치취득·가산
+LOCAL:1 += CFLAG:(400 + LOCAL)
+;장기보정치취득·가산
+LOCAL:1 += ABCBSI(ARG * 60)
+;보정치을반환
+RETURN LOCAL:1
+
+;────────────────────────────────────
+;ACT 장기보정치 조정 ;ACT 장기 보정 값 조정
+;────────────────────────────────────
+;ARG = 0:조교 전(초기화) 1:조교 후(산입)
+@ACT_M_RESEARCH_L(ARG)
+#LOCALSIZE 200
+#DIM LCOUNT
+#DIM LTEMP, 200
+
+;조교전
+IF ARG == 0
+	;ACT 실행횟수를 보존
+	FOR LCOUNT, 0, 200
+		LOCAL:LCOUNT = FLAG:(1000 + LCOUNT)
+	NEXT
+;조교 후
+ELSE
+	FOR LCOUNT, 0, 200
+		;ACT 실행횟수증분의 평방근의 정부를 역전해, ACT 장기보정치 변동치로 한다
+		LTEMP:LCOUNT =  LOCAL:LCOUNT - FLAG:(1000 + LCOUNT)
+		;소질에 의해 가산 방향으로 보너스
+		;(※길게 행해지지 않았던 ACT를 유리하게 하기 위해(때문))
+		LTEMP:LCOUNT += 4 + TALENT:호기심 - TALENT:무관심 + TALENT:민감 - TALENT:신중함
+	NEXT
+	;조교대상반응에 의한흥미보정를 가산
+	CALL KYOMI_ADD(1)
+	FOR LCOUNT, 0, 200
+		LTEMP:LCOUNT += RESULT:LCOUNT
+	NEXT
+	;실제의 가산 처리(값이 너무 커지지 않게 조정)
+	FOR LCOUNT, 0, 200
+		;부호가 다르면보정치가 큰 만큼 변동이 가속
+		IF SIGN(CFLAG:(600 + LCOUNT)) != SIGN(LTEMP:LCOUNT)
+			CFLAG:(600 + LCOUNT) += LTEMP:LCOUNT * MAX(ABS(CFLAG:(600 + LCOUNT)), 50) / 50
+		;부호가 같으면보정치가 큰 만큼 변동이 감속(변동시+-1을 보증)
+		ELSEIF LTEMP:LCOUNT != 0
+			CFLAG:(600 + LCOUNT) += SIGN(LTEMP:LCOUNT) * MAX(ABS(LTEMP:LCOUNT) * 50 / MAX(ABS(CFLAG:(600 + LCOUNT)), 50), 1)
+		ENDIF
+	NEXT
+	;디버그시, 보정치 표시(다만오토모드의 간이표의시는 제외함)
+	IF FLAG:디버그 && !(FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1)
+		;LOCAL 초기화
+		LOCAL = 0
+		LOCAL:1 = GETCOLOR()
+		;전보정치에 대해
+		FOR LCOUNT, 0, 200
+			;대응 ACT가 존재하면
+			IF STR:LCOUNT != ""
+				;문자수카운트
+				LOCAL += 10
+				;일행을 돌파하면 개행
+				IF LOCAL >= WIDTH()
+					PRINTL 
+					LOCAL = 0
+				ENDIF
+				;보정치취득
+				LOCAL:2 = CFLAG:(600 + LCOUNT)
+				;보정치의 표시 상하한으로 거두어, 색을 바꾼다
+				IF LOCAL:2 < -99
+					LOCAL:2 = -99
+					SETCOLOR 0xC07070
+				ELSEIF LOCAL:2 > 999
+					LOCAL:2 = 999
+					SETCOLOR 0x66FFFF
+				ENDIF
+				;보정치 표시
+				PRINTFORM %GET_ACTABBNAME(LCOUNT), 4%({LOCAL:2, 3}) 
+				;문자색리셋트
+				SETCOLOR LOCAL:1
+			ENDIF
+		NEXT
+;OriginalString : 
+		PRINTW 
+	ENDIF
+ENDIF
+RETURN RESULT
+

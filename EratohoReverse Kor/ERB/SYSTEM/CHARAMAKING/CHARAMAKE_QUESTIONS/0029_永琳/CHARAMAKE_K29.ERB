@@ -1,0 +1,50 @@
+﻿@CHARAMAKE_K29(ARG)
+PRINTFORMW 「어머、일어났네요. 마침 좋아요、당신에게 묻고 싶은 게 있어」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「만약、만약이야？　당신이 나를 죽이고 싶어졌어」
+PRINTFORMW 「그렇다면、어떤 죽는 방법을 나에게 바라는걸까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 즉사
+PRINTFORMDL [2] 질식사
+PRINTFORMDL [3] 안락사
+PRINTFORMDL [4] 죽어도 되살아나기 때문에 의미 없지 않습니까？
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……이상한 질문을 해버려서 미안해」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「뭐、정말로 싫다면 지금 당장 죽어버려、라는 느낌이구나」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", 10)
+	CASE 2
+		PRINTFORML 「괴로워하는 것을 즐기는걸까？」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("호기심", 20)
+	CASE 3
+		PRINTFORML 「당신……상냥하구나. 죽이는 거지만」
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("도착", -10)
+		CALLF CM_PROF("결벽", 10)
+	CASE 4
+		PRINTFORML 「그래. 응、그렇지. 그러니까 당신은 나를 죽일 수 없어. 후후후」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("솔직야", 10)
+ENDSELECT
+PRINTFORMW 「어울려줘서 고마워. 그럼、잘자」
+RETURN 1
+

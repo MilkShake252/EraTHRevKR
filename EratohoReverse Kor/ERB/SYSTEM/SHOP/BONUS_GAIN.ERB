@@ -1,0 +1,1014 @@
+﻿;────────────────────────────────────
+;보너스취득의 메뉴. 보너스의 종류와필요포인트는 가짜의 설정입니다
+;────────────────────────────────────
+@BONUS_GAIN
+#DIM DAYONCE = -1
+
+#DIM LINE_WIDTH
+#DIM ITEM_LIST, 4, 10
+#DIM ITEM_SIZE, 4
+#DIM TALENT_LIST, 8, 15
+#DIM TALENT_SIZE, 8
+#DIM CONST TALENT_TBL = 52, 55, 57, 58, 59, 64, 66, 83, 91, 108, 109, 121, 130, 135, 140
+
+VARSET LOCAL
+VARSET ITEM_LIST
+VARSET ITEM_SIZE
+VARSET TALENT_LIST
+VARSET TALENT_SIZE
+
+DRAWLINE
+PRINTFORML %플레이어를% %타겟이% 조교중
+SIF ASSI:1 >= 0
+	PRINTFORML   (조수 1:%CALLNAME:(ASSI:1)%)　\@ ASSI:2 >= 0 ? (조수 2:%CALLNAME:(ASSI:2)%) # \@
+PRINTFORML [LV {CFLAG:TARGET:0}　EXP {CFLAG:TARGET:1}/{CFLAG:TARGET:4}　NEXT {CFLAG:TARGET:4-CFLAG:TARGET:1}]
+PRINTFORML (나머지 마력 {CFLAG:마력})
+
+;────────────────────────────────────
+;이것까지취득했다보너스의 표시
+;처리가 거의 SQR인 채로, 표시 정보가 불발 하고 있었으므로 처리 변경. 미조정@revkoishi(14/05/26)
+LINE_WIDTH = WIDTH()
+
+;추가조교자
+PRINTFORM \@ FLAG:추가조교자수 ? 추가된 조교자：{FLAG:11,2}명\n # \@
+
+;도구. 기본적인 처리는 스테이터스의 소질 분류표시와 같습니다
+;닮은 처리인 것으로 좀 더 머리 사용하면 함수화할 수 있을 것 같은 생각도 들지만, 지금이라면 좀 더 영리한 방식이 있을지도
+FOR LOCAL:0, 0, 50	;분류 루프
+	SIF ITEM:(LOCAL:0)
+		ITEM_LIST:ITEM_TYPE(LOCAL:0):(ITEM_SIZE:ITEM_TYPE(LOCAL:0)++) = LOCAL:0
+NEXT
+IF VARSIZE("ITEM_SIZE") - MATCH(ITEM_SIZE, 0)
+	PRINTFORML -- □ 취득한 도구 □ \@ ITEM:커스텀도구 ? (성도구커스텀) %"-" * (LINE_WIDTH - 43)% # %"-" * (LINE_WIDTH - 22)% \@
+	FOR LOCAL:0, 1, 4
+		IF ITEM_SIZE:(LOCAL:0)	;그 만큼류의도구가 없으면 날린다
+			;도구분류명을 표시
+			PRINTFORM %ITEM_TYPENAME(LOCAL:0), 8, RIGHT%:
+			LOCAL:2 = 10	;자리수 위치(↑표시 후의 위치)
+			FOR LOCAL:1, 0, ITEM_SIZE:(LOCAL:0)	;그 만큼류의도구소지 몇분 루프
+				;도구명을취득([도구명] )
+				LOCALS:0 = [%GET_ITEMNAME(ITEM_LIST:(LOCAL:0):(LOCAL:1))%]%" "%
+				LOCAL:3 = STRLENS(LOCALS:0)	;↑의 문자수(도구명+[]+스페이스)
+				LOCAL:2 += LOCAL:3			;자리수 위치 가산
+				IF LOCAL:2 > LINE_WIDTH		;이대로 표시하면 도중 개행될 것 같은 경우는 개행 처리를 실시한다
+					;개행 처리(되풀이해, 줄머리 인덴트, 자리수 위치 재계산)
+					PRINTFORM \n          
+					LOCAL:2 = 10 + LOCAL:3
+				ENDIF
+				;도구명의 표시
+				IF GROUPMATCH(ITEM_LIST:(LOCAL:0):(LOCAL:1), 1, 11, 12, 13, 14) && ITEM:커스텀도구
+					CALL PRINT_RAINBOW(LOCALS:0, , , RAND:12)
+				ELSE
+					PRINTS LOCALS:0
+				ENDIF
+			NEXT
+			PRINTL 
+		ENDIF
+	NEXT
+ENDIF
+
+;소질의 표시. 위와 대개 같음… 이었던 것이지만 조금 마가 차이했다
+FOR LOCAL:0, 0, VARSIZE("TALENT_TBL")
+	SIF (TALENT:TARGET:(TALENT_TBL:(LOCAL:0)) ^^ CSVTALENT(NO:TARGET, TALENT_TBL:(LOCAL:0))) && TALENT_TYPE(TALENT_TBL:(LOCAL:0))
+		TALENT_LIST:TALENT_TYPE(TALENT_TBL:(LOCAL:0)):(TALENT_SIZE:TALENT_TYPE(TALENT_TBL:(LOCAL:0))++) = TALENT_TBL:(LOCAL:0)
+NEXT
+IF VARSIZE("TALENT_SIZE") - MATCH(TALENT_SIZE, 0)
+	LOCAL:4 = GETCOLOR()	;현재의 표시색을 보유
+{
+;OriginalString : ("-- □ 変動했다素質 □ (凡例：" + HTMLFONT("[<I> 취득素質 </I>] ", , 0x60FFFF) + 
+	CALL HTMLPRINTL("-- □ 변동한소질 □ (범례:" + HTMLFONT("[<I> 취득소질 </I>] ", , 0x60FFFF) + 
+                    HTMLFONT("[<I> 소거 소질 </I>]", , 0x606060) + @") %"-" * (LINE_WIDTH - 56)%")
+}
+	IF FLAG:소질표시방법	;소질 분류표시. 여기서 하는 의미가 있는지 어떤지… 우선 유저 프렌들리 중점(수수께끼)
+		FOR LOCAL:0, 1, 8
+			IF TALENT_SIZE:(LOCAL:0)
+				PRINTFORM %TALENT_TYPENAME(LOCAL:0), 8, RIGHT%:
+				LOCAL:2 = 10
+				FOR LOCAL:1, 0, TALENT_SIZE:(LOCAL:0)
+					LOCALS:0 = [%GET_TALENTNAME(TARGET, TALENT_LIST:(LOCAL:0):(LOCAL:1))%]%" "%
+					LOCAL:3 = STRLENS(LOCALS:0)
+					LOCAL:2 += LOCAL:3
+					IF LOCAL:2 > LINE_WIDTH
+						PRINTFORM \n          
+						LOCAL:2 = 10 + LOCAL:3
+					ENDIF
+					SETCOLOR TALENT:TARGET:(TALENT_LIST:(LOCAL:0):(LOCAL:1)) ? 0x60FFFF # 0x606060
+					PRINTS LOCALS:0
+					SETCOLOR LOCAL:4
+				NEXT
+				PRINTL 
+			ENDIF
+		NEXT
+	ELSE					;소질번호 순서 표시
+		LOCAL:2 = 0
+		FOR LOCAL:0, 0, VARSIZE("TALENT_TBL")
+			IF (TALENT:TARGET:(TALENT_TBL:(LOCAL:0)) ^^ CSVTALENT(NO:TARGET, TALENT_TBL:(LOCAL:0))) && TALENT_TYPE(TALENT_TBL:(LOCAL:0))
+				LOCALS:0 = [%GET_TALENTNAME(TARGET, TALENT_TBL:(LOCAL:0))%]%" "%
+				LOCAL:3 = STRLENS(LOCALS:0)
+				LOCAL:2 += LOCAL:3
+				IF LOCAL:2 > LINE_WIDTH
+					PRINTL 
+					LOCAL:2 = LOCAL:3
+				ENDIF
+				SETCOLOR TALENT:TARGET:(TALENT_TBL:(LOCAL:0)) ? 0x60FFFF # 0x606060
+				PRINTS LOCALS:0
+				SETCOLOR LOCAL:4
+			ENDIF
+		NEXT
+		PRINTL 
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;보너스 메뉴의 표시
+;이름의 여백분
+LOCAL = MAX(8 - STRLENSU(CALLNAME:TARGET), 0)
+DRAWLINE
+
+;하루 1회만 표시
+IF DAYONCE != DAY
+	;이벤트구상:마력사용전
+	CALL KOJO_EVENT(110, 0)
+	CALL VOIDLINE_IF(RESULT)
+	DAYONCE = DAY
+ENDIF
+
+PRINTFORML %타겟은%、%CALLNAME:MASTER%에게서 정제한 마력을 사용해…
+PRINTL [ 0] 이제 되었다
+;소환은주인님한정
+SIF TALENT:주인님
+	PRINTFORML [ 1] 새로운 조교자를 소환한다　　　　　　　　　　　　 마력1000
+SELECTCASE ABL:기교
+	CASE 0
+		PRINTFORML [ 2] 조교 기교의 재능을 개화시킨다　　　　　　　　　　 마력{RIZE_ABL_V(0), 4}
+	CASE IS >= 99
+		PRINTFORML [--] 조교 기교는 이미 MAX입니다
+	CASEELSE
+		PRINTFORML [ 2] 조교 기교를 높인다　　　　　　　　　　　　　　　 마력{RIZE_ABL_V(0), 4} 요LV{RIZE_ABL_V(1)}
+	;시험적으로마력에서 살 수 있는기교상한을 없애 본다
+	;세상마력야
+	;PRINTFORML [--] 조교기교는 실천으로 높일 수 밖에 없을 것이다
+ENDSELECT
+PRINTL [ 3] 지식을 습득한다
+PRINTL [ 4] 기능을 취득한다
+IF FLAG:모드 != 1 || FLAG:디버그 || !(FLAG:AI자유도&1)
+	PRINTL [ 5] 외계의 도구를 연성한다
+	PRINTL [ 6] 고문도구를 연성한다
+ENDIF
+PRINTFORML \@ ITEM:9 ? [--] 도구는 이미 커스터마이즈 되어있습니다 # [10] 도구를 커스터마이즈한다　　　　　　　　　　　　 마력 3000  요점[%TALENTNAME:59%] \@
+SIF !TALENT:남자
+	PRINTFORML [11] \@ TALENT:후타나리 ? 양성화를 원래대로 되돌린다　 # 양성화 의식을 한다 \@　　　　　　　　　　　　　　 마력7000
+SIF !TALENT:남자
+	PRINTFORML \@ TALENT:거유 ? [12] 더 이상 가슴을 크게 할 수 없습니다 # [12] 거유의 의식을 한다　　　　　 \@　　　　　　　　　　 마력5000
+SIF !TALENT:남자
+	PRINTFORML \@ TALENT:빈유 ? [13] 더 이상 가슴을 작게 할 수 없습니다 # [13] 빈유의 의식을 한다　　　　　 \@　　　　　　　　　　 마력1000
+SIF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+	PRINTFORML \@ MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500 ? [--] 노예의 정력은 단련하면 아직 늘릴 수 있을 것 같다 # [16] 노예 정력의 한계를 올린다　　　　　　　　　　　 마력{(MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000} \@
+DRAWLINE
+
+;────────────────────────────────────
+;입력 처리
+$INPUT_LOOP
+INPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		SIF !TALENT:주인님
+			GOTO FAILED
+		IF CFLAG:마력 < 1000
+			$FAILED_BY_MP
+			CLEARLINE 1
+			REUSELASTLINE 마력이 부족한 것 같다…
+			GOTO INPUT_LOOP
+		ENDIF
+		CALL NEW_TRAINER
+		SIF RESULT
+			RETURN 0
+	CASE 2
+		;기교상승에 도전
+		CALL RIZE_ABL
+		LOCAL = RESULT:1
+		SELECTCASE RESULT
+			;성공시
+			CASE 0
+				CALL PRINT_DIALOG(@"%CALLNAME:TARGET%의 조교 기교를<{ABL:기교+1}>로 올려도 괜찮으십니까？",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					;마력를 소비
+					CFLAG:마력 -= LOCAL
+					;기교를 상승
+					ABL:기교++
+					;이벤트구상:조교기교업
+					CALL KOJO_EVENT(110, 1)
+					CALL VOIDLINE_IF(RESULT)
+					;지문 표시
+					PRINTFORMW %CALLNAME:TARGET%의 조교기교는 <{ABL:기교}>가 되었습니다
+				ENDIF
+			;마력불발시
+			CASE 1
+				REUSELASTLINE 마력이 부족한 것 같다…(마력{LOCAL}가필요)
+				GOTO INPUT_LOOP
+			;조교레벨불발시
+			CASE 2
+				REUSELASTLINE 기교를 올리려면, 좀 더 경험을 쌓아야할 것 같다…(조교LV{RIZE_ABL_V(1)}가필요)
+				GOTO INPUT_LOOP
+			;기교상한시
+			CASE 3
+				REUSELASTLINE 이 이상 기교는 올릴 수 없다
+				GOTO INPUT_LOOP
+			;그 외의 문제
+			CASEELSE
+				$FAILED
+				CLEARLINE 1
+				GOTO INPUT_LOOP
+		ENDSELECT
+	CASE 3
+		;이벤트구상:지식를 얻기 전
+		CALL KOJO_EVENT(110, 2)
+		PRINTFORML %CALLNAME%는 마력을 사용해 새로운 지식을 얻기로 했다…
+		PRINTL [ 0] - 그만둔다
+		PRINTFORML \@ TALENT:배합지식   ? [--] [배합지식]을 가지고 있습니다           # [ 1] 약품의 [배합지식]을 습득　　　　　　　　　　　　 마력{GAIN_TALENT_V("배합지식"  , 0), 5} 요LV{GAIN_TALENT_V("배합지식"  , 1)} \@
+		PRINTFORML \@ TALENT:매혹       ? [--] [매혹]을 가지고 있습니다               # [ 2] [매혹]능력 체득　　　　　　　　　　　　　　　 마력{GAIN_TALENT_V("매혹"      , 0), 5} 요LV{GAIN_TALENT_V("매혹"      , 1)} \@
+		PRINTFORML \@ TALENT:금단의지식 ? [--] [금단의지식]을 가지고 있습니다         # [ 3] [금단의지식]을 익힌다　　　　　　　　　　　 마력{GAIN_TALENT_V("금단의지식", 0), 5} 요LV{GAIN_TALENT_V("금단의지식", 1)} \@
+		PRINTFORML \@ TALENT:도구능숙   ? [--] [도구능숙]을 가지고 있습니다           # [ 4] [도구능숙]의 지식을 습득　　　　　　　　　　　　 마력{GAIN_TALENT_V("도구능숙"  , 0), 5} 요LV{GAIN_TALENT_V("도구능숙"  , 1)} \@
+		PRINTFORML \@ TALENT:촬영기능   ? [--] [촬영기능]을 가지고 있습니다           # [ 5] 사진의 [촬영기능]을 습득　　　　　　　　　　　　 마력{GAIN_TALENT_V("촬영기능"  , 0), 5} 요LV{GAIN_TALENT_V("촬영기능"  , 1)} \@
+		$INPUT_LOOP_SKILL
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				RESTART
+			CASE 1 TO 5
+				IF 0
+				ELSEIF RESULT == 1
+					LOCALS:0 = 배합지식
+					LOCALS:1 = 약을 올바르게 취급하려면、좀 더 경험을 쌓아야 할 것 같다…
+					LOCAL = 3
+				ELSEIF RESULT == 2
+					LOCALS:0 = 매혹
+					LOCALS:1 = 매혹 능력을 얻으려면、좀 더 경험을 쌓아야 할 것 같다…
+					LOCAL = 4
+				ELSEIF RESULT == 3
+					LOCALS:0 = 금단의지식
+					LOCALS:1 = 금단의지식을 다루려면、좀 더 경험을 쌓아야 할 것 같다…
+					LOCAL = 5
+				ELSEIF RESULT == 4
+					LOCALS:0 = 도구능숙
+					LOCALS:1 = 외계의 도구를 다루기에는、아직 경험이 부족한 것 같다…
+					LOCAL = 6
+				ELSEIF RESULT == 5
+					LOCALS:0 = 촬영기능
+					LOCALS:1 = 카메라를 능숙하게 사용하려면、좀 더 경험을 쌓아야 할 것 같다…
+					LOCAL = 37
+				ENDIF
+				IF TALENT:LOCALS
+					CLEARLINE 1
+					GOTO INPUT_LOOP_SKILL
+				ENDIF
+				;기능취득에 도전
+				CALL GAIN_TALENT(LOCALS)
+				LOCAL:1 = RESULT:1
+				SELECTCASE RESULT
+					;성공시
+					CASE 0
+						CALL PRINT_DIALOG(@"%CALLNAME:TARGET%가 소질[%LOCALS%]를취득 합니다. 하시겠습니까?",1,1,1)
+						CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+						IF RESULT == 1
+							;마력를 소비
+							CFLAG:마력 -= LOCAL:1
+							;기능을취득
+							TALENT:LOCALS ^= 1
+							;이벤트구상:지식취득
+							CALL KOJO_EVENT(110, LOCAL)
+							CALL VOIDLINE_IF(RESULT)
+							;지문 표시
+							PRINTFORMW %CALLNAME%(은)는 [%LOCALS%](을)를 취득했습니다
+						ENDIF
+					;마력불발시
+					CASE 1
+						CLEARLINE 1
+						REUSELASTLINE 마력이 부족한 것 같다…(마력{LOCAL:1}가필요)
+						GOTO INPUT_LOOP_SKILL
+					;조교레벨불발시
+					CASE 2
+						CLEARLINE 1
+						REUSELASTLINE %LOCALS:1%(조교LV{GAIN_TALENT_V(LOCALS, 1)}가필요)
+						GOTO INPUT_LOOP_SKILL
+					;그 외의 문제
+					CASEELSE
+						CLEARLINE 1
+						GOTO INPUT_LOOP_SKILL
+				ENDSELECT
+			CASEELSE
+				CLEARLINE 1
+				GOTO INPUT_LOOP_SKILL
+		ENDSELECT
+	CASE 4
+		;이벤트구상:기술을 얻기 전
+		CALL KOJO_EVENT(110, 7)
+		PRINTFORML %CALLNAME%(은)는 마력을 사용해 새로운 기술을 얻기로 했다…
+		PRINTL [ 0] - 그만둔다
+		PRINTFORML \@ TALENT:혀기술          ? %"[--] [혀기술]을 가지고 있습니다"    , 51, LEFT% # %"[ 1] [혀기술]을 교묘하게"      , 51, LEFT   % 마력{GAIN_TALENT_V("혀기술"        , 0), 5} 요LV{GAIN_TALENT_V("혀기술"        , 1)} \@
+		PRINTFORML \@ TALENT:손가락기술      ? %"[--] [손가락기술]을 가지고 있습니다", 51, LEFT% # %"[ 2] [손가락기술]을 터득"        , 51, LEFT   % 마력{GAIN_TALENT_V("손가락기술"    , 0), 5} 요LV{GAIN_TALENT_V("손가락기술"    , 1)} \@
+		PRINTFORML \@ TALENT:허리기술          ? %"[--] [허리기술]을 가지고 있습니다    ", 51, LEFT% # %"[ 3] [허리기술]을 요염하게"    , 51, LEFT   % 마력{GAIN_TALENT_V("허리기술"        , 0), 5} 요LV{GAIN_TALENT_V("허리기술"        , 1)} \@
+		PRINTFORML \@ TALENT:긴박능숙        ? %"[--] [긴박능숙]을 가지고 있습니다"  , 51, LEFT% # %"[ 4] [긴박능숙]을 터득"    , 51, LEFT   % 마력{GAIN_TALENT_V("긴박능숙"      , 0), 5} 요LV{GAIN_TALENT_V("긴박능숙"      , 1)} \@
+		PRINTFORML \@ TALENT:새드            ? %"[ 5] [새드]를 가지고 있습니다"    , 51, LEFT% # %"[ 5] [새드]플레이 선호"        , 51, LEFT% \@ 마력{GAIN_TALENT_V("새드"          , 0), 5} 요LV{GAIN_TALENT_V("새드"          , 1)}
+		PRINTFORML \@ TALENT:착의플레이선호  ? %"[ 6] [착의플레이선호]를 가지고 있습니다"  , 51, LEFT% # %"[ 6] [착의플레이선호]를 선호", 51, LEFT% \@ 마력{GAIN_TALENT_V("착의플레이선호", 0), 5} 요LV{GAIN_TALENT_V("착의플레이선호", 1)}
+		PRINTFORML \@ TALENT:더러움무시        ? %"[--] [더러움무시]을 가지고 있습니다"  , 51, LEFT% # %"[ 7] [더러움무시]가 가능하게"  , 51, LEFT   % 마력{GAIN_TALENT_V("더러움무시"      , 0), 5} 요LV{GAIN_TALENT_V("더러움무시"      , 1)} \@
+		$INPUT_LOOP_SKILL2
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				RESTART
+			CASE 1 TO 7
+				IF 0
+				ELSEIF RESULT == 1
+					LOCALS:0 = 혀기술
+					LOCALS:1 = 인간을 넘은 혀사용에 이르려면、아직 경험이 부족한 것 같다…
+					LOCAL = 8
+				ELSEIF RESULT == 2
+					LOCALS:0 = 손가락기술
+					LOCALS:1 = 손끝을 섬세하게 사용하기엔、아직 경험이 부족한 것 같다…
+					LOCAL = 9
+				ELSEIF RESULT == 3
+					LOCALS:0 = 허리기술
+					LOCALS:1 = 허리 놀림을 능숙하게 하기에는、아직 경험이 부족한 것 같다…
+					LOCAL = 39
+				ELSEIF RESULT == 4
+					LOCALS:0 = 긴박능숙
+					LOCALS:1 = 구속술의 비의에 이르기엔、아직 경험이 부족한 것 같다…
+					LOCAL = 10
+				ELSEIF RESULT == 5
+					LOCALS:0 = 새드
+					IF TALENT:새드
+						LOCALS:1 = 가학취미를 그만두기엔、아직 제대로 놀지 못했다…
+					ELSE
+						LOCALS:1 = 새디스트가 되려면、좀 더 학대하는 즐거움을 알 필요가 있을 것이다…
+					ENDIF
+					LOCAL = 11
+				ELSEIF RESULT == 6
+					LOCALS:0 = 착의플레이선호
+					IF TALENT:착의플레이선호
+						LOCALS:1 = 착의 플레이를 그만두기엔、아직 조금 아쉬운듯한 기분이 든다…
+					ELSE
+						LOCALS:1 = 착의 플레이에 열중하기 전에、좀 더 평범한 행위를 더 해두는 게 좋겠지…
+					ENDIF
+					LOCAL = 38
+				ELSEIF RESULT == 7
+					LOCALS:0 = 더러움무시
+					LOCALS:1 = 더러움을 무시할 수 있게 되려면、좀 더 행위에 익숙해져야 할 것이다…
+					LOCAL = 12
+				ENDIF
+				IF TALENT:LOCALS && LOCALS != "새드" && LOCALS != "착의플레이선호"
+					CLEARLINE 1
+					GOTO INPUT_LOOP_SKILL2
+				ENDIF
+				;기능취득에 도전
+				CALL GAIN_TALENT(LOCALS)
+				LOCAL:1 = RESULT:1
+				SELECTCASE RESULT
+					;성공시
+					CASE 0
+						IF TALENT:LOCALS
+							CALL PRINT_DIALOG(@"%CALLNAME:TARGET%의 소질[%LOCALS%]를 소거합니다. 하시겠습니까?",1,1,1)
+						ELSE
+							CALL PRINT_DIALOG(@"%CALLNAME:TARGET%가 소질[%LOCALS%]를 취득합니다. 하시겠습니까?",1,1,1)
+						ENDIF
+						CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+						IF RESULT == 1
+							;마력를 소비
+							CFLAG:마력 -= LOCAL:1
+							;기능을취득
+							TALENT:LOCALS ^= 1
+							;이벤트구상:기능취득
+							CALL KOJO_EVENT(110, LOCAL)
+							CALL VOIDLINE_IF(RESULT)
+							;지문 표시
+							IF !TALENT:LOCALS
+								PRINTFORMW %CALLNAME%는 [%LOCALS%]가 아니게 되었습니다
+							ELSE
+								PRINTFORMW %CALLNAME%는 [%LOCALS%]를 취득했습니다
+							ENDIF
+						ENDIF
+					;마력불발시
+					CASE 1
+						CLEARLINE 1
+						REUSELASTLINE 마력이 부족한 것 같다…(마력{LOCAL:1}가필요)
+						GOTO INPUT_LOOP_SKILL2
+					;조교레벨불발시
+					CASE 2
+						CLEARLINE 1
+						REUSELASTLINE %LOCALS:1%(조교LV{GAIN_TALENT_V(LOCALS, 1)}가 필요)
+						GOTO INPUT_LOOP_SKILL2
+					;그 외의 문제
+					CASEELSE
+						CLEARLINE 1
+						GOTO INPUT_LOOP_SKILL2
+				ENDSELECT
+			CASEELSE
+				CLEARLINE 1
+				GOTO INPUT_LOOP_SKILL2
+		ENDSELECT
+	CASE 5
+		;이벤트구상: 아이템 연성전
+		CALL KOJO_EVENT(110, 13)
+		PRINTFORML %타겟은% 마력을 써서 외계의 도구를 만들기로 했다…
+		PRINTL [ 0] - 그만둔다
+		PRINTFORML \@ ITEM:0  ? [--] 로터을 가지고 있습니다             # [ 1] 로터　　　　　　　　　　　　　　　　　　　 마력200 \@
+		PRINTFORML \@ ITEM:1  ? [--] 바이브을 가지고 있습니다               # [ 2] 바이브　　　　　　　　　　　　　　　　　　　　 마력500 \@
+		PRINTFORML \@ ITEM:2  ? [--] 애널비즈을 가지고 있습니다         # [ 3] 애널비즈　　　　　　　　　　　　　　　　　 마력300 \@
+		PRINTFORML \@ ITEM:3  ? [--] 페니스밴드을 가지고 있습니다         # [ 4] 페니스밴드　　　　　　　　　　　　　　　　　 마력500 \@
+		PRINTFORML \@ ITEM:11 ? [--] 애널바이브을 가지고 있습니다         # [ 5] 애널바이브　　　　　　　　　　　　　　　　　 마력1000 \@
+		PRINTFORML \@ ITEM:12 ? [--] 클리캡을 가지고 있습니다         # [ 6] 클리캡　　　　　　　　　　　　　　　　　 마력600 \@
+		PRINTFORML \@ ITEM:13 ? [--] 유두캡을 가지고 있습니다       # [ 7] 유두캡　　　　　　　　　　　　　　　　 마력600 \@
+		PRINTFORML \@ ITEM:14 ? [--] 오나홀을 가지고 있습니다           # [ 8] 오나홀　　　　　　　　　　　　　　　　　　 마력600 \@
+		$INPUT_LOOP_ITEM1
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				RESTART
+			CASE 1
+				IF ITEM:0
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 200
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「로터」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 200
+					ITEM:0 = 1
+					CALL KOJO_EVENT(110, 14)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 로터를 연성하였습니다
+				ENDIF
+			CASE 2
+				IF ITEM:1
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 500
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「바이브」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 500
+					ITEM:1 = 1
+					CALL KOJO_EVENT(110, 15)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 바이브를 연성했습니다
+				ENDIF
+			CASE 3
+				IF ITEM:2
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 300
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「애널비즈」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 300
+					ITEM:2 = 1
+					CALL KOJO_EVENT(110, 16)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 애널비즈를 연성했습니다
+				ENDIF
+			CASE 4
+				IF ITEM:3
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 500
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「페니스밴드」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 500
+					ITEM:3 = 1
+					CALL KOJO_EVENT(110, 17)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 페니스밴드를 연성했습니다
+				ENDIF
+			CASE 5
+				IF ITEM:11
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 1000
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「애널바이브」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 1000
+					ITEM:11 = 1
+					CALL KOJO_EVENT(110, 18)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 애널바이브를 연성했습니다
+				ENDIF
+			CASE 6
+				IF ITEM:12
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 600
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「클리캡」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 600
+					ITEM:12 = 1
+					CALL KOJO_EVENT(110, 19)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 클리캡을 연성했습니다
+				ENDIF
+			CASE 7
+				IF ITEM:13
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 600
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「유두캡」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 600
+					ITEM:13 = 1
+					CALL KOJO_EVENT(110, 20)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%는 유두캡을 연성했습니다
+				ENDIF
+			CASE 8
+				IF ITEM:14
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM1
+				ELSEIF CFLAG:마력 < 600
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM1
+				ENDIF
+				CALL PRINT_DIALOG(@"「오나홀」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 600
+					ITEM:14 = 1
+					CALL KOJO_EVENT(110, 21)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 오나홀를 연성하였습니다
+				ENDIF
+			CASEELSE
+				CLEARLINE 1
+				GOTO INPUT_LOOP_ITEM1
+		ENDSELECT
+	CASE 6
+		;이벤트구상:고문도구 연성전
+		CALL KOJO_EVENT(110, 22)
+		PRINTFORML %CALLNAME%(은)는 마력을 사용해 고문도구를 만들기로 했다…
+		PRINTL [ 0] - 그만둔다
+		PRINTFORML \@ ITEM:20 ? [--] 눈가리개을 가지고 있습니다           # [ 1] 눈가리개　　　　　　　　　　　　　　　　　　 마력300 \@
+		PRINTFORML \@ ITEM:21 ? [--] 채찍을 가지고 있습니다                   # [ 2] 채찍　　　　　　　　　　　　　　　　　　　　　　 마력500 \@
+		PRINTFORML \@ ITEM:22 ? [--] 밧줄을 가지고 있습니다                   # [ 3] 밧줄　　　　　　　　　　　　　　　　　　　　　　 마력300 \@
+		PRINTFORML \@ ITEM:30 ? [--] 볼개그을 가지고 있습니다         # [ 4] 볼개그　　　　　　　　　　　　　　　　　 마력300 \@
+		PRINTFORML \@ ITEM:31 ? [--] 바늘을 가지고 있습니다                   # [ 5] 바늘　　　　　　　　　　　　　　　　　　　　　　 마력500 \@
+		PRINTFORML \@ ITEM:32 ? [--] 관장세트을 가지고 있습니다           # [ 6] 관장세트　　　　　　　　　　　　　　　　　　 마력1000 \@
+		PRINTFORML \@ ITEM:33 ? [--] 삼각목마을 가지고 있습니다             # [ 7] 삼각목마　　　　　　　　　　　　　　　　　　　 마력2000 \@
+		PRINTFORML \@ ITEM:40 ? [--] 거울을 가지고 있습니다                 # [ 8] 거울　　　　　　　　　　　　　　　　　　　　　 마력1000 \@
+		PRINTFORML \@ ITEM:42 ? [--] 개목걸이을 가지고 있습니다                 # [ 9] 개목걸이　　　　　　　　　　　　　　　　　　　　　 마력1500 \@
+		$INPUT_LOOP_ITEM2
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				RESTART
+			CASE 1
+				IF ITEM:20
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 300
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「눈가리개」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 300
+					ITEM:20 = 1
+					CALL KOJO_EVENT(110, 23)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 아이마스크를 연성하였습니다
+				ENDIF
+			CASE 2
+				IF ITEM:21
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 500
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「채찍」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 500
+					ITEM:21 = 1
+					CALL KOJO_EVENT(110, 24)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 채찍을 연성하였습니다
+				ENDIF
+			CASE 3
+				IF ITEM:22
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 300
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「밧줄」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 300
+					ITEM:22 = 1
+					CALL KOJO_EVENT(110, 25)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 줄을 연성하였습니다
+				ENDIF
+			CASE 4
+				IF ITEM:30
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 300
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「볼개그」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 300
+					ITEM:30 = 1
+					CALL KOJO_EVENT(110, 26)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 볼 개그를 연성하였습니다
+				ENDIF
+			CASE 5
+				IF ITEM:31
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 500
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「바늘」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 500
+					ITEM:31 = 1
+					CALL KOJO_EVENT(110, 27)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 바늘을 연성하였습니다
+				ENDIF
+			CASE 6
+				IF ITEM:32
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 100
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「관장세트」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+					IF RESULT == 1
+					CFLAG:마력 -= 1000
+					ITEM:32 = 1
+					CALL KOJO_EVENT(110, 28)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 관장 세트를 연성하였습니다
+				ENDIF
+			CASE 7
+				IF ITEM:33
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 2000
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「삼각목마」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 2000
+					ITEM:33 = 1
+					CALL KOJO_EVENT(110, 29)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 삼각 목마를 연성하였습니다
+				ENDIF
+			CASE 8
+				IF ITEM:40
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 1000
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「거울」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 1000
+					ITEM:40 = 1
+					CALL KOJO_EVENT(110, 30)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 대거울을 연성하였습니다
+				ENDIF
+			CASE 9
+				IF ITEM:42
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 1500
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「개목걸이」을 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 1500
+					ITEM:42 = 1
+					CALL KOJO_EVENT(110, 31)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 목걸이를 연성하였습니다
+				ENDIF
+			CASEELSE
+				CLEARLINE 1
+				GOTO INPUT_LOOP_ITEM2
+		ENDSELECT
+	CASE 10
+		IF ITEM:9
+			GOTO FAILED
+		ELSEIF CFLAG:마력 < 3000
+			GOTO FAILED_BY_MP
+		ELSEIF !TALENT:도구능숙
+			CLEARLINE 1
+			REUSELASTLINE 외계의 도구를 커스터마이즈할 수 있을 만큼의 지식이 아직 없다…
+			GOTO INPUT_LOOP
+		ENDIF
+		CALL PRINT_DIALOG(@"성도구의 성능을 향상시킵니다. 하시겠습니까?",1,1,1)
+		CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+		IF RESULT == 1
+			CFLAG:마력 -= 2000
+			ITEM:9 = 1
+			CALL KOJO_EVENT(110, 32)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMW %타겟은% 도구를 커스터마이즈 했습니다
+		ENDIF
+	CASE 11
+		SIF TALENT:남자
+			GOTO FAILED
+		SIF CFLAG:마력 < 7000
+			GOTO FAILED_BY_MP
+		IF TALENT:후타나리
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%의 [후타나리]를 소거합니다. 하시겠습니까?",1,1,1)
+		ELSE
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%를 [후타나리]로 합니다. 하시겠습니까?",1,1,1)
+		ENDIF
+		CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+		IF RESULT == 1
+			CFLAG:마력 -= 7000
+			TALENT:후타나리 = !TALENT:후타나리
+			;동정인가 어떤가
+			TALENT:동정 = !CFLAG:동정상실된 && TALENT:후타나리
+			;사정게이지의 초기화
+			;초기화 함수를 통일@이것 보고
+			CALL BASE_SETUP_PENIS(TARGET)
+			CALL KOJO_EVENT(110, 33)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMW %CALLNAME:TARGET%(은)는 \@ TALENT:후타나리 ? 후타나리 # 여자아이 \@가 되었습니다
+		ENDIF
+	CASE 12
+		SIF TALENT:남자 || TALENT:거유
+			GOTO FAILED
+		SIF CFLAG:마력 < 5000
+			GOTO FAILED_BY_MP
+		IF TALENT:빈유
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%의 가슴을 남들 수준의 사이즈로 합니다. 하시겠습니까?",1,1,1)
+		ELSE
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%를 [거유]로 합니다. 하시겠습니까?",1,1,1)
+		ENDIF
+		CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+		IF RESULT == 1
+			CFLAG:마력 -= 5000
+			TALENT:거유 = !TALENT:빈유
+			TALENT:빈유 = 0
+			CALL KOJO_EVENT(110, 34)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMW %타겟은% \@ TALENT:거유 ? 거유 # 평범한 젖가슴이 \@ 되었습니다
+		ENDIF
+	CASE 13
+		SIF TALENT:남자 || TALENT:빈유
+			GOTO FAILED
+		SIF CFLAG:마력 < 1000
+			GOTO FAILED_BY_MP
+		IF TALENT:거유
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%의 가슴을 남들 수준의 사이즈로 합니다. 하시겠습니까?",1,1,1)
+		ELSE
+			CALL PRINT_DIALOG(@"%CALLNAME:TARGET%를 [빈유]로 합니다. 하시겠습니까?",1,1,1)
+		ENDIF
+		CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+		IF RESULT == 1
+			CFLAG:마력 -= 1000
+			TALENT:빈유 = !TALENT:거유
+			TALENT:거유 = 0
+			CALL KOJO_EVENT(110, 35)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMW %CALLNAME:TARGET%(은)는 \@ TALENT:빈유 ? 빈유 # 평범한 젖가슴이 \@ 되었습니다
+		ENDIF
+	CASE 16
+		SIF MAXBASE:MASTER:사정 < 2500 + CFLAG:MASTER:정력한계 * 500
+			GOTO FAILED
+		SIF CFLAG:마력 < (MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000
+			GOTO FAILED_BY_MP
+		CALL PRINT_DIALOG(@"%CALLNAME:MASTER%의 정력한계가 상승합니다. 하시겠습니까?",1,1,0)
+		CALL PRINT_DIALOG(@"※정력이 상승 가능한 최대치가 증가합니다。",0,1,0)
+		CALL PRINT_DIALOG(@"  정력수치 자체는 향후 조교로 단련해야 합니다。",0,1,1)
+		CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+		IF RESULT == 1
+			CFLAG:마력 -= (MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 * 1000 + 1000
+			CFLAG:MASTER:정력한계 += (MAXBASE:MASTER:사정 - 2500 - CFLAG:MASTER:정력한계 * 500) / 500 + 1
+			CALL KOJO_EVENT(110, 36)
+			CALL VOIDLINE_IF(RESULT)
+			PRINTFORMW %CALLNAME:MASTER%의 정력의 한계치가 상승했습니다
+		ENDIF
+	CASEELSE
+		GOTO FAILED
+ENDSELECT
+RESTART
+
+
+;────────────────────────────────────
+;벌써취득했다보너스를 새로운조교자에 적용
+;────────────────────────────────────
+@BONUS_APPLY
+
+;────────────────────────────────────
+;기교상승 처리
+;돌아가 값 = 0:성공 1:마력불발 2:조교레벨불발 3:기교상한
+;────────────────────────────────────
+@RIZE_ABL
+
+;마력소비량을반환
+RESULT:1 = RIZE_ABL_V(0)
+;기교상한을 판정
+SIF ABL:기교 >= 99
+	RETURN 3
+;마력불발를 판정
+SIF CFLAG:마력 < RIZE_ABL_V(0)
+	RETURN 1
+;조교레벨를 판정
+SIF CFLAG:조교레벨 < RIZE_ABL_V(1)
+	RETURN 2
+RETURN 0
+
+;-------------------------------------
+;기교상승 소요마력·조교레벨
+;어느 쪽의 조건도 만했다경우만기교상승이 가능
+;ARG = 0:마력 1:조교레벨
+;-------------------------------------
+@RIZE_ABL_V(ARG)
+#FUNCTION
+IF ARG == 0
+	;소요마력
+	;0→1:100 1→2:300 2→3:1000 3→4:3000 4→5:10000……
+	LOCAL = POWER(10, 2 + ABL:기교 / 2)
+	SIF ABL:기교 % 2
+		LOCAL *= 3
+	RETURNF LOCAL
+ELSE
+	;소요 레벨
+	;0→1:0 1→2:1 2→3:4 3→4:9 4→5:16……
+	RETURNF ABL:기교 * ABL:기교
+ENDIF
+
+;────────────────────────────────────
+;기능취득·방폐 처리
+;돌아가 값 = 0:성공 1:마력불발 2:조교레벨불발
+;────────────────────────────────────
+@GAIN_TALENT(ARGS)
+
+;마력소비량을반환
+RESULT:1 = GAIN_TALENT_V(ARGS, 0)
+;마력불발를 판정
+SIF CFLAG:마력 < GAIN_TALENT_V(ARGS, 0)
+	RETURN 1
+;조교레벨를 판정
+SIF CFLAG:조교레벨 < GAIN_TALENT_V(ARGS, 1)
+	RETURN 2
+RETURN 0
+
+;-------------------------------------
+;기능취득·방폐 소요마력·조교레벨
+;어느 쪽의 조건도 만했다경우만 기능취득·방폐가 가능
+;ARG = 0:마력 1:조교레벨
+;-------------------------------------
+@GAIN_TALENT_V(ARGS, ARG)
+#FUNCTION
+
+;디버그용
+;마력소비 면제
+;SIF ARG == 0
+;	RETURNF 0
+;조교레벨무시
+;SIF ARG != 0
+;	RETURNF 0
+
+SELECTCASE ARGS
+	CASE "배합지식"
+		IF ARG == 0
+			RETURNF 1000
+		ELSE
+			RETURNF 5
+		ENDIF
+	CASE "매혹"
+		IF ARG == 0
+			RETURNF 1000
+		ELSE
+			RETURNF 5
+		ENDIF
+	CASE "금단의지식"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 8
+		ENDIF
+	CASE "도구능숙"
+		IF ARG == 0
+			RETURNF 1000
+		ELSE
+			RETURNF 6
+		ENDIF
+	CASE "촬영기능"
+		IF ARG == 0
+			RETURNF 1000
+		ELSE
+			RETURNF 6
+		ENDIF
+	CASE "혀기술"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "손가락기술"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "허리기술"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "긴박능숙"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "새드"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "착의플레이선호"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+	CASE "더러움무시"
+		IF ARG == 0
+			RETURNF 10000
+		ELSE
+			RETURNF 10
+		ENDIF
+ENDSELECT

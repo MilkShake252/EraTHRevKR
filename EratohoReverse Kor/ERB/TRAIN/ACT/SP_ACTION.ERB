@@ -1,0 +1,139 @@
+﻿;특수 능력행동의 시작안입니다. 분명히 말하면 꽤손빼고가, 이 방식은조교자사고 루틴에의 부담이 제일 적습니다
+;────────────────────────────────────
+;조교자의 특수 능력의 체크. 특정의조교자와행동의 편성에 의해 특수 능력행동에변화 합니다
+;────────────────────────────────────
+@SP_CHECK
+IF NO:TARGET == 1
+	;바늘=＞패스 웨이 존 니들
+	IF IS_NOWACTNAME("바늘") && CFLAG:조교레벨 > 0
+		TFLAG:ＳＰ행동 = 200
+	;밧줄로긴박=＞팔방귀박진
+	ELSEIF IS_NOWACTNAME("밧줄") && ABL:기교 > 2
+		TFLAG:ＳＰ행동 = 201
+	ENDIF
+ELSEIF NO:TARGET == 28
+	;기분 나쁜 미소=＞광기의 눈동자
+	IF IS_NOWACTNAME("기분 나쁘게 웃는다") && ABL:이상 > 1
+		TFLAG:ＳＰ행동 = 202
+	;이 캐릭터의 새로운 특수 능력을 만들고 싶을 때는 이와 같이 확장해 주세요
+	;ELSEIF TFLAG:ACT == XX && CFLAG:조교레벨 > X && ABL:X > X && ...
+	;	TFLAG:ＳＰ행동 = 2XX
+	ENDIF
+;새로운 캐릭터의 특수 능력을 만들고 싶을 때는 이쪽으로부터 확장해 주세요
+;ELSEIF NO:TARGET == XX
+ENDIF
+
+
+;────────────────────────────────────
+;조교자의 특수 능력행동의 실행（）안에 베이스가 되는조교지령으로부터의 변경점을 설명
+;────────────────────────────────────
+@SP_ACTION
+;────────────────────────────────────
+;패스 웨이 존 니들（고통보정, 조교시간단축）
+;────────────────────────────────────
+IF TFLAG:ＳＰ행동 == 200
+	SOURCE:MASTER:고통 = 320 * (TALENT:새드 + 2) + (ABL:기교 + 1) * (ABL:가학 + 2) * (2 + TALENT:바느질 * 3) + (ABL:기교 * 2 + CFLAG:조교레벨) * (TALENT:새드 + TALENT:바느질 * 2 + 1) * (12 + TALENT:새드)
+	SIF TALENT:마음씨착한
+		TIMES SOURCE:MASTER:고통 , 0.80
+	SOURCE:MASTER:이탈 = 200 + SOURCE:MASTER:고통 / 2 - CFLAG:MASTER:조교레벨 * 30 - ABL:MASTER:마조끼 * 60 - ABL:MASTER:고통중독 * 200
+	SIF SOURCE:MASTER:이탈 < 0
+		SOURCE:MASTER:이탈 = 0
+	SOURCE:MASTER:중독충족 = ABL:MASTER:마조끼 * (ABL:MASTER:고통중독 - 1) * (ABL:MASTER:고통중독 + 1) * SOURCE:MASTER:고통 / 100
+	SIF SOURCE:MASTER:중독충족 < 0
+		SOURCE:MASTER:중독충족 = 0
+	SOURCE:MASTER:트라우마 = SOURCE:MASTER:고통 / 2 - SOURCE:MASTER:중독충족
+	SIF SOURCE:MASTER:트라우마 < 0
+		SOURCE:MASTER:트라우마 = 0
+	SIF CFLAG:MASTER:트라우마 == 62
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+	;출혈
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		STAIN:MASTER:페니스 |= 32
+	ELSE
+		STAIN:MASTER:보지 |= 32
+	ENDIF
+	STAIN:MASTER:가슴 |= 32
+	SIF TEQUIP:자위중
+		TEQUIP:자위중 = 0
+	SIF TEQUIP:성교중
+		TEQUIP:성교중 = 0
+	TFLAG:경과시간 += 1
+;────────────────────────────────────
+;팔방귀박진（구속보정, 조교시간단축）
+;────────────────────────────────────
+ELSEIF TFLAG:ＳＰ행동 == 201
+	IF TEQUIP:밧줄 == 0
+		SOURCE:MASTER:구속 = 120 + (MARK:반항각인 + CFLAG:조교레벨 * 2 + 1) * (ABL:기교 * 2 + 1) * 5 * (TALENT:긴박능숙 * 3 + 2)
+		SOURCE:MASTER:중독충족 = ABL:MASTER:마조끼 * (ABL:MASTER:구속중독 - 1) * (ABL:MASTER:구속중독 + 1) * SOURCE:MASTER:구속 / 100
+		;장비번호는 변함없지만, INFO.ERB와 USERCOM.ERB로 표시하는 메세지를 설정할 수 있습니다
+		TEQUIP:밧줄 = 1 + SOURCE:MASTER:구속 / 500
+	ELSE
+		TEQUIP:밧줄 = 0
+	ENDIF
+	SIF TEQUIP:자위중
+		TEQUIP:자위중 = 0
+	SIF TEQUIP:성교중
+		TEQUIP:성교중 = 0
+	TFLAG:경과시간 += 1
+;────────────────────────────────────
+;광기의 눈동자（랜덤 파라미터 상승, 이탈에보정）
+;────────────────────────────────────
+ELSEIF TFLAG:ＳＰ행동 == 202
+	SIF RAND:6 > 2
+		TFLAG:강제탈의 = 6
+	SIF RAND:6 > 2
+		TFLAG:자주탈의 = 6
+	A = RAND:14
+	B = RAND:14
+	SIF B == A
+		B += 1 + RAND:3
+	SIF B > 13
+		B -= 13
+	PALAM:MASTER:A += 500 + RAND:500
+	PALAM:MASTER:B += 300 + RAND:300
+	SOURCE:MASTER:이탈 = (3 + RAND:5) * (CFLAG:조교레벨 + 3) * 50
+	SOURCE:MASTER:트라우마 = 250 + RAND:5 * 100
+	SIF CFLAG:MASTER:트라우마 == 9
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+	SIF TEQUIP:자위중 == 2
+		TEQUIP:자위중 = 0
+	SIF TEQUIP:자위중 == 3
+		TEQUIP:자위중 = 1
+	SIF TEQUIP:성교중
+		TEQUIP:성교중 = 0
+	TFLAG:경과시간 += 1
+	TFLAG:기출의화제 |= 32
+ENDIF
+@SP_TRAIN_MESSAGE
+;패스 웨이 존 니들
+IF TFLAG:ＳＰ행동 == 200
+	IF PENIS(MASTER)
+;OriginalString : %CALLNAME:TARGET%は%CALLNAME:MASTER%의 体に
+		PRINTFORML %타겟은% %CALLNAME:MASTER%의 몸에
+		PRINTFORML 익숙한 손놀림으로 퇴마의 바늘을 찔러 넣었다…
+	ELSE
+		PRINTFORML %타겟은% %CALLNAME:MASTER%의 유두와 클리토리스에
+		PRINTFORML 익숙한 손놀림으로 퇴마의 바늘을 찔러 넣었다…
+	ENDIF
+;팔방귀박진
+ELSEIF TFLAG:ＳＰ행동 == 201
+	;해제
+	IF TFLAG:ACT파생 == 1
+		PRINTFORML %CALLNAME:TARGET%의 이상한 힘에 의해、
+		PRINTFORML %플레이어를% 구속하고 있던 부적은 순식간에 %CALLNAME:TARGET%의 손으로 되돌아왔다...
+	;통상
+	ELSE
+		PRINTFORML %타겟은% 부적을 사용해 결계를 치고
+		PRINTFORML 사념을 보내 %CALLNAME:MASTER%의 몸을 구속했다…
+	ENDIF
+ELSEIF TFLAG:ＳＰ행동 == 202
+	;PRINTL ＜식스나인＞
+	IF TSTR:전조교지령 == "식스나인"
+		PRINTFORML %타겟은% %CALLNAME:MASTER%의 얼굴에 올라탄 채로
+		PRINTFORML 페니스를 물고 떼어놓지 않는다…
+	ELSE
+		PRINTFORML %타겟은% %플레이어를% 밀어 넘어뜨리고 얼굴에 올라탄 채로
+		PRINTFORML 무방비가 된 그 곳에 혀를 놀리기 시작했다…
+	ENDIF
+ENDIF
+

@@ -1,0 +1,61 @@
+﻿;リグル＠むのう
+@CHARAMAKE_K24(ARG)
+PRINTFORMW 「이야、일어났어？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「물어보고 싶은 게 있어、대답해 줘」
+PRINTFORMW 「곤충을 어떻게 생각해？　역시 기분 나빠？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 기분 나쁘다고 생각합니다
+PRINTFORMDL [2] 곤충 무지 좋아합니다
+PRINTFORMDL [3] 그런 것보다、걷어차지 말아주세요
+PRINTFORMDL [4] 그런 것보다、팬티 아래는 어떤 상태입니까？
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「곤충이라고 무시하는 거야？　차가워！」
+		PRINTFORMW 「이제 됐으니까、빨리 자버려！」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「솔직하구나！」
+		PRINTFORMW 「그치만、아름다운 곤충도 있다구、잊지 마」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("호기심", -10)
+	CASE 2
+		PRINTFORML 「헤ー！　특이한 인간이구나」
+		PRINTFORMW 「대답도 들었고、이제 됐어、잘자」
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("결벽", -10)
+	CASE 3
+		PRINTFORML 「차거나 하지 않았어！　그 쪽이 멋대로 찔러 넣는 것 뿐이잖아！」
+		PRINTFORML 「애초에 여기에 오는 게 나쁜거라구、떨어지는 걸 기다리고 있으면…」
+		PRINTFORMW 「읏 얘기 도중에 자지 마ー！」
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("도착", 20)
+	CASE 4
+		PRINTFORML 「에？　어떻게라니…별로 아무것도 입고 있지 않……윽 무슨 말을 하게 하는 거야！」
+		PRINTFORML 「뭐야 당신、내 질문 제대로 이해하고 있어？」
+		PRINTFORMW 「하아……이제 됐어、이제 그만 자라구」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("동성애",20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람",30)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("신경질", -30)
+ENDSELECT
+RETURN 1
+

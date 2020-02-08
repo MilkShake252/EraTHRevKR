@@ -1,0 +1,54 @@
+﻿;霖之助@Enter
+@CHARAMAKE_K56(ARG)
+;1％でこーりん
+IF PERCENT(1)
+	CALL CHARAMAKE_K56_2(ARG)
+	RETURN 2
+ENDIF
+PRINTFORMW 「옷,  눈을 떴어?　갑작스럽게 미안하지만、조금 질문에 답해 줘」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그런데、 너는 환상향의 밖의 세계를 알고 있는 것 같지만」
+PRINTFORMW 「나도 외계의 물건이라던가에는 조금 지식도 있어」
+PRINTFORMW 「거기서 질문이야. 네가 제일 좋아하는 가구는 뭐지?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] PC
+PRINTFORMDL [2] 냉난방기
+PRINTFORMDL [3] 단상
+PRINTFORMDL [4] 욕조
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「음―,  뭔가 어려운 질문이었나?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그건 좋지. 판을 치면 유리에 문자가 떠오르는 이상한 도구야」
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("지성", 30)
+	CASE 2
+		PRINTFORML 「계절이 바뀌면 편리하지. 그런 건」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("충동", 10)
+	CASE 3
+		PRINTFORML 「단상, 깊은 곳이 있어서 좋지. 사용하면 사용할수록 위엄이 늘어나」
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("신경질", 30)
+	CASE 4
+		PRINTFORML 「욕조?　그거 가구에 들어가는 건가?　확실히 목욕통은 기분 좋지만」
+		CALLF CM_PROF("결벽", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("솔직야", 10)
+ENDSELECT
+PRINTFORMW 「대답해줘서 고마워. 그럼, 또 쉰 후에 노력해. 응원하고 있어」
+RETURN 1

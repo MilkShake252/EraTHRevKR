@@ -1,0 +1,51 @@
+﻿;蓮子＠CPMの人
+@CHARAMAKE_K49(ARG)
+PRINTFORMW 「좀 일어나주지 않을래」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「네、좋은 아침. 한가지 생각거리를 줄게」
+PRINTFORMW 「시간의 흐름이란 건 어떻게 되어있다고 생각해？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 과거에서 미래로
+PRINTFORMDL [2] 불연속적인 배열
+PRINTFORMDL [3] 지금밖에 없다
+PRINTFORMDL [4] 너와 키스하고 있으면 멈춘다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「아직 머리가 제대로 돌지 않는걸까？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그래、그게 보통의 대답」
+		CALLF CM_PROF("솔직야",   20)
+		CALLF CM_PROF("신경질",   10)
+		CALLF CM_PROF("도착",     -10)
+		CALLF CM_PROF("공격",     -10)
+	CASE 2
+		PRINTFORML 「관측의 정밀도를 넘은 스키마에는、대체 무엇이 있는걸까……」
+		CALLF CM_PROF("지성",     20)
+		CALLF CM_PROF("도착",     10)
+		CALLF CM_PROF("솔직야",   -30)
+	CASE 3
+		PRINTFORML 「믿을 수 있는 것은 자신이나 감각뿐. 당신은 좋은 철학자가 될 것 같네」
+		CALLF CM_PROF("충동",     10)
+		CALLF CM_PROF("낙관",     20)
+		CALLF CM_PROF("수치",     -10)
+		CALLF CM_PROF("솔직야",   30)
+	CASE 4
+		PRINTFORML 「유혹은 기쁘지만、이미 상대가 있어」
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("모랄",   -20)
+		CALLF CM_PROF("도착",     10)
+		CALLF CM_PROF("결벽",     -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",   10)
+ENDSELECT
+PRINTFORMW 「내 질문은 이걸로 끝. 잘 자」
+RETURN 1
+

@@ -1,0 +1,56 @@
+﻿;勇儀@Enter
+@CHARAMAKE_K60(ARG)
+PRINTFORMW 「겨우 일어났니. 기분은 어때?　하하하, 잘 잤어?」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「뭐、아직 제대로 머리가 돌아가지 않겠지만、조금 질문에 답해 줘. 괜찮을까?」
+PRINTFORML 「너는 술을 아주 좋아하는 폭주가야. 응?　좋아하지 않아?　그럼 식혜로」
+PRINTFORMW 「그래서말야, 네가 술을 마실때 가장 좋아하는 분위기는 뭐야?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 혼자 바에서 담배와 함께 위스키
+PRINTFORMDL [2] 친구 몇명과 일식을 안주로 일본술
+PRINTFORMDL [3] 회식에서 기름기 있는 음식과 맥주
+PRINTFORMDL [4] 약혼자와 와인
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「취기가 도는 건 싫은가?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「당신 중후한 맛이 있네. 멋져」
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 2
+		PRINTFORML 「나도 그걸 제일 좋아해. 귀신은 일본술을 아주 좋아하지」
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 10)
+	CASE 3
+		PRINTFORML 「사람이 많은 건 좋지만、그 술은 아무래도 별로야」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("호기심", 30)
+	CASE 4
+		PRINTFORML 「그게, 소위 『로망』이라고 부르는 그건가？」
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 30)
+ENDSELECT
+PRINTFORMW 「좋아, 내 담당은 끝이야. 수고했어. 이제 쉬어둬」
+RETURN 1
+
+

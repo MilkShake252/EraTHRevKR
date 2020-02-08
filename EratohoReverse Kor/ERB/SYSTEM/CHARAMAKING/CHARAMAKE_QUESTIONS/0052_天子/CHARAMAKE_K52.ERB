@@ -1,0 +1,56 @@
+﻿
+;天子＠CPMの人
+@CHARAMAKE_K52(ARG)
+;1％でブロン子
+IF PERCENT(1)
+	CALL CHARAMAKE_K52_2(ARG)
+	RETURN 2
+ENDIF
+PRINTFORMW 「자、일어나주세요！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「천인인 내가 와줬으니까、빨리 대답하세요」
+PRINTFORMW 「내일의 날씨는 어떤 게 좋아？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 맑음
+PRINTFORMDL [2] 흐림
+PRINTFORMDL [3] 비
+PRINTFORMDL [4] 휴일이 되니까 태풍
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「뭐든지 말하라구」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「개인 날은 기분 좋지. 조금 숨막힐 정도로 덥지만」
+		CALLF CM_PROF("솔직야",   20)
+		CALLF CM_PROF("낙관",     10)
+		CALLF CM_PROF("수치",     -20)
+		CALLF CM_PROF("호기심",   10)
+	CASE 2
+		PRINTFORML 「보내기 쉬울 것 같은 날씨네. 그치만、그걸 선택하다니、지쳐있야？」
+		CALLF CM_PROF("피학",     10)
+		CALLF CM_PROF("신경질",   20)
+		CALLF CM_PROF("모랄",   10)
+		CALLF CM_PROF("공격",     -10)
+	CASE 3
+		PRINTFORML 「한 달에 한 번 정도는、빗소리를 들으면서 독서하는 것도 나쁘지 않지」
+		CALLF CM_PROF("지성",     10)
+		CALLF CM_PROF("결벽",     10)
+		CALLF CM_PROF("공격",     -20)
+		CALLF CM_PROF("충동",     -10)
+	CASE 4
+		PRINTFORML 「당신말야ー. 『대체』라는 거 알고 있어？」
+		CALLF CM_PROF("충동",     30)
+		CALLF CM_PROF("솔직야",   30)
+		CALLF CM_PROF("지성",     -20)
+		CALLF CM_PROF("모랄",   -20)
+ENDSELECT
+PRINTFORMW 「그럼、잘자」
+RETURN 1
+

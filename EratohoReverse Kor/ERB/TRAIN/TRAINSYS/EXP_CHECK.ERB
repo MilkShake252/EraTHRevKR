@@ -1,0 +1,558 @@
+﻿;────────────────────────────────────
+;경험를행동나 커맨드로부터 분리해 여기서 정리해 처리하는 것 실험입니다
+;────────────────────────────────────
+@EXP_CHECK
+#DIM LCOUNT
+;────────────────────────────────────
+;쾌ＣＶＡＢ경험
+;────────────────────────────────────
+;1(최저 보증) + UP보정(MASTER:1000 UP로+1, 10000 UP로+4, TARGET:500 UP로+1, 그 후 1000 UP 마다+1) * 레벨보정（대 손와의 레벨차이가 큰 만큼보정）
+
+;조교대상PALAM
+FOR LCOUNT, 0, 4
+	;PALAM변화시
+	IF CUP:MASTER:LCOUNT
+		;변화치의 평방근을 초기치에 이용
+		LOCAL = (SQRT(CUP:MASTER:LCOUNT) + 10) / 30
+		;조교자조교레벨가 우위이면 증대
+		LOCAL = LOCAL * MAX(100 * (CFLAG:조교레벨 + 10) / (CFLAG:MASTER:조교레벨 + 10) , 10) / 100
+		;절정시 1.5배+α
+		SIF NOWEX:MASTER:LCOUNT
+			LOCAL = (LOCAL + 1) * 3 / 2
+		;최저한 1을 확보
+		LOCAL = LOCAL < 1 ? 1 # LOCAL
+		;경험상승
+		EXP:MASTER:LCOUNT += LOCAL
+		;지문 표시
+		PRINTFORML %EXPNAME:LCOUNT%+{LOCAL}
+	ENDIF
+NEXT
+
+;조교자PALAM
+FOR LCOUNT, 0, 4
+	;PALAM변화시
+	IF CUP:LCOUNT
+		;변화치의 것 1/1000을 초기치에 이용
+		LOCAL = 1 + (CUP:LCOUNT + 500) / 1000
+		;조교대상조교레벨가 우위이면 증대
+		LOCAL = LOCAL * MAX(100 * (CFLAG:MASTER:조교레벨 + 10) / (CFLAG:조교레벨 + 10) , 100) / 100
+		;절정시 1.5배+α
+		SIF NOWEX:LCOUNT
+			LOCAL = (LOCAL + 1) * 3 / 2
+		;최저한 1을 확보
+		;조교대상에 맞추어 시험삼아 추가해 보았다@이것 보고
+		LOCAL = LOCAL < 1 ? 1 # LOCAL
+		;경험상승
+		EXP:LCOUNT += LOCAL
+		;지문 표시
+		PRINTFORML （%CALLNAME:TARGET%）%EXPNAME:LCOUNT%+{LOCAL}
+	ENDIF
+NEXT
+
+;────────────────────────────────────
+;처녀상실의 체크
+;────────────────────────────────────
+IF TCVAR:MASTER:처녀상실 && TALENT:MASTER:처녀
+	;지문 표시
+;OriginalString : 처녀상실
+	PRINTW 처녀 상실
+	CALL MARK_CHECK_GET("처녀상실")	;【굴복:57】처녀상실	신사양으로 변경@revkoishi(14/05/26)
+	;처녀상실
+	TALENT:MASTER:처녀 = 0
+	TCVAR:MASTER:조교중처녀상실 = 1
+	CFLAG:MASTER:처녀상실된 = 1
+	;최저한 1의Ｖ경험를 확보
+	IF EXP:MASTER:Ｖ경험 == 0
+		EXP:MASTER:Ｖ경험 += 1
+		PRINTL Ｖ경험+1
+	ENDIF
+	;의존도변화
+	CALL ADD_DEPEND(20, 50)
+ENDIF
+
+;처녀시
+IF TCVAR:처녀상실 && TALENT:처녀
+	;지문 표시
+	PRINTFORMW 처녀 상실（%CALLNAME:TARGET%）
+	;처녀상실
+	TALENT:처녀 = 0
+	TCVAR:조교중처녀상실 = 1
+	CFLAG:처녀상실된 = 1
+	;최저한 1의Ｖ경험를 확보
+	IF EXP:Ｖ경험 == 0
+		EXP:Ｖ경험 += 1
+		;v를 대문자에 수정@revkoishi(14/05/26)
+		PRINTFORML （%CALLNAME:TARGET%）Ｖ경험+1
+	ENDIF
+	;의존도변화
+	CALL ADD_DEPEND(50, 20)
+ENDIF
+
+
+;────────────────────────────────────
+;동정상실의 체크
+;────────────────────────────────────
+;동정시
+IF TCVAR:MASTER:동정상실 && TALENT:MASTER:동정
+	;지문 표시
+;OriginalString : 동정상실
+	PRINTW 동정 상실
+	CALL MARK_CHECK_GET("동정상실")	;【굴복:58】동정상실	신사양으로 변경@revkoishi(14/05/26)
+	;동정상실
+	TALENT:MASTER:동정 = 0
+	TCVAR:MASTER:조교중동정상실 = 1
+	CFLAG:MASTER:동정상실된 = 1
+	;의존도변화
+	CALL ADD_DEPEND(20, 50)
+ENDIF
+
+
+;동정시
+IF TCVAR:동정상실 && TALENT:동정
+	;지문 표시
+	PRINTFORMW 동정 상실（%CALLNAME:TARGET%）
+	;동정상실
+	TALENT:동정 = 0
+	TCVAR:조교중동정상실 = 1
+	CFLAG:동정상실된 = 1
+	;의존도변화
+	CALL ADD_DEPEND(50, 20)
+ENDIF
+
+;────────────────────────────────────
+;절정경험
+;────────────────────────────────────
+;조교대상절정총계를취득
+LOCAL = NOWEX:MASTER:Ｃ절정 + NOWEX:MASTER:Ｖ절정 + NOWEX:MASTER:Ａ절정 + NOWEX:MASTER:Ｂ절정
+;정이면
+IF LOCAL > 0
+	;절정경험에 추가
+	EXP:MASTER:절정경험 += LOCAL
+	;절정시킨경험에 추가
+	EXP:절정시킨경험 += LOCAL
+	;지문 표시
+;OriginalString : 절정경험+
+	PRINT 절정 경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;조교자절정총계를취득
+LOCAL = NOWEX:Ｃ절정 + NOWEX:Ｖ절정 + NOWEX:Ａ절정 + NOWEX:Ｂ절정
+;정이면
+IF LOCAL > 0
+	;절정시켰다를기록
+	TFLAG:절정시켰다 = 2 + RAND:3
+	;절정경험에 추가
+	EXP:절정경험 += LOCAL
+	;절정시킨경험에 추가
+	EXP:MASTER:절정시킨경험 += LOCAL
+	;지문 표시
+	PRINTFORM （%CALLNAME:TARGET%）절정 경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;────────────────────────────────────
+;사정/분유/시오후키경험 시오후키경험를 추가@revkoishi(14/05/26)
+;────────────────────────────────────
+;조교대상분유시
+IF NOWEX:MASTER:분유
+	;분유경험가산
+	EXP:MASTER:분유경험 += NOWEX:MASTER:분유
+	;지문 표시
+;OriginalString : 분유경험+
+	PRINT 분유경험+
+;OriginalString : NOWEX:MASTER:분유
+	PRINTVL NOWEX:MASTER:분유
+ENDIF
+;조교대상사정시
+IF NOWEX:MASTER:사정
+	;사정경험가산
+	EXP:MASTER:사정경험 += NOWEX:MASTER:사정
+	;지문 표시
+;OriginalString : 사정경험+
+	PRINT 사정 경험+
+;OriginalString : NOWEX:MASTER:사정
+	PRINTVL NOWEX:MASTER:사정
+ENDIF
+IF NOWEX:MASTER:시오후키	;조교대상시오후키시
+	EXP:MASTER:시오후키경험 += NOWEX:MASTER:시오후키	;시오후키경험가산
+	PRINTFORML 물총 경험+{NOWEX:MASTER:시오후키}
+ENDIF
+;조교자분유시
+IF NOWEX:분유
+	;분유경험가산
+	EXP:분유경험 += NOWEX:분유
+	;지문 표시
+	PRINTFORM （%CALLNAME:TARGET%）분유경험+
+;OriginalString : NOWEX:분유
+	PRINTVL NOWEX:분유
+ENDIF
+;조교자사정시
+IF NOWEX:사정
+	;사정경험가산
+	EXP:사정경험 += NOWEX:사정
+	;지문 표시
+	PRINTFORM （%CALLNAME:TARGET%）사정 경험+
+;OriginalString : NOWEX:사정
+	PRINTVL NOWEX:사정
+ENDIF
+
+;────────────────────────────────────
+;성교경험/성지식/자위경험/피사체경험（성지식를 어떻게 취급할까는 아직 모릅니다만 여기에서도 보류해 둡시다. 지금은회화의지식만으로 오릅니다）
+;────────────────────────────────────
+;성교시
+IF TEQUIP:성교중 || TEQUIP:성교봉사중
+	;성교경험가산
+	EXP:MASTER:성교경험 += 1
+	EXP:성교경험 += 1
+	;조수참가시에는조수에도 가산
+	IF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == 1
+		EXP:(ASSI:1):성교경험 += 1
+		PRINTFORML （세 명）성교 경험+1
+	ELSE
+		PRINTL （두 명）성교 경험+1
+	ENDIF
+ENDIF
+
+;성에 관한 이야기를 함
+IF IS_NOWACTNAME("성적인 이야기를 한다")
+	;1～3을성지식에 추가
+	LOCAL = 1 + RAND:3
+	EXP:MASTER:성지식 += LOCAL
+;OriginalString : 성지식+
+	PRINT 성 지식+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;자위경험, 조교자위경험를 추가
+IF TEQUIP:자위중 == 1
+	EXP:MASTER:자위경험 += 1
+	EXP:MASTER:조교자위경험 += 1
+	PRINTL 자위 경험+1
+ELSEIF TEQUIP:자위중 == 2
+	EXP:자위경험 += 1
+	PRINTFORML （%CALLNAME:TARGET%）자위 경험+1
+ELSEIF TEQUIP:자위중 == 3
+	EXP:MASTER:자위경험 += 1
+	EXP:MASTER:조교자위경험 += 1
+	EXP:자위경험 += 1
+	PRINTL （두 명）자위 경험+1
+ENDIF
+
+;피사체경험추가
+IF NOWASSIACTNAME(ASSI:1) == "사진촬영" || NOWASSIACTNAME(ASSI:2) == "사진촬영"
+	EXP:MASTER:피사체경험 += 1
+	PRINTL 피사경효험+1
+ENDIF
+
+;────────────────────────────────────
+;방뇨경험/정액경험/펠라경험/수음경험/도구사용경험
+;────────────────────────────────────
+;방뇨시
+IF (IS_COMGRONAME("소극적으로 한다/적극적으로 한다") && IS_NOWACTNAME("방뇨")) || NOWEX:MASTER:방뇨 > 0
+	;방뇨경험가산
+	EXP:MASTER:방뇨경험 += 1
+	PRINTL 방뇨 경험+1
+ENDIF
+
+;조교자사정시
+IF NOWEX:사정 && NOWEX:사정 != 1
+	;정액경험가산
+	EXP:MASTER:정액경험 += DOWNBASE:사정 / 300
+;OriginalString : 정액경험+
+	PRINT 정액 경험+
+;OriginalString : DOWNBASE:사정 / 300
+	PRINTVL DOWNBASE:사정 / 300
+ENDIF
+
+;조교대상사정시
+IF NOWEX:MASTER:사정 && NOWEX:MASTER:사정 != 1
+	;정액경험가산
+	EXP:정액경험 += DOWNBASE:MASTER:사정 / 300
+	PRINTFORM （%CALLNAME:TARGET%）정액 경험+
+;OriginalString : DOWNBASE:MASTER:사정 / 300
+	PRINTVL DOWNBASE:MASTER:사정 / 300
+ENDIF
+
+;봉사계 능력을 잘 오르게 하기 (위해)때문에애무도수음, 쿤닐링구스도구음경험로서 취급합니다
+;구음경험추가
+IF IS_NOWACTNAME("입으로 애무를 강요/파이즈리")
+	EXP:MASTER:구음경험 += 1
+	PRINTL 구음경험+1
+ENDIF
+
+;LOCAL 초기화
+VARSET LOCAL
+;구음경험추가
+IF IS_NOWACTNAME("입으로 애무/파이즈리한다") || (IS_NOWACTNAME("가슴애무") && TFLAG:ACT파생 == 1) || NOWASSIACTNAME(ASSI:1) == "조교자와키스" || NOWASSIACTNAME(ASSI:2) == "조교자와키스" || TEQUIP:조교대상Ｃ사용 == 2
+	EXP:구음경험 += 1
+	IF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == 1
+		EXP:(ASSI:1):구음경험 += 1
+		PRINTFORML （%CALLNAME:TARGET%·%CALLNAME:(ASSI:1)%）구음경험+1
+	ELSE
+		PRINTFORML （%CALLNAME:TARGET%）구음경험+1
+	ENDIF
+ENDIF
+
+;키스경험추가
+IF IS_NOWACTNAME("키스")
+	EXP:키스경험 += 1
+	EXP:MASTER:키스경험 += 1
+	;조수참가시에는조수에도 가산
+	IF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == 1
+		EXP:(ASSI:1):키스경험 += 1
+		PRINTL （세 명）키스 경험+1
+	ELSE
+		PRINTL （두 명）키스 경험+1
+	ENDIF
+ENDIF
+
+;조교대상수음경험추가
+IF IS_NOWACTNAME("손으로 애무를 강요") || (IS_NOWACTNAME("가슴애무") && TFLAG:ACT파생 == 2)
+	EXP:MASTER:수음경험 += 1
+	PRINTL 자위 경험+1
+ENDIF
+
+;조교자수음경험추가
+IF IS_NOWACTNAME("손으로 애무/애널애무") || TEQUIP:조교대상Ｃ사용 == 1
+	EXP:수음경험 += 1
+	;조수참가시에는조수에도 가산
+	IF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == 1
+		EXP:(ASSI:1):수음경험 += 1
+		PRINTFORML （%CALLNAME:TARGET%·%CALLNAME:(ASSI:1)%）자위 경험+1
+	ELSE
+		PRINTFORML （%CALLNAME:TARGET%）자위 경험+1
+	ENDIF
+ENDIF
+
+;도구사용경험추가
+;자위로바이브사용도 계산합니다
+IF TEQUIP:자위중 && TFLAG:REACT분류 < 6
+	IF TEQUIP:바이브 || TEQUIP:애널바이브 || TEQUIP:애널비즈
+		EXP:MASTER:도구사용경험 += 1
+		PRINTL 도구 사용 경험+1
+	ENDIF
+ENDIF
+
+;회화경험추가
+IF TFLAG:ACT분류 == 0 && SELECTCOM > 0 && SELECTCOM < 10
+	EXP:회화경험 += 1
+	EXP:MASTER:회화경험 += 1
+	PRINTFORML （두 명）회화 경험+1
+ENDIF
+
+;────────────────────────────────────
+;봉사쾌락경험/고통쾌락경험/치욕쾌락경험
+;────────────────────────────────────
+;조교대상봉사쾌락경험추가
+IF ((TFLAG:ACT분류 == 5 || TFLAG:ACT분류 == 10  || TEQUIP:성교중 == 3 ) && IS_COMGRONAME("적극적으로 한다")) && CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > 750
+	EXP:MASTER:봉사쾌락경험 += 1
+	PRINTL 봉사 쾌락 경험+1
+ENDIF
+
+;조교자봉사쾌락경험추가
+IF TFLAG:ACT분류 == 1
+	IF CUP:쾌Ｃ + CUP:쾌Ｖ + CUP:쾌Ａ + CUP:쾌Ｂ + CUP:MASTER:공순 > 1000 || (BASE:만족 > BASE:초조함 && CUP:MASTER:반항 < CUP:MASTER:굴복 + CUP:MASTER:공순)
+		EXP:봉사쾌락경험 += 1
+		PRINTFORML （%CALLNAME:TARGET%）봉사 쾌락 경험+1
+	ENDIF
+ENDIF
+
+;고통시
+IF CUP:MASTER:고통 > 200 
+	;쾌Ｘ가불쾌에 우수하면
+	IF (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > CUP:MASTER:불쾌) && (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > 500)
+		;고통쾌락경험추가
+		EXP:MASTER:고통쾌락경험 += 1
+		PRINTL 고통 쾌락 경험+1
+	;이상경험와고통계 강도가 충분히 있으면
+	ELSEIF (CUP:MASTER:욕정 + CUP:MASTER:고통 + CUP:MASTER:불쾌 > 1500 - EXP:이상경험 * 50) && (EXP:이상경험 > RAND:5)
+		;고통쾌락경험추가
+		EXP:MASTER:고통쾌락경험 += 1
+		PRINTL 고통 쾌락 경험+1
+	ENDIF
+ENDIF
+
+;치욕쾌락경험추가
+IF CUP:MASTER:치정 > 200 
+	IF (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > CUP:MASTER:불쾌) && (CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ > 500)
+		EXP:MASTER:치욕쾌락경험 += 1
+		PRINTL 치욕 쾌락 경험+1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;애정경험
+;이 장래적으로 새댁플레이헤비 로테이션 같은 것을 일으킬 것 같은
+;경험는 지금 어떻게든 해 두는 것이 좋아서는 없을까도 생각하는금일 요즘@이것 보고
+;────────────────────────────────────
+IF CUP:MASTER:공순 > 5000 || IS_NOWCOMNAME("애정을 담아 한다")
+	EXP:애정경험 += 1
+	EXP:MASTER:애정경험 += 1
+	PRINTL （두 명）애정 경험+1
+ENDIF
+
+;────────────────────────────────────
+;레즈경험/ＢＬ경험
+;────────────────────────────────────
+;접촉가 많을 정도 많이경험치가 들어갑니다
+;레즈경험가산
+IF !TALENT:MASTER:남자 && !TALENT:남자
+	LOCAL = 1 + SOURCE:MASTER:접촉 / 200
+	SIF LOCAL > 10
+		LOCAL = 10
+	EXP:MASTER:레즈경험 += LOCAL
+	EXP:레즈경험 += LOCAL
+;OriginalString : （二人）레즈경험+
+	PRINT （두 명）백합 경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+;ＢＬ경험가산
+ELSEIF TALENT:MASTER:남자 && TALENT:남자
+	LOCAL = 1 + SOURCE:MASTER:접촉 / 200
+	SIF LOCAL > 10
+		LOCAL = 10
+	EXP:MASTER:ＢＬ경험 += LOCAL
+	EXP:ＢＬ경험 += LOCAL
+;OriginalString : （二人）ＢＬ경험+
+	PRINT （두 명）ＢＬ경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;────────────────────────────────────
+;긴박경험/확장경험
+;────────────────────────────────────
+;LOCAL 초기화
+VARSET LOCAL
+;강긴박시 정도 많이긴박경험추가
+SIF TEQUIP:밧줄
+	LOCAL += 1
+SIF TEQUIP:밧줄 > 4
+	LOCAL += 1
+SIF TEQUIP:눈가리개
+	LOCAL += 1
+SIF TEQUIP:볼개그
+	LOCAL += 1
+SIF TEQUIP:삼각목마
+	LOCAL += 1
+IF LOCAL > 0
+	EXP:MASTER:긴박경험 += LOCAL
+;OriginalString : 긴박경험+
+	PRINT 긴박 경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;REACT가날뛴다 이외
+IF !IS_COMGRONAME("날뛴다")
+	;피스트계시 대응하는 확장경험추가
+	IF IS_NOWACTNAME("피스트퍽")
+		EXP:MASTER:Ｖ확장경험 += 1
+		PRINTL Ｖ확장 경험+1
+	ELSEIF IS_NOWACTNAME("애널피스트")
+		EXP:MASTER:Ａ확장경험 += 1
+		PRINTL Ａ확장 경험+1
+	ELSEIF IS_NOWACTNAME("양쪽피스트")
+		EXP:MASTER:Ｖ확장경험 += 1
+		EXP:MASTER:Ａ확장경험 += 1
+		PRINTL Ｖ확장＆Ａ확장 경험+1
+	ENDIF
+ENDIF
+
+;────────────────────────────────────
+;촉수경험
+;────────────────────────────────────
+IF TEQUIP:촉수조교중
+	LOCAL = 1
+	EXP:MASTER:촉수경험 += LOCAL
+;OriginalString : 촉수경험+
+	PRINT 촉수 경험+
+;OriginalString : LOCAL
+	PRINTVL LOCAL
+ENDIF
+
+;────────────────────────────────────
+;이상경험/굴복경험/공포경험/노출경험
+;────────────────────────────────────
+;이상경험추가
+IF SOURCE:MASTER:이탈 > 200 + CFLAG:MASTER:조교레벨 * 50 + MARK:굴복각인 * 50 + EXP:MASTER:이상경험 * 20
+	EXP:MASTER:이상경험 += 1
+	PRINTL 이상 경험+1
+ENDIF
+
+;굴복경험추가
+IF CUP:MASTER:굴복 > 100 + EXP:MASTER:굴복경험 * 10 + MARK:굴복각인 * 20
+	EXP:MASTER:굴복경험 += 1
+	PRINTL 굴복 경험+1
+ENDIF
+
+;공포경험추가
+IF CUP:MASTER:공포 > 200 + EXP:MASTER:공포경험 * 10 + MARK:MASTER:트라우마 * 20
+	EXP:MASTER:공포경험 += 1
+	PRINTL 공포 경험+1
+ENDIF
+
+;노출경험추가
+IF SOURCE:MASTER:노출 > 200 + EXP:MASTER:노출경험 * 10 + CFLAG:MASTER:조교레벨 * 20
+	EXP:MASTER:노출경험 += 1
+	PRINTL 노출 경험+1
+ENDIF
+
+;조수에 대해경험추가 cvb를 대문자에 수정@revkoishi(14/05/26)
+SIF ASSI:1 > 0
+	PRINTL 
+FOR LOCAL, 1, 3
+	IF ASSI:LOCAL > 0
+		;Ｃ경험
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 2 || TCVAR:(ASSI:LOCAL):조수ACT == 41 || TCVAR:(ASSI:LOCAL):조수ACT == 32
+			EXP:(ASSI:LOCAL):Ｃ경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）Ｃ경험+1
+		ENDIF
+		;v경험
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 6
+			EXP:(ASSI:LOCAL):Ｖ경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）Ｖ경험+1
+		ENDIF
+		;b경험
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 3
+			EXP:(ASSI:LOCAL):Ｂ경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）Ｂ경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 6 || TCVAR:(ASSI:LOCAL):조수ACT == 32
+			EXP:(ASSI:LOCAL):성교경험 += 1
+			EXP:MASTER:성교경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%·%CALLNAME:MASTER%）성교 경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 50
+			EXP:(ASSI:LOCAL):자위경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）자위 경험+1
+		ENDIF
+		IF NOWEX:MASTER:사정 && NOWEX:MASTER:사정 != 1 && !(TEQUIP:성교봉사중 || TFLAG:전회질싸 == 2 || TFLAG:전회질싸 == 4 || TFLAG:전회질싸 == 6 || TFLAG:전회질싸 == 8)
+			EXP:(ASSI:LOCAL):정액경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）정액 경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT== 1 || TCVAR:(ASSI:LOCAL):조수ACT == 3 || TCVAR:(ASSI:LOCAL):조수ACT == 11 || TCVAR:(ASSI:LOCAL):조수ACT == 21
+			EXP:(ASSI:LOCAL):구음경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）구음경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 7 || TCVAR:(ASSI:LOCAL):조수ACT == 10 || TCVAR:(ASSI:LOCAL):조수ACT == 20 || TCVAR:(ASSI:LOCAL):조수ACT == 30
+			EXP:(ASSI:LOCAL):수음경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）자위 경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 5 || TCVAR:(ASSI:LOCAL):조수ACT == 12 || TCVAR:(ASSI:LOCAL):조수ACT == 13 || TCVAR:(ASSI:LOCAL):조수ACT == 22 || TCVAR:(ASSI:LOCAL):조수ACT == 31
+			EXP:(ASSI:LOCAL):도구사용경험 += 1
+			PRINTFORML （%CALLNAME:(ASSI:LOCAL)%）도구 사용 경험+1
+		ENDIF
+		IF TCVAR:(ASSI:LOCAL):조수ACT == 40 || TCVAR:(ASSI:LOCAL):조수ACT == 53
+			EXP:(ASSI:LOCAL):키스경험 += 1
+			EXP:키스경험 += 1
+			PRINTFORML （%CALLNAME:TARGET%·%CALLNAME:(ASSI:LOCAL)%）키스 경험+1
+		ENDIF
+		SIF MASTER_EX(4 * LOCAL,10)
+			EXP:(ASSI:LOCAL):절정시킨경험 += 1
+	ENDIF
+NEXT

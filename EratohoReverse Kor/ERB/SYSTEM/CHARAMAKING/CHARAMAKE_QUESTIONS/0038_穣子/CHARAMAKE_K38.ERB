@@ -1,0 +1,62 @@
+﻿;穣子＠Crow
+@CHARAMAKE_K38(ARG)
+PRINTFORMW 「이봐、일어나 일어나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「멍하니 있는 것 같은데 당신 괜찮아？」
+PRINTFORML 「풍양의 신인 내가、풍요에 대해 질문할게」
+PRINTFORMW 「풍요란、당신에게 있어 어떤 것？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 전부 먹을 수 없을 만큼의 음식
+PRINTFORMDL [2] 전부 쓸 수 없을 만큼의 돈
+PRINTFORMDL [3] 타인에게 자유롭고、배려할 수 있는 여유
+PRINTFORMDL [4] 젖가슴
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답할 수 없어？　마음이 궁핍하구나」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「배부르게 먹을 수 있다는 건 행복한 일이지」
+		CALLF CM_PROF("솔직야",  +10)
+		CALLF CM_PROF("프라이드",-10)
+		CALLF CM_PROF("충동",    +10)
+		CALLF CM_PROF("호기심",  +10)
+		CALLF CM_PROF("수치",    -10)
+		CALLF CM_PROF("낙관",    +10)
+		CALLF CM_PROF("신경질",  -20)
+	CASE 2
+		PRINTFORML 「돈은 사용하면 할수록 풍요를 주위에 나누어주게 돼」
+		PRINTFORML 「어때？　쓸데없이 모아두기만 하거나 하지 않아？」
+		CALLF CM_PROF("솔직야",  +10)
+		CALLF CM_PROF("지성",    +10)
+		CALLF CM_PROF("도착",    +10)
+		CALLF CM_PROF("결벽",    -20)
+		CALLF CM_PROF("모랄",  -20)
+		CALLF CM_PROF("신경질",  +10)
+	CASE 3
+		PRINTFORML 「당신은 물질적인 풍요보다、정신적인 풍요를 선택한다고 하는 거구나」
+		CALLF CM_PROF("피학",    +10)
+		CALLF CM_PROF("솔직야",  -10)
+		CALLF CM_PROF("충동",    -10)
+		CALLF CM_PROF("호기심",  -10)
+		CALLF CM_PROF("낙관",    -10)
+		CALLF CM_PROF("결벽",    +10)
+		CALLF CM_PROF("모랄",  +20)
+	CASE 4
+		PRINTFORML 「아ー정말！　알겠다구！」
+		CALLF CM_PROF("프라이드",-10)
+		CALLF CM_PROF("수치",    -10)
+		CALLF CM_PROF("지성",    -10)
+		CALLF CM_PROF("결벽",    -10)
+		CALLF CM_PROF("충동",    +20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",  +40)
+ENDSELECT
+PRINTFORMW 「네、이제 가도 돼」
+RETURN 1
+

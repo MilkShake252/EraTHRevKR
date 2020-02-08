@@ -1,0 +1,48 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	앨리스구상 통괄 범용 리액션구상파일
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;-------------------------------------------------
+;개별의 리액션 및 범용 리액션이 표시되지 않는 경우에 불려 가는구상를 정리한 파일（가짜）
+;어디까지나 개인용인 것으로 코멘트는 최소한
+;다른 캐릭터에게 적용하는 경우는@KOJO_REACT_KXX를 임의의번호로 변경
+;-------------------------------------------------
+;REACTION계를 이것만으로 끝마치는 일도 가능
+;궁극의손빼기도 가능하고, 파생을 마련해 함수 나누고 하지 않는 구조를 만드는 일도 가능
+;COMGRO의 범위내에서 MENUMATCH를 처리해도 되고, 그 역에서도 좋다
+;EASY 텐프레를 만드는 때는 그 근처도 보충 해 둘까 하고 말한다
+;-------------------------------------------------
+;────────────────────────────────────
+;통괄 범용 리액션구상
+;────────────────────────────────────
+;·개별의 리액션＆범용 리액션이 표시되지 않았던 때에 표시
+;-------------------------------------------------
+@KOJO_REACT_K14
+;-------------------------------------------------
+[SKIPSTART]
+IF 0
+ELSEIF MENUMATCH(TFLAG:ACT, "회화")
+	SELECTCASE COMGRONAME(TFLAG:REACT분류)
+		CASE "없음"
+		CASE "소극적으로 한다"
+		CASE "태연하게 한다"
+		CASE "적극적으로 한다"
+		CASE "받아들인다"
+		CASE "용서를 빌다"
+		CASE "날뛴다"
+		CASE "거부"
+		CASE "도망친다"
+	ENDSELECT
+ELSEIF MENUMATCH(TFLAG:ACT, "애무")
+ELSEIF MENUMATCH(TFLAG:ACT, "도구")
+ELSEIF MENUMATCH(TFLAG:ACT, "성교")
+ELSEIF MENUMATCH(TFLAG:ACT, "수치")
+ELSEIF MENUMATCH(TFLAG:ACT, "봉사")
+ELSEIF MENUMATCH(TFLAG:ACT, "가학")
+ELSEIF MENUMATCH(TFLAG:ACT, "이상")
+ELSEIF MENUMATCH(TFLAG:ACT, "휴식")
+ELSEIF MENUMATCH(TFLAG:ACT, "성봉")
+ENDIF
+[SKIPEND]
+RETURN 0

@@ -1,0 +1,134 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;히나구상 휴식계 액션구상파일
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;        
+;휴식계 ACT90～92
+;        
+[SKIPSTART]
+	#TFLAG:ACT
+		90=휴식시킨다
+		91=영양제를 먹인다
+		92=치료한다
+	#TFLAG:ACT분류 == 9에 해당
+	#범용 리액션에 대해서는 MENUMATCH(TFLAG:ACT, "휴식")로 참조하는 것이 가능
+	#특정의 소질이 조건이 되는 ACT
+		ACT91, 영양제를 먹인다 TALENT:배합지식
+		ACT92, 치료한다         TALENT:치료
+[SKIPEND]
+
+
+;/////////////////
+;ACT90, 휴식시킨다//
+;/////////////////
+[SKIPSTART]
+	#이 시점에서는 명령만
+	#안면승마계는 해제된다
+	#구속계 TEQUIP(밧줄/눈가리개/볼개그/삼각목마)는 해제된다
+	#더러움은 리셋트 된다
+	#조교자, 조교대상의자위는 중단
+	#리액션이"자위를 시작한다 "(이었)였던 경우"승손에자위를하기 시작했다"에 파생한다
+	#이하에 나타내는지속계도구장착시는, 도구의 탓으로 너무 쉬게 하지 않았다에 파생한다
+		(바이브/애널바이브/애널비즈/관장기＋플러그/유두캡)
+	#ACT파생는 REACT 이후의 참조에 이용된다（알기 어려운 사양 지나는…）
+	#지문에 분기 없음
+[SKIPEND]
+@KOJO_MALE_ACT_K39_90 ;TFLAG:ACT파생(0=보통으로 쉰/1=도구의 탓으로 쉬게 하지 않았다/2=승손에자위를하기 시작했다)
+
+;호의, 호감도로 파생
+;==================
+IF GET_KFLAG_K39("상사상애")
+;OriginalString : 「%RAND_SPLIT("ちょっと休みましょう/ねぇ、少し휴식しない？")%」
+	PRINTFORML 「%RAND_SPLIT("조금 쉽시다/저기, 조금휴식하지 않는다?")%」
+	CALL HTMLPRINTW(@"「끝나면 또 즐겁게 해%HTML_PS_K39()%」")
+ELSE
+;OriginalString : 「少し휴식にしましょうか」
+	PRINTFORML 「조금 휴게로 할까요」
+;OriginalString : 「でも、これで終わりじゃ%RAND_SPLIT("ないですよ？/ありませんから")%」
+	PRINTFORMW 「 그렇지만, 이것으로 마지막이다%RAND_SPLIT("없어요?/없기 때문에")%」
+ENDIF
+RETURN 1
+
+
+;/////////////////////////
+;ACT91, 영양제를 먹인다//
+;/////////////////////////
+[SKIPSTART]
+	#이 시점에서는 명령만
+	#조교대상의 리액션이"거부한다 "에서 만났을 경우는"영양제를 버렸다"에 파생한다
+	#그 외의 반응의 경우는 "영양제를 마셨다"취급이 된다
+	#조교자에 TALENT:배합지식가 없는 경우는 발생하지 않는다(배합지식자체는 SHOP에서의 구입이 가능)
+	#미약를 사용하는 일도 있다
+	#TEQUIP(볼개그/삼각목마)는 해제된다
+	#안면승마계, 자위계는 해제된다
+	#ACT파생는 REACT 이후의 참조에 이용된다
+	#지문에 분기 없음
+[SKIPEND]
+@KOJO_MALE_ACT_K39_91 ;TFLAG:ACT파생(0=영양제를 마신/1=영양제를 버렸다)
+
+;호의, 호감도로 분기
+;==================
+IF GET_KFLAG_K39("상사상애")
+	;조교자의만족가 높은 경우
+	IF TENSION(TARGET, 8) == "높다"
+;OriginalString : 「はい
+		PRINT 「네
+		SELECTCASE RANDACT(3, 0)
+			CASE 0
+;OriginalString : 、どうぞ。厄ルトよ」
+				PRINTL , 아무쪼록. 액르트야」
+			CASE 1
+;OriginalString : 、厄ルト。遠慮しなくていいわよ？」
+				PRINTL , 액르트. 사양하지 않아 좋아요?」
+			CASE 2
+;OriginalString : これ。え、何って…。厄ルトだけど？」
+				PRINTL 이것. 네, 무엇은…. 액르트이지만?」
+		ENDSELECT
+		CALL HTMLPRINTW(@"「이봐요 빨리. 마셔, 마셔%HTML_PS_K39()%」")
+;OriginalString : %CALLNAME:TARGET%は満面の笑みで、%CALLNAME:MASTER%に厄ルトを손渡했다…
+		PRINTFORMDW %CALLNAME:TARGET%(은)는 만면의 미소로, %CALLNAME:MASTER%에 액르트를 전했다…
+	ELSE
+;OriginalString : 「はい、いつもの厄ルトよ。飲んでみて？」
+		PRINTFORMW 「네, 평소의 액르트야. 마셔 봐?」
+	ENDIF
+ELSE
+	CALL HTMLPRINTW(@"「이것을 마셔 봐 주세요. 건강하게 될 것이에요%HTML_PS_K39()%」")
+;OriginalString : %CALLNAME:TARGET%そう言うと、%CALLNAME:MASTER%に厄ルトを손渡했다…
+	PRINTFORMDW %CALLNAME:TARGET%그렇게 말하면, %CALLNAME:MASTER%에 액르트를 전했다…
+ENDIF
+RETURN 1
+
+
+;/////////////////
+;ACT92, 치료한다//
+;/////////////////
+[SKIPSTART]
+	#조교자가조교대상를치료 하려고 한다
+	#REACT분류가"날뛴다 "에서 만났을 경우는"날뛰었기 때문에치료 할 수 없었다"에 파생한다
+	#그 외의 경우는"몸의 구석구석까지 더듬어치료했다"라고 하는 취급
+	#조교자에 TALENT:치료가 없으면 발생하지 않는다
+	#미약를 사용하는 일도 있다
+	#TEQUIP:삼각목마는 해제된다
+	#안면승마계, 자위계는 해제된다
+	#ACT파생는 REACT 이후의 참조에 이용된다
+	#지문에 분기 없음
+[SKIPEND]
+@KOJO_MALE_ACT_K39_92 ;TFLAG:ACT파생(0=치료했다/1=치료 할 수 없었다)
+
+;호의, 호감도로 분기
+;==================
+IF GET_KFLAG_K39("상사상애")
+;OriginalString : 「厄といっても色々あるの」
+	PRINTFORML 「액이라고 해도 여러가지 있어」
+;OriginalString : 「치료で吸い出す厄は、あっちの厄とは別物なのよ？」
+	PRINTFORMW 「치료로 빨아내는 액은, 저쪽의 액과는 별개야?」
+ELSE
+;OriginalString : 「今から치료をするので、動かないでくださいね？」 
+	PRINTFORML 「지금부터 치료를 하므로, 움직이지 말아 주세요?」 
+;OriginalString : 「치료というより、厄を吸い出すといった方が適切かもしれませんけど」
+	PRINTFORMW 「치료라고 하는 것보다, 액을 빨아낸다고 하는 것이 적절할지도 모르지만」
+ENDIF
+RETURN 1

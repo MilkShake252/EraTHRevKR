@@ -1,0 +1,53 @@
+﻿;サニー@Enter
+@CHARAMAKE_K45(ARG)
+PRINTFORMW 「저기、일어나！　질문의 시간이야！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「갑작스럽지만、당신의 집이 망가져버렸어」
+PRINTFORMW 「좋아、그럼 이사하자！　라는 마음을 먹었을 때、어디로 이사할거야？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 비가 잘 내리지 않는 홍마관 근처
+PRINTFORMDL [2] 벚꽃이 아름다운 백옥루 근처
+PRINTFORMDL [3] 의료 시선이 가까운 영원정 근처
+PRINTFORMDL [4] 사계절 그 때 그 때 꽃을 볼 수 있는 꽃밭 근처
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어라？　집 없는게 좋은거야？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「비가 내리면 우울한 기분이 되지. 좋은 판단이야」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("지성", 10)
+	CASE 2
+		PRINTFORML 「벚꽃은 아름답지. 나도 좋아해」
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("낙관", 20)
+	CASE 3
+		PRINTFORML 「뭐、무슨 일이 생겼을때는 편리하지. 그런 게 있으면」
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("피학", 20)
+	CASE 4
+		PRINTFORML 「그것도 좋네. 질리지 않는 일년은 멋지구나」
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("솔직야", 10)
+ENDSELECT
+PRINTFORMW 「괜찮아. 지금 같은 때、그렇게 간단히 집이 망가지거나 하지 않으니까. 안심하고 안녕히 주무세요」
+RETURN 1
+

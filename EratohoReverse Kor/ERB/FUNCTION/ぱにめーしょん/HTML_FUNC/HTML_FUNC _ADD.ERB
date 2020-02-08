@@ -1,0 +1,98 @@
+﻿;===============================================================================
+;
+;	HTML_PRINT 관련 함수군을 이용해 개인적으로 독자 추가했다의
+;
+;===============================================================================
+;-------------------------------------------------------------------------------
+;	ADD_BTAG(HTML_ADDBUTTONTAG(식 안의 함수))
+;	버튼 태그에 제작했다버튼 정보의취득를 추가
+;===============================================================================
+@ADD_BTAG(ARGS = HTML_SUBSTITUTE , ARGS:1 , ARGS:2)
+#FUNCTIONS
+;CALLF ADD_LAYER_BUTTONF, ARGS:1
+RETURNF HTML_ADDBUTTONTAG(ARGS, ARGS:1, ARGS:2)
+
+;-------------------------------------------------------------------------------
+;	ADD_FTAG(HTML_ADDFONTTAG(식 안의 함수))
+;-------------------------------------------------------------------------------
+;	상기 함수로 명칭을 맞추기 위해서(때문에) 가마니
+;===============================================================================
+@ADD_FTAG( ARGS = HTML_SUBSTITUTE , ARGS:1 , ARGS:2 , ARGS:3 )
+#FUNCTIONS
+RETURNF HTML_ADDFONTTAG(ARGS, ARGS:1, ARGS:2, ARGS:3)
+
+
+;-------------------------------------------------------------------------------
+;	ADD_CTAG(HTML_ADDCOMMENTTAG(식 안의 함수))
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDCOMMENTTAG("원은―","HOGE")%
+;		→  원은―<! -- HOGE -->
+;
+;	예:LOCALS:0 =원은―<! -- HOGE -->
+;		LOCALS:0 = %HTML_ADDCOMMENTTAG(LOCALS:0,"HAGE")%
+;		→  원은―<! -- HOGE/HAGE -->
+
+;-------------------------------------------------------------------------------
+;	ARGS에<! --ARGS:1-->를 부가한다
+;	벌써 코멘트 태그가 존재하고 있는 경우 ARGS:2를 단락지어 기호로서(초기치"/")
+;	기존의 것에 추가하는 형태로 동작한다
+;	(내용의 분할 따위를 SPLIT로 할 것을 상정한 사양)
+;===============================================================================
+@ADD_CTAG(ARGS = HTML_SUBSTITUTE , ARGS:1 , ARGS:2 = "/")
+#FUNCTIONS
+RETURNF HTML_ADDCOMMENTTAG(ARGS, ARGS:1, ARGS:2)
+
+;------------------------------------------------------------------------------
+;	ADD_OTAG(HTML_ADDOTHERTAG(식 안의 함수))
+;-------------------------------------------------------------------------------
+;	예：LOCALS:0 = %HTML_ADDBUTTONTAG("원은―","b")%
+;		→  <b>원은―</b>
+;-------------------------------------------------------------------------------
+;	본 그대로 시리즈를 1개로 한다
+;===============================================================================
+@ADD_OTAG( ARGS = HTML_SUBSTITUTE, ARGS:1 )
+#FUNCTIONS
+RETURNF HTML_ADDOTHERTAG(ARGS, ARGS:1)
+
+;-------------------------------------------------------------------------------
+;	HTML_ADDALIGNTAG(식 안의 함수)
+;-------------------------------------------------------------------------------
+;	P태그는 맨 앞/최후미가 아니면 안된 것 같으니까, 마지막에 사용하자
+;===============================================================================
+@ADD_ATAG( ARGS = HTML_SUBSTITUTE , ARGS:1)
+#FUNCTIONS
+RETURNF HTML_ADDALIGNTAG(ARGS, ARGS:1)
+
+
+@HTML_TAGADDFORM, ARGS, ARG, ARGS:1 = "LEFT"
+#FUNCTIONS
+#LOCALSIZE 4
+#LOCALSSIZE 100
+LOCAL = ARG - STRLENS(HTML_TOPLAINTEXT(ARGS))
+IF LOCAL >= 0
+	SELECTCASE ARGS:1
+		CASE "LEFT"
+			RETURNF ARGS + " " * LOCAL
+		CASE "RIGHT"
+			RETURNF " " * LOCAL + ARGS
+		CASEELSE
+			THROW 인수[ARGS:1] 에  부적절한 캐릭터 라인[%ARGS:1%]가 도 사라질 수 있는 했다.
+	ENDSELECT
+ELSE
+	LOCAL = ABS(LOCAL) + 2
+	HTML_TAGSPLIT ARGS, LOCALS
+	LOCAL:2 = RESULT
+	FOR LOCAL:1, LOCAL:2, -1, -1
+		SIF SUBSTRING(LOCALS:(LOCAL:1), 0, 1) == "<"
+			CONTINUE
+		LOCAL:3 = STRLENS(LOCALS:(LOCAL:1))
+		LOCALS:(LOCAL:1) '= SUBSTRING(LOCALS:(LOCAL:1), 0, MAX(LOCAL:3 - LOCAL, 0))
+		LOCAL -= LOCAL:3
+		SIF LOCAL <= 0
+			BREAK
+	NEXT
+	FOR LOCAL:1, 1, LOCAL:2
+		LOCALS += LOCALS:(LOCAL:1)
+	NEXT
+	RETURNF LOCALS + ("." * (ARG - STRLENS(HTML_TOPLAINTEXT(LOCALS))))
+ENDIF

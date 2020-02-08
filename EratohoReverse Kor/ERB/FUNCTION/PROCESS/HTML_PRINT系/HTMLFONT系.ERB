@@ -1,0 +1,321 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;		HTML_PRINT전용(HTMLFONT계) 함수
+;
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;=========================================================================================
+;	*#FUNCTIONS 속성으로 HTML_PRINT(cEmuera) 혹은@HTMLPRINT계(cKOMEIJI_FUNCTIONS) 내에서의 사용을 상정.
+;   *@HTMLFONT를 개입시켜 출력하므로 KOMEIJI_FUNCTIONS는 필수. 파일의 엔코드는 UTF-8(BOM 첨부)이 전제
+;   *엔코드가 SJIS의 파일에 내용을 카피해 보존하는 것은 할 수 없다고 생각된다
+;   *데포 설정의 폰트는 Win7 표준의 것. 다른 Windows라면 경우에 따라서는 문제 있을지도?
+;       폰트 지정, 문자색지정, 표시하는 수의 지정, 인수의 생략 가능
+;           지정하는 폰트에 따라서는 올바르게 출력되지 않는 것도 있다
+;               묘화 인터페이스가 GDI+인 경우, 올바르게 출력되지 않는 것도 있다
+;=========================================================================================
+
+;※폰트에 관해서는 등폭의 것, 한편 묘화 인터페이스가 WIN API(GDI)인 경우에 제대로 표시되는 일을 확인 후 설정.
+;  TexRenderer(GDI)에서도 거의 문제 없을 것. Graphics(GDI+)라면 문제가 나올 가능성 있어.
+
+;-------------------------------------------------
+;함수명:HTML_HEARTB
+;개  요점:모두 칠함의 하트 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면나눔고딕)
+;인  수:ARG: 0… 색지정(생략 하면 희미한 핑크계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_HEARTB(ARGS:0 = "나눔고딕", ARG:0 = 0xFFBFBE, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♥" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+;//Batang, BatangChe, David, DFKai-SB, Dotum, DotumChe, Gulim, Gungsuh, Lucida Console
+;//Microsoft Yi Baiti, Miriam, PMingLiu, Rod, SimHei, SimSun, SimSun-ExtB
+;//상기의 폰트도 표시가 무너지거나 행을 침식하는 일 없이 사용할 수 있다. 다만 HEART계는 폰트 마다의 차이가 그다지 없다
+
+;-------------------------------------------------
+;함수명:HTML_HEART
+;개  요점:HTML_HEARTB의 솎아내기판
+;사양은 HTML_HEARTB에 준한다
+;-------------------------------------------------
+@HTML_HEART(ARGS:0 = "나눔고딕", ARG:0 = 0xFFBFBE, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♡" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_SPADEB
+;개  요점:모두 칠함의 스페이드를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면나눔고딕)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SPADEB(ARGS:0 = "나눔고딕", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♠" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;함수명:HTML_SPADE
+;개  요점:HTML_SPADEB의 솎아내기판
+;사양은 HTML_SPADEB에 준한다
+;-------------------------------------------------
+@HTML_SPADE(ARGS:0 = "나눔고딕", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♤" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_CLUBB
+;개  요점:모두 칠함의 클럽을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 Batang)
+;인  수:ARG: 0… 색지정(생략 하면 초록계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_CLUBB(ARGS:0 = "Batang", ARG:0 = 0x40BE70, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♣" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;함수명:HTML_CLUB
+;개  요점:HTML_CLUBB의 솎아내기판
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;다른 사양은 HTML_CLUBB에 준한다
+;-------------------------------------------------
+@HTML_CLUB(ARGS:0 = "SimSun-ExtB", ARG:0 = 0x40BE70, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♧" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_DIAMONDB
+;개  요점:모두 칠함의 다이어를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 세키계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_DIAMONDB(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xA8142F, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♦" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;함수명:HTML_DIAMOND
+;개  요점:HTML_DIAMONDB의 솎아내기판
+;사양은 HTML_DIAMONDB에 준한다
+;-------------------------------------------------
+@HTML_DIAMOND(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xA8142F, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♢" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_EIGHTHNOTE
+;개  요점:8분 음표를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 Lucida Console)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_EIGHTHNOTE(ARGS:0 = "Lucida Console", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♪" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_W8NOTE
+;개  요점:련 8분 음표를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 Lucida Console)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_W8NOTE(ARGS:0 = "Lucida Console", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♫" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_W16NOTE
+;개  요점:련 16분 음표를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_W16NOTE(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♬" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_FLAT
+;개  요점:플랫을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 Courier New)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_FLAT(ARGS:0 = "Courier New", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♭" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_NATURAL
+;개  요점:내츄럴을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_NATURAL(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♮" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_SHARP
+;개  요점:샤프를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 Courier New)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SHARP(ARGS:0 = "Courier New", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("♯" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_SUNNY
+;개  요점:개이고 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 오렌지계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SUNNY(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xF3743E, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☀" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_CLOUDY
+;개  요점:흐림 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 회색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_CLOUDY(ARGS:0 = "SimSun-ExtB", ARG:0 = 0x9AA4A4, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☁" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_RAINY
+;개  요점:비(우산) 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 물색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_RAINY(ARGS:0 = "SimSun-ExtB", ARG:0 = 0x95EDF5, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☂" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+;"Malgun Gothic", "Meiryo UI", "Microsoft JhengHei", "Microsoft YaHei", "메이 리오"
+;상기의 폰트의 경우, 오른쪽으로 경사했다 우산 마크가 출력된다
+;본목적에는 몹시 좋지만, 출력시에 아래 쪽의 행을 침식해 버린다
+;"Meiryo UI"라면 사용 드코로에 따라서는 어떻게든, 이라고 하는 감
+
+;-------------------------------------------------
+;함수명:HTML_SNOW
+;개  요점:눈(달마) 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 흰색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SNOW(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xFFFFFF, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☃" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_SHOOTINGSTAR
+;개  요점:유성 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 물색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SHOOTINGSTAR(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xABF5F3, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☄" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_STARB
+;개  요점:호시 마크를 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 DFKai-SB)
+;인  수:ARG: 0… 색지정(생략 하면 황색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_STARB(ARGS:0 = "DFKai-SB", ARG:0 = 0xEAF0A7, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("★" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;함수명:HTML_STAR
+;개  요점:HTML_STARB의 솎아내기판
+;사양은 HTML_STARB에 준한다
+;-------------------------------------------------
+@HTML_STAR(ARGS:0 = "DFKai-SB", ARG:0 = 0xEAF0A7, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☆" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_SKULL
+;개  요점:하자드 심볼(독성)을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 세키계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_SKULL(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xA8142F, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☠" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_NUKE
+;개  요점:하자드 심볼(방사능)을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 황색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_NUKE(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xE9FC02, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☢" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS
+
+
+;-------------------------------------------------
+;함수명:HTML_BIOHAZARD
+;개  요점:하자드 심볼(바이오해저드)을 표시한다
+;인  수:ARGS:0… 사용하는 폰트명(생략 하면 SimSun-ExtB)
+;인  수:ARG: 0… 색지정(생략 하면 황색계로 출력)
+;인  수:ARG: 1… 표시하는 수(생략 하면 1)
+;-------------------------------------------------
+@HTML_BIOHAZARD(ARGS:0 = "SimSun-ExtB", ARG:0 = 0xE0E909, ARG:1 = 1)
+#FUNCTIONS
+LOCALS = %HTMLFONT("☣" * ARG:1, ARGS:0, ARG:0)%
+RETURNF LOCALS

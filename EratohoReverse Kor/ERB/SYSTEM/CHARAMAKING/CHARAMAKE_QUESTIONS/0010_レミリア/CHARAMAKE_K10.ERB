@@ -1,0 +1,64 @@
+﻿@CHARAMAKE_K10(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「곧바로지만、질문에 답해줄래」
+	CASE 9
+		PRINTFORMW 「마지막은 나야. 기뻐하도록」
+	CASEELSE
+		PRINTFORMW 「그럼 다음에는 내 질문에 대답해줄래」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「이 세상에서 가장 강한 힘은 뭐라고 생각해？」
+PRINTFORMW 「재밌는 대답을 기대할게」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 권력
+PRINTFORMDL [2] 폭력
+PRINTFORMDL [3] 재력
+PRINTFORMDL [4] 애정
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답하지 않는다……인가. 선문답 흉내라도 내고 싶은걸까」
+		PRINTFORMW 「꽤 좋은 대답이라고는 생각하지만、유감스럽게도 너무 수수하구나！」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「강하다는 건、무언가를 따르게 한다는 것일지도」
+		PRINTFORMW 「좋아. 그럼 또 만날 때까지――」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("지성", 10)
+	CASE 2
+		PRINTFORML 「역시 힘이라면 이거지. 알기 쉬워서 좋아」
+		PRINTFORMW 「나도 이것엔 자신 있어」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「환상향에서도 눈에 띄지는 않지만、분명한 힘을 가지고 있는 것이구나」
+		PRINTFORMW 「가장 강한지 어떤지는 별개로」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 4
+		PRINTFORML 「……과연. 그런 일을 말하는 녀석은 보통 혀 끝만이지만」
+		PRINTFORMW 「혹시、당신이 그걸 증명해줄건가」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+ENDSELECT
+RETURN 1

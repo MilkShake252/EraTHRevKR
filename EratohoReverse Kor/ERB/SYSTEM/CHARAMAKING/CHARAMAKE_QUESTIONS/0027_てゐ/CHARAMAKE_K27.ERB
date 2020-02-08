@@ -1,0 +1,69 @@
+﻿@CHARAMAKE_K27(ARG)
+PRINTFORMW 「이봐、일어나 일어나. 시간은 금이라구、촌각이라도 가볍게 여기지 마」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「약간의 질문. 빨리 대답해」
+PRINTFORMW 「휑하니 넓은 강이 있어. 당신은 이 강을 건너야만 해. 어떻게 건널거야？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 사실은 다리가 설치되어 있으므로、그것을 사용한다
+PRINTFORMDL [2] 다리 같은 건 없었다. 헤엄쳐서 건너자
+PRINTFORMDL [3] 아니、그것보다 좀 더 확실한 방법이 있지요？
+PRINTFORMDL [4] 이것도 저것도 싫어졌어. 단념하자
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「０점. 결단도 할 수 없는 녀석에게는 행운은 오지 않아」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「재미 없는 선택을 했구나ー. 당신、그런 식으로 살아서 즐거워？」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+	CASE 2
+		PRINTFORML 「네 유감. 당신은 강에서 상어의 먹이가 되어버렸어. １４로 가세요」
+		PRINTFORML 「힘에 의지해서 무리하게 길을 만드는 걸로 뭐든 해결할 수 있다고는 생각하지 마」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+	CASE 3
+		PRINTFORML 「뭐、그렇게 생각하는 게 보통이지」
+		PRINTFORML 「목 위에 올려져 있는게 장식이 아니라면、가능한 한 사용해야겠지」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+	CASE 4
+		PRINTFORML 「어째서 거기서 단념하는 거야 거기서ー」
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("수치", 30)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 30)
+ENDSELECT
+PRINTFORMW 「……응、수고했어. 그럼」
+RETURN 1
+

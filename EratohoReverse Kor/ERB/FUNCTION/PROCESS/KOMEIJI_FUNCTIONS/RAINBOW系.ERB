@@ -1,0 +1,411 @@
+﻿;-------------------------------------------------
+;무지개색표시 관련 함수
+;-------------------------------------------------
+;Emuera1810 이후 향해라
+;PRINT_RAINBOW 등 무지개색표시에 관한 파일
+;생각보다는 재료 요소가 강하다. 좋아도 싫어도 눈에 띈다
+;에 째─실마리응함수를 사용하고 있는 개소가 있다
+;※이전의 버젼으로 동작시킨다경우는, GET_RAINBOW를 적당하게 고쳐 써 주세요
+;-------------------------------------------------
+;함수의 개요
+;·PRINT_RAINBOW(|L|W)… 무지개색으로 PRINT 하는 함수
+;·BIGPRINT_RAINBOW(L|W)… 크고 무지개색으로 PRINT 하는 함수
+;·SMALLPRINT_RAINBOW(|L|W)… 작고 무지개색으로 PRINT 하는 함수
+;·PRINT_RAINBOW2(|L|W)… 무지개색으로 PRINT 하는 함수. 색이변화 하는애니메─숀 첨부
+;·BIGPRINT_RAINBOW2(L|W)… 크고 무지개색으로 PRINT 하는 함수. 색이변화 하는애니메─숀 첨부
+;·SMALLPRINT_RAINBOW2(|L|W)… 작고 무지개색으로 PRINT 하는 함수. 색이변화 하는애니메─숀 첨부
+;·GET_RAINBOW… 무지개색의 구성색치(전 12색)을반환식 안의 함수
+;-------------------------------------------------
+
+;*************************************************
+;PRINT 함수
+;*************************************************
+;·보통… 아니요이상인 PRINT 함수입니다
+;·이지만, 이런 것은 서장에 지나지 않았다…!
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:PRINT_RAINBOW(|L|W)
+;개  요점:움직이지 않는 무지개색PRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　 ARG:0…[생략가능]지정치만 표시 개시색을 비켜 놓는다. PRINT_RAINBOW를 새겨 사용할 때 용. 생략 하면 0
+;　　　 ARG:1…[생략가능]진정한 경우, 색의 진행 방향을 역순서로 한다. 생략 하면 가짜(정순)
+;반환값:없음(아마 RESULT 보호)
+;하는 김에 조금 두드려 직했다PRINT_RAINBOW. PRINT_RANIBOW2와 공통 처리로
+;-------------------------------------------------
+@PRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+;OriginalString : ARGS:1
+PRINTS ARGS:1
+CALL _PRINT_RAINBOW_SUB1(ARGS:0, ARG:0, ARG:1)
+;OriginalString : ARGS:2
+PRINTS ARGS:2
+RETURN RESULT
+
+@PRINT_RAINBOWL(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+CALL PRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+PRINTL 
+RETURN RESULT
+
+@PRINT_RAINBOWW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+CALL PRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+WAIT 
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:BIGPRINT_RAINBOW(L|W)
+;개  요점:움직이지 않는 무지개색BIGPRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　 ARG:0…[생략가능]지정치만 표시 개시색을 비켜 놓는다. 생략 하면 0
+;　　　 ARG:1…[생략가능]진정한 경우, 색의 진행 방향을 역순서로 한다. 생략 하면 가짜(정순)
+;반환값:없음(아마 RESULT 보호)
+;PRINT_RAINBOW에 BIG와 SMALL가 동참!
+;예에 의해 예와 같이 2 행사 우노로 반드시 개행해 버린다
+;\n는 그만두는 편이 좋은 예감
+;-------------------------------------------------
+@BIGPRINT_RAINBOWL(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+#LOCALSIZE 1
+#LOCALSSIZE 1
+IF CHKFONT("Raavi")
+	LOCAL:0 = CURRENTREDRAW()
+	LOCALS:0 = %GETFONT()%
+	REDRAW 0
+	SETFONT "Raavi"
+;OriginalString : " " + ARGS:1
+	PRINTS " " + ARGS:1
+	CALL _PRINT_RAINBOW_SUB1(ARGS:0, ARG:0, ARG:1)
+;OriginalString : ARGS:2 + " "
+	PRINTSL ARGS:2 + " "
+	SETFONT LOCALS:0
+	PRINTL 
+	REDRAW LOCAL:0
+ELSE
+	CALL PRINT_RAINBOWL(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+ENDIF
+RETURN RESULT
+
+@BIGPRINT_RAINBOWW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+CALL BIGPRINT_RAINBOWL(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+WAIT
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:SMALLRINT_RAINBOW(|L|W)
+;개  요점:움직이지 않는 무지개색SMALLPRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　 ARG:0…[생략가능]지정치만 표시 개시색을 비켜 놓는다. 생략 하면 0
+;　　　 ARG:1…[생략가능]진정한 경우, 색의 진행 방향을 역순서로 한다. 생략 하면 가짜(정순)
+;반환값:없음(아마 RESULT 보호)
+;PRINT_RAINBOW에 BIG와 SMALL가 동참!
+;-------------------------------------------------
+@SMALLPRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+#LOCALSSIZE 1
+LOCALS:0 = %GETFONT()%
+SETFONT CHKFONT("Estrangelo Edessa") ? "Estrangelo Edessa" # LOCALS:0
+CALL PRINT_RAINBOW(ARGS:0, " " + ARGS:1, ARGS:2 + " ", ARG:0, ARG:1)
+SETFONT LOCALS:0
+RETURN RESULT
+
+@SMALLPRINT_RAINBOWL(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+CALL SMALLPRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+PRINTL 
+RETURN RESULT
+
+@SMALLPRINT_RAINBOWW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+CALL SMALLPRINT_RAINBOW(ARGS:0, ARGS:1, ARGS:2, ARG:0, ARG:1)
+WAIT
+RETURN RESULT
+
+
+;*************************************************
+;애니메─숀 첨부 PRINT 함수
+;*************************************************
+;·애니메─숀 하는 PRINT 함수… 생각보다는 특수한 부류? 왜 동이나했다 해
+;·Rev#와_L에 짜넣어 사용하는 형편상, 에 째─실마리응확장으로서 취급한다
+;·즉, 에 째─실마리응 같은 콘피그 참조를 실시한다
+;·스크롤 불가때는 보통 PRINT_RAINBOW 같이
+;·에 째─실마리응과 잘라 리했다 있고 경우는, 해당 개소의 IF네스트를 제외하면 OK
+;·행의 도중에 부르면, CLEARLINE 하는 형편상 그 이전의 부분이 일단 사라지므로, 그러한 것 극력 삼가하자
+;  일단 캐릭터 라인만은 되돌리는 처리를 넣었지만, 그 캐릭터 라인의 색이나 폰트를 대굴대굴 바꾸고 있었을 경우는 아마 슬픈 결말이 된다
+;  는 서식에 관한 태그 정보 잡히는 같아? 의로 자기 부담으로 개행하지 않는 HTMLParser도 물러나 짜면 어떻게든 될지도 모르지만…
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:PRINT_RAINBOW2(|L|W)
+;개  요점:움직이는 무지개색PRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　  ARG:0… 비켜 놓아횟수. 1회에 대해{ARG:1}밀리 세컨드 소비
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　  ARG:1…[생략가능]1회의 묘화의 뒤로 웨이트 하는 밀리 세컨드. 생략 하면 100
+;　　　  ARG:2…[생략가능]기능 옵션. 생략했다경우는 0(정순모드). 미정도리의 값이 도당했다경우도 0 취급
+;　　　                 0. 통상의 표시(색의 진행 방향은 정순)
+;　　　                 1. 색의 진행 방향을 역순서로 한다
+;　　　                 2. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆정순
+;　　　                 3. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆역순서
+;　　　                 4. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆정순
+;　　　                 5. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆역순서
+;　　　 ARGS:3…[생략가능]묘화 폰트. 생략했다경우나 사용 할 수 없는 폰트가 지정당했다경우는 변경하지 않는다
+;반환값:없음(아마 RESULT 보호)
+;악명 높다(?) KOMEIJI_FUNCTIONS보다 수년…
+;질림도 없게 만든, 미끈미끈 움직이는 PRINT_RAINBOW. 악김의 극한. 무지개색안에 반성의 색은 없었다
+;움직이는 탓으로, 오히려 사용하는 곳이 한정될지도
+;표시순서는 항상 %ARGS:1%%ARGS:0%%ARGS:2%
+;옵션으로 무지개색이 되는 개소를 바꿀 수 있도록(듯이) 기능 강화당했다의 것으로, 무지개색으로 둘러싸고 싶은 때에도 사용할 수 있을지도
+;-------------------------------------------------
+@PRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2, ARGS:3)
+#LOCALSIZE 3
+#LOCALSSIZE 2
+ARG:2 = INRANGE(ARG:2, 0, 5) ? ARG:2 # 0
+LOCAL:1 = CURRENTREDRAW()
+LOCAL:2 = STRLENSU(ARGS:1)
+LOCALS:0 = %GETFONT()%
+LOCALS:1 =
+ARGS:3 = \@ CHKFONT(ARGS:3) ? %ARGS:3% # %LOCALS:1% \@
+IF !LINEISEMPTY()
+	REDRAW 0
+	PRINTL 
+	LOCALS:1 = %HTML_TOPLAINTEXT(HTML_GETPRINTEDSTR())%
+	CLEARLINE 1
+;OriginalString : LOCALS:1
+	PRINTS LOCALS:1
+	REDRAW LOCAL:1
+ENDIF
+;스크롤가능(스크롤 하지 않지만… 뭐, 움직여 보이므로)
+IF ANIME_CONFIG("SCROLLTEXT")
+	FOR LOCAL:0, 0, ARG:0 - 1
+		SETFONT ARGS:3
+		IF INRANGE(ARG:2, 0, 1)
+;OriginalString : ARGS:1
+			PRINTS ARGS:1
+			CALL _PRINT_RAINBOW_SUB1(ARGS:0, LOCAL:0, ARG:2)
+;OriginalString : ARGS:2
+			PRINTS ARGS:2
+		ELSE
+			CALL _PRINT_RAINBOW_SUB1(ARGS:1, LOCAL:0, INRANGE(ARG:2, 4, 5))
+;OriginalString : ARGS:0
+			PRINTS ARGS:0
+			CALL _PRINT_RAINBOW_SUB1(ARGS:2, GROUPMATCH(ARG:2, 2, 5) ? LOCAL:0 + LOCAL:2 # 12 - LOCAL:2 - LOCAL:0, GROUPMATCH(ARG:2, 3, 5))
+		ENDIF
+		TWAIT ARG:1, 0
+		CLEARLINE 1
+		SETFONT LOCALS:0
+;OriginalString : LOCALS:1
+		PRINTS LOCALS:1
+	NEXT
+ENDIF
+SETFONT ARGS:3
+IF INRANGE(ARG:2, 0, 1)
+;OriginalString : ARGS:1
+	PRINTS ARGS:1
+	CALL _PRINT_RAINBOW_SUB1(ARGS:0, LOCAL:0, ARG:2)
+;OriginalString : ARGS:2
+	PRINTS ARGS:2
+ELSE
+	CALL _PRINT_RAINBOW_SUB1(ARGS:1, LOCAL:0, INRANGE(ARG:2, 4, 5))
+;OriginalString : ARGS:0
+	PRINTS ARGS:0
+	CALL _PRINT_RAINBOW_SUB1(ARGS:2, GROUPMATCH(ARG:2, 2, 5) ? LOCAL:0 + LOCAL:2 # 12 - LOCAL:2 - LOCAL:0, GROUPMATCH(ARG:2, 3, 5))
+ENDIF
+SETFONT LOCALS:0
+RETURN RESULT
+
+@PRINT_RAINBOW2L(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL PRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+PRINTL 
+RETURN RESULT
+
+@PRINT_RAINBOW2W(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL PRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+WAIT
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:BIGPRINT_RAINBOW2(L|W)
+;개  요점:움직이는 무지개색BIGPRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　  ARG:0… 비켜 놓아횟수. 1회에 대해{ARG:1}밀리 세컨드 소비
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　  ARG:1…[생략가능]1회의 묘화의 뒤로 웨이트 하는 밀리 세컨드. 생략 하면 100
+;　　　  ARG:2…[생략가능]기능 옵션. 생략했다경우는 0(정순모드). 미정도리의 값이 도당했다경우도 0 취급
+;　　　                 0. 통상의 표시(색의 진행 방향은 정순)
+;　　　                 1. 색의 진행 방향을 역순서로 한다
+;　　　                 2. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆정순
+;　　　                 3. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆역순서
+;　　　                 4. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆정순
+;　　　                 5. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆역순서
+;반환값:없음(아마 RESULT 보호)
+;예에 의해 예와 같이 2 행사 우노로 반드시 개행해 버린다
+;\n는 그만두는 편이 좋은 예감
+;가볍고 밖에 테스트하고 있지 않았기 때문에 과도하게 기대하지 않도록…
+;그러나… 여기까지 오면 과연 나의 머리가 저것이라고 생각되어도 어쩔 수 없네요
+;-------------------------------------------------
+@BIGPRINT_RAINBOW2L(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+#LOCALSIZE 3
+#LOCALSSIZE 2
+ARG:2 = INRANGE(ARG:2, 0, 5) ? ARG:2 # 0
+LOCAL:1 = CURRENTREDRAW()
+LOCAL:2 = STRLENSU(ARGS:1) + 1
+LOCALS:0 = %GETFONT()%
+LOCALS:1 =
+IF CHKFONT("Raavi")
+	IF !LINEISEMPTY()	;이미 PRINT당했다캐릭터 라인이 있으면 확보해 둔다
+		REDRAW 0
+		PRINTL 
+		LOCALS:1 = %HTML_TOPLAINTEXT(HTML_GETPRINTEDSTR())%
+		CLEARLINE 1
+;OriginalString : LOCALS:1
+		PRINTS LOCALS:1
+	ENDIF
+	;스크롤가능(스크롤 하지 않지만… 뭐, 움직여 보이므로)
+	IF ANIME_CONFIG("SCROLLTEXT")
+		FOR LOCAL:0, 0, ARG:0 - 1
+			REDRAW 0
+			SETFONT "Raavi"
+			IF INRANGE(ARG:2, 0, 1)
+;OriginalString : " " + ARGS:1
+				PRINTS " " + ARGS:1
+				CALL _PRINT_RAINBOW_SUB1(ARGS:0, LOCAL:0, ARG:2)
+;OriginalString : ARGS:2 + " "
+				PRINTSL ARGS:2 + " "
+			ELSE
+				CALL _PRINT_RAINBOW_SUB1(" " + ARGS:1, LOCAL:0, INRANGE(ARG:2, 4, 5))
+;OriginalString : ARGS:0
+				PRINTS ARGS:0
+				CALL _PRINT_RAINBOW_SUB1(ARGS:2 + " ", GROUPMATCH(ARG:2, 2, 5) ? LOCAL:0 + LOCAL:2 # 12 - LOCAL:2 - LOCAL:0, GROUPMATCH(ARG:2, 3, 5))
+				PRINTL 
+			ENDIF
+			SETFONT LOCALS:0
+			PRINTL 
+			REDRAW 2
+			TWAIT ARG:1, 0
+			CLEARLINE 2
+;OriginalString : LOCALS:1
+			PRINTS LOCALS:1
+		NEXT
+	ENDIF
+	REDRAW 0
+	SETFONT "Raavi"
+	IF INRANGE(ARG:2, 0, 1)
+;OriginalString : " " + ARGS:1
+		PRINTS " " + ARGS:1
+		CALL _PRINT_RAINBOW_SUB1(ARGS:0, LOCAL:0, ARG:2)
+;OriginalString : ARGS:2 + " "
+		PRINTSL ARGS:2 + " "
+	ELSE
+		CALL _PRINT_RAINBOW_SUB1(" " + ARGS:1, LOCAL:0, INRANGE(ARG:2, 4, 5))
+;OriginalString : ARGS:0
+		PRINTS ARGS:0
+		CALL _PRINT_RAINBOW_SUB1(ARGS:2 + " ", GROUPMATCH(ARG:2, 2, 5) ? LOCAL:0 + LOCAL:2 # 12 - LOCAL:2 - LOCAL:0, GROUPMATCH(ARG:2, 3, 5))
+		PRINTL 
+	ENDIF
+	SETFONT LOCALS:0
+	PRINTL 
+	REDRAW LOCAL:1
+ELSE
+	CALL PRINT_RAINBOW2L(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+ENDIF
+RETURN RESULT
+
+@BIGPRINT_RAINBOW2W(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL BIGPRINT_RAINBOW2L(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+WAIT
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:SMALLPRINT_RAINBOW2(|L|W)
+;개  요점:움직이는 무지개색SMALLPRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 사용하는 경우는""의 전에@를 붙이는 것
+;　　　  ARG:0… 비켜 놓아횟수. 1회에 대해{ARG:1}밀리 세컨드 소비
+;　　　 ARGS:1…[생략가능]처음에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면" 「"야"（"를 넣는다)
+;　　　 ARGS:2…[생략가능]끝나에 원의 문자색으로 표시하는 캐릭터 라인(예를 들면"」"야"）"를 넣는다)
+;　　　  ARG:1…[생략가능]1회의 묘화의 뒤로 웨이트 하는 밀리 세컨드. 생략 하면 100
+;　　　  ARG:2…[생략가능]기능 옵션. 생략했다경우는 0(정순모드). 미정도리의 값이 도당했다경우도 0 취급
+;　　　                 0. 통상의 표시(색의 진행 방향은 정순)
+;　　　                 1. 색의 진행 방향을 역순서로 한다
+;　　　                 2. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆정순
+;　　　                 3. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 정순＆역순서
+;　　　                 4. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆정순
+;　　　                 5. 무지개색으로 하는대상를 ARGS:0→ARGS:1＆ARGS:2로 변경한다. 색의 진행 방향은 역순＆역순서
+;반환값:없음(아마 RESULT 보호)
+;가볍고 밖에 테스트하고 있지 않았기 때문에 과도하게 기대하지 않도록…
+;-------------------------------------------------
+@SMALLPRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL PRINT_RAINBOW2(ARGS:0, ARG:0, " " + ARGS:1, ARGS:2 + " ", ARG:1, ARG:2, "Estrangelo Edessa")
+RETURN RESULT
+
+@SMALLPRINT_RAINBOW2L(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL SMALLPRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+PRINTL 
+RETURN RESULT
+
+@SMALLPRINT_RAINBOW2W(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1 = 100, ARG:2)
+CALL SMALLPRINT_RAINBOW2(ARGS:0, ARG:0, ARGS:1, ARGS:2, ARG:1, ARG:2)
+WAIT
+RETURN RESULT
+
+
+;*************************************************
+;유틸리티 함수
+;*************************************************
+;·다른 장소에서 무지개 요염한 일을 하고 싶은 경우에 다소 사용할 수 있어?
+;·현재무지개색의 정의 함수 밖에 없지만
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:GET_RAINBOW
+;개  요:홍색치취득용 함수
+;인  수:ARG:0… 몇번째의 색인가(0～11). 범위외의 경우에서도 순번 그대로의 색을반환
+;반환값:색치
+;비  고:식 안의 함수
+;다른 장소에서 무지개색을 사용할 때 재정의하는 것이 귀찮음되었다의 것으로 함수화
+;인수 에러을반환의 것도 그것을 처리하는 것도 귀찮은 것으로, 범위외에서도 순번을 무너뜨리지 않고 처리할 수 있도록(듯이)
+;색의 이름 및 순번은 이하와 같다
+;Red, Orange, Yellow, Spring, Green, Teal, Cyan, Azure, Blue, Violet, Magenta, Pink
+;-------------------------------------------------
+@GET_RAINBOW(ARG:0)
+#FUNCTION
+#DIM CONST RAINBOW = 0xFF9999, 0xFFCC99, 0xFFFF99, 0xCCFF99, 0x99FF99, 0x99FFCC, 0x99FFFF, 0x99CCFF, 0x9999FF, 0xCC99FF, 0xFF99FF, 0xFF99CC
+RETURNF RAINBOW:((ARG:0 >= 0 ? ARG:0 # 11 - ABS(ARG:0 + 1)) % 12)
+
+
+;*************************************************
+;내부 함수
+;*************************************************
+;·진정한 의미로 무지개색에 관한 일은 실질 여기만
+;·다른 장소로부터 직접 불렀을 경우의 동작은 보증되지 않습니다
+;·아무튼, 원래 동작 보증은 어느 함수에도 없지만
+;·보증하지 않는 것뿐으로 사용해도 괜찮은거야. 추천은 하지 않지만
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:_PRINT_RAINBOW_SUB1
+;개  요:홍색PRINT 함수의 내부 처리용 함수
+;인  수:ARGS:0… 표시 캐릭터 라인
+;　　　  ARG:0…[생략가능]색의 비켜 놓아 카운트. 생략 하면 0
+;　　　  ARG:1…[생략가능]진정한 경우, 색의 진행 방향을 역순서로 한다. 생략 하면 가짜(정순)
+;반환값:없음(아마 RESULT 보호)
+;비  고:내부 함수(다른 장소로부터 직접 불렀을 경우의 동작은 보증되지 않습니다)
+;-------------------------------------------------
+@_PRINT_RAINBOW_SUB1(ARGS:0, ARG:0, ARG:1)
+#LOCALSIZE 3
+LOCAL:0 = GETCOLOR()		;현재의 문자색을취득
+LOCAL:1 = STRLENSU(ARGS:0)	;표시 캐릭터 라인의 문자수를취득
+FOR LOCAL:2, 0, LOCAL:1	;문자 몇분 루프시킨다
+	;12로 나눈 나머지, 혹은 11으로부터 그것을 뺀 수로 색설정. 여기에 비켜 놓아 카운트가 들어간다
+	SETCOLOR GET_RAINBOW(ARG:1 ? 11 - (LOCAL:2 + ARG:0) % 12 # (LOCAL:2 + ARG:0) % 12)
+;OriginalString : CHARATU(ARGS:0, LOCAL:2)	
+	PRINTS CHARATU(ARGS:0, LOCAL:2)	;ARGS로부터 1문자 뽑아내 출력. 이런 용도에 CHARATU는 실제 편리
+NEXT
+SETCOLOR LOCAL:0	;원의 문자색에 되돌린다
+RETURN RESULT

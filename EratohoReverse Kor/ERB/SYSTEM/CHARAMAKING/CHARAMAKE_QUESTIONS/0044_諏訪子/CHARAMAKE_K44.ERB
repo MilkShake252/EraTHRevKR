@@ -1,0 +1,58 @@
+﻿;諏訪子＠CPMの人
+@CHARAMAKE_K44(ARG)
+PRINTFORMW 「자、일어나 일어나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「신도 한가하지 않아. 빨리 진행하자구요」
+PRINTFORMW 「당신에게 있어 장마는 어떤 계절？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 계속되는 비로 우울한 계절
+PRINTFORMDL [2] 수확을 위한 준비의 계절
+PRINTFORMDL [3] 조용히 보낼 수 있는 온화한 계절
+PRINTFORMDL [4] 밖에 나올 수 없을 땐 할 일은 한가지
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「네네、알겠어요」
+		PRINTFORMW 「이제 빨리 자」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「확실히 돌아다닐 수 없으면 울적해지죠」
+		PRINTFORMW 「자아、잘 자라고」
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("솔직야",   10)
+	CASE 2
+		PRINTFORML 「그쵸. 그래요. 응응」
+		PRINTFORMW 「고마워、천천히 쉬어」
+		CALLF CM_PROF("지성",     20)
+		CALLF CM_PROF("충동",     -10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("모랄",   10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람",   10)
+	CASE 3
+		PRINTFORML 「빗소리를 들으면서 책을 읽는다거나？　좋네요 좋아요」
+		PRINTFORMW 「시간을 빼앗아 버렸네. 잘자요」
+		CALLF CM_PROF("충동",     -20)
+		CALLF CM_PROF("공격",     -20)
+		CALLF CM_PROF("모랄",   10)
+		CALLF CM_PROF("지성",     10)
+	CASE 4
+		PRINTFORML 「이런이런. 원기왕성하구나. 한 발 해줄까？」
+		PRINTFORMW 「……라니 농담이야. 빨리 자버려」
+		CALLF CM_PROF("지성",     -20)
+		CALLF CM_PROF("모랄",   -20)
+		CALLF CM_PROF("도착",     10)
+		CALLF CM_PROF("공격",     20)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("동성애",   10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람",   10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람",   10)
+ENDSELECT
+RETURN 1

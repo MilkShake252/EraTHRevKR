@@ -1,0 +1,90 @@
+﻿;=================================================
+;
+;	묘사 함수 두는 곳
+;		각 표현은 개인적 취미
+;
+;=================================================
+;본체 측에이했다의 것을 삭제
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:TITTIES_DESCRIPTION_K14
+;개  요점:미유인 것, 그것이 모두
+;인  수:캐릭터번호. 생략 하면 TARGET
+;반환값:캐릭터 라인
+;비  고:식 안의 함수
+;사용예:%TITTIES_DESCRIPTION_K14(TARGET)%
+;-------------------------------------------------
+@TITTIES_DESCRIPTION_K14(ARG = -2)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+ARG = ARG != -2 ? ARG # TARGET
+;거유시
+IF TALENT:ARG:거유
+	STRDATA LOCALS:0
+;OriginalString : 形の整った、たわわな
+		DATA 실속있는、휘어진
+;OriginalString : 張りのある、豊かな
+		DATA 팽팽한、풍만한
+;OriginalString : 
+	ENDDATA
+;빈유시
+ELSEIF TALENT:ARG:빈유
+	STRDATA LOCALS:0
+;OriginalString : 控えめながらも形の整った
+		DATA 겸손하면서도 모양을 갖춘
+;OriginalString : ささやかながらも気品のある
+		DATA 자그마하면서도 기품 있는
+;OriginalString : 
+	ENDDATA
+;그 외
+ELSE
+	STRDATA LOCALS:0
+;OriginalString : 見事に均整のとれた美しい
+		DATA 훌륭하게 균형 잡힌 아름다운
+;OriginalString : たまらない感触の美しい
+		DATA 참을 수 없는 감촉의 아름다운
+;OriginalString : 
+	ENDDATA
+ENDIF
+RETURNF LOCALS:0
+
+;-------------------------------------------------
+;함수명:MOIST
+;개  요점:ARG의윤활상태에 해당하면 진을반환
+;인  수:캐릭터번호. 생략 하면 MASTER
+;비  고:식 안의 함수
+;현재의 바리안트의 사양상, 기능하는 것은 MASTER의 경우에 대해서만
+;-------------------------------------------------
+@MOIST_K14(ARG = -2)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+ARG = ARG != -2 ? ARG # MASTER
+SELECTCASE PALAM:ARG:윤활
+	CASE IS < 250
+		LOCALS:0 = "낮은"
+	CASE IS < 500
+		LOCALS:0 = "일반적인"
+	CASE IS > 499
+		LOCALS:0 = "높은"
+ENDSELECT
+RETURNF LOCALS:0
+
+;-------------------------------------------------
+;MASTER용과 결론짓는 일로 한다
+;-------------------------------------------------
+@PENIS_DESCRIPTION2_K14(ARG)
+#FUNCTIONS
+#LOCALSSIZE 1
+LOCALS:0 = 
+SELECTCASE TCVAR:MASTER:발기도
+	CASE IS > 1500
+		LOCALS:0 = %RAND_SPLIT("한계까지/터질 듯이/위험할 정도로")%%RAND_SPLIT("치솟은/격분한/우뚝 솟은")%
+	CASE IS > 1000
+		LOCALS:0 = %RAND_SPLIT("치솟은/격분한/우뚝 솟은")%
+	CASEELSE
+		LOCALS:0 = %RAND_SPLIT("아직 부드러운/딱딱함이 점차 강해지는/서서히 고개를 들고 있는")%
+ENDSELECT
+RETURNF LOCALS:0

@@ -1,0 +1,53 @@
+﻿;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+;
+;	Module		:VAR.ERH
+;	Facility	:주로 변수의 추가를 선언하는 파일.
+;
+;	Licence		:라이센스 프리.
+;
+;	Modification Data:
+;
+;	Edit	Date			Author					Reason
+;	001		2012/12/19		Ｎ새					신규 작성
+;_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/#
+
+
+;===========================================================
+;변수
+;===========================================================
+;@INPUT_CHARA_LIST에서 사용한다
+;캐릭터 리스트 보존용 변수
+#DIM CHARA_LIST, 1000
+;옵션 규정치 기억 변수
+#DIMS CONST C_OPTION  = "행 수", "렬수", "항목"
+#DIMS CONST C_DEFAULT = "20"  , "1"   , "이름"
+;INPUT_CHARA_LIST 지정 옵션
+#DIMS C_ARGS
+;리스트 표시의 현재 페이지
+#DIM C_PAGE
+;리스트 표시의 페이지행수
+#DIM C_LINM
+;페이지행수기억
+#DIMS GLOBAL SAVEDATA C_G_LINM
+;리스트 표시의 페이지행수
+#DIM C_LINE
+;리스트 표시의 최대렬수
+#DIM C_ROWM
+;최대렬수기억
+#DIMS GLOBAL SAVEDATA C_G_ROWM
+;리스트 표시의 실제렬수
+#DIM C_ROW
+;표시 문자수
+#DIM C_CHAR
+;식별 캐릭터 라인
+#DIMS C_IDES
+;대상로 하는 캐릭터의 분류(캐릭터번호의 처리 방법)
+#DIMS C_TARS
+;구상색에 문자색을 맞춘다
+#DIMS C_KOJS
+;표시 항목
+#DIMS C_ITES
+;표시 항목 기억
+#DIMS GLOBAL SAVEDATA C_G_ITES
+
+

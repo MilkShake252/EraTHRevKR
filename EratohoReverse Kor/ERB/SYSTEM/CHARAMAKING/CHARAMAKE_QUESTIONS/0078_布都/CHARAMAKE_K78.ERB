@@ -1,0 +1,56 @@
+﻿;布都＠ぱ。
+@CHARAMAKE_K78(ARG)
+PRINTFORMW 「왔구나」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「애타게 기다렸어. 당신이 우리들에게 힘을 하사한다고하는 신선이지?」
+PRINTFORMW 「…숨기지 않아도 좋아. 그렇지?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 그렇습니다
+PRINTFORMDL [2] 착각입니다
+PRINTFORMDL [3] 건방져
+PRINTFORMDL [4] 아니요 신문 권유입니다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「…그런가, 과연. 나에게 시련을 주려고 하는 거야?」
+		PRINTFORMW 「좋겠지, 나중에 또 와. 안녕히――」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「역시 그런가!　그렇다면 이렇게 있을수는 없지!」
+		PRINTFORMW 「나는 태자님을 부르러 가겠어. 안녕히――」
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("모랄", -10)
+	CASE 2
+		PRINTFORML 「뭐라고!　그런가, 후, 후후… 나에게는 아직 힘을 얻는 자격이 없다는건가」
+		PRINTFORMW 「좋겠지, 그 시련 받아주겠어. 나중에 또 오도록. 안녕히――」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("모랄", 20)
+	CASE 3
+		PRINTFORML 「크…나를 누구라고 생각하는건가」
+		PRINTFORMW 「그것도 좋겠지. 언젠가 싸움으로 결착을 내자. 안녕히――」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("모랄", -10)
+	CASE 4
+		PRINTFORML 「…시, 신문?」
+		PRINTFORMW 「에에이, 그런 하계의 것 따위 필요하지 않아. 돌아가 돌아가――」
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("결벽", -20)
+ENDSELECT
+RETURN 1

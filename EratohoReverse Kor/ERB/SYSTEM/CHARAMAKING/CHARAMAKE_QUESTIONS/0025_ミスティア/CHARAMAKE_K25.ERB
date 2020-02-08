@@ -1,0 +1,46 @@
+﻿;ミスティア＠shiraiwaR
+@CHARAMAKE_K25(ARG)
+PRINTFORMW 「네 일어나세요ー！야작(夜雀) 소리로 일어나다니 왠만해선 없는 일이라구ー！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「좋아하는 노래를 알려줄래？」
+PRINTFORMW 「아아、말하는 것도 직접 노래하는 것도 괜찮아」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 락
+PRINTFORMDL [2] 팝
+PRINTFORMDL [3] 클래식
+PRINTFORMDL [4] 엔카
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「좋아하는 노래가 없는건가、아니면 이 중에 없었던 것 뿐일까～♪」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「격렬한 걸 좋아해？　꽤 좋은 취미잖아！」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("지성", -10)
+	CASE 2
+		PRINTFORML 「가끔씩은 평범한 것도 좋지！」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 20)
+	CASE 3
+		PRINTFORML 「시대를 넘어 인정받는 명작～」
+		PRINTFORML 「시대를 넘어서도 인정받지 못한 명작～♪」
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("신경질", 30)
+		CALLF CM_PROF("결벽", 10)
+	CASE 4
+		PRINTFORML 「들려줄 마디가 부족해～♪」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("모랄", 20)
+ENDSELECT
+PRINTFORMW 「그럼 다음에 만날 때 까지、밤하늘을 조심해」
+RETURN 1

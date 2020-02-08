@@ -1,0 +1,115 @@
+﻿;依姫＠ぱ。
+@CHARAMAKE_K54(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「눈을 떴어？　곧바로 일으켜서 미안하다고는 생각하지만」
+	CASE 9
+		PRINTFORMW 「그 얼굴、상당히 여기저기 돌아본 것 같구나. 괜찮아、내가 마지막이야」
+	CASEELSE
+		PRINTFORMW 「자、간략하게 갈까」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「인간은 신을 의지하면서 신사에 가지. 야시로란 건 신의 의대(依り代)니까말야」
+PRINTFORMW 「묻겠습니다. 당신이 머물렀으면하는、힘을 빌리고 싶은 신은？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 스가와라 미치자네(菅原道真)
+PRINTFORMDL [2] 오오쿠니누시(大国主命)
+PRINTFORMDL [3] 이자나미노미코토(伊邪那美命)
+PRINTFORMDL [4] 스사노오(素盞鳴尊)
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「모시지 않는 자를 구하는 신은 없습니다」
+		PRINTFORMW 「기원의 목소리를 높이고 신앙하는 것、이것이 시작인 것입니다」
+		;無回答の보정値は고정
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「미치자네라고 하면 학문의 신. 당신은 문관이나、과거에 임하는 사람입니까？」
+		PRINTFORMW 「지혜까지도 소원한다는 것은 그야말로 탐욕. 천신님도 힘드시겠네」
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+	CASE 2
+		PRINTFORML 「다이코쿠님은 여러 모습이라 전해지는 신. 굉장한 미남이라고 하죠」
+		;ちんこある
+		IF PENIS(MASTER)
+			PRINTFORMW 「그의 힘이라면 어떤 여자의 마음도 흐트러집니다. 어쩌면 이 나조차도」
+			CALLF CM_PROF("공격", 10)
+			CALLF CM_PROF("피학", -20)
+			CALLF CM_PROF("솔직야", 20)
+			CALLF CM_PROF("프라이드", 20)
+			CALLF CM_PROF("충동", 20)
+			CALLF CM_PROF("낙관", 10)
+			CALLF CM_PROF("지성", -20)
+			SIF TALENT:MASTER:후타나리
+				CALLF CM_PROF("동성애", 30)
+			CALLF CM_PROF("결벽", -10)
+			CALLF CM_PROF("모랄", -20)
+			CALLF CM_PROF("신경질", -10)
+			CALLF CM_PROF("Ｃ를 좋아하는 사람", 30)
+			CALLF CM_PROF("Ｖ를 좋아하는 사람", -10)
+			CALLF CM_PROF("Ｂ를 좋아하는 사람", -10)
+			CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+		;ちんこない
+		ELSE
+			PRINTFORMW 「…뭔가요 그 얼굴. 당신、안기고 싶은 것 같네요？」
+			CALLF CM_PROF("공격", -20)
+			CALLF CM_PROF("피학", 30)
+			CALLF CM_PROF("솔직야", 10)
+			CALLF CM_PROF("프라이드", -30)
+			CALLF CM_PROF("충동", 20)
+			CALLF CM_PROF("호기심", 20)
+			CALLF CM_PROF("수치", -20)
+			CALLF CM_PROF("낙관", 20)
+			CALLF CM_PROF("지성", -10)
+			CALLF CM_PROF("동성애", -20)
+			CALLF CM_PROF("결벽", -20)
+			CALLF CM_PROF("모랄", -20)
+			CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+		ENDIF
+	CASE 3
+		PRINTFORML 「이자나미는 (일본) 창세신화의 신. 풍요와 다산을 담당하는、더럽혀진 부인」
+		PRINTFORMW 「…더럽혀진 그녀는、저승의 삶과 죽음과 질투의 신. 여자는 슬픔 생물이네요」
+		CALLF CM_PROF("공격", -30)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("수치", 30)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("동성애", -10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「부정에서 출생한 재앙을 가져오는 신. 당신은 그런 힘을 갖고 싶은겁니까？」
+		PRINTFORMW 「그의 아내는 아름답고 풍족한 쿠시나다 공주님. 당신은 현명한 아내를 만날 수 있을까」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -30)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 30)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", -30)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", -30)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+ENDSELECT
+RETURN 1
+

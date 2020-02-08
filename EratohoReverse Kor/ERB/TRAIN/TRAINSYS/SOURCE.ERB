@@ -1,0 +1,615 @@
+﻿@SOURCE_CHECK
+#LOCALSIZE 20
+;────────────────────────────────────
+;조교대상행동에 의한 정신적 부하를 설정（지문·구상로 참조한다）
+;────────────────────────────────────
+;선택당했다REACT의 부하를 보존
+;소비기력가 가장 낮은 COM라면 0, 소비기력가 100 미만이라면 1, 그렇지 않으면 2
+TFLAG:REACT부하 = GET_COMEFFORT(TRAINNAME:SELECTCOM)
+
+;────────────────────────────────────
+;REACT분류에 의한 쾌SOURCE등보정
+;────────────────────────────────────
+CALL REACT_TYPE_CHECK
+
+;────────────────────────────────────
+;변수 정리
+;────────────────────────────────────
+CALL SOURCE_CHECK_DEBUG("SOURCE.ERB외", 1)
+
+;처녀상실·동정상실의 리셋트
+CVARSET TCVAR, 50, 0
+CVARSET TCVAR, 51, 0
+
+TFLAG:전회질싸 = 0
+
+;────────────────────────────────────
+;조교대상행동에 의한기력소비
+;────────────────────────────────────
+CALLF COMABLE_CONT(TRAINNAME:SELECTCOM, 1)
+DOWNBASE:MASTER:기력 += COM_VITALITY(, TRAINNAME:SELECTCOM)
+CALL SOURCE_CHECK_DEBUG("조교대상행동")
+
+;────────────────────────────────────
+;지연당했다조교자행동의 실행
+;────────────────────────────────────
+RESULT = 0
+;조교자행동가조교대상의행동에 의해 좌우되는 경우의 처리
+CALL ACTION_APPLY2
+SIF RESULT
+;OriginalString : 
+	PRINTW
+
+;귀가가 1이 아니면 부른다
+IF RESULT != 1
+	;@ACTION_APPLY2대상외의 일반 처리
+	CALL REACTION_MESSAGE
+;OriginalString : 
+	PRINTW
+ENDIF
+CALL SOURCE_CHECK_DEBUG("조교자추가행동")
+
+;────────────────────────────────────
+;복약 따위에 의한소변게이지 발생
+;────────────────────────────────────
+;소변가 발생하고 처음으로 MAXBASE:MASTER:소변가 준비된다
+;조루, 싫증에영향 된다
+SIF BASE:MASTER:소변 > MAXBASE:MASTER:소변
+	MAXBASE:MASTER:소변 = 10000 - TALENT:MASTER:조루 * 5000 + TALENT:MASTER:지루 * 5000
+
+;────────────────────────────────────
+;징계·모드의 처리
+;────────────────────────────────────
+;징계·모드중은 관련 SOURCE에 보너스가 들어온다
+IF TFLAG:징계·플래그 > 0
+	TIMES SOURCE:MASTER:고통 , 1.25
+	TIMES SOURCE:MASTER:구속 , 1.25
+	TIMES SOURCE:MASTER:트라우마 , 1.15
+ENDIF
+
+;────────────────────────────────────
+;기력 0에 의한 상하의 처리（전반）
+;────────────────────────────────────
+;기력 0로 쾌감에 보너스
+IF BASE:MASTER:기력 <= 0
+	TIMES SOURCE:MASTER:쾌Ｃ, 1.25
+	TIMES SOURCE:MASTER:쾌Ｖ, 1.25
+	TIMES SOURCE:MASTER:쾌Ａ, 1.25
+	TIMES SOURCE:MASTER:쾌Ｂ, 1.25
+ENDIF
+;!!!!!!!!!
+IF BASE:기력 <= 0
+	TIMES SOURCE:쾌Ｃ, 1.25
+	TIMES SOURCE:쾌Ｖ, 1.25
+	TIMES SOURCE:쾌Ａ, 1.25
+	TIMES SOURCE:쾌Ｂ, 1.25
+ENDIF
+
+;────────────────────────────────────
+;쾌감의 소스
+;────────────────────────────────────
+;연속보너스
+;연속수가 1씩 증가해 간다
+;원래는 배들에 증가했지만, 단기 결전에 갖고 오게 되어도 재미있지 않았다고 생각했으므로@이것 보고
+IF TFLAG:ACT == TFLAG:전ACT
+	TFLAG:동일행동보너스 += 1
+ELSE
+	TFLAG:동일행동보너스 = 1
+ENDIF
+;절정용 캐릭터 라인 초기화
+VARSET STR, "", 1030, 1038
+
+;쾌감계 소스를 곱셈하는 장비 아이템을 호출한다
+CALL EQUIP_CHECK2
+
+;SOURCE 계산
+SIF SOURCE:MASTER:쾌Ｃ + SOURCE:MASTER:쾌Ｖ + SOURCE:MASTER:쾌Ａ + SOURCE:MASTER:쾌Ｂ > 0
+	CALL CALC_SOURCE00
+CALL SOURCE_CHECK_DEBUG("SOURCE00")
+
+SIF SOURCE:쾌Ｃ + SOURCE:쾌Ｖ + SOURCE:쾌Ａ + SOURCE:쾌Ｂ > 0
+	CALL CALC_SOURCE40
+CALL SOURCE_CHECK_DEBUG("SOURCE40")
+
+;────────────────────────────────────
+;행위·정신·반응의 소스
+;────────────────────────────────────
+FOR LOCAL, 10, 40
+	;SOURCE 계산
+	IF SOURCE:MASTER:LOCAL > 0
+		CALLFORM CALC_SOURCE{LOCAL}
+		CALL SOURCE_CHECK_DEBUG(@"SOURCE{LOCAL}")
+	ENDIF
+NEXT
+
+;────────────────────────────────────
+;조수보정라고 하는 이름의 농땡이
+;────────────────────────────────────
+;조수가조교자에 협력하면, 조교대상의 전UP가 1.5배가 된다
+IF TFLAG:조수의방침 == 1
+	FOR LOCAL, 0, 14
+		TIMES CUP:MASTER:LOCAL, 1.50
+	NEXT
+ENDIF
+
+;────────────────────────────────────
+;조교대상의 반응에 의한 변동（처음은 이것이 없었지만보다 올바르고조교대상의 행위를 반응하기 위해(때문에) 그치는 유리한 구추가 섬했다）
+;────────────────────────────────────
+;쾌감을 받아들인다/안에 싸!
+IF IS_NOWCOMNAME("쾌감을 받아들인다/안에 싸!/가게해줘!")
+	TIMES CUP:MASTER:공순 , 1.10
+	TIMES CUP:MASTER:불쾌 , 0.50
+	TIMES CUP:MASTER:억울 , 0.25
+;상냥하게 응답한다/적극적으로 한다
+ELSEIF IS_NOWCOMNAME("상냥하게 응답한다/적극적으로 한다")
+	TIMES CUP:MASTER:반항 , 0.80
+	TIMES CUP:MASTER:불쾌 , 0.60
+	TIMES CUP:MASTER:억울 , 0.20
+;애정을 담아 한다/더 하드하게 해/기분좋게 해
+ELSEIF IS_NOWCOMNAME("애정을 담아 한다/더 하드하게 해/기분 좋아!/기분좋게 해")
+	TIMES CUP:MASTER:공포 , 0.50
+	TIMES CUP:MASTER:공순 , 1.25
+	TIMES CUP:MASTER:불쾌 , 0.20
+	TIMES CUP:MASTER:억울 , 0.05
+	TFLAG:호감도업 += 1
+ENDIF
+
+;────────────────────────────────────
+;궁합에 의한 상하의 처리(미구현)
+;────────────────────────────────────
+;R = NO:PLAYER
+;IF RELATION:R != 0
+;	PRINTFORML ＜궁합{RELATION:R/100}. {RELATION:R%100}배＞
+;ENDIF
+
+;────────────────────────────────────
+;조교자의체력/기력추가 소비（처음은 소스만으로 이것을 해결했다 샀지만 잘 표현할 수 없지 않아했다…）
+;────────────────────────────────────
+;ACT분류 또는<ACT>
+
+;회화/<매도>
+IF TFLAG:ACT분류 == 0 || IS_NOWACTNAME("매도")
+	DOWNBASE:기력 += 25
+;애무
+ELSEIF TFLAG:ACT분류 == 1
+	DOWNBASE:체력 += 30
+	DOWNBASE:기력 += 50
+;도구
+ELSEIF TFLAG:ACT분류 == 2
+	DOWNBASE:체력 += 40
+	DOWNBASE:기력 += 35
+;성교
+ELSEIF TFLAG:ACT분류 == 3
+	DOWNBASE:체력 += 60
+	DOWNBASE:기력 += 50
+;수치
+ELSEIF TFLAG:ACT분류 == 4
+	;<자위과시>
+	SIF IS_NOWACTNAME("자위과시")
+		DOWNBASE:기력 += 40
+	;<수치플레이>/<야외플레이>
+	SIF IS_NOWACTNAME("수치플레이/야외플레이")
+		DOWNBASE:체력 += 40
+	DOWNBASE:체력 += 15
+	DOWNBASE:기력 += 40
+;봉사
+ELSEIF TFLAG:ACT분류 == 5
+	;<이라마치오>
+	SIF IS_NOWACTNAME("이라마치오")
+		DOWNBASE:기력 += 40
+	DOWNBASE:체력 += 5
+	DOWNBASE:기력 += 30
+;가학/<매도>
+ELSEIF TFLAG:ACT분류 == 6 && !IS_NOWACTNAME("매도")
+	DOWNBASE:체력 += 50
+	DOWNBASE:기력 += 15
+;이상/<방치플레이>
+ELSEIF TFLAG:ACT분류 == 7 && !IS_NOWACTNAME("방치플레이")
+	DOWNBASE:체력 += 35
+	DOWNBASE:기력 += 60
+ENDIF
+
+;────────────────────────────────────
+;기력 0에 의한 상하의 처리（후반）
+;────────────────────────────────────
+;조교대상기력 0시, 효과에 보너스
+IF BASE:MASTER:기력 <= 0
+	TIMES CUP:MASTER:욕정 , 1.40
+	TIMES CUP:MASTER:공포 , 1.20
+	TIMES CUP:MASTER:반항 , 0.60
+	TIMES CUP:MASTER:불쾌 , 0.80
+ENDIF
+
+LOCAL = DOWNBASE:MASTER:기력 - BASE:MASTER:기력
+;저항불능라면
+IF TFLAG:저항불능
+	;기력는 줄어들지 않고 체력로 돌려진다
+	DOWNBASE:MASTER:체력 += DOWNBASE:MASTER:기력
+	DOWNBASE:MASTER:기력 = 0
+;기력가 부가 되는 감소량이라면
+ELSEIF LOCAL > 0
+	;기력감소량의 것 1/4이체력로 돌려져이성도 감소한다
+	DOWNBASE:MASTER:체력 += LOCAL
+	DOWNBASE:MASTER:이성 += LOCAL / 2
+ENDIF
+
+;────────────────────────────────────
+;조교대상의 게이지의 변동
+;────────────────────────────────────
+BASE:MASTER:체력 -= DOWNBASE:MASTER:체력
+BASE:MASTER:기력 -= DOWNBASE:MASTER:기력
+BASE:MASTER:사정 -= DOWNBASE:MASTER:사정
+BASE:MASTER:모유 -= DOWNBASE:MASTER:모유
+BASE:MASTER:소변 -= DOWNBASE:MASTER:소변
+;이성감소량보정
+SIF TALENT:MASTER:자제심
+	TIMES DOWNBASE:MASTER:이성 , 0.75
+SIF TALENT:MASTER:충동적
+	TIMES DOWNBASE:MASTER:이성 , 1.25
+BASE:MASTER:이성 -= DOWNBASE:MASTER:이성
+
+;────────────────────────────────────
+;조교자의 게이지의 변동
+;────────────────────────────────────
+;흥미의 처리, 조교대상의 반응이나변화를 보이지 않으면 시시함
+
+;LOCAL:1 =긍정계계
+LOCAL:1 = SOURCE:MASTER:굴종 + SOURCE:MASTER:달성 + SOURCE:MASTER:열락
+;LOCAL:2 = 쾌락계계
+LOCAL:2 = CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ + CUP:MASTER:욕정
+;LOCAL:3 = 순종계계
+LOCAL:3 = CUP:MASTER:굴복 + CUP:MASTER:공포 + CUP:MASTER:공순 + CUP:MASTER:고통 + CUP:MASTER:치정
+;LOCAL:4 =저항계계
+LOCAL:4 = CUP:MASTER:반항 * 2 + CUP:MASTER:불쾌 + CUP:MASTER:억울
+;LOCAL:5 = 조교자쾌락계계		이것이 있어도 좋은 기분이했다의 것으로 추가해 본다@/L
+LOCAL:5 = CUP:쾌Ｃ + CUP:쾌Ｖ + CUP:쾌Ａ + CUP:쾌Ｂ
+;긍정/쾌락/순종계계중 한쪽이 규정치에 이르고 있으면흥미증가
+;(무관심에 마이나스, 호기심에 플러스보정)
+LOCAL = MAX(LOCAL:1, LOCAL:2, LOCAL:3, LOCAL:5)
+BASE:흥미 += LINE_CALC(LOCAL, "300→10, 1500→50, LIMIT/10～50") + (TALENT:호기심 - TALENT:무관심) * LINE_CALC(LOCAL, "300→5, 1500→20, LIMIT/5～20")
+
+;민감의조교자는 부의 반응에 지긋지긋
+;민감시, 저항계계가 규정치에 이르고 있으면흥미감소
+SIF TALENT:민감
+	BASE:흥미 -= LINE_CALC(LOCAL:4, "0→0, 1500→150, LIMIT/0～150")
+
+;자연소모
+;(흥미가 1/3를 자르면소모속도가 내린다)
+;조교레벨에 의한소모가속을 생략했다판
+;이것 너무 기계적이라 심하구나w
+IF BASE:흥미 > MAXBASE:흥미 / 3
+	BASE:흥미 -= MAXBASE:흥미 * 20 / 200
+ELSE
+	BASE:흥미 -= MAXBASE:흥미 * 20 / 300
+ENDIF
+
+;흥미를 0-MAXBASE의 범위에 거둔다
+BASE:흥미 = LIMIT(BASE:흥미, 0, MAXBASE:흥미)
+
+;흥미저하에 의한기력소모
+;(활발한성격인 만큼기력소모량은 크다)
+SIF BASE:흥미 < 200
+	DOWNBASE:기력 += (300 - BASE:흥미) / (10 + TALENT:무관심 * 3 - TALENT:호기심 * 3 + TALENT:감정결여 * 2 - TALENT:정서적 * 2)
+
+;초조함의 처리
+;저항계계로부터보정 해초조함를 산출
+DOWNBASE:초조함 -= LIMIT(LOCAL:4 / 15, 20, 100) + (TALENT:민감 - TALENT:신중함) * LIMIT(LOCAL:4 / 75 + 5, 10, 25) + (TALENT:건방짐 - TALENT:얌전한) * LIMIT(LOCAL:4 / 150, 2, 10)
+
+;애원/날뛴다/요구를거부
+;(REACT시 소질에 의해 추가보정)
+IF IS_COMGRONAME("용서를 빌다")
+	DOWNBASE:초조함 -= 25 - TALENT:마음씨착한 * 25 + TALENT:심술궂음 * 10 + TALENT:새드 * 25 - TALENT:MASTER:연모 * 5 - TALENT:MASTER:예속 * 10 + PALAM:MASTER:반항 / 250
+ELSEIF IS_COMGRONAME("날뛴다")
+	DOWNBASE:초조함 -= 50 + PALAM:MASTER:반항 / 200 - TALENT:신중함 * 15 + TALENT:민감 * 20 + TALENT:프라이드높음 * 20 + MARK:반항각인 * 2
+ELSEIF IS_COMGRONAME("거부")
+	DOWNBASE:초조함 -= 25 + PALAM:MASTER:굴복 / 200 - TALENT:신중함 * 25 + TALENT:민감 * 15 + TALENT:마음씨착한 * 5 + TALENT:프라이드높음 * 10 + MARK:굴복각인
+ENDIF
+
+;광기로 랜덤 변동, 이 설정에 찬동 할 수 없는 사람은 꽤 있을지도 모릅니다…
+SIF TALENT:광기
+	DOWNBASE:초조함 -= (10 - RAND:20) * (1 + RAND:10)
+
+;초조함시, 조교대상가순종이면만족도에 응해초조함감쇠
+SIF DOWNBASE:초조함 > MAXBASE:초조함 / 3 && CUP:MASTER:반항 < 10
+	DOWNBASE:초조함 += BASE:만족 / 20
+
+;분노시, 조교강도에 응해초조함감쇠
+IF TCVAR:상태변화 == 6
+	;공순보정
+	LOCAL = CUP:MASTER:공순 * POWER(2, TALENT:마음씨착한 - TALENT:심술궂음 + 10) / 1024
+	;굴복보정
+	LOCAL += (CUP:MASTER:굴복 + MARK:굴복각인 * 50) * POWER(2, TALENT:솔직 + 10) / 1024
+	DOWNBASE:초조함 += LOCAL
+ENDIF
+
+;BASE치 변동 처리
+BASE:체력 -= DOWNBASE:체력
+BASE:기력 -= DOWNBASE:기력
+BASE:사정 -= DOWNBASE:사정
+BASE:모유 -= DOWNBASE:모유
+BASE:소변 -= DOWNBASE:소변
+
+;안절부절 의한이성소모
+;그 만큼초조함감쇠
+;이성 0시는 그 반 한층 더초조개
+IF BASE:초조함 > 700
+	LOCAL = (BASE:초조함 - 500) / (5 + TALENT:광기 * RAND:3)
+	IF BASE:이성 > 0
+		DOWNBASE:이성 += LOCAL
+		DOWNBASE:초조함 += LOCAL
+	ELSE
+		DOWNBASE:초조함 -= LOCAL / 2
+	ENDIF
+ENDIF
+;BASE치 변동 처리
+BASE:초조함 -= DOWNBASE:초조함
+;초조함를 0-MAXBASE의 범위에 거둔다
+BASE:초조함 = LIMIT(BASE:초조함, 0, MAXBASE:초조함)
+
+;이성감소량이 소질에 의해보정 된다
+SIF TALENT:자제심
+	TIMES DOWNBASE:이성 , 0.75
+SIF TALENT:충동적
+	TIMES DOWNBASE:이성 , 1.25
+;BASE치 변동 처리
+BASE:이성 -= DOWNBASE:이성
+
+;BASE치 변동 처리
+BASE:만족 -= DOWNBASE:만족
+
+;────────────────────────────────────
+;커맨드 실행시의구상
+;────────────────────────────────────
+CALL KOJO_REACT
+
+IF TCVAR:MASTER:REACT자세변화
+	PRINTL 
+	CALL POSE_SHOW
+	TCVAR:MASTER:REACT자세변화 = 0
+ENDIF
+DRAWLINE
+
+;────────────────────────────────────
+;절정시의구상
+;────────────────────────────────────
+PRINTL 
+FLAG:지문제어 = 0
+RESULT = 0
+;비트화에서의 지정이 불편의 온상이 되어있는 기색이 있었으므로 생략 해 본다@/L
+;공중육변기플레이시의 호출은 규제한다//1. 1 series까지의 잠정 처치, 라는 것으로@/L
+SIF !IS_NOWACTNAME("공중육변기플레이") && (MASTER_EX() || TARGET_EX())	;MASTER_EX(79) || TARGET_EX(15)
+	CALL KOJO_EVENT(20)
+IF RESULT
+	PRINTL 
+	DRAWLINE
+ENDIF
+
+RESULT = 0
+SIF MASTER_EX(4) || TARGET_EX(4)
+	CALL KOJO_EVENT_ASSI(20)
+
+RESULT = 0
+IF MASTER_EX(8) || TARGET_EX(8)
+	ASSI = ASSI:2
+	CALL KOJO_EVENT_ASSI(20)
+	ASSI = ASSI:1
+ENDIF
+
+;RESULT = 0
+;IF MASTER_EX(16) || TARGET_EX(16)
+;	ASSI = ASSI:3
+;	CALL KOJO_EVENT_ASSI(20)
+;	ASSI = ASSI:1 < 0? ASSI:3 # ASSI:1
+;ENDIF
+
+;────────────────────────────────────
+;절정관련의 표시
+;────────────────────────────────────
+CALL PRINT_SOURCE00_40
+
+;의존도의 계산
+VARSET LOCAL
+;사정orＣ절정와 타 3종절정의 화로 계산
+LOCAL = (MASTER_EX(, 1) || MASTER_EX(, 12)) + MASTER_EX(, 3) + MASTER_EX(, 3) + MASTER_EX(, 4)
+;2승의 10배를 기초치로 한다
+LOCAL = LOCAL*LOCAL*10
+;방뇨·분유라도+10한다
+LOCAL += (MASTER_EX(, 11) + MASTER_EX(, 13)) * 10
+;주인님에질내사정 되고 있으면 20을 더한다
+LOCAL += TE_PLAYER(1) == 4 && TE_PLAYER(0) == 1 ? 20 # 0
+
+;사정orＣ절정와 타 3종절정의 화로 계산
+LOCAL:1 = (TARGET_EX(, 1) || TARGET_EX(, 12)) + TARGET_EX(, 3) + TARGET_EX(, 3) + TARGET_EX(, 4)
+;2승의 10배를 기초치로 한다
+LOCAL:1 = LOCAL:1*LOCAL:1*10
+;분유라도+10한다
+LOCAL:1 += TARGET_EX(, 11) * 10
+;노예에질내사정 되고 있으면 20을 더한다
+LOCAL:1 += ME_PLAYER(1) == 4 && ME_PLAYER(0) == 2 ? 20 # 0
+
+;의존도변화
+CALL ADD_DEPEND(LOCAL:1, LOCAL)
+
+
+;────────────────────────────────────
+;밀어넘어짐종료
+;────────────────────────────────────
+;IF (SUMARRAY(NOWEX, 0, 4) || NOWEX:MASTER:사정) && TEQUIP:밀어넘어지는중 == 1
+IF (NOWEX:MASTER:Ｃ절정 || NOWEX:MASTER:Ｖ절정 || NOWEX:MASTER:Ａ절정 || NOWEX:MASTER:Ｂ절정 || NOWEX:MASTER:사정) && TEQUIP:밀어넘어지는중 == 1
+	TEQUIP:밀어넘어지는중 = 0
+	TFLAG:밀어넘어짐경과 = TFLAG:경과시간
+	PRINTFORMW %타겟은% %플레이어를% 절정시켜 만족한 것 같다…
+ENDIF
+IF TFLAG:밀어넘어짐경과 && (TFLAG:경과시간 - TFLAG:밀어넘어짐경과) > 15 && TEQUIP:밀어넘어지는중
+	TEQUIP:밀어넘어지는중 = 0
+	TFLAG:밀어넘어짐경과 = TFLAG:경과시간
+	PRINTFORMW %타겟은% %플레이어를% 실컷 희롱해 만족한 것 같다…
+ENDIF
+
+;────────────────────────────────────
+;각인취득의 체크, 그리고각인에 의한 소질 변동
+;────────────────────────────────────
+CALL MARK_CHECK_SOURCE
+
+;────────────────────────────────────
+;경험의 체크, 조교소스의 표시
+;────────────────────────────────────
+CALL EXP_CHECK
+FOR LOCAL, 0, 50
+	PRINTFORM \@ SOURCE:MASTER:LOCAL > 0 ? %SOURCENAME:LOCAL%({SOURCE:MASTER:LOCAL}) # \@
+NEXT
+FOR LOCAL, 0, 50
+	PRINTFORM \@ SOURCE:LOCAL > 0 ? 조교자%SOURCENAME:LOCAL%({SOURCE:LOCAL}) # \@
+NEXT
+PRINTL 
+
+;────────────────────────────────────
+;수치 변동의 표시
+;────────────────────────────────────
+;궁합
+;SIF RELATION:(NO:PLAYER) && RELATION:(NO:PLAYER) != 100
+;	PRINTFORML ＜궁합%TOSTR(RELATION:(NO:PLAYER), "0\\. 00")%배＞
+
+;체력·기력의 감소
+PRINTFORML 체력-{DOWNBASE:MASTER:체력} 기력-{DOWNBASE:MASTER:기력} 이성-{DOWNBASE:MASTER:이성}
+PRINTFORML （%CALLNAME:TARGET%）체력-{DOWNBASE:체력} 기력-{DOWNBASE:기력}
+
+;CUP:MASTER:고통의 것 1/30을마력로서취득
+TFLAG:취득마력 += CUP:MASTER:고통 / 30
+
+;체력·기력 0, 피폐의 메세지도 있으므로 이것은필요 없다고 생각합니다
+;SIF BASE:MASTER:체력 <= 0
+;	PRINTL ★체력 0★
+;SIF BASE:MASTER:기력 <= 0
+;	PRINTL ★기력 0★
+;SIF BASE:체력 <= 0
+;	PRINTL ★체력 0★（조교자）
+;SIF BASE:기력 <= 0
+;	PRINTL ★기력 0★（조교자）
+
+;────────────────────────────────────
+;능력 상승의 호출
+;여기에서는 대범한 조건으로 짜, 상세한 판정은 ABLUP_**함수로 실시한다
+;────────────────────────────────────
+
+;조교대상능력
+
+;순종
+;굴복 + 공순, 또는공포가 상승하고 있을 때
+;또, 조교대상의 반응이 날뛴다/요구에 응하지 않고 있으면 판정하지 않는다
+SIF (CUP:MASTER:굴복 + CUP:MASTER:공순 > 0 || CUP:MASTER:공포 > 0) && TFLAG:REACT분류 < 6
+	CALL ABLUP_0M
+;욕망
+;욕정상승시
+SIF CUP:MASTER:욕정 > 0
+	CALL ABLUP_1M
+;기교
+;조교중용이봉사계이며, 조교자가 쾌감을 얻었을 때
+SIF TFLAG:ACT분류 == 5 && CUP:쾌Ｃ + CUP:쾌Ｖ + CUP:쾌Ａ + CUP:쾌Ｂ > 0
+	CALL ABLUP_2M
+;Ｘ감각
+;조교대상가 쾌감을 얻었을 때
+FOR LOCAL, 0, 4
+	SIF CUP:MASTER:LOCAL > 0
+		CALLFORM ABLUP_{3 + LOCAL}M
+NEXT
+;봉사정신
+;조교중용이봉사계/성교봉사인지, 조교자삽입중체위가기승위인 경우
+;더 한층조교대상가적극적으로 따라, 쾌감+욕정합계가 1000 돌파
+SIF (TFLAG:ACT분류 == 5 || TFLAG:ACT분류 == 10  || TEQUIP:성교중 == 3 ) && IS_COMGRONAME("적극적으로 한다") && CUP:MASTER:쾌Ｃ + CUP:MASTER:쾌Ｖ + CUP:MASTER:쾌Ａ + CUP:MASTER:쾌Ｂ + CUP:MASTER:욕정 > 1000
+	CALL ABLUP_7M
+;노출증
+;치정 상승시
+SIF CUP:MASTER:치정 > 0
+	CALL ABLUP_8M
+;레즈끼
+;조교대상, 조교자가 함께 남자는 아니다
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자 == 0
+	CALL ABLUP_9M
+;ＢＬ끼
+;조교대상, 조교자가 함께 남자
+SIF TALENT:MASTER:남자 && TALENT:남자
+	CALL ABLUP_10M
+;마조끼
+;고통 + 불쾌상승량이억울상승량을 웃돈다
+SIF CUP:MASTER:고통 + CUP:MASTER:불쾌 > CUP:MASTER:억울
+	CALL ABLUP_11M
+;자위중독
+;조교대상자위중
+SIF GETBIT(TEQUIP:자위중, 0)
+	CALL ABLUP_12M
+;정액중독
+;조교자 또는조교대상가사정
+SIF NOWEX:사정 || NOWEX:MASTER:사정
+	CALL ABLUP_13M
+;레즈중독
+;조교대상, 조교자가 함께 남자는 아니다
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자 == 0
+	CALL ABLUP_14M
+;고통중독
+;고통상승량이억울상승량을 웃돈다
+SIF CUP:MASTER:고통 > CUP:MASTER:억울
+	CALL ABLUP_15M
+;구속중독
+;조교대상가 어떠한구속를 받는다
+SIF TEQUIP:밧줄 || TEQUIP:눈가리개 || TEQUIP:볼개그 || TEQUIP:삼각목마
+	CALL ABLUP_16M
+
+;조교자능력
+
+;욕망
+;조교자가 쾌감을 얻었을 때
+SIF CUP:쾌Ｃ + CUP:쾌Ｖ + CUP:쾌Ａ + CUP:쾌Ｂ > 0
+	CALL ABLUP_1T
+;기교
+;조교대상절정시
+SIF NOWEX:MASTER:Ｃ절정 + NOWEX:MASTER:Ｖ절정 + NOWEX:MASTER:Ａ절정 + NOWEX:MASTER:Ｂ절정 > 0
+	CALL ABLUP_2T
+;Ｘ감각
+;조교자가 쾌감을 얻었을 때
+FOR LOCAL, 0, 4
+	SIF CUP:LOCAL > 0
+		CALLFORM ABLUP_{3 + LOCAL}T
+NEXT
+;봉사정신
+;조교중용이애무/도구계
+SIF TFLAG:ACT분류 == 1 || TFLAG:ACT분류 == 2
+	CALL ABLUP_7T
+;노출증
+;현재 조건 없음
+;SIF ???
+	;CALL ABLUP_8T
+;레즈끼
+;조교대상, 조교자가 함께 남자는 아니다
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자 == 0
+	CALL ABLUP_9T
+;ＢＬ끼
+;조교대상, 조교자가 함께 남자
+SIF TALENT:MASTER:남자 && TALENT:남자
+	CALL ABLUP_10T
+;정액중독
+;조교자 또는조교대상가사정
+SIF NOWEX:사정 || NOWEX:MASTER:사정
+	CALL ABLUP_13T
+;레즈중독
+;조교대상, 조교자가 함께 남자는 아니다
+SIF TALENT:MASTER:남자 == 0 && TALENT:남자 == 0
+	CALL ABLUP_14T
+;조교계열 기능
+;대응하는조교계열에 대해 판정
+SIF 0 <= TFLAG:ACT분류 && TFLAG:ACT분류 <= 8
+	CALLFORM ABLUP_{20 + TFLAG:ACT분류}T
+;성교
+;조교중용이성교봉사계
+SIF TFLAG:ACT분류 == 10
+	CALL ABLUP_23T
+
+@SOURCE_CHECK_DEBUG(ARGS, ARG)
+RETURN 0
+SIF ARG
+	VARSET LOCAL
+NOSKIP
+	PRINTFORML %ARGS% {DOWNBASE:MASTER:기력}(+{DOWNBASE:MASTER:기력 - LOCAL})
+ENDNOSKIP
+LOCAL = DOWNBASE:MASTER:기력
+RETURN 0

@@ -1,0 +1,405 @@
+﻿;────────────────────────────────────
+;성교(봉사) (정상 95/후배 96/승마 103/대면 97/배면 98/ＡＳ99)
+;────────────────────────────────────
+@ACT_M10(ARG = 0)
+;1이상이라면 판정을 실시하지 않는다
+#DIM LCOUNT, 1
+
+;함수 초기화 ;함수 초기화
+CALL ACT_M_INIT(10)
+
+;처리 개시
+
+LOCALS = ACT_ACTM10
+
+CALL CHA_CRI_VAR, "기준치"
+CALLFORM %LOCALS%_REFERENCE
+
+CALL CHA_CRI_VAR, @"이번방침(%POLICY("지금")%)"
+CALLFORM %LOCALS%_COURCE
+
+CALL CHA_CRI_VAR, "조교자의 소질"
+CALLFORM %LOCALS%_TALENT_T
+
+CALL CHA_CRI_VAR, "조교대상의 소질"
+CALLFORM %LOCALS%_TALENT_M
+
+CALL CHA_CRI_VAR, "조교자의 능력"
+CALLFORM %LOCALS%_ABL_T
+
+CALL CHA_CRI_VAR, "밧줄"
+CALLFORM %LOCALS%_ROPE
+
+CALL CHA_CRI_VAR, "눈가리개"
+CALLFORM %LOCALS%_EYEMASK
+
+CALL CHA_CRI_VAR, "거울"
+CALLFORM %LOCALS%_T_MILLER
+
+CALL CHA_CRI_VAR, "체위"
+CALLFORM %LOCALS%_S_POSITION
+
+CALL CHA_CRI_VAR, "연속행동보정"
+CALLFORM %LOCALS%_PREV
+
+CALL CHA_CRI_VAR, "구상보정치"
+CALL ACT_ACTM_KOJO_CORRECTION_T, 10
+
+CALL CHA_CRI_VAR, "ACT보정치"
+CALLFORM %LOCALS%_CORRECTION(ARG)
+
+;ARG가 1이상이라면 처리 중단
+SIF ARG
+	RETURN RESULT
+
+CALL CHA_CRI_VAR, "실행 판정"
+CALLFORM %LOCALS%_ABLE
+
+;────────────────────────────────────
+;최종판정
+;────────────────────────────────────
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
+
+;삽입 하는 봉이 없는 경우, 가능하면페니스밴드에변화. 페니스밴드가 없으면 여기에는 오지 않는다
+IF !PENIS(MASTER) && !TEQUIP:페니스밴드
+	CALL ACT_ABLE26
+	IF RESULT
+		TFLAG:ACT분류 = 2
+		TFLAG:ACT     = 26
+	ELSE
+		TFLAG:ACT분류 = 0
+		TFLAG:ACT     = 0
+	ENDIF
+ELSEIF LOCAL == -1
+	SIF FLAG:디버그
+;OriginalString : (성교봉사ACT분류に実行可能なACTが存在しません)
+		PRINTL (성교 봉사ACT분류에 실행 가능한ACT가 존재하지 않습니다)
+	TFLAG:ACT = -1
+	CALL ACT_MENU_RESULT(2, "성봉")
+;삽입 하는 봉이 없는 경우,
+ELSE
+	LOCAL = GET_ACTNUM(RESULTS)
+	TFLAG:ACT = LOCAL
+	;성교봉사연속수가산 처리
+	SPLIT "351/352/354/355/356////353", "/", LOCALS
+	LOCAL = TOINT(LOCALS:(LOCAL - 95))
+	TFLAG:LOCAL++
+ENDIF
+CALL ANA_CRI_VAR()
+
+;-------------------------------------------------------------------------
+;기준치
+;-------------------------------------------------------------------------
+@ACT_ACTM10_REFERENCE
+	
+	;실험 코드
+	SELECTCASE FLAG:항문봉사옵션
+		CASE 0 ;애널성교까지 허용
+			
+		CASE 1 ;손가락, 혀만 허용
+			CALL ADD_CRI_VAR("항문섹스시킨다", -999)
+		CASE 2 ;혀만 허용
+			CALL ADD_CRI_VAR("항문섹스시킨다", -999)
+		CASE 3 ;손가락만 허용
+			CALL ADD_CRI_VAR("항문섹스시킨다", -999)
+		CASE 4 ;항문봉사 불가
+			CALL ADD_CRI_VAR("항문섹스시킨다", -999)
+	ENDSELECT
+
+;필요하지 않을지도라고 생각했으므로 시험삼아 무효화@이것 보고
+[SKIPSTART]
+CALL ADD_CRI_VAR("정상위시킨다", 10)
+CALL ADD_CRI_VAR("후배위시킨다", 8, 2)
+CALL ADD_CRI_VAR("역강간", 8, 2)
+CALL ADD_CRI_VAR("대면좌위시킨다", 8, 2)
+CALL ADD_CRI_VAR("배면좌위시킨다", 7, 3)
+CALL ADD_CRI_VAR("항문섹스시킨다", 5)
+[SKIPEND]
+
+;------------------------------------------
+;이번조교방침
+;------------------------------------------
+@ACT_ACTM10_COURCE
+;조교방침(1=휴식/2=소프트/3=노멀/4=하드/5=이상)
+SELECTCASE POLICY("지금")
+	CASE "소프트"
+		CALL ADD_CRI_VAR("정상위시킨다"  , 1, 2)
+		CALL ADD_CRI_VAR("대면좌위시킨다", 3)
+	CASE "하드"
+		CALL ADD_CRI_VAR("후배위시킨다"        , 4)
+		CALL ADD_CRI_VAR("배면좌위시킨다"      , 3)
+		CALL ADD_CRI_VAR("항문섹스시킨다", 2)
+	CASE "이상"
+		CALL ADD_CRI_VAR("항문섹스시킨다", 3)
+		CALL ADD_CRI_VAR("역강간", 1, 4)
+ENDSELECT
+
+
+;-------------------------------------------------------------------------
+;조교자의 소질을 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM10_TALENT_T	
+;조교자가겁쟁이/꿋꿋함
+IF TALENT:겁쟁이
+	CALL ADD_CRI_VAR("정상위시킨다", , 2)
+	CALL ADD_CRI_VAR("후배위시킨다" , -2)
+	CALL ADD_CRI_VAR("대면좌위시킨다", , 3)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -2)
+	CALL ADD_CRI_VAR("역강간", -5)
+ELSEIF TALENT:꿋꿋함
+	CALL ADD_CRI_VAR("후배위시킨다"  , 3)
+	CALL ADD_CRI_VAR("배면좌위시킨다", 2)
+	CALL ADD_CRI_VAR("항문섹스시킨다", 1)
+ENDIF
+
+;조교자가반항적/솔직
+IF TALENT:반항적
+	CALL ADD_CRI_VAR("역강간", , 9)
+ELSEIF TALENT:솔직
+	CALL ADD_CRI_VAR("정상위시킨다", 2)
+	CALL ADD_CRI_VAR("역강간"   , -3)
+ENDIF
+
+;조교자가일선을넘지않음
+IF TALENT:일선을넘지않음
+	CALL ADD_CRI_VAR("후배위시킨다"  , -3)
+	CALL ADD_CRI_VAR("역강간"      , -4)
+	CALL ADD_CRI_VAR("대면좌위시킨다", -1)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -3)
+	CALL ADD_CRI_VAR("항문섹스시킨다", -5)
+ENDIF
+
+;조교자가청초
+IF TALENT:청초
+	CALL ADD_CRI_VAR("정상위시킨다"  ,  3)
+	CALL ADD_CRI_VAR("후배위시킨다"  , -3)
+	CALL ADD_CRI_VAR("대면좌위시킨다",  2)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -3)
+	CALL ADD_CRI_VAR("항문섹스시킨다", -3)
+	CALL ADD_CRI_VAR("역강간", -4)
+ENDIF
+
+;조교자가튀고싶어함
+SIF TALENT:튀고싶어함
+	CALL ADD_CRI_VAR("역강간", , 5)
+
+;조교자의처녀, 정조관념등의 처리
+IF TALENT:처녀 && CFLAG:M호의 < 1000
+	CALL ADD_CRI_VAR("정상위시킨다"  , -5 - TALENT:정조관념 * 5 + TALENT:정조무관심 * 3 - CFLAG:M호의 / 500)
+	CALL ADD_CRI_VAR("후배위시킨다"  , -5 - TALENT:정조관념 * 5 + TALENT:정조무관심 * 3 - CFLAG:M호의 / 500)
+	CALL ADD_CRI_VAR("역강간"      , -5 - TALENT:정조관념 * 5 + TALENT:정조무관심 * 3 - CFLAG:M호의 / 500)
+	CALL ADD_CRI_VAR("대면좌위시킨다", -5 - TALENT:정조관념 * 5 + TALENT:정조무관심 * 3 - CFLAG:M호의 / 500)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -5 - TALENT:정조관념 * 5 + TALENT:정조무관심 * 3 - CFLAG:M호의 / 500)
+ENDIF
+
+;조교자가수동적
+IF TALENT:수동적
+	CALL ADD_CRI_VAR("정상위시킨다", 3)
+	CALL ADD_CRI_VAR("후배위시킨다", 3)
+ENDIF
+
+;조교자가헌신적
+IF TALENT:헌신적
+	CALL ADD_CRI_VAR("대면좌위시킨다", 2)
+	CALL ADD_CRI_VAR("배면좌위시킨다", 2)
+	CALL ADD_CRI_VAR("역강간"      , 3)
+ENDIF
+
+;조교자가음호
+IF TALENT:음호
+	CALL ADD_CRI_VAR("정상위시킨다"  , 4, 2)
+	CALL ADD_CRI_VAR("후배위시킨다"  , 4, 2)
+	CALL ADD_CRI_VAR("역강간"      , 4, 2)
+	CALL ADD_CRI_VAR("대면좌위시킨다", 4, 2)
+	CALL ADD_CRI_VAR("배면좌위시킨다", 4, 2)
+ENDIF
+
+;조교자가새드
+IF TALENT:새드
+	CALL ADD_CRI_VAR("정상위시킨다"  ,  2)
+	CALL ADD_CRI_VAR("후배위시킨다"  , -2)
+	CALL ADD_CRI_VAR("역강간"      ,  5)
+	CALL ADD_CRI_VAR("대면좌위시킨다",  3)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -2)
+ENDIF
+
+;조교자가 마음 상냥함
+IF TALENT:마음씨착한
+	CALL ADD_CRI_VAR("정상위시킨다"  , 2)
+	CALL ADD_CRI_VAR("대면좌위시킨다", 2)
+ENDIF
+
+;조교사가허리기술
+IF TALENT:MASTER:허리기술
+	CALL ADD_CRI_VAR("정상위시킨다", 2)
+	CALL ADD_CRI_VAR("역강간"    , 5)
+ENDIF
+
+;조교자가변태적
+IF TALENT:변태적
+	CALL ADD_CRI_VAR("항문섹스시킨다", , 2)
+	CALL ADD_CRI_VAR("역강간", , 2)
+ENDIF
+
+;조교자가Ｃ민감/둔감
+IF TALENT:Ｃ민감
+	CALL ADD_CRI_VAR("정상위시킨다"  , , 2)
+	CALL ADD_CRI_VAR("대면좌위시킨다", , 2)
+	CALL ADD_CRI_VAR("배면좌위시킨다", , 2)
+ELSEIF TALENT:Ｃ둔감
+	CALL ADD_CRI_VAR("대면좌위시킨다", , -2)
+	CALL ADD_CRI_VAR("배면좌위시킨다", , -2)
+ENDIF
+
+;조교자가Ｖ민감/둔감
+IF TALENT:Ｖ민감
+	CALL ADD_CRI_VAR("정상위시킨다", , 4)
+	CALL ADD_CRI_VAR("후배위시킨다", , 4)
+	CALL ADD_CRI_VAR("역강간"    , , 4)
+	CALL ADD_CRI_VAR("대면좌위시킨다", , 4)
+	CALL ADD_CRI_VAR("배면좌위시킨다", , 4)
+ELSEIF TALENT:Ｖ둔감
+	CALL ADD_CRI_VAR("항문섹스시킨다", , 2)
+ENDIF
+
+;조교자가Ａ민감/둔감
+IF TALENT:Ａ민감
+	CALL ADD_CRI_VAR("항문섹스시킨다", , 3)
+ELSEIF TALENT:Ａ둔감
+	CALL ADD_CRI_VAR("항문섹스시킨다", -2)
+ENDIF
+
+;-------------------------------------------------------------------------
+;조교대상의 소질을 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM10_TALENT_M
+
+;조교대상가동정
+IF TALENT:MASTER:동정
+	CALL ADD_CRI_VAR("정상위시킨다"  , -7 + CFLAG:합의 * 5 + CFLAG:M호의 / 500 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("후배위시킨다"  , -7 + CFLAG:합의 * 5 + CFLAG:M호의 / 500 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("역강간"      , -7 + CFLAG:합의 * 5 + CFLAG:M호의 / 500 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("대면좌위시킨다", -7 + CFLAG:합의 * 5 + CFLAG:M호의 / 500 + GET_TRAINLV(TARGET) / 3)
+	CALL ADD_CRI_VAR("배면좌위시킨다", -7 + CFLAG:합의 * 5 + CFLAG:M호의 / 500 + GET_TRAINLV(TARGET) / 3)
+ENDIF
+
+;조교대상가변태적
+SIF TALENT:MASTER:변태적
+	CALL ADD_CRI_VAR("항문섹스시킨다", 2, 1)
+
+;────────────────────────────────────
+;능력, 파라미터에 의한 변동
+;────────────────────────────────────
+;-------------------------------------------------------------------------
+;조교자의 능력을 참조
+;-------------------------------------------------------------------------
+@ACT_ACTM10_ABL_T
+
+;조교자의Ｃ감각
+IF ABL:Ｃ감각
+	CALL ADD_CRI_VAR("정상위시킨다"  , ABL:Ｃ감각, 1)
+	CALL ADD_CRI_VAR("대면좌위시킨다", ABL:Ｃ감각, 1)
+	CALL ADD_CRI_VAR("배면좌위시킨다", ABL:Ｃ감각, 1)
+ENDIF
+
+;조교자의Ｖ감각
+IF ABL:Ｖ감각
+	CALL ADD_CRI_VAR("정상위시킨다"  , ABL:Ｖ감각, 2)
+	CALL ADD_CRI_VAR("후배위시킨다"  , ABL:Ｖ감각, 1)
+	CALL ADD_CRI_VAR("역강간"      , ABL:Ｖ감각, 2)
+	CALL ADD_CRI_VAR("대면좌위시킨다", ABL:Ｖ감각, 1)
+	CALL ADD_CRI_VAR("배면좌위시킨다", ABL:Ｖ감각, 1)
+ENDIF
+
+;조교자의Ａ감각
+SIF ABL:Ａ감각
+	CALL ADD_CRI_VAR("항문섹스시킨다", ABL:Ａ감각, 1)
+
+;조교자의Ａ경험가[0→-15, 20→0]을 가산(-15～0)
+CALL ADD_CRI_VAR("항문섹스시킨다", LINE_CALC(EXP:Ａ경험, "0→-15, 20→0, LIMIT/-15～0"))
+
+;────────────────────────────────────
+;전회의행동나 상황에 의한 변동
+;────────────────────────────────────
+;-------------------------------------
+;밧줄
+;-------------------------------------
+@ACT_ACTM10_ROPE
+
+IF TEQUIP:밧줄
+	CALL ADD_CRI_VAR("후배위시킨다", -5)
+	CALL ADD_CRI_VAR("항문섹스시킨다", -5)
+ENDIF
+
+;-------------------------------------
+;눈가리개
+;-------------------------------------
+@ACT_ACTM10_EYEMASK
+
+IF TEQUIP:눈가리개
+	CALL ADD_CRI_VAR("후배위시킨다", -5)
+	CALL ADD_CRI_VAR("항문섹스시킨다", -5)
+ENDIF
+
+;-------------------------------------
+;거울
+;-------------------------------------
+@ACT_ACTM10_T_MILLER
+
+SIF TEQUIP:거울
+	CALL ADD_CRI_VAR("배면좌위시킨다", 3)
+
+;────────────────────────────────────
+;체위 관련
+;────────────────────────────────────
+@ACT_ACTM10_S_POSITION
+#DIM LCOUNT
+
+;TEQUIP:성교봉사중의 인수와 대응시킨다
+SPLIT "정상위시킨다/후배위시킨다/역강간/대면좌위시킨다/배면좌위시킨다/항문섹스시킨다", "/", LOCALS
+
+;체위 변경의하드르
+IF TEQUIP:성교봉사중
+	CALL ADD_CRI_VAR(LOCALS:(TEQUIP:성교봉사중), 5, 5)
+ENDIF
+
+;────────────────────────────────────
+;같은행동연속실행의 확률을 다운합니다
+;────────────────────────────────────
+@ACT_ACTM10_PREV
+
+LOCAL = 95, 96, 103, 97, 98
+SELECTCASE TFLAG:전ACT
+	;항문섹스는연속실행제한으로 걸리지 않는다
+	CASE 95 TO 98, 103
+		LOCAL = FINDELEMENT(LOCAL, TFLAG:전ACT) + 351
+		CALL ADD_CRI_VAR(GET_ACTNAME(TFLAG:전ACT), -3 * TFLAG:LOCAL / 100, -4 * TFLAG:LOCAL / 100)
+ENDSELECT
+
+;────────────────────────────────────
+;보정치 계산
+;────────────────────────────────────
+@ACT_ACTM10_CORRECTION(ARG)
+#DIM LCOUNT
+
+;ARG가 0이외라면보정치를 계산해, 이후의 처리를 실시하지 않는다
+IF ARG
+	FOR LCOUNT, 95, 100
+		CALL ACT_M_RES_CALC(LCOUNT, GET_CRI_VAR(GET_ACTNAME(LCOUNT) + "누계"))
+	NEXT
+	CALL ACT_M_RES_CALC(103, GET_CRI_VAR("역강간누계"))
+ELSE
+	;보정치를 판정치에 가산한다  ; 보정 값을 판정 값에 가산한다
+	CALL ACT_ACTM_CORRECTION(10)
+ENDIF
+
+;────────────────────────────────────
+;그 외 변동이나 실행 불가능의 판정
+;────────────────────────────────────
+@ACT_ACTM10_ABLE
+#DIM LCOUNT
+
+;불가능 판정
+CALL ACT_ACTM_ABLE(10)
+

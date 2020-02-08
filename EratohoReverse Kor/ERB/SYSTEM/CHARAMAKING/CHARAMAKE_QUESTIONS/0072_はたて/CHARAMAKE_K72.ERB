@@ -1,0 +1,57 @@
+﻿;はたて@Enter
+@CHARAMAKE_K72(ARG)
+PRINTFORMW 「눈을 떴군요. 그럼 곧바로 내 질문에 답해 주세요!」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「휴대폰은 좋지요」
+PRINTFORMW 「당신의 휴대폰은 어떤 휴대폰?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 잔뜩 꾸민 휴대폰
+PRINTFORMDL [2] 어플리케이션 많은 비지니스 휴대폰
+PRINTFORMDL [3] 이성의 연락처가 가득한 가벼운 휴대폰
+PRINTFORMDL [4] 휴대폰……가지고 있지 않아
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「어라、전자기기는 골칫거리?」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「그렇네. 역시 자기 취향으로 어레인지 해야만 귀여운 핸드폰, 이라고 느껴요―」
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("피학", 10)
+	CASE 2
+		PRINTFORML 「헤에―. 제법 사용하고 있구나. 프로패셔널?」
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("모랄", 10)
+
+		CALLF CM_PROF("호기심", 20)
+	CASE 3
+		PRINTFORML 「그, 그렇구나. 미팅이라던가, 역시 잔뜩 참가해버리는 계-?」
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("신경질", -10)
+	CASE 4
+		PRINTFORML 「가지고 있지 않구나……가끔 불편하다던가 생각하지 않아?」
+		CALLF CM_PROF("호기심", -20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("지성", -10)
+ENDSELECT
+PRINTFORMW 「흠흠, 좋은 정보를 얻을 수 있었어요. 탐문료는 외상으로 해 두세요. 그럼 안녕히 주무세요」
+RETURN 1

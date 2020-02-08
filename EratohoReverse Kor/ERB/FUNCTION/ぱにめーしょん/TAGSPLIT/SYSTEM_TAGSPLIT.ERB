@@ -1,0 +1,433 @@
+﻿;-------------------------------------------------------------------------------
+;
+;	TAGSPLIT 함수군
+;
+;===============================================================================
+;	캐릭터 라인에 태그를 갖게하는＆취득·해석한다
+;-------------------------------------------------------------------------------
+;	용도가 제작시로 괴리해 온 것으로 코멘트 예문 정리
+;
+;-------------------------------------------------------------------------------
+;	■AUTO_SPLIT의 유용으로 갈 수 있을까하고 생각했지만 결국 신조
+;	■발상원래는 위대한 eraMegaten와 IRC비익명구상ch로부터
+;	■물론 라이센스 프리
+;===============================================================================
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_TAGEND
+;-------------------------------------------------------------------------------
+;	0의 예  = "<색_0xFFC0C0><폰트_나눔바른고딕>, 이로하"
+;	1의 예  = "롱 소드,<공격력_12><가격_100><참격속성>"
+;
+;	즉 본문이 앞이나 태그가 앞인지를 지정하고 있어
+;	용도와 상담하면서 사용하기 쉬운 (분)편으로 사용해
+;===============================================================================
+@TAGSPLIT_TAGEND()
+#FUNCTION
+; 샘플용 동적으로 변경시킨다의 것은+격렬하고 비추천+
+;	RETURNF FLAG:0
+;  ★★★★★★★★★★★★★★★어느 쪽인지선택★★★★★★★★★★★★★★★★
+;	RETURNF 0
+	RETURNF 1
+;  ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_ONE
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <HOGE_100><HAGE>, 이로하
+;		PRINTFORM %TAGSPLIT_ONE(LOCALS, "HOGE")%
+;		→  "100"
+;		PRINTFORM %TAGSPLIT_ONE(LOCALS, "HAGE")%
+;		→  "HAGE"
+;-------------------------------------------------------------------------------
+;	이른바 AUTO_SPLIT에 가장 가깝다
+;	돌려주는 것은 프롭퍼티가 수치든지 무엇이든지 캐릭터 라인
+;===============================================================================
+@TAGSPLIT_ONE(ARGS, ARGS:1 = "")
+#FUNCTIONS
+#LOCALSIZE 1
+LOCAL = TAGSPLIT_SETLOG(ARGS,ARGS:1)
+; ARGS:1이 공백의 경우는 문장 부분(태그가 없는 부분)을반환
+IF ARGS:1 == ""
+	RETURNF TAGSPLIT_TAGBLOCS:LOCAL
+; ARGS:1이 발견되었을 경우는 프롭퍼티치 없음이라면 태그의 라벨을 돌려주어, 프롭퍼티치가 있다면 값을반환
+ELSEIF LOCAL != -1
+	; 예:위의 예로 말하는<HOGE_100>을 탐했다→"100"이 돌아가,<HAGE>를 탐했다→"HAGE"가 돌아간다
+	RETURNF \@ TAGSPLIT_TAGPROPS:1 != "" ? %TAGSPLIT_TAGPROPS:1% # %TAGSPLIT_TAGPROPS:0% \@
+ENDIF
+; 발견되지 않았으면 아무것도 돌려주지 않는다
+RETURNF
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_INT
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <HOGE_100><HAGE_아 말하는>, 이로하
+;		LOCAL  = TAGSPLIT_INT(LOCALS, "HOGE")
+;		→  100
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_ONE의 돌아가 값이 수치판
+;	수치로 돌려줄 수 있다면이라면 수치로 돌려주어, 수치로 돌려줄 수 없으면 1으로 돌려주어, 발견되지 않으면 0 을반환
+;	프롭퍼티에"0"이 들어가 있으면 발견되지 않았던 취급이 되지만, 그 동작을 전제로
+;	시스템을 짜는 것은+격렬하고 비추천+
+;	예:<_0><벗겨라_1>  ←태그 그 자체가 발견되지 않았던 취급
+;===============================================================================
+@TAGSPLIT_INT(ARGS, ARGS:1)
+#FUNCTION
+#LOCALSSIZE 1
+; TAGSPLIT_ONE에 통째로 맡김, 돌아가 값캐릭터 라인을 다음의 행으로부터 TOINT 들인다
+LOCALS = %TAGSPLIT_ONE(ARGS,ARGS:1)%
+; 발견되었을 경우는 수치로 돌려줄 수 있다면이라면 수치로 돌려주어, 수치로 돌려줄 수 없으면 「존재하고 있는 BOOLEAN」라고 하는 일로 1 을반환  
+SIF LOCALS != "" && LOCALS != "0"
+	RETURNF ISNUMERIC(LOCALS) ? TOINT(LOCALS) # 1
+; 발견되지 않았으면 아무것도 돌려주지 않는… 은 두이지만 0이 돌아가는 사양
+; ※프롭퍼티"0"의 경우는 발견되지 않는 취급과 돌아가 값이 같음
+RETURNF 0
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_ADD
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <HOGE_100><HAGE_아 말하는>, 이로하
+;		LOCALS = %TAGSPLIT_ADD(LOCALS,"<HAGE_감구>")%
+;		LOCALS = %TAGSPLIT_ADD(LOCALS,"HIGE","5")%
+;		LOCALS = %TAGSPLIT_ADD(LOCALS,,"에")%
+;		→  "<HOGE_100><HAGE_감구><HIGE_5>, 에"
+;
+;		LOCALS = %TAGSPLIT_ADD(LOCALS,,)%	←인수 양쪽 모두 없음(제 2 인수없이 본문 지정, 제 3 인수없이 공백 치환)
+;		→  ""								←태그마다 사라진다
+;-------------------------------------------------------------------------------
+;	TAGSPLIT 사양의 태그를 치환했다추가했다하는 함수
+;	지정의 태그가 없는 경우는 추가, 어느 경우는 동태그내에서 프롭퍼티치의 변경을 한다
+;	프롭퍼티의 기법은 2종류 있어, 직접 써도 괜찮고, (HAGE의 예)
+;	태그명만 기입해 ARGS:2를 사용해도 괜찮다(HIGE의 예).
+;	는 후자 쪽을 알 수 있기 쉬울지도
+;
+;	·제 2 인수를 생략 해, 제 3 인수는 입력했다경우 본문을 옮겨놓는다
+;
+;	·제 2 인수와 제 3 인수 양쪽 모두 생략했다때는 태그마다 지워 공문자열로 한다
+;	  주로 배열 처리용으로, 위 같은 예의 경우는 직접 지우면 좋은 것이 아닐까
+;===============================================================================
+@TAGSPLIT_ADD(ARGS,ARGS:1,ARGS:2)
+#FUNCTIONS
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL = TAGSPLIT_SETLOG(ARGS,ARGS:1)
+; 상에서 말하는 TAGSPLIT_ADD(LOCALS, "<HAGE_감구>")의 예
+IF STRFIND(ARGS:1,"<") != -1 && STRFIND(ARGS:1,">") != -1 && ARGS:2 == ""
+	LOCALS = %REPLACE(ARGS:1,">","")%
+; 상에서 말하는 TAGSPLIT_ADD(LOCALS, "HIGE", "5")의 예
+ELSEIF ARGS:1 != ""
+	LOCALS = %"<" + ARGS:1%
+	SIF ARGS:2 != ""
+		LOCALS += "_" + ARGS:2
+ENDIF
+
+; 지정의 태그가 발견되지 않는다
+IF ARGS:1 != "" && LOCAL == -1
+	; 태그전의 경우는 본문을 1개 근처의 블록에 ARRAYSHIFT 해 빈 곳에삽입
+	IF TAGSPLIT_TAGEND() == 0
+		ARRAYSHIFT TAGSPLIT_TAGBLOCS, 1, LOCALS, TAGSPLIT_TAGNUM-1
+	; 태그 후의 경우는 마지막에 추가
+	ELSEIF TAGSPLIT_TAGEND() == 1
+		TAGSPLIT_TAGBLOCS:(TAGSPLIT_TAGNUM) = %LOCALS%
+	ENDIF
+	TAGSPLIT_TAGNUM += 1
+; 지정의 태그가 발견되면 거기를 치환
+ELSEIF ARGS:1 != "" && LOCAL != -1
+	TAGSPLIT_TAGBLOCS:LOCAL = %LOCALS%
+; 태그의 지정 없음→본문의 치환
+ELSEIF ARGS:1 == ""
+	TAGSPLIT_TAGBLOCS:LOCAL = %ARGS:2%
+	; 본문 치환이 소거 사령이라면 태그마다 사라진다
+	SIF ARGS:2 == ""
+		VARSET TAGSPLIT_TAGBLOCS
+ENDIF
+; 합성
+IF ARGS != ""
+	RETURNF TAGSPLIT_UNITE()
+ELSE
+	RETURNF
+ENDIF
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_ADDINT
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_ADD의 제 3 인수 수치판
+;	그 외는 완전히 함께
+;===============================================================================
+@TAGSPLIT_ADDINT(ARGS,ARGS:1,ARG = 0)
+#FUNCTIONS
+RETURNF TAGSPLIT_ADD(ARGS,ARGS:1,TOSTR(ARG))
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_DEL
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <HOGE_100><HAGE_아 말하는>, 이로하
+;		LOCALS = %TAGSPLIT_DEL(LOCALS,"HAGE")%
+;		→  "<HOGE_100>, 이로하"
+;-------------------------------------------------------------------------------
+;	TAGSPLIT 사양의 태그를 삭제하는 함수
+;	지정의 태그가 없는 경우는 아무것도 하지 않는다
+;===============================================================================
+@TAGSPLIT_DEL(ARGS,ARGS:1)
+#FUNCTIONS
+#LOCALSIZE 1
+LOCAL = TAGSPLIT_SETLOG(ARGS,ARGS:1)
+SIF LOCAL == -1
+	RETURNF ARGS
+
+; 그 부분의 블록을 지워 쌓아올릴 뿐
+TAGSPLIT_TAGBLOCS:LOCAL =
+; 합성해 RETURNF
+RETURNF TAGSPLIT_UNITE()
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_NUM
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <HOGE_0xFFC0C0><HAGE>, 이로하
+;		PRINTFORM {TAGSPLIT_NUM(LOCALS, "HAGE")}
+;		→  1
+;		PRINTFORM {TAGSPLIT_NUM(LOCALS, "HOGE")}
+;		→  0
+;-------------------------------------------------------------------------------
+;	그 태그가 몇번째에 있는 거야? 그렇다고 하는 것을반환
+;===============================================================================
+@TAGSPLIT_NUM(ARGS,ARGS:1)
+#FUNCTION
+#LOCALSIZE 1
+LOCAL = TAGSPLIT_SETLOG(ARGS,ARGS:1)
+IF LOCAL == -1
+	RETURNF LOCAL
+ELSE
+	RETURNF (TAGSPLIT_TAGEND() == 0) ? LOCAL # LOCAL - 1 
+ENDIF
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_LABEL
+;-------------------------------------------------------------------------------
+;	예:LOCALS = <색_0xFFC0C0><비밀>, 이로하
+;		PRINTFORM %TAGSPLIT_LABEL(LOCALS, 0)%
+;		→  색
+;		PRINTFORM %TAGSPLIT_LABEL(LOCALS, 1)%
+;		→  비밀
+;-------------------------------------------------------------------------------
+;	x번째는 어째서 태그? 그렇다고 하는 것을반환
+;===============================================================================
+@TAGSPLIT_LABEL(ARGS,ARG)
+#FUNCTIONS
+#LOCALSIZE 1
+#LOCALSSIZE 1
+CALLF TAGSPLIT_SETLOG(ARGS)
+LOCAL = ARG + TAGSPLIT_TAGEND()
+SPLIT ( REPLACE(TAGSPLIT_TAGBLOCS:LOCAL,"<","") ), "_", LOCALS, LOCAL
+RETURNF LOCALS
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_MERGE
+;-------------------------------------------------------------------------------
+;	예:LOCALS:0 = <A_100><B_100>, 이로하
+;		LOCALS:1 = <A_100><C_50><D_20>, 이로하
+;		PRINTFORM %TAGSPLIT_MERGE(LOCALS:0, LOCALS:1)%
+;		→  <A_200><B_100><C_50><D_20>, 이로하
+;-------------------------------------------------------------------------------
+;	인수 1으로 인수 2를 머지시킨다  
+;	태그 내부가 양쪽 모두 수치의 경우는 가산, 그렇지 않으면 캐릭터 라인 가산
+;	인수 2의 본문은 현상 무시된다
+;
+;	인수 3에 캐릭터 라인 지정으로, 캐릭터 라인 가산될 때에 단락 문자를 사이에 두고 가산된다
+;===============================================================================
+@TAGSPLIT_MERGE(ARGS,ARGS:1,ARGS:2 ="")
+#FUNCTIONS
+#DIM LCOUNT,1
+#DIM RINUM,1
+#DIM RILABEL, 1
+#DIMS RITEMPS, 100
+#DIM LFNUM,1
+#DIM LFLABEL,1
+#LOCALSSIZE 3
+VARSET RITEMPS
+; ARGS:1을 분할해 퇴피 장소에 보호
+RILABEL = TAGSPLIT_SETLOG(ARGS:1)	;본문 위치
+RINUM = TAGSPLIT_TAGNUM				;분할수
+ARRAYCOPY "TAGSPLIT_TAGBLOCS", "RITEMPS"
+; ARGS:0을 분할
+LFLABEL = TAGSPLIT_SETLOG(ARGS)
+FOR LCOUNT, 0, RINUM
+	IF LCOUNT == RILABEL		; 본문
+		; comment out 제외한다고 본문도 가산이 됩니다
+		; CALLF TAGSPLIT_ADD(, , TAGSPLIT_TAGBLOCS:LFLABEL + ARGS:2 + RITEMPS:RILABEL)
+	ELSE
+		VARSET LOCALS
+		RITEMPS:LCOUNT = %REPLACE(RITEMPS:LCOUNT,"<","")%
+		SPLIT RITEMPS:LCOUNT, "_", LOCALS
+		LOCALS:2 = %TAGSPLIT_ONE(,LOCALS)%
+		;ARGS:0에 같은 태그가 있는 && 함께 수치에서의 돌아가 값이 가능
+		IF LOCALS:2 != "" && ( ISNUMERIC(LOCALS:2) && ISNUMERIC(LOCALS:1) )
+			CALLF TAGSPLIT_ADDINT( , LOCALS, TAGSPLIT_INT(,LOCALS) + TOINT(LOCALS:1) )
+		;ARGS:0에 같은 태그가 있는 && 캐릭터 라인 섞이고 있다
+		ELSEIF LOCALS:2 != ""
+			CALLF TAGSPLIT_ADD( , LOCALS, LOCALS:2 + ARGS:2 + LOCALS:1 )
+		ELSE
+			CALLF TAGSPLIT_ADD( , LOCALS, LOCALS:1)
+		ENDIF
+	ENDIF
+NEXT
+RETURNF TAGSPLIT_UNITE()
+
+
+;===============================================================================
+;	이하 내부 처리
+;===============================================================================
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_SETLOG
+;-------------------------------------------------------------------------------
+;	내부 처리
+;	이른바 공통적인 처리와필요인 SPLIT를 모두 여기서 해 버린다
+;	상황에 의해 주는필요가 없는 처리를 세세하게 분기에서 피하고 있으면 당초의에 비해 쓸데없이 길어진 건
+;===============================================================================
+;	TAGSPLIT_TAGEND() ==  (태그전 = 0/태그 뒤 = 1)
+@TAGSPLIT_SETLOG(ARGS,ARGS:1,MODE=0)
+#FUNCTION
+#DIM LCOUNT,1
+#DIM MODE,1
+#LOCALSIZE 3
+#LOCALSSIZE 3
+VARSET LOCAL
+LOCAL:1 = RESULT
+; ARGS 공백에서 재이용하도록(듯이)해 본다
+IF ARGS != "" || TAGSPLIT_STR == ""
+	TAGSPLIT_TAG =
+	TAGSPLIT_STR =
+	VARSET TAGSPLIT_TAGBLOCS
+	; ARGS 가 있다 ==본문은 당연 있으므로 +1
+	TAGSPLIT_TAGNUM = 1
+	; ARGS의", "를 세어 분기(태그가 존재할까를 본다)
+	SELECTCASE STRCOUNT(ARGS,",")
+		CASE 0	; 0 =태그가 존재하지 않고 본문 밖에 없다
+			TAGSPLIT_STR = %ARGS%
+			TAGSPLIT_TAGBLOCS:0 = %ARGS%
+
+		CASE 1	; 1 =정상, 본문과 태그의 양쪽 모두가 존재한다
+			VARSET LOCALS
+			; ARGS를 「본문과 태그군」에게 SPLIT 해, TAGSPLIT_TAG에 태그를, TAGSPLIT_STR에 본문을 대입
+			; 예:인수 1 = "<HOGE_10><HAGE_20>, 본문"  →  TAGSPLIT_NOWFORMS:(0～1) = "<HOGE_10><HAGE_20", "본문",
+			SPLIT ARGS, ",", LOCALS			
+			IF TAGSPLIT_TAGEND() == 0		; 태그전치
+				TAGSPLIT_TAG = %LOCALS:0%
+				TAGSPLIT_STR = %LOCALS:1%
+			ELSEIF TAGSPLIT_TAGEND() == 1	; 태그 후치
+				TAGSPLIT_TAG = %LOCALS:1%
+				TAGSPLIT_STR = %LOCALS:0%
+			ENDIF
+
+			; 레이어 시스템 용례외 처리  "태그군"만을 놓치는필요가 있기 (위해)때문에 여기서 끝  이런 것 비교적 너무 싫다
+			SIF ARGS:1 == "＠태그군"
+				GOTO FROM_LAYER_SYSTEM
+
+			; "태그군"을 태그 마다 SPLIT		예:태그군= "<HOGE_10><HAGE_20>"  →  TAGSPLIT_NOWBLOCS:(0～19) = "<HOGE_10", "<HAGE_20"
+			SPLIT TAGSPLIT_TAG, ">", TAGSPLIT_TAGBLOCS						
+			; 태그수를 본문의 1에 SPLIT 분할수를 플러스
+			TAGSPLIT_TAGNUM += RESULT - 1
+			
+			; 태그전치는 본문을 마지막으로 배치						예:TAGSPLIT_NOWBLOCS:(0～19) = "<HOGE_10", "<HAGE_20", "본문"
+			IF TAGSPLIT_TAGEND() == 0
+				TAGSPLIT_TAGBLOCS:(TAGSPLIT_TAGNUM-1) = %TAGSPLIT_STR%
+			; 태그 후치는 본문을 0에, 태그를 1이후에 비켜 놓아 배치예:TAGSPLIT_NOWBLOCS:(0～19) = "본문", "<HOGE_10", "<HAGE_20"
+			ELSEIF TAGSPLIT_TAGEND() == 1
+				ARRAYSHIFT TAGSPLIT_TAGBLOCS, 1, TAGSPLIT_STR, 0
+			ENDIF
+
+			; ----     여기까지로 본문과 태그의 전요소가 TAGSPLIT_TAGBLOCS 배열에 들어가 있을 것    ---- ;
+
+		CASEELSE	; ", "의 수가 0도 1도 아닌 경우는 에러
+			THROW %ARGS%가 부정합니다", "의 수를 확인해 주세요 {LOCAL:2}
+	ENDSELECT
+ENDIF
+
+; 찾는 태그가 없는 경우 본문의 장소을반환
+IF ARGS:1 == ""
+	RESULT = LOCAL:1
+	; 본문 밖에 없는 or 태그 후치는 0번째
+	IF TAGSPLIT_TAGNUM == 1 ||  TAGSPLIT_TAGEND() == 1
+		RETURNF 0
+	; 태그전치는 마지막 배열이 본문
+	ELSEIF TAGSPLIT_TAGEND() == 0
+		RETURNF TAGSPLIT_TAGNUM - 1
+	ENDIF
+; 찾는 태그가 있다
+ELSEIF ARGS:1 != ""
+	VARSET TAGSPLIT_NOWPROPS
+	; 찾는 태그를 태그와 내용에 SPLIT									;	예:인수 2 = "<HOGE_10>"  →  TAGSPLIT_NOWPROPS:(0～1) = "<HOGE", "10"
+	SPLIT ( REPLACE(ARGS:1,">","") ), "_", TAGSPLIT_NOWPROPS
+	; 본문 밖에 없는데 태그를 찾고 있는→서치 할 것도 없이 있을 리가 없다(속도 단축 효과)
+	IF TAGSPLIT_TAGNUM == 1
+		RESULT = LOCAL:1
+		RETURNF -1
+	ENDIF
+	; 분할 배열의 본문을 제외한 부분으로부터 인수 1의 S태그 요소를 찾는다			;	예:(본문), "<HOGE_10", "<HAGE_20", (본문)로부터"<HOGE"를 찾는다
+	LOCAL = FINDELEMENT( TAGSPLIT_TAGBLOCS, TAGSPLIT_NOWPROPS:0, TAGSPLIT_TAGEND(), ( TAGSPLIT_TAGEND() == 0 ? TAGSPLIT_TAGNUM -1 # TAGSPLIT_TAGNUM ) )
+	; 발견되었을 경우는 발견된 것을 태그와 프롭퍼티에 SPLIT		;	예:TAGSPLIT_TAGBLOCS:1 = "<HOGE_10"  →  TAGSPLIT_TAGPROPS:(0～1) = "HOGE", "10"
+	IF LOCAL != -1
+		VARSET TAGSPLIT_TAGPROPS
+		SPLIT REPLACE(TAGSPLIT_TAGBLOCS:(LOCAL),"<",""), "_", TAGSPLIT_TAGPROPS	
+	ENDIF
+ENDIF
+RESULT = LOCAL:1
+RETURNF LOCAL
+
+
+$FROM_LAYER_SYSTEM
+; SPLIT로 잃었다", "를 보완해돌아가기
+TAGSPLIT_TAG = \@ TAGSPLIT_TAGEND() == 0 ? %TAGSPLIT_TAG + ","% # %"," + TAGSPLIT_TAG% \@
+RESULT = LOCAL:1
+RETURNF -2
+
+
+
+;-------------------------------------------------------------------------------
+;	TAGSPLIT_UNITE
+;-------------------------------------------------------------------------------
+;	내부 처리
+;	TAGSPLIT_TAGBLOCS를 쌓아올릴 뿐
+;===============================================================================
+@TAGSPLIT_UNITE(ARG = 0)
+#FUNCTIONS
+#DIM LCOUNT,1
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCALS = 
+LOCAL = -1
+FOR LCOUNT, 0, VARSIZE("TAGSPLIT_TAGBLOCS")				; 최대 요소수의 검색
+	SIF TAGSPLIT_TAGBLOCS:LCOUNT != ""
+		LOCAL = LCOUNT
+NEXT
+SIF LOCAL == -1											; 전공백이라면 아무것도 하지 않는다(정리하는필요없음)
+	RETURNF
+FOR LCOUNT, 0, LOCAL + 1
+	IF TAGSPLIT_TAGBLOCS:LCOUNT != ""
+		; 태그 전본문 후의 경우는 마지막에", "붙여 본문
+		IF TAGSPLIT_TAGEND() == 0 && (LCOUNT == LOCAL)
+			LOCALS += "," + TAGSPLIT_TAGBLOCS:LCOUNT
+		; 본문 전태그 후의 경우는 최초의 본문 어미에", "를 붙인다
+		ELSEIF TAGSPLIT_TAGEND() == 1 && (LCOUNT == 0)
+			LOCALS += TAGSPLIT_TAGBLOCS:LCOUNT + ","
+		; 어느 쪽도 아닌 경우는 태그인 것으로 태그와 글자">"를 붙인다
+		ELSE
+			LOCALS += TAGSPLIT_TAGBLOCS:LCOUNT + ">"
+		ENDIF
+	ENDIF
+	SIF LCOUNT == LOCAL									; 상에서탐했다최대 요소수까지 오면 끝
+		BREAK
+NEXT
+; 인수 개미로 재분할해 로그에 거둔다(재이용은 실제 어떤 것인가)
+SIF ARG
+	CALLF TAGSPLIT_SETLOG(LOCALS)
+RETURNF LOCALS
+

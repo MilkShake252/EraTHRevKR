@@ -1,0 +1,16 @@
+﻿
+;────────────
+;식별 정보
+;────────────
+
+コード,131109102
+
+;메이저 2자리수. 마이나 1자리수. 마이크로 1자리수. 마이나 홀수는 개발판, 짝수로 안정판
+バージョン,1212
+;개발판은[Dev] 안정판은[Stable] Release Candidate판은[RC] Preview판은[PR]
+ウィンドウタイトル,eratohoЯeverse 1.2.12 [Dev]
+タイトル,eratohoЯeverse
+作者,Reverse Developers team
+製作年,2010-2018
+バージョン違い認める,1200
+追加情報,※조교SLG도구 erakanon의 수정*재배포  /  1차 번역 - 암모니아  /  손번역 통합 - CoronA。

@@ -1,0 +1,58 @@
+﻿;앨리스＠/L
+@CHARAMAKE_K14(ARG)
+PRINTFORMW 「어라、안녕하신가요。마침 좋은 기회니까 질문에 답해줬으면 해」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「준비는 됐어？ 약간의 마술과 점성술에 관련된 질문이야」
+PRINTFORML 「예를 들어 태양의 영향력을 끌어내기위해 반지를 만드는 경우」
+PRINTFORMW 「어떤 금속을 사용하면 좋을까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 철에 박힌 루비、혹은 종류는 무엇이든 붉은 돌
+PRINTFORMDL [2] 은에 박힌 진주、수정 혹은 석영
+PRINTFORMDL [3] 금에 박힌 다이아몬드、혹은 토파즈
+PRINTFORMDL [4] 동에 박힌 에메랄드、혹은 터키석
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「조금이라도 생각해볼 마음은 없는 거야？ 우둔、하구나」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「유감. 그건 화성일때구나」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("수치", -30)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("도착", 20)
+	CASE 2
+		PRINTFORML 「유감. 그건 달일때야」
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("충동", -20)
+	CASE 3
+		PRINTFORML 「정답이야. 당신、꽤 가능성이 있구나？」
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("호기심", 30)
+	CASE 4
+		PRINTFORML 「유감. 그건 금성이야」
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("지성", 10)
+ENDSELECT
+PRINTFORMW 「수고했어. 행운을 빌게」
+RETURN 1
+

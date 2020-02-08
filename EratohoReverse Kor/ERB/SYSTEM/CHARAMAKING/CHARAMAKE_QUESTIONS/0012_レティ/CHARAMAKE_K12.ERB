@@ -1,0 +1,53 @@
+﻿@CHARAMAKE_K12(ARG)
+PRINTFORMW 「응、일어났군요. ……그럼 곧바로지만 내 질문에 답해줘」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「아아、정답은 없으니까 굳이 지혜를 짜낼 필요는 업어요？」
+PRINTFORMW 「당신은、겨울에 무엇을 바라는걸까？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 몸도 얼어버릴듯한 추위
+PRINTFORMDL [2] 휴일
+PRINTFORMDL [3] 덧없음
+PRINTFORMDL [4] 여름
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그건 겨울은 필요 없다는 뜻일까」
+		PRINTFORML 「아니면 단순히 대답할 수 없는 것일까」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「당신은 그렇게 생각하는군요」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("모랄", 30)
+	CASE 2
+		PRINTFORML 「…………당신은 언제나 그걸 바라는 거 아냐……？」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+	CASE 3
+		PRINTFORML 「그렇구나、겨울은 덧없기 때문에 더더욱인걸」
+		PRINTFORML 「미인 박명이라고 요괴에게 미인은 없는걸까」
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 4
+		PRINTFORML 「아아、뭐 확실히 겨울이 되면 여름을 바라게 되죠」
+		PRINTFORML 「여름이 되면 그 땐 또 겨울을 바라겠지만」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("수치", -10)
+ENDSELECT
+PRINTFORMW 「뭐、아무래도 좋지만」
+PRINTFORMW 「그럼 또. 안녕히 주무세요」
+RETURN 1
+

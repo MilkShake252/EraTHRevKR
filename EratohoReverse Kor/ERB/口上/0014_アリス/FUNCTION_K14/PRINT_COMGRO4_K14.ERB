@@ -1,0 +1,23 @@
+﻿@PRINT_COMGRO_4_K14
+SELECTCASE GET_COM_RANK()
+	CASE "자연스러운 행동"
+		PRINTFORMW 「어설픈 짓을 해도、안타까울 뿐이거든？ 그치만 뭐어…」
+		SELECTCASE TENSION(TARGET, 8)
+			CASE "높다"
+				PRINTFORM 「이건 이거대로、조금 흐뭇하기도 하려나、그렇지
+			CASE "일반"
+				PRINTFORM 「그 모습을 보니 어쩔 수 없으려나、그렇지
+			CASE "낮다"
+				PRINTFORM 「지금의 %CNAME(MASTER, TARGET)%에게는、무슨 말을 해도 쓸모 없어 보이네
+		ENDSELECT
+		;PSで閉じる
+		CALL PRINT_SYMBOL_K14
+	CASE "무리없는 행동"
+		PRINTFORMW 「저기 말야아…、시킨 건 제대로 해 주지 않으면 곤란한데」
+		PRINTFORM 「뭐、지금 집중하기 어려운 건、알고 있지만、말야…
+		;PSで閉じる
+		CALL PRINT_SYMBOL_K14
+	CASE "무리한 행동"
+		PRINTFORMW 「\@ TENSION(TARGET, 8) == "높다" ? 는 ？ 장난치고 있는 거야？　 # 뭐야 그거…、 \@ 자기만 잔뜩 좋아져선、어쩔 생각 \@ GET_CONDITION(TARGET) == "분노" ? 이얏！ # 인 걸까…… \@」
+		PRINTFORMW 「정말、\@ AFFECTION("익애") ?  질리네 # 쓸모없는 개네 \@…」
+ENDSELECT

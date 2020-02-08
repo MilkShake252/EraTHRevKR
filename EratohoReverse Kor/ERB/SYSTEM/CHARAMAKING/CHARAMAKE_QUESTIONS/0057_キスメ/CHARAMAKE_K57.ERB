@@ -1,0 +1,62 @@
+﻿;키스メ＠ぱ。
+@CHARAMAKE_K57(ARG)
+PRINTFORML 「우왓 일어났다!」
+PRINTFORMDW 목소리가 한 쪽을 올려다보면…
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「어쩔 수 없네, 질문할 테니까」
+PRINTFORMW 「찬장의 정리를 하고 있을 때, 뭔가가 머리로 떨어져 내렸어. 그건 뭐게?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 칠판 지우개
+PRINTFORMDL [2] 비상금
+PRINTFORMDL [3] 옛 애인의 사진
+PRINTFORMDL [4] 백골
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「네, 마감 시간입니다」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「누가 그런 장치 같은 걸!　당신에게 맞는 건 여기―」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 20)
+	CASE 2
+		PRINTFORML 「예예, 그런 사탕발림은 됐습니다. 수고했어-」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("수치", -20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「거북해지네. 처분 해 두는 걸 추천할게. 네, 그럼 또 보자」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("동성애", -20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+	CASE 4
+		PRINTFORML 「즐거운 집에 사는구나. 그럼, 돌아갈게」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("신경질", -10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 10)
+ENDSELECT
+PRINTFORMDW 쿵, 하고 머리에 통을 맞아, %플레이어는% 정신을 잃었다…
+RETURN 1
+
+

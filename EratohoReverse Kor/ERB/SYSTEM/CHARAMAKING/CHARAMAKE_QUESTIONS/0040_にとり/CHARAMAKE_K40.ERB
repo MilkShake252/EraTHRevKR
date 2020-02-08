@@ -1,0 +1,53 @@
+﻿@CHARAMAKE_K40(ARG)
+PRINTFORMW 「좋은 아침ー. 아직 졸린 것 같네」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그럼 내가 하는 한가지 질문」
+PRINTFORML 「수리의 의뢰를 받아서 먼 곳까지 온 것 까진 좋은데」
+PRINTFORMW 「중요한 공구를 하나 빼놓고 와버렸어. 어쩌지」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 이제 안 돼. 끝이야……
+PRINTFORMDL [2] 아니、멀어도 가지러 돌아가자
+PRINTFORMDL [3] 도구가 없으면、만들어 버리면 되잖아
+PRINTFORMDL [4] 내가 맥가이버다！
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「완전히 방심 상태구나」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「쇼크가 너무 컸나」
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("충동", 30)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 2
+		PRINTFORML 「뭐、어쩔 수 없지」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("모랄", 10)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+	CASE 3
+		PRINTFORML 「기왕이면 좋은 걸 만들어야겠네」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+	CASE 4
+		PRINTFORML 「휘유！？（멋져……！）」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("지성", 30)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+ENDSELECT
+PRINTFORMW 「일단 노력해볼게. 고마워」
+RETURN 1
+

@@ -1,0 +1,58 @@
+﻿@CHARAMAKE_K4(ARG)
+PRINTFORMW 「좋은 아침입니다、괜찮으신가요？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「그럼 제가 드리는 질문입니다」
+PRINTFORMW 「확실하게 묻겠습니다. 저는 어떤 아이로 보이나요？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 마음 상냥한 솔직한 소녀
+PRINTFORMDL [2] 어딘지 비틀린 성격의 계집애
+PRINTFORMDL [3] 두려움을 모르는 못된 장난꾸러기
+PRINTFORMDL [4] 자지가 너무 좋은 음란한 아가씨
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「입 다물어버리면 곤란합니다만…」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「다행이다…기쁩니다」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("충동", -30)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("도착", -30)
+	CASE 2
+		PRINTFORML 「그건 아마、비틀린 건 당신 쪽이니까. 정말이지…」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("모랄", -10)
+		CALLF CM_PROF("도착", 10)
+	CASE 3
+		PRINTFORML 「요정인걸. 후후훗」
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("신경질", 20)
+	CASE 4
+		PRINTFORML 「잠…、뭔가요 그게！？　……정말」
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 20)
+ENDSELECT
+PRINTFORMW 「그러면、안녕히 주무세요――」
+RETURN 1

@@ -1,0 +1,85 @@
+﻿;코스즈＠ぱ。
+@CHARAMAKE_K81(ARG)
+SELECTCASE ARG
+	CASE 0
+		PRINTFORMW 「일찍 일어나는구나. 영나암에 어서와」
+	CASE 9
+		PRINTFORMW 「좋은 점심. 당신의 꿈도 이제 곧 끝나는구나」
+	CASEELSE
+		PRINTFORMW 「어머？　어서와. 책을 찾고 있어？」
+ENDSELECT
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「여기선 외래의 책이 인기 있어. 바깥 세상의 책」
+PRINTFORMW 「그래서、 당신이 찾고 있는 건 어떤 책이야？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 학술서
+PRINTFORMDL [2] 춘화도
+PRINTFORMDL [3] 요마책
+PRINTFORMDL [4] 소설
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그렇구나、자세히 보니 책은 읽지 않을 것 같은 얼굴을 하고 있네」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「책에 있는 것은 옛 사람이 남긴 찌꺼기뿐. 그렇지만、그건 수명이 짧은 인간에게는 충분한 보물인거네」
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("낙관", -20)
+		CALLF CM_PROF("지성", 50)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("동성애", 20)
+		CALLF CM_PROF("결벽", 30)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", -20)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 30)
+	CASE 2
+		PRINTFORML 「어머 솔직한 사람. 그렇지만、오래된 미인도는 당신이 생각하고 있는 그런 게 아닐지도 몰라」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("결벽", -10)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+	CASE 3
+		PRINTFORML 「이건 빌려줄 수 없어. 애초에 당신은 읽을 수도 없잖아?」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("낙관", -10)
+		CALLF CM_PROF("도착", 30)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("모랄", -20)
+	CASE 4
+		PRINTFORML 「소설은 좋구나. 차라리 써보면 어때? 인쇄는 여기서도 하청받고 있어」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", -30)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("수치", 20)
+		CALLF CM_PROF("낙관", -30)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("동성애", 40)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("모랄", 20)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 30)
+ENDSELECT
+PRINTFORMW 「돌아가는 길은 저쪽. 반환 기한은 다음에 방문할 때까지. 잘자요」
+RETURN 1

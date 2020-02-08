@@ -1,0 +1,136 @@
+﻿;────────────────────────────────────
+;커맨드선택 후의 TFLAG 리셋트
+;────────────────────────────────────
+@EVENTCOM
+#PRI
+;강제 종료시킨다때에 SHOW_USERCOM내에서 BEGIN 할 수 없기 때문에 여기에 가져와 끝낸다
+SIF SELECTCOM == 999
+	BEGIN AFTERTRAIN
+DRAWLINE
+;TFLAG:0-39 초기화
+FOR LOCAL, 0, 40
+	TFLAG:LOCAL = 0
+NEXT
+
+
+;────────────────────────────────────
+;조교종료시의 회복
+;────────────────────────────────────
+@BASE_RECOVERY
+#DIM 잔존체력
+;CHARA 전원을 차례로 회복
+FOR LOCAL, 0, CHARANUM
+	;잔존체력를 기억
+	잔존체력 = BASE:LOCAL:체력
+	
+	;체력회복
+	BASE:LOCAL:체력 += (400 + TIME * 100 + MAXBASE:LOCAL:체력 / 5) * (4 + TIME + TALENT:LOCAL:회복빠름 - TALENT:LOCAL:회복느림 + TALENT:LOCAL:불사 * 2) * 3 / (10 + CFLAG:LOCAL:소모)
+	;체력가 상한을 돌파하지 않게 조정
+	SIF BASE:LOCAL:체력 > MAXBASE:LOCAL:체력
+		BASE:LOCAL:체력 = MAXBASE:LOCAL:체력
+	
+	;정액게이지 회복
+	SIF MAXBASE:LOCAL:사정 > 0
+		BASE:LOCAL:사정 += MAXBASE:LOCAL:사정 * (50 + TIME * 20 + TALENT:LOCAL:정력절륜 * 10 - TALENT:LOCAL:정력박약 * 10) / (100 + CFLAG:LOCAL:소모 * 10)
+	;정액게이지가 상한을 돌파하지 않게 조정
+	SIF BASE:LOCAL:사정 > MAXBASE:LOCAL:사정
+		BASE:LOCAL:사정 = MAXBASE:LOCAL:사정
+	
+	;분유게이지 회복
+	SIF MAXBASE:LOCAL:모유 > 0
+		BASE:LOCAL:모유 += (1200 + TIME * 400 + CFLAG:LOCAL:조교레벨 * 80) * (3 + TIME + TALENT:LOCAL:회복빠름 - TALENT:LOCAL:회복느림) * (3 + ABL:LOCAL:순종) / (7 + CFLAG:LOCAL:소모)
+	;분유게이지가 상한을 돌파하지 않게 조정
+	SIF BASE:LOCAL:모유 > MAXBASE:LOCAL:모유
+		BASE:LOCAL:모유 = MAXBASE:LOCAL:모유
+	
+	;이성회복(상한까지)
+	BASE:LOCAL:이성 = MAXBASE:LOCAL:이성
+	
+	;흥미의 회복(상한까지), 초조함/만족의 리셋트
+	BASE:LOCAL:흥미 = MAXBASE:LOCAL:흥미
+	BASE:LOCAL:초조함 = 0
+	BASE:LOCAL:만족 = 0
+	
+	;죄책감경감
+	IF CFLAG:LOCAL:죄책감 > 0
+		;고정치 경감
+		CFLAG:LOCAL:죄책감 -= 3
+		;얼라이먼트에 의해 비율로 경감
+		CFLAG:LOCAL:죄책감 = CFLAG:LOCAL:죄책감 * (200 + CFLAG:LOCAL:얼라이먼트) / 500
+		;얼라이먼트에 의해 감산
+		CFLAG:LOCAL:죄책감 += LIMIT(CFLAG:LOCAL:얼라이먼트 / 9 - 9, -14, 0)
+		;얼라이먼트가-75 미만이라면 소멸
+		SIF CFLAG:LOCAL:얼라이먼트 < -75
+			CFLAG:LOCAL:죄책감 = 0
+		;죄책감는 0 미만이 되지 않는다
+		SIF CFLAG:LOCAL:죄책감 < 0
+			CFLAG:LOCAL:죄책감 = 0
+	ENDIF
+	
+	;기력회복
+	BASE:LOCAL:기력 += (240 + TIME * 60 + 잔존체력 + MAXBASE:LOCAL:기력 / 5) * (4 + TIME * 2 + TALENT:LOCAL:회복빠름 - TALENT:LOCAL:회복느림 + TALENT:LOCAL:불사) * (3 + TALENT:LOCAL:정력절륜 - TALENT:LOCAL:정력박약) / (10 + CFLAG:LOCAL:소모)
+	;기력가 상한을 돌파하지 않게 조정
+	SIF BASE:LOCAL:기력 > MAXBASE:LOCAL:기력
+		BASE:LOCAL:기력 = MAXBASE:LOCAL:기력
+	
+	;피폐플래그의 경감
+	;피폐가 20 초과이면 고정치 경감
+	SIF CFLAG:LOCAL:소모 > 20
+		CFLAG:LOCAL:소모 -= 5
+	;시간경과에 의해 경감
+	CFLAG:LOCAL:소모 -= 1 + CFLAG:LOCAL:소모 / 3 + TIME
+	;체력가 완쾌에 가까우면 한층 더 경감
+	SIF BASE:LOCAL:체력 > MAXBASE:LOCAL:체력 * 4 / 5
+		CFLAG:LOCAL:소모 -= 1
+	;기력가 완쾌에 가까우면 한층 더 경감
+	SIF BASE:LOCAL:기력 > MAXBASE:LOCAL:기력 * 4 / 5
+		CFLAG:LOCAL:소모 -= 1
+	;피폐플래그는 0 미만이 되지 않는다
+	SIF CFLAG:LOCAL:소모 < 0
+		CFLAG:LOCAL:소모 = 0
+NEXT
+;조교자가치료소질을 가지고 있는 경우
+IF TARGET > -1 && TALENT:치료
+	;조교대상체력, 기력를 비율 회복
+	TIMES BASE:MASTER:체력, 1.2
+	TIMES BASE:MASTER:기력, 1.2
+	;체력, 기력가 상한을 돌파하지 않게 조정
+	SIF BASE:MASTER:체력 > MAXBASE:MASTER:체력
+		BASE:MASTER:체력 = MAXBASE:MASTER:체력
+	SIF BASE:MASTER:기력 > MAXBASE:MASTER:기력
+		BASE:MASTER:기력 = MAXBASE:MASTER:기력
+ENDIF
+
+;일시의 갱신
+;오전이라면 오후에, 오후라면 다음날로 한다
+;일시 갱신 처리가 2개소 있었던 것이 기분되었다의 것으로 함수로 정리했다
+;그렇다 치더라도 심한 함수명이다… 영어라든지 모르지요
+@NEXTTIME
+IF TIME++
+	;총일수/일/해/계절/밤낮의 갱신
+	DAY++
+	FLAG:일수 = DAY % 120
+	FLAG:연수 = DAY / 120
+	FLAG:계절 = FLAG:연수 / 30
+	TIME = 0
+;OriginalString : 一日が終わった・・・
+	PRINTW 하루가 끝났다···
+
+	;30일째 이후라면 엔딩 조건을 참조한다(시나리오모드가 생기면시나리오시로 변경할지도)
+	IF DAY >= 30 && !FLAG:END달성
+		CALL ENDING
+		SIF RESULT > 0
+			FLAG:END달성 = 1
+	ENDIF
+	
+ELSE
+;OriginalString : 夜が更ける・・・
+	PRINTW 밤이 깊어진다···
+ENDIF
+CALL DAY_EFFECT
+
+;────────────────────────────────────
+;NEWDAY를 호출해
+;────────────────────────────────────
+@EVENTSHOP
+#PRI

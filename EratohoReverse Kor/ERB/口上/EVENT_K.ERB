@@ -1,0 +1,844 @@
+﻿;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+;구상호출용 터미널 파일
+;≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡
+
+;-------------------------------------------------
+;구상표시 전후 처리@KOJO_BAA
+;구상표시 전후에 부르는 것으로구상호출전의표시설정에 돌아옵니다@이것 보고
+;인수 0이-1이라면 사전 처리, -2라면 모든 후 처리입니다
+;또, 인수 0에 정의 수치를 넣는 것으로 리셋트를 실시하는 설정을선택·제외할 수 있습니다
+;※0을 넣었을 경우는 아무것도 하지 않게 됩니다
+;-------------------------------------------------
+@KOJO_BAA(ARG)
+;사전 처리
+IF ARG == -1
+	;키 경치 보존
+	LOCAL:0 = GETBGCOLOR()
+	;문자 속성 보존
+	LOCAL:1 = GETSTYLE()
+	
+	;말소 예정플래그세트
+	
+;후 처리
+ELSE
+	;ARG가 부라면 모든 후 처리를 실시한다
+	SIF ARG < 0
+		ARG = 7
+	;키 경치 리셋트
+	SIF (ARG & 1) && LOCAL:0 != GETBGCOLOR()
+		SETBGCOLOR LOCAL:0
+	;문자 속성 리셋트
+	SIF (ARG & 2) && LOCAL:1 != GETSTYLE()
+		FONTSTYLE LOCAL:1
+	;문자색리셋트
+	SIF (ARG & 4)
+		RESETCOLOR
+	
+	;말소 예정플래그의 리셋트
+	
+ENDIF
+;RESULT 보유
+RETURN RESULT
+
+;-------------------------------------------------
+;구상개요@KOJO_DIGEST
+;주인님선택시에 표시됩니다. 일차적으로 TARGET로서손바탕으로 불려구상표시 후에 또 사라집니다.
+;대상한정 돌출하고 기술했다경우, 그대상가 되는 MASTER의 경우는 그 쪽이 표시됩니다.
+;인수는 캐릭터번호. 생략 불가입니다. 등록번호가 아닌 것에 요주의!
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_DIGEST(ARG:0 = -1)
+;인수 생략시, RESULT0로돌아가기
+SIF ARG < 0
+	RETURN 0
+;TARGET를 날조
+ADDCHARA ARG
+TARGET = CHARANUM-1
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+CALL KOJO_CALL(@"DIGEST_K{ARG}", TARGET)
+;후 처리
+CALL KOJO_BAA(-2)
+DELCHARA TARGET
+TARGET = -1
+RETURN RESULT
+
+;-------------------------------------------------
+;구상주의 사항@KOJO_ATTENTION
+;주인님선택시에 표시됩니다. 일차적으로 TARGET로서손바탕으로 불려구상표시 후에 또 사라집니다.
+;대상한정 돌출하고 기술했다경우, 그대상가 되는 MASTER의 경우는 그 쪽이 표시됩니다.
+;인수는 캐릭터번호. 생략 불가입니다. 등록번호가 아닌 것에 요주의!
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_ATTENTION(ARG:0 = -1)
+;인수 생략시, RESULT0로돌아가기
+SIF ARG < 0
+	RETURN 0
+;TARGET를 날조
+ADDCHARA ARG
+TARGET = CHARANUM-1
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+CALL KOJO_CALL(@"ATTENTION_K{ARG}", TARGET)
+;후 처리
+CALL KOJO_BAA(-2)
+DELCHARA TARGET
+TARGET = -1
+RETURN RESULT
+
+;-------------------------------------------------
+;이벤트구상@KOJO_EVENT
+;이벤트시의구상, 이벤트개시시에 출력합니다
+;인수 0은이벤트번호, 인수 1은이벤트의 파생번호（파생이 없는 것은 생략 해도 좋다）
+;인수 2는 캐릭터의등록번호（생략 하면 TARGET）
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_EVENT(ARG:0, ARG:1, ARG:2 = -2)
+;인수 2 생략시, TARGET에 변환
+ARG:2 = ARG:2 != -2 ? ARG:2 # TARGET
+;구상로 참조하기 위해서이벤트번호를플래그에 떨어뜨린다
+TFLAG:이벤트번호 = ARG
+;인수 2가-1이면 호출하지 않는다
+SIF ARG:2 < 0
+	RETURN 0
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(ARG:2)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"EVENT_K{NO:(ARG:2)}_{ARG}", ARG:2, 1, ARG:1)
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;조수이벤트구상@KOJO_EVENT_ASSI
+;조수관련이벤트시의구상, 이벤트개시시에 출력합니다. 항상 오른쪽맞춤이 된다
+;인수 0은이벤트번호, 인수 1은이벤트의 파생번호（파생이 없는 것은 생략 해도 좋다）
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;또, RESULT치가 1이라면 DRAWLINE, 2라면 일행 개행, 3이라고 양쪽 모두 합니다
+;-------------------------------------------------
+@KOJO_EVENT_ASSI(ARG:0, ARG:1)
+;조수가 없으면 호출하지 않는다
+SIF ASSI < 0
+	RETURN 0
+TFLAG:조수이벤트번호 = ARG
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(ASSI)
+;구상표시 온 또는구상강제 호출시, 구상호출
+IF FLAG:구상 || RESULT
+	;오른쪽맞춤
+	ALIGNMENT RIGHT
+	CALL KOJO_CALL(@"EVENT_ASSI_K{NO:ASSI}_{ARG}", ASSI, 1, ARG:1)
+	;왼쪽 가지런히 해에 되돌린다
+	ALIGNMENT LEFT
+ENDIF
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;각인취득구상@KOJO_MARK
+;각인취득시에 출력합니다
+;인수는 각각이각인번호에 대응, 그 커맨드로취득했다각인의 수치가 들어갑니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_MARK(ARG:0, ARG:1, ARG:2, ARG:3, ARG:4)
+;TARGET 부재시에는 호출하지 않는다
+SIF TARGET < 0
+	RETURN 0
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"MARK_K{NO:TARGET}", TARGET, 5, ARG, ARG:1, ARG:2, ARG:3, ARG:4)
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다시 일행 연다
+SIF FLAG:구상 && RESULT
+;OriginalString : 
+	PRINTL 
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;탈의액션구상@KOJO_DATUI
+;조교자액션의 앞, 강제탈의나자주탈의가 발생했다 풀어에 출력합니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;※같은 물건을 2회부르는 일이 되므로,
+;  조교자가 벗게 했을 경우는조교자가 벗었다를 처리하지 않습니다
+;-------------------------------------------------
+@KOJO_DATUI
+;사전 처리
+CALL KOJO_BAA(-1)
+;조교자가 벗게 했다
+IF TFLAG:강제탈의 && TFLAG:조수ACT != 70
+	;예외:주인님가조수（TARGET의 서포트탈의구상를 부른다）
+	IF ASSI >= 0 && TALENT:ASSI:주인님
+		;조수를 일시적으로조교자와 교대한다
+		CALL ASSISWAP
+		;구상색설정
+		CALL KOJO_COLOR(ASSI)
+		;구상표시 온 또는구상강제 호출시, 구상호출
+		SIF FLAG:구상 || RESULT
+			CALL KOJO_CALL(@"DATUI_ASSI_K{NO:ASSI}")
+		;후 처리
+		CALL KOJO_BAA(-2)
+		;조수를조수에 되돌린다
+		CALL ASSISWAP
+	;통상
+	ELSE
+		;구상색설정
+		CALL KOJO_COLOR(TARGET)
+		;구상표시 온 또는구상강제 호출시, 구상호출
+		SIF FLAG:구상 || RESULT
+			CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
+		;후 처리
+		CALL KOJO_BAA(-2)
+	ENDIF
+	;구상표시 온이라면구상가 표시당했다나을반환
+	;※상기 주석 참조
+	RETURN FLAG:구상 ? RESULT # 0
+;조수가 벗게 했다
+ELSEIF TFLAG:강제탈의 && TFLAG:조수ACT == 70
+	;오른쪽맞춤
+	ALIGNMENT RIGHT
+	;예외:주인님가조수（ASSI의탈의구상를 부른다）
+	IF ASSI >= 0 && TALENT:ASSI:주인님
+		;조수를 일시적으로조교자와 교대한다
+		CALL ASSISWAP
+		;구상색설정
+		CALL KOJO_COLOR(TARGET)
+		;구상표시 온 또는구상강제 호출시, 구상호출
+		SIF FLAG:구상 || RESULT
+			CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
+		;후 처리
+		CALL KOJO_BAA(-2)
+		;조수를조수에 되돌린다
+		CALL ASSISWAP
+	;통상
+	ELSE
+		;구상색설정
+		CALL KOJO_COLOR(ASSI)
+		;구상표시 온 또는구상강제 호출시, 구상호출
+		SIF FLAG:구상 || RESULT
+			CALL KOJO_CALL(@"DATUI_ASSI_K{NO:ASSI}")
+		;후 처리
+		CALL KOJO_BAA(-2)
+	ENDIF
+	;왼쪽 가지런히 해에 되돌린다
+	ALIGNMENT LEFT
+ENDIF
+
+;조교자가 벗었다
+IF TFLAG:자주탈의
+	;구상색설정
+	CALL KOJO_COLOR(TARGET)
+	;구상표시 온 또는구상강제 호출시, 구상호출
+	SIF FLAG:구상 || RESULT
+		CALL KOJO_CALL(@"DATUI_K{NO:TARGET}")
+	;후 처리
+	CALL KOJO_BAA(-2)
+ENDIF
+
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;자세변화구상@KOJO_POSE
+;자세의 변경 지시가 있었을 때에 불리는구상입니다
+;ACT는 이미 정해져 있으므로 안에서 참조할 수도 있습니다.
+;ARG는조교대상의자세, ARG:1은위치전후, ARG:2는위치상하의변화입니다. 변함없었을 때는-1이 들어갑니다
+;모두-1 때는 지문이 표시되지 않고 이구상도 불리지 않습니다.
+;-------------------------------------------------
+@KOJO_POSE(ARG = -1, ARG:1 = -1, ARG:2 = -1)
+;사전 처리
+CALL KOJO_BAA(-1)
+;돌아가 값초기화
+RESULT = 0
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"POSE_K{NO:TARGET}", TARGET, 3, ARG, ARG:1, ARG:2)
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;지문구상@KOJO_MESSAGE
+;지문을 치환하는구상입니다
+;이구상가 불려 진정한 값을 RETURN했다경우, 통상의 지문이 불려 가지 않습니다
+;또, RETURN에 넣은 값은 FLAG:지문제어에 격납됩니다
+;ACT구상와 제휴할 때에 이용해 주세요
+;덧붙여 SP구상는 SP_TRAIN_MESSAGE_KX_SPACT번호  가 됩니다
+;-------------------------------------------------
+@KOJO_TRAIN_MESSAGE
+;사전 처리
+CALL KOJO_BAA(-1)
+;돌아가 값초기화
+RESULT = 0
+;구상호출(SP행동시는 호출해 위치를 변경)
+IF TFLAG:ＳＰ행동 >= 200
+	CALL KOJO_CALL(@"SP_TRAIN_MESSAGE_K{NO:TARGET}_{TFLAG:ACT}")
+ELSE
+	CALL KOJO_CALL(@"TRAIN_MESSAGE_K{NO:TARGET}_{TFLAG:ACT}")
+ENDIF
+;후 처리
+CALL KOJO_BAA(-2)
+;지문제어에 RESULT가 부라면 0, 정이라면 그대로을반환
+FLAG:지문제어 = MAX(RESULT, 0)
+;돌아가 값에지문제어을반환
+RETURN FLAG:지문제어
+
+;-------------------------------------------------
+;지문구상@KOJO_MESSAGE2
+;상기와 거의 같습니다만, 이쪽은 리액션의 지문을 옮겨놓습니다
+;리액션구상와 제휴하는 경우는구상내에서 FLAG:지문제어에 수치를 대입해 주세요
+;-------------------------------------------------
+@KOJO_TRAIN_MESSAGE2
+;사전 처리
+CALL KOJO_BAA(-1)
+;돌아가 값초기화
+RESULT = 0
+;구상호출(SP행동시는 호출해 위치를 변경)
+IF TFLAG:ＳＰ행동 >= 200
+	CALL KOJO_CALL(@"SP_TRAIN_MESSAGE2_K{NO:TARGET}_{TFLAG:ACT}")
+ELSE
+	CALL KOJO_CALL(@"TRAIN_MESSAGE2_K{NO:TARGET}_{TFLAG:ACT}")
+ENDIF
+;후 처리
+CALL KOJO_BAA(-2)
+;지문제어에 RESULT가 부라면 0, 정이라면 그대로을반환
+FLAG:지문제어 = MAX(RESULT, 0)
+;돌아가 값에지문제어을반환
+RETURN FLAG:지문제어
+
+;-------------------------------------------------
+;액션구상@KOJO_ACT
+;조교자액션이 발생했다 풀어에 출력합니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;RESULT치가 2라면 다음의 「미약등사용구상@KOJO_USE」를 부르지 않습니다
+;액션구상내에서미약등사용구상를 겸하고 썼을 경우로 지정해 주세요
+;-------------------------------------------------
+@KOJO_ACT
+;사전 처리
+CALL KOJO_BAA(-1)
+;조수가미약등사용 하고 있는 경우, 사용플래그를 놓친다
+;이렇게 하지 않으면 주인이미약를 사용한구상를 표시해 버리기 (위해)때문에
+LOCAL = TFLAG:미약등사용
+;약품를 사용했다조수가 있으면,
+;미약사용은조교자는 아니기 때문에미약등사용플래그를 0에
+SIF GET_ASSIACTMATCH("약품")
+	TFLAG:미약등사용 = 0
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+IF FLAG:구상 || RESULT
+	;우선 액션마다의구상
+	CALL KOJO_CALL(@"ACT_K{NO:TARGET}_{TFLAG:ACT}")
+	;표시하지 않았던 경우, 콤비네이션이 발생하고 있으면 파생전을 불러 본다
+	IF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비네이션")
+		;조수의방침（구사양）를 세워 위장
+		TFLAG:조수의방침 = 1
+		CALL KOJO_CALL(@"ACT_K{NO:TARGET}_{GET_COMBIACTNUM(TFLAG:ACT)}")
+	ENDIF
+	;표시하지 않았던 경우 범용 액션구상（EASY 템플릿용의 기능이지만 외에서도 사용할 수 있을지도）
+	SIF !RESULT
+		CALL KOJO_CALL(@"ACT_K{NO:TARGET}")
+ENDIF
+;후 처리
+CALL KOJO_BAA(-2)
+;도가했다플래그를 복귀
+TFLAG:미약등사용 = LOCAL
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;추가 액션구상@KOJO_ACT_EXTRA
+;추가 액션이 발생했다 풀어에 출력합니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;인수 0은 추가 액션의 분류（0, 손으로 애무, 이하미구현）
+;관련 변수 TFLAG:229
+;-------------------------------------------------
+@KOJO_ACT_EXTRA(ARG)
+;번호는 추가 액션 분류와 변수로부터 생성한다
+TFLAG:추가ACT = ARG * 10 + TFLAG:(229 + ARG)
+;추가행동구상플래그가 서 있는 때만 처리한다
+SIF !GETBIT(TFLAG:추가행동구상, ARG)
+	RETURN 0
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"ACT_EXTRA_K{NO:TARGET}_{TFLAG:추가ACT}")
+;후 처리
+CALL KOJO_BAA(-2)
+;추가 액션 발생플래그를 떨어뜨린다
+CLEARBIT TFLAG:추가행동구상, ARG
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;조수액션구상@KOJO_ACT_ASSI
+;조수액션이 발생했다 풀어에 출력합니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_ACT_ASSI
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(ASSI)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"ACT_ASSI_K{NO:ASSI}_{TFLAG:조수ACT}")
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;미약등사용구상@KOJO_USE
+;미약나로션가 사용되었을 때에 출력합니다
+;RESULT치가 0이라면구상를 표시하지 않았던 것을 나타냅니다
+;조수가 갔을 경우나 「액션구상@KOJO_ACT」의 RESULT치가 2라고 불리지 않습니다
+;액션구상내에서미약사용구상를 겸하고 썼을 경우로 지정해 주세요
+;-------------------------------------------------
+@KOJO_USE
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+SIF FLAG:구상 || RESULT
+	CALL KOJO_CALL(@"USE_K{NO:TARGET}")
+;후 처리
+CALL KOJO_BAA(-2)
+;RESULT가 0이외라면미약등사용구상플래그계속
+TFLAG:미약등사용구상 = RESULT ? 0 # TFLAG:미약등사용구상
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;리액션구상@KOJO_REACT
+;조교대상가 커맨드를 실행했다뒤로 출력합니다
+;최초로조교지시 마다 개별의구상를 참조해, 그 RESULT치가 0이라면구상를 표시하지 않았던 것을 나타내,
+;표시하지 않았다（RESULT=0）의 경우만 커맨드 마다 범용의구상를 참조합니다
+;RESULT치가 0이라면 어느구상도 표시하지 않았던 것을 나타냅니다
+;-------------------------------------------------
+@KOJO_REACT
+;사전 처리
+CALL KOJO_BAA(-1)
+;구상색설정
+CALL KOJO_COLOR(TARGET)
+;구상표시 온 또는구상강제 호출시, 구상호출
+IF FLAG:구상 || RESULT
+	;우선 리액션 마다의구상
+	CALL KOJO_CALL(@"REACT_K{NO:TARGET}_{TFLAG:ACT}")
+	;표시되지 않았던 경우 콤비네이션을 보러 간다. 그런데도 표시되지 않으면 파생원을 부른다
+	SIF !RESULT && ASSI:1 >= 0 && TCVAR:(ASSI:1):조수방침 == GET_ASSIMENUNUM("콤비네이션")
+		CALL KOJO_CALL(@"REACT_K{NO:TARGET}_{GET_COMBIACTNUM(TFLAG:ACT)}")
+	;여기까지 표시되지 않았던 경우, 순서에 범용구상에 떨어뜨린다
+	SIF !RESULT
+		CALL KOJO_CALL(@"COM_K{NO:TARGET}_{SELECTCOM}")
+	SIF !RESULT
+		CALL KOJO_CALL(@"REACT_K{NO:TARGET}")
+ENDIF
+;후 처리
+CALL KOJO_BAA(-2)
+;구상표시 온이라면구상가 표시당했다나을반환
+RETURN FLAG:구상 ? RESULT # 0
+
+;-------------------------------------------------
+;구상색설정@KOJO_COLOR
+;구상의 색설정을 실시합니다. 색설정 함수가 없는 경우는 약간 회색이 됩니다
+;하는 김에, 플래그관리이기 때문에구상표시의 설정을 무시하는구상를 여기서 판단합니다
+;-------------------------------------------------
+@KOJO_COLOR(ARG)
+;인수가 부라면 처리하지 않는다
+SIF ARG < 0
+	RETURN 0
+;돌아가 값초기화
+RESULT = 0
+;TARGET 대피
+LOCAL = TARGET
+;TARGET에 인수를 대입
+TARGET = ARG
+;구상로부터 색지정을 꺼내, 설정한다
+;지정이 없으면 디폴트 칼라
+TRYCCALLFORM KOJO_COLOR_K{NO:ARG}
+CATCH
+	SETCOLOR 160, 160, 160
+ENDCATCH
+;TARGET 지정을 되돌린다
+TARGET = LOCAL
+;구상강제 호출의 지정을반환
+TRYCCALLFORM KOJO_ON_K{NO:(ARG)}
+	RETURN RESULT
+CATCH
+	RETURN 0
+ENDCATCH
+
+;-------------------------------------------------
+;입장 한정구상호출@KOJO_CALL
+;조교자의 입장（주인님나 추가조교자인가）한정의구상를 설정할 수 있습니다
+;이 아래에대상한정구상의 호출이 존재해, 함수명으로 공존할 수 있습니다. 또, 한정구상에 칼라의 설정은 할 수 없습니다（범용 부분과 어긋나기 (위해)때문에）
+;인수 0은 함수명의 후반 부분, 인수 1에는구상주의등록번호, 인수 2에는 원래의 인수의 수를 넣는다（현상 0, 1, 3, 5）, 인수 3이후는 원래의 인수를 넣는다
+;이쪽도 배타의 설정을 할 수 있습니다만, 대상한정보다 상층에서 처리됩니다.
+;-------------------------------------------------
+@KOJO_CALL(ARGS, ARG = -2, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+#DIM LCOUNT, 1
+#DIM 우선에의한배타, 1
+ARG = ARG != -2 ? ARG # TARGET
+
+;우선구상 3, 2, 1, 통상의 순서로 돌린다
+FOR LCOUNT, 0, 4
+	RESULT = 0
+	우선에의한배타 = 0
+	IF LCOUNT < 3
+		;우선구상의 처리
+		TRYCALLFORM KOJO_PRIORITY{3-LCOUNT}_K{NO:(ARG)}
+		IF !RESULT
+			CONTINUE
+		ELSEIF RESULT > 1
+			우선에의한배타 = 1
+		ENDIF
+		LOCALS = PRI{3-LCOUNT}_%ARGS%
+	ELSE
+		LOCALS = %ARGS%
+	ENDIF
+	;주인님한정구상를 본다
+	IF TALENT:주인님
+		CALL KOJO_CALL2(@"MS_%LOCALS%", ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	;비주인님한정구상를 본다
+	ELSE
+		CALL KOJO_CALL2(@"AS_%LOCALS%", ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+	;표시했다경우돌아가기
+	SIF RESULT
+		RETURN RESULT
+
+	;배타의 체크（조건을 채우는 입장의 경우, 미기입에서도 일반구상를 표시하지 않는 설정）
+	;주인님한정구상에 히트 할까를 본다
+	IF TALENT:주인님
+		TRYCALLFORM KOJO_MS_EXCLUSION_K{NO:(ARG)}
+	;비주인님한정구상에 히트 할까를 본다
+	ELSE
+		TRYCALLFORM KOJO_AS_EXCLUSION_K{NO:(ARG)}
+	ENDIF
+	;배타
+	SIF RESULT
+		CONTINUE
+
+	;대상한정구상에 패스한다
+	CALL KOJO_CALL2(LOCALS, ARG, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	;표시했다경우, 혹은우선에 의한 배타가 일하는 경우돌아가기
+	SIF RESULT || 우선에의한배타
+		RETURN RESULT
+NEXT
+RETURN 0
+
+;-------------------------------------------------
+;대상한정구상호출@KOJO_CALL2
+;특정의조교대상로플레이했다라고 하고 한정의구상를 설정할 수 있습니다
+;조건이 어려운 정도우선 됩니다. 또, 한정구상에 칼라의 설정은 할 수 없습니다（범용 부분과 어긋나기 (위해)때문에）
+;기술이 꽤 저것이 되어 있습니다만 뭐현재 어쩔 수 없다
+;인수 0은 함수명의 후반 부분, 인수 1에는구상주의등록번호, 인수 2에는 원래의 인수의 수를 넣는다（현상 0, 1, 3, 5）, 인수 3이후는 원래의 인수를 넣는다
+;-------------------------------------------------
+@KOJO_CALL2(ARGS, ARG = -2, ARG:1, ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+ARG = ARG != -2 ? ARG # TARGET
+RESULT = 0
+;MASTER 지정구상를 본다
+;인수 0
+IF !ARG:1
+	;주인공이당신라면 성별을 본다
+	IF !NO:MASTER
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자당신구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
+				TRYCALLFORM KOJO_MALEYOU_%ARGS%
+			;후타나리당신구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
+				TRYCALLFORM KOJO_TWINYOU_%ARGS%
+			ENDIF
+			;히트 하고 있지 않으면, 고추 붙어 있는당신구상에 히트 할까를 본다
+			SIF !RESULT
+				TRYCALLFORM KOJO_PENISYOU_%ARGS%
+		ENDIF
+		;녀구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
+			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%
+	ENDIF
+
+	;히트 하고 있지 않으면, 대상지정（0～99）의구상에 히트 할까를 본다
+	SIF !RESULT
+		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%
+;인수 1
+ELSEIF ARG:1 == 1
+	;주인공이당신라면 성별을 본다
+	IF !NO:MASTER
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자당신구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
+				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2)
+			;후타나리당신구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
+				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2)
+			ENDIF
+			;히트 하고 있지 않으면, 고추 붙어 있는당신구상에 히트 할까를 본다
+			SIF !RESULT
+				TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2)
+		ENDIF
+		;녀구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
+			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2)
+	ENDIF
+
+	;히트 하고 있지 않으면, 대상지정（0～99）의구상에 히트 할까를 본다
+	SIF !RESULT
+		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2)
+;인수 3
+ELSEIF ARG:1 == 3
+	;주인공이당신라면 성별을 본다
+	IF !NO:MASTER
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자당신구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
+				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
+			;후타나리당신구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
+				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
+			ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는당신구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
+		ENDIF
+		;녀구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
+			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4)
+	ENDIF
+
+	;히트 하고 있지 않으면, 대상지정（0～99）의구상에 히트 할까를 본다
+	SIF !RESULT
+		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2, ARG:3, ARG:4)
+;인수 5
+ELSEIF ARG:1 == 5
+	;주인공이당신라면 성별을 본다
+	IF !NO:MASTER
+		;고추는 비친다
+		IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+			;남자당신구상에 히트 할까를 본다
+			IF TALENT:MASTER:남자
+				TRYCALLFORM KOJO_MALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+			;후타나리당신구상에 히트 할까를 본다
+			ELSEIF TALENT:MASTER:후타나리
+				TRYCALLFORM KOJO_TWINYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+			ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는당신구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENISYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+		;녀구상에 히트 할까를 본다
+		SIF !TALENT:MASTER:남자
+			TRYCALLFORM KOJO_FEMALEYOU_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+
+	;히트 하고 있지 않으면, 대상지정（0～99）의구상에 히트 할까를 본다
+	SIF !RESULT
+		TRYCALLFORM KOJO_NO{NO:MASTER}_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+ENDIF
+
+;표시했다경우돌아가기
+IF RESULT
+	RETURN RESULT
+ENDIF
+
+;배타의 체크（조건을 채우는조교대상의 경우, 미기입에서도 일반구상를 표시하지 않는 설정）
+;지정구상끼리의 배타 설정은 할 수 없다
+;주인공이당신라면 성별을 본다
+IF !NO:MASTER
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자당신구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
+			TRYCALLFORM KOJO_MALEYOU_EXCLUSION_K{NO:(ARG)}
+		;후타나리당신구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
+			TRYCALLFORM KOJO_TWINYOU_EXCLUSION_K{NO:(ARG)}
+		ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는당신구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENISYOU_EXCLUSION_K{NO:(ARG)}
+	ENDIF
+	;녀구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
+		TRYCALLFORM KOJO_FEMALEYOU_EXCLUSION_K{NO:(ARG)}
+ENDIF
+
+;히트 하고 있지 않으면, 대상지정（0～99）의구상에 히트 할까를 본다
+SIF !RESULT
+	TRYCALLFORM KOJO_NO{NO:MASTER}_EXCLUSION_K{NO:(ARG)}
+
+;배타의 경우 RESULT에 0을 돌려주어, 돌아가기
+IF RESULT
+	RETURN 0
+ENDIF
+
+;성별 지정구상를 본다
+;인수 0
+IF !ARG:1
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
+			TRYCALLFORM KOJO_MALE_%ARGS%
+		;후타나리구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
+			TRYCALLFORM KOJO_TWIN_%ARGS%
+		ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENIS_%ARGS%
+	ENDIF
+	;녀구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
+		TRYCALLFORM KOJO_FEMALE_%ARGS%
+;인수 1
+ELSEIF ARG:1 == 1
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
+			TRYCALLFORM KOJO_MALE_%ARGS%(ARG:2)
+		;후타나리구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
+			TRYCALLFORM KOJO_TWIN_%ARGS%(ARG:2)
+		ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENIS_%ARGS%(ARG:2)
+	ENDIF
+	;녀구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
+		TRYCALLFORM KOJO_FEMALE_%ARGS%(ARG:2)
+;인수 5
+ELSEIF ARG:1 == 5
+	;고추는 비친다
+	IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+		;남자구상에 히트 할까를 본다
+		IF TALENT:MASTER:남자
+			TRYCALLFORM KOJO_MALE_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		;후타나리구상에 히트 할까를 본다
+		ELSEIF TALENT:MASTER:후타나리
+			TRYCALLFORM KOJO_TWIN_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+		ENDIF
+		;히트 하고 있지 않으면, 고추 붙어 있는구상에 히트 할까를 본다
+		SIF !RESULT
+			TRYCALLFORM KOJO_PENIS_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+	ENDIF
+	;녀구상에 히트 할까를 본다
+	SIF !TALENT:MASTER:남자
+		TRYCALLFORM KOJO_FEMALE_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+ENDIF
+
+;표시했다경우돌아가기
+IF RESULT
+	RETURN RESULT
+ENDIF
+
+;배타의 체크
+;MASTAR 지정구상가 상위에 해당해, 배타에서는 축 (일)것은 할 수 없다
+;고추는 비친다
+IF TALENT:MASTER:남자 || TALENT:MASTER:후타나리
+	;남자구상에 히트 할까를 본다
+	IF TALENT:MASTER:남자
+		TRYCALLFORM KOJO_MALE_EXCLUSION_K{NO:(ARG)}
+	;후타나리구상에 히트 할까를 본다
+	ELSEIF TALENT:MASTER:후타나리
+		TRYCALLFORM KOJO_TWIN_EXCLUSION_K{NO:(ARG)}
+	ENDIF
+	;히트 하고 있지 않으면, 고추 붙어 있는구상에 히트 할까를 본다
+	SIF !RESULT
+		TRYCALLFORM KOJO_PENIS_EXCLUSION_K{NO:(ARG)}
+	ENDIF
+;녀구상에 히트 할까를 본다
+SIF !TALENT:MASTER:남자
+	TRYCALLFORM KOJO_FEMALE_EXCLUSION_K{NO:(ARG)}
+
+
+;배타의 경우 RESULT에 0을 돌려주어, 돌아가기
+IF RESULT
+	RETURN 0
+ENDIF
+
+;통상의구상
+;인수 0
+IF !ARG:1
+	TRYCALLFORM KOJO_%ARGS%
+;인수 1
+ELSEIF ARG:1 == 1
+	TRYCALLFORM KOJO_%ARGS%(ARG:2)
+;인수 5
+ELSEIF ARG:1 == 5
+	TRYCALLFORM KOJO_%ARGS%(ARG:2, ARG:3, ARG:4, ARG:5, ARG:6)
+ENDIF
+
+
+RETURN RESULT
+
+;-------------------------------------------------
+;구상존재 판정@KOJO_CHECK
+;인수 0의 캐릭터에 대해서, NO=인수 1의 캐릭터는 표시할 수 있는구상를 가지고 있을까 돌려준다
+;구상없음은 0, 일반구상유는 1, 전용구상의대상라면 2을반환
+;-------------------------------------------------
+@KOJO_CHECK(ARG, ARG:1)
+VARSET RESULT
+VARSET RESULTS
+TRYCALLFORM KOJO_K{ARG:1}
+;남당신판정
+SIF NO:ARG == 0 && TALENT:ARG:남자 && STRFIND(RESULTS, @"/MALEYOU/") >= 0
+	RETURN 2
+;녀당신판정
+SIF NO:ARG == 0 && !TALENT:ARG:남자 && STRFIND(RESULTS, @"/FEMALEYOU/") >= 0
+	RETURN 2
+;후타나리당신판정
+SIF NO:ARG == 0 && TALENT:ARG:후타나리 && STRFIND(RESULTS, @"/TWINYOU/") >= 0
+	RETURN 2
+;고추 첨부당신판정
+SIF NO:ARG == 0 && PENIS(ARG) && STRFIND(RESULTS, @"/PENISYOU/") >= 0
+	RETURN 2
+;캐릭터 일치 판정
+SIF STRFIND(RESULTS, @"/K{NO:ARG}/") >= 0
+	RETURN 2
+;남 판정
+SIF TALENT:ARG:남자 && STRFIND(RESULTS, @"/MALE/") >= 0
+	RETURN 2
+;녀 판정
+SIF !TALENT:ARG:남자 && STRFIND(RESULTS, @"/FEMALE/") >= 0
+	RETURN 2
+;후타나리판정
+SIF TALENT:ARG:후타나리 && STRFIND(RESULTS, @"/TWIN/") >= 0
+	RETURN 2
+;고추 첨부 판정
+SIF PENIS(ARG) && STRFIND(RESULTS, @"/PENIS/") >= 0
+	RETURN 2
+;범용의 판정을 해돌아가기
+RETURN RESULT
+

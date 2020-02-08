@@ -1,0 +1,52 @@
+﻿@CHARAMAKE_K19(ARG)
+PRINTFORMW 「좋은 아침이에요. 내 질문에 답해 주세요」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「눈 앞에는 풀이 무성한 넓은 뜰이 있어、당신은 그것을 정돈하란 말을 들었습니다」
+PRINTFORML 「성실하게하면 하루가 걸리는 큰 일이 될 것 같습니다」
+PRINTFORMW 「그런데、당신은 어떻게 할거죠？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 성실하게 뜰을 정돈한다
+PRINTFORMDL [2] 사람을 불러 도움을 받는다
+PRINTFORMDL [3] 게으름 피운다
+PRINTFORMDL [4] 이만큼 넓으면 청간(青姦.야외플레이)도 마음껏！
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답해 주지 않다니……벨거에요？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「보통은 그렇네요」
+		CALLF CM_PROF("솔직야", 20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("피학", -10)
+	CASE 2
+		PRINTFORML 「으ー응…그것도 하나의 방법、이네요」
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("낙관", -10)
+	CASE 3
+		PRINTFORML 「그건 사람으로서 어떨지…？」
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("모랄", -20)
+	CASE 4
+		PRINTFORML 「무슨、성실하게 대답해 주세욧！！」
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("모랄", -20)
+ENDSELECT
+PRINTFORMW 「…수고하셨습니다、그럼 좋은 꿈을」
+RETURN 1
+

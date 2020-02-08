@@ -1,0 +1,116 @@
+﻿;-------------------------------------------------
+;BIGPRINT계 함수
+;-------------------------------------------------
+;·정말로 font size를 바꾸고 있는 것은 아니다. 실제 바꿀 수 없고
+;·조금했다트릭. BIGPRINT계의 기본 처리이기도 함
+;·어쩌면 표시 결과는 환경에 의존할지도 모른다
+;  낡은 XP 밖에 없고 상세한 테스트는 할 수 없는거야. 미안해요
+;·일부 기호가 좋은 느낌에 낼 수 없었다거나 하므로 확인 필수
+;·키워드"D"를 만들 예정은 없다. 아무래도라고 하는 (분)편은 GETDEFCOLOR()를 사용해 주세요
+;·네? 맥? 나는 오니포테를 먹고 싶습니다
+;-------------------------------------------------
+;당신이 사용할지도 모르는, 추천 할 수 없는 문자
+;·"…" → 작고"..."라고 출력된다. "…"인가 "…"로 그것 같고
+;·"///" → BIG에서는 작게 출력된다. UNICODE(0 x2571) * 3으로 그것 같아진다
+;  SMALL에서도 UNICODE(0 x2571) * 3으로 하는지, 문제 없으면 그대로도…?
+;·"!?" → 작게 출력된다. BIG에서는"!?"로 할 수 밖에 없다
+;  SMALL에서도"!?"로 하는지, 문제 없으면 그대로도…?
+;·그 외 반각(영수, 특히 기호) → 우선 출력해 봐 부자연스럽게 안 되는가 확인했다 (분)편이 좋다
+;  ';'나':'는 작게 출력되어'*'는 형태가변화 한다. '\'는 백 슬래시가 된다
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:BIGPRINT(L|W)
+;개  요점:오오키이 PRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 건네주는 경우는""의 전에@를 붙여 주세요
+;　　　 ARG:0…[생략가능]문자의 표시색. 생략했다경우는 SETCOLOR의 지정 그대로
+;　　　 ARGS:1…[생략가능]캐릭터 라인의 표시 위치. (LEFT/왼쪽/CENTER/중앙/RIGHT/오른쪽)의 어느쪽이든을 지정가능
+;　　　         생략했다경우는, ALIGNMENT의 지정 그대로. 대문자 소문자의 구별은 하지 않습니다
+;반환값:없음(아마 RESULT 보호)
+;비  고:\n에 의한 개행은 아마 할 수 없습니다
+;굉장한·오오키이입니다…///
+;라고 하면서 기본적인 실태는 폰트를 Raavi로 바꾸고 있을 뿐
+;Raavi는 XP/Vista/7/8에는 표준으로 들어가 있다고 생각되는 폰트. 안심 주세요
+;하의행으로 서로 잡아를 하는 일이 있었으므로, 안전을 위해서(때문에) 2행분 사용하는＆REDRAW로 제어
+;인 것로\n라든지 넣을 때 와 이상해진다
+;행간도 기분되었다의 것으로 좁은 싶었지만, 이것은 SMALLPRINTL를 사용해도변화없음
+;행간에 관해서는 단념해 주세요
+;굉장한·오오키이소리로 매도해져 보고 싶은 당신에
+;-------------------------------------------------
+@BIGPRINTL(ARGS:0, ARG:0 = -1, ARGS:1)
+#LOCALSSIZE 2
+#LOCALSIZE 2
+LOCAL:0 = GETCOLOR()
+LOCALS:0 = %CURRENTALIGN()%
+SETCOLOR ARG:0 < 0 ? LOCAL:0 # (ARG:0 & 0xFFFFFF)
+CALL ALIGNMENTS(ARGS:1)
+IF CHKFONT("Raavi")
+	LOCAL:1 = CURRENTREDRAW()
+	LOCALS:1 = %GETFONT()%
+	REDRAW 0
+	SETFONT "Raavi"
+;OriginalString : " " + ARGS:0 + " "
+	PRINTSL " " + ARGS:0 + " "
+	SETFONT LOCALS:1
+	PRINTL 
+	REDRAW LOCAL:1
+ELSE
+;OriginalString : ARGS:0
+	PRINTSL ARGS:0
+ENDIF
+CALL ALIGNMENTS(LOCALS:0)
+SETCOLOR LOCAL:0
+RETURN RESULT
+
+@BIGPRINTW(ARGS:0, ARG:0 = -1, ARGS:1)
+CALL BIGPRINTL(ARGS:0, ARG:0, ARGS:1)
+WAIT
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:SMALLPRINT(|L|W)
+;개  요점:치이사이 PRINT 함수
+;인  수:ARGS:0… 표시 캐릭터 라인. FORM 캐릭터 라인을 건네주는 경우는""의 전에@를 붙여 주세요
+;　　　 ARG:0…[생략가능]문자의 표시색. 생략했다경우는 SETCOLOR의 지정 그대로
+;　　　 ARGS:1…[생략가능]캐릭터 라인의 표시 위치. (LEFT/왼쪽/CENTER/중앙/RIGHT/오른쪽)의 어느쪽이든을 지정가능
+;　　　         생략했다경우는, ALIGNMENT의 지정 그대로. 대문자 소문자의 구별은 하지 않습니다
+;　　　         ※키워드"L""W"를 사용하지 않는 경우는 ARGS:1을 지정할 수 없습니다
+;반환값:없음(아마 RESULT 보호)
+;파하하하하하! 아카체…… 굉장한·치이사이!
+;라고 하면서 실태는 폰트를 Estrangelo Edessa로 바꾸고 있을 뿐
+;Estrangelo Edessa는 XP/Vista/7/8에는 표준으로 들어가 있다고 생각되는 폰트. 안심 주세요
+;실은 특별 바뀐 일은 하고 있지 않는 것이지만, 우선 BIGPRINT(L|W)와 세트로
+;굉장한·치이사이소리로 속삭여지고 싶은 당신에
+;-------------------------------------------------
+@SMALLPRINT(ARGS:0, ARG:0 = -1)
+#LOCALSIZE 1
+#LOCALSSIZE 1
+LOCAL:0 = GETCOLOR()
+SETCOLOR ARG:0 < 0 ? LOCAL:0 # (ARG:0 & 0xFFFFFF)
+IF CHKFONT("Estrangelo Edessa")
+	LOCALS:0 = %GETFONT()%
+	SETFONT "Estrangelo Edessa"
+;OriginalString : " " + ARGS:0 + " "
+	PRINTS " " + ARGS:0 + " "
+	SETFONT LOCALS:0
+ELSE
+;OriginalString : ARGS:0
+	PRINTS ARGS:0
+ENDIF
+SETCOLOR LOCAL:0
+RETURN RESULT
+
+@SMALLPRINTL(ARGS:0, ARG:0 = -1, ARGS:1)
+#LOCALSSIZE 1
+LOCALS:0 = %CURRENTALIGN()%
+CALL ALIGNMENTS(ARGS:1)
+CALL SMALLPRINT(ARGS:0, ARG:0)
+PRINTL 
+CALL ALIGNMENTS(LOCALS:0)
+RETURN RESULT
+
+@SMALLPRINTW(ARGS:0, ARG:0 = -1, ARGS:1)
+CALL SMALLPRINTL(ARGS:0, ARG:0, ARGS:1)
+WAIT
+RETURN RESULT

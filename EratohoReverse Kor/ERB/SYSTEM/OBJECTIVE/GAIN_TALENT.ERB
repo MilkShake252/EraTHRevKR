@@ -1,0 +1,351 @@
+﻿
+;────────────────────────────────────
+;기능취득·방폐 처리
+;※ARG는 요구 편차(0을 기준에 큰 만큼 이 종별로마력를 소비했다)
+;────────────────────────────────────
+@GAIN_TALENT_AI()
+#DIM LCOUNT
+#DIM 기능수
+#DIM 가용마력
+#DIMS 전기능명
+#DIMS 기능명, 15
+#DIMS 결정종
+
+;취득(방폐) 가능 기능을 기능명에 격납한다
+전기능명 = 배합지식/매혹/금단의지식/도구능숙/촬영기능/혀기술/손가락기술/긴박능숙/새드/더러움무시/종단
+SPLIT 전기능명, "/", 기능명
+
+;기능에 대한 해설@이것 보고_201205
+;『배합지식』
+;미약·로션의 약효 상승, 또휴식계 영양제ACT의 회복량 상승
+;『매혹』
+;조교대상의 긍정적행동에 대한 장벽이 낮아진다, 또호감도상승도 커진다
+;『금단의지식』
+;휴식계 영양제ACT의 회복량 상승 정도. 현재는 불우
+;『도구능숙』
+;전반적인도구효과의 상승, 또도구커스터마이즈가 가능하게
+;『촬영기능』
+;촬영조수ACT가 가능하게 된다
+;『혀기술』
+;혀를 사용하는행동의 효과가 높아진다
+;『손가락기술』
+;손가락을 이용하는행동의 효과가 높아진다
+;『긴박능숙』
+;밧줄를 이용하는행동의 효과가 높아진다. 그것 뿐
+;『새드』
+;고통를 주는 일에 대해서 저항이 없어져, 효과도 오릅니다
+;『더러움무시』
+;더러움에 의한 디메리트를 경감. 현재는 약간 불우
+
+;기능수를 카운트
+기능수 = FINDELEMENT(기능명, "종단")
+
+;이 가격을 웃도는 기능이 존재하면 파탄한다
+LOCAL = 1000000
+FOR LCOUNT, 0, 기능수
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
+		LOCAL = MIN(LOCAL, GAIN_TALENT_V(기능명:LCOUNT, 0))
+NEXT
+;사용 가능마력판정
+가용마력 = GAIN_TALENT_MP_ABLE()
+
+SIF FLAG:디버그
+	PRINTFORML 「기능 취득 처리」(가용 마력:{가용마력})
+
+;살 수 없는가, 살 수 있는도구가 이제 없으면 돌아간다
+IF 가용마력 < LOCAL || LOCAL == 1000000
+	IF FLAG:디버그
+		IF LOCAL == 1000000
+			PRINTFORMW 취득 가능한 기능이 존재하지 않습니다!
+		ELSE
+			PRINTFORMW 가용 마력이 부족합니다(앞으로 {LOCAL - 가용마력})
+		ENDIF
+	ENDIF
+	RETURN RESULT
+ENDIF
+
+;변수를 초기화 ;변수 초기화
+CALL SET_CRI_VAR
+FOR LCOUNT, 0, 기능수
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
+		CALL SET_CRI_VAR, 기능명:LCOUNT, 1
+NEXT
+
+;------------------------------------------
+;보정처리
+;------------------------------------------
+
+LOCALS = GAIN_TALENT
+
+CALL CHA_CRI_VAR, "조교자의 소질"
+CALLFORM %LOCALS%_TALENT_T
+
+CALL CHA_CRI_VAR, "조교대상의 소질"
+CALLFORM %LOCALS%_TALENT_M
+
+CALL CHA_CRI_VAR, "조교자의광기"
+CALLFORM %LOCALS%_INSANE(전기능명)
+
+CALL CHA_CRI_VAR, "가격에 의한보정"
+CALLFORM %LOCALS%_PRICE(전기능명)
+
+CALL CHA_CRI_VAR, "실행 판정"
+CALLFORM %LOCALS%_ABLE
+
+;------------------------------------------
+;취득판정
+;------------------------------------------
+
+LOCAL:2 = 0
+
+$GAIN_TALENT
+
+;취득상황에 의한 판정(이미취득, 마력불발)
+;판정 처리
+FOR LCOUNT, 0, 기능수
+	IF TALENT:(기능명:LCOUNT) == 1 && 기능명:LCOUNT != "새드"
+		CALL DIM_CRI_VAR(기능명:LCOUNT, -999)
+		CONTINUE
+	ENDIF
+	LOCAL = GET_CRI_VAR(기능명:LCOUNT + "누계")
+	IF LOCAL < 0
+		LOCAL = GAIN_TALENT_V(기능명:LCOUNT, 0) * (10 + ABS(LOCAL)) / 10
+	ELSE
+		LOCAL = GAIN_TALENT_V(기능명:LCOUNT, 0) * 10 / (10 + ABS(LOCAL))
+	ENDIF
+	SIF LOCAL > 가용마력
+		CALL DIM_CRI_VAR(기능명:LCOUNT, -999)
+NEXT
+
+CALL DEF_CRI_VAR("최대 전자")
+LOCAL = GET_CRI_VAR("결정")
+결정종 = %RESULTS%
+CALL ANA_CRI_VAR()
+IF LOCAL != -1 && GAIN_TALENT_V(결정종, 0) <= CFLAG:마력
+	LOCAL = CFLAG:마력
+	CFLAG:마력 -= GAIN_TALENT_V(결정종, 0)
+	가용마력 -= GAIN_TALENT_V(결정종, 0)
+	TALENT:결정종 = 1
+	;연성시구상호출
+	;CALL KOJO_EVENT(110, XX)
+	;CALL VOIDLINE_IF(RESULT)
+	SKIPDISP 0
+	PRINTFORMW %CALLNAME%(은)는 [%결정종%](을)를 취득했습니다
+	PRINTFORMW 마력({LOCAL} → {CFLAG:마력})
+	IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
+		SKIPDISP 1
+	ENDIF
+	LOCAL:2++
+	SIF FLAG:디버그
+		PRINTFORML (가용 마력:{가용마력})
+	GOTO GAIN_TALENT
+ENDIF
+
+SIF FLAG:디버그
+;OriginalString : 
+	PRINTW 
+
+RETURN RESULT
+
+;-------------------------------------------------------------------------
+;조교자의 소질을 참조
+;-------------------------------------------------------------------------
+@GAIN_TALENT_TALENT_T
+
+;조교자가프라이드높음/낮다
+IF TALENT:프라이드높음
+	CALL ADD_CRI_VAR("더러움무시", -6)
+ELSEIF TALENT:프라이드낮음
+	CALL ADD_CRI_VAR("더러움무시", 6)
+ENDIF
+
+;조교자가무관심/호기심
+IF TALENT:무관심
+	CALL ADD_CRI_VAR("배합지식", -6)
+	CALL ADD_CRI_VAR("금단의지식", -6)
+	CALL ADD_CRI_VAR("도구능숙", -6)
+	CALL ADD_CRI_VAR("촬영기능", -6)
+ELSEIF TALENT:호기심
+	CALL ADD_CRI_VAR("배합지식", 6)
+	CALL ADD_CRI_VAR("금단의지식", 6)
+	CALL ADD_CRI_VAR("도구능숙", 6)
+	CALL ADD_CRI_VAR("촬영기능", 6)
+ENDIF
+
+;조교자가억압/해방
+IF TALENT:억압
+	CALL ADD_CRI_VAR("새드", TALENT:새드 ? 6 # -6)
+ELSEIF TALENT:해방
+	CALL ADD_CRI_VAR("새드", TALENT:새드 ? -6 # 6)
+ENDIF
+
+;조교자가헌신적
+SIF TALENT:헌신적
+	CALL ADD_CRI_VAR("더러움무시", 3)
+	
+;-------------------------------------------------------------------------
+;조교대상의 소질을 참조
+;-------------------------------------------------------------------------
+@GAIN_TALENT_TALENT_M
+
+;조교대상가반항적/솔직
+IF TALENT:MASTER:반항적
+	CALL ADD_CRI_VAR("매혹", 6)
+	CALL ADD_CRI_VAR("긴박능숙", 3)
+	CALL ADD_CRI_VAR("새드", 3)
+ELSEIF TALENT:MASTER:솔직
+	CALL ADD_CRI_VAR("매혹", -6)
+	CALL ADD_CRI_VAR("긴박능숙", -3)
+	CALL ADD_CRI_VAR("새드", -3)
+ENDIF
+
+;조교대상가무관심/호기심
+IF TALENT:MASTER:무관심
+	CALL ADD_CRI_VAR("도구능숙", -3)
+ELSEIF TALENT:MASTER:호기심
+	CALL ADD_CRI_VAR("도구능숙", 3)
+ENDIF
+
+;조교대상가감정결여/정서적
+IF TALENT:MASTER:감정결여
+	CALL ADD_CRI_VAR("배합지식", 3)
+ELSEIF TALENT:MASTER:정서적
+	CALL ADD_CRI_VAR("배합지식", -3)
+ENDIF
+
+;조교대상가튀고싶어함
+SIF TALENT:MASTER:튀고싶어함
+	CALL ADD_CRI_VAR("촬영기능", 6)
+
+;조교대상가정조관념/정조무관심
+IF TALENT:MASTER:정조관념
+	CALL ADD_CRI_VAR("매혹", 6)
+ELSEIF TALENT:MASTER:정조무관심
+	CALL ADD_CRI_VAR("매혹", -3)
+ENDIF
+
+;조교대상가억압/해방
+IF TALENT:MASTER:억압
+	CALL ADD_CRI_VAR("매혹", 3)
+ELSEIF TALENT:MASTER:해방
+	CALL ADD_CRI_VAR("매혹", -3)
+ENDIF
+
+;조교대상가수줍음/수치없음
+IF TALENT:MASTER:수줍음
+	CALL ADD_CRI_VAR("촬영기능", 6)
+ELSEIF TALENT:MASTER:수치없음
+	CALL ADD_CRI_VAR("촬영기능", -6)
+ENDIF
+
+;조교대상가고통에약함/고통에강함
+IF TALENT:MASTER:고통에약함
+	CALL ADD_CRI_VAR("긴박능숙", 6)
+	CALL ADD_CRI_VAR("새드", 6)
+ELSEIF TALENT:MASTER:고통에강함
+	CALL ADD_CRI_VAR("긴박능숙", -3)
+	CALL ADD_CRI_VAR("새드", -3)
+ENDIF
+
+;조교대상가젖기쉬움/젖기어려움
+IF TALENT:MASTER:젖기쉬움
+	CALL ADD_CRI_VAR("배합지식", 6)
+	CALL ADD_CRI_VAR("혀기술", 3)
+ELSEIF TALENT:MASTER:젖기어려움
+	CALL ADD_CRI_VAR("배합지식", -6)
+	CALL ADD_CRI_VAR("혀기술", -3)
+ENDIF
+
+;조교대상가약독내성
+SIF TALENT:MASTER:약독내성
+	CALL ADD_CRI_VAR("배합지식", -9)
+
+;조교대상가자위하기쉬움
+SIF TALENT:MASTER:자위하기쉬움
+	CALL ADD_CRI_VAR("긴박능숙", 3)
+
+;조교대상가쾌감에솔직/쾌감을부정
+IF TALENT:MASTER:쾌감에솔직
+	CALL ADD_CRI_VAR("매혹", -3)
+ELSEIF TALENT:MASTER:쾌감을부정
+	CALL ADD_CRI_VAR("매혹", 3)
+ENDIF
+
+;조교대상가도Ｍ
+IF TALENT:MASTER:도Ｍ
+	CALL ADD_CRI_VAR("긴박능숙", 3)
+	CALL ADD_CRI_VAR("새드", 3)
+ENDIF
+
+;조교대상가변태적
+SIF TALENT:MASTER:변태적
+	CALL ADD_CRI_VAR("새드", 6)
+
+;조교대상가회복빠름/회복느림
+IF TALENT:MASTER:회복빠름
+	CALL ADD_CRI_VAR("배합지식", -6)
+ELSEIF TALENT:MASTER:회복느림
+	CALL ADD_CRI_VAR("배합지식", 6)
+ENDIF
+
+;------------------------------------------
+;조교자의광기
+;------------------------------------------
+@GAIN_TALENT_INSANE(ARGS)
+#DIM LCOUNT
+#DIM 기능수
+#DIMS 기능명, 15
+
+SIF !TALENT:광기
+	RETURN 0
+
+;취득(방폐) 가능 기능을 기능명에 격납한다
+SPLIT ARGS, "/", 기능명
+
+;기능수를 카운트
+기능수 = FINDELEMENT(기능명, "종단")
+
+FOR LCOUNT, 0, 기능수
+	SIF TALENT:(기능명:LCOUNT) == 0 && 기능명:LCOUNT != "새드"
+		CALL MUL_CRI_VAR(기능명:LCOUNT, -50, 100)
+NEXT
+
+;------------------------------------------
+;가격에 의한보정
+;------------------------------------------
+@GAIN_TALENT_PRICE(ARGS)
+#DIM LCOUNT
+#DIM 기능수
+#DIMS 기능명, 15
+
+;취득(방폐) 가능 기능을 기능명에 격납한다
+SPLIT ARGS, "/", 기능명
+
+;기능수를 카운트
+기능수 = FINDELEMENT(기능명, "종단")
+
+FOR LCOUNT, 0, 기능수
+	LOCAL = GET_CRI_VAR(기능명:LCOUNT + "누계")
+	IF LOCAL > 0
+		CALL MUL_CRI_VAR(기능명:LCOUNT, 100 * POWER(2, 10 + TALENT:충동적 - TALENT:자제심 + TALENT:튀고싶어함) / GAIN_TALENT_V(기능명:LCOUNT, 0))
+	ELSEIF LOCAL < 0
+		CALL MUL_CRI_VAR(기능명:LCOUNT, 100 * GAIN_TALENT_V(기능명:LCOUNT, 0) / POWER(2, 10 + TALENT:충동적 - TALENT:자제심 + TALENT:튀고싶어함))
+	ENDIF
+NEXT
+
+;------------------------------------------
+;실행 판정
+;------------------------------------------
+@GAIN_TALENT_ABLE
+
+;현사양에서는새드소질을 붙이거나 밖했다를 반복할 수도 있기 때문에
+CALL DIM_CRI_VAR("새드", -999)
+CALL DIM_CRI_VAR("착의플레이선호", -999)
+
+;------------------------------------------
+;사용 가능마력판정
+;------------------------------------------
+@GAIN_TALENT_MP_ABLE()
+#FUNCTION
+;마력불발기준 설정
+RETURNF LIMIT(CFLAG:마력 * (8 + MANAGE_MP_PROP() + TALENT:습득빠름 - TALENT:습득느림) * 10 / 100, 0, CFLAG:마력)

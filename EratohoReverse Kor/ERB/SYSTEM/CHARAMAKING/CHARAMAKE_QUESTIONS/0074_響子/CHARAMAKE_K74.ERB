@@ -1,0 +1,57 @@
+﻿;響子＠ぱ。
+@CHARAMAKE_K74(ARG)
+PRINTFORMW 「좋은 아침」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「인사 할 수 없는 아이는 변변한 어른이 되지 않아!」
+PRINTFORMW 「좋은 아-침!」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 좋은 아침
+PRINTFORMDL [2] 앞으로 5분만
+PRINTFORMDL [3] 시끄러워 조용히 해
+PRINTFORMDL [4] 예예, 안녕 안녕
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「메아리조차도 되돌아온다구. 사람의 말에는 귀를 기울여」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「좋은 아침. 응응、 인사는 확실히」
+		CALLF CM_PROF("공격", -20)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("프라이드", -10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("결벽", -10)
+	CASE 2
+		PRINTFORML 「절의 아침은 빨라. 자명종 대신 인간의 비명이 울려!」
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("낙관", 30)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("모랄", -10)
+	CASE 3
+		PRINTFORML 「시끄러워 조용히 해!　우리들 야마비코야!」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("신경질", 20)
+	CASE 4
+		PRINTFORML 「패기가 없구나. 절에서 단련하는 게 좋은 거 아냐?」
+		CALLF CM_PROF("모랄", -20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("도착", -10)
+ENDSELECT
+PRINTFORMW 「그럼 다음번에 또, 안녕히 주무세요. 응、 인사는 됐어」
+RETURN 1

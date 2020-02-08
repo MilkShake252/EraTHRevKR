@@ -1,0 +1,171 @@
+﻿;-------------------------------------------------
+;코이시구상 ANIMATION계 함수
+;-------------------------------------------------
+;·에 째─실마리응적인 김의 독자 함수(?)
+;·에 째─실마리응확장? 와에 째─실마리응? 잘 모른다
+;·에 째─실마리응의 콘피그는 참조하고 있다
+;-------------------------------------------------
+
+;-------------------------------------------------
+;함수명:K64_LIGHT
+;개  요점:전구 함수
+;인  수:없음
+;반환값:없음(아마 RESULT 보호)
+;코이시 분명하게 말하면 전구. 전구 표시한다! 피콘
+;적당한 만들기. 생각보다는손빼기. 구체적으로는 좌단에 밖에 나오지 않는 근처
+;-------------------------------------------------
+@K64_LIGHT
+#LOCALSIZE 2
+#LOCALSSIZE 1
+;　　　　　 |
+;　　＼　　__　　／
+;　　＿  （m）  ＿
+;　　　　　|미|
+;　　 ／   ｀′   ＼
+LOCAL:0 = CURRENTREDRAW()
+LOCAL:1 = GETCOLOR()
+LOCALS:0 = %GETFONT()%
+SETFONT CHKFONT("나눔고딕") ? "나눔고딕" # LOCALS:0
+REDRAW 0
+IF ANIME_CONFIG("FLASH")	;발광가능. 뭔가 틀리다는 느낌도 든다
+	;엇갈림을 예방. 표시하지 않는 부분은 키 경치(PRINT), 표시하는 장소를 디폴트색(PRINTD)으로 묘화
+	SETCOLOR GETBGCOLOR()
+	PRINTL       |
+;OriginalString : 　　＼　　
+	PRINT   ＼  
+;OriginalString : __
+	PRINTD __
+	PRINTL   ／
+;OriginalString : 　　＿　
+	PRINT   ＿ 
+;OriginalString : （ｍ）
+	PRINTD （m）
+	PRINTL  ＿
+;OriginalString : 　　　　　|ミ|
+	PRINTDL      |미|
+;OriginalString : 　　 ／ 　
+	PRINT    ／  
+;OriginalString : ｀´
+	PRINTD ｀′
+	PRINTL   ＼
+	REDRAW 2
+	TWAIT 700, 0
+	CLEARLINE 5
+ENDIF
+;발광하는 부분을 황색(PRINT), 발광하지 않는 부분을 디폴트색(PRINTD)으로 묘화
+SETCOLOR 0xFFFF99
+PRINTL       |
+;OriginalString : 　　＼　　
+PRINT   ＼  
+;OriginalString : __
+PRINTD __
+PRINTL   ／
+;OriginalString : 　　＿　
+PRINT   ＿ 
+;OriginalString : （
+PRINTD （
+;OriginalString : ｍ
+PRINT m
+;OriginalString : ）
+PRINTD ）
+PRINTL  ＿
+;OriginalString : 　　　　　|ミ|
+PRINTDL      |미|
+;OriginalString : 　　 ／ 　
+PRINT    ／  
+;OriginalString : ｀´
+PRINTD ｀′
+PRINTL   ＼
+REDRAW LOCAL:0
+SETFONT LOCALS:0
+SETCOLOR LOCAL:1
+WAIT
+RETURN RESULT
+
+
+;-------------------------------------------------
+;함수명:K64_SHOPWAIT
+;개  요점:보너스취득시에 그것 같은 WAIT를 걸쳐 보는 함수
+;인  수:ARGS:0… 표시 캐릭터 라인(소녀 00중이라든지)
+;　　　 ARGS:1…[생략가능]사용하는 폰트. 생략했다경우는 HG창영존재 EB
+;반환값:없음(아마 RESULT 보호)
+;비  고:HG창영존재 EB는 Windows 표준 폰트는 아니기 때문에, 있으면 사용하는 느낌으로
+;　　　 Office든지 StarSuite든지 넣고 있다면 있는 것이 아닐까, 아마…
+;-------------------------------------------------
+@K64_SHOPWAIT(ARGS:0, ARGS:1 = "HG창영존재 EB")
+#LOCALSIZE 5
+#LOCALSSIZE 1
+LOCAL:0 = STRLENS(ARGS:0) + 4	;캐릭터 라인장+"..."+반각 스페이스분
+;원의 설정 보유
+LOCAL:1 = CURRENTREDRAW()
+LOCAL:2 = GETCOLOR()
+LOCAL:3 = GETSTYLE()
+LOCALS = %GETFONT()%
+
+;폰트/폰트 스타일 설정
+IF CHKFONT(ARGS:1)
+	SETFONT ARGS:1
+ELSEIF CHKFONT("나눔명조")
+	SETFONT "나눔명조"
+	FONTSTYLE 1	;Bold
+ELSE
+	FONTSTYLE 1
+ENDIF
+;오른쪽 공격
+ALIGNMENT RIGHT
+;지문의 색에
+RESETCOLOR
+
+;☆REDRAW는 조정의 여지 있어?
+IF ANIME_CONFIG("FULLCUTIN")	;전화면 컷 인 가능
+	;REDRAW로 여러가지 제어하지 않다고 가크 붙는다
+	REDRAW 0
+	CALL SAVELINE
+	FOR LOCAL:4, 0, 150
+		PRINTL 
+	NEXT
+	LOCAL:4 = 0
+	IF ANIME_CONFIG("FADE")	;페이드가능(우선 거동적으로는 페이드의 아종일까하고)
+		WHILE 1
+			PRINTFORML %ARGS:0, LOCAL:0, LEFT%
+			REDRAW 2
+			ARGS:0 += "."
+			TWAIT 700, 0
+			SIF ++(LOCAL:4) == 4
+				BREAK
+			CLEARLINE 1
+		WEND
+	ELSE					;페이드 불가
+		PRINTFORML %ARGS:0%... 
+		REDRAW 2
+		TWAIT 1500, 0
+	ENDIF
+	CALL RETURNLINE
+ELSE							;전화면 컷 인 불가
+	PRINTL 
+	PRINTL 
+	IF ANIME_CONFIG("FADE")	;페이드가능
+		WHILE 1
+			PRINTFORML %ARGS:0, LOCAL:0, LEFT%
+			REDRAW 2
+			ARGS:0 += "."
+			TWAIT 700, 0
+			SIF ++(LOCAL:4) == 4
+				BREAK
+			CLEARLINE 1
+		WEND
+	ELSE					;페이드 불가
+		PRINTFORML %ARGS:0%... 
+		REDRAW 2
+		TWAIT 1500, 0
+	ENDIF
+	PRINTL 
+	PRINTL 
+ENDIF
+;원의 설정에 되돌린다
+REDRAW LOCAL:1
+SETCOLOR LOCAL:2
+ALIGNMENT LEFT
+FONTSTYLE LOCAL:3
+SETFONT LOCALS
+RETURN RESULT

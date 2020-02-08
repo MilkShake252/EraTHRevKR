@@ -1,0 +1,635 @@
+﻿;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;히나구상 가학계 개별 리액션구상파일
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;         
+;가학계 REACT60～68
+;         
+[SKIPSTART]
+	#TFLAG:ACT
+		60 = 스펭킹
+		61 = 채찍
+		62 = 바늘
+		63 = 밧줄
+		64 = 눈가리개
+		65 = 볼개그
+		66=  매도
+		67 = 삼각목마
+		68 = 관장세트
+
+·ACT분류:가학계의 경우, 고통계 COM(COM30~COM32)를 중심으로, 회화계, 애무계의 일부가선택지가 된다
+·상황에 따라서는 그 외의 것이선택지에 포함될 가능성도 있다
+·※지속효과가 있는 TEQUIP로애무계 반응이선택지가 되는 경우가 있다
+[SKIPEND]
+
+
+;///////////////////////////////////////
+;REACT60, 스펭킹·개별 리액션
+;///////////////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:더 하드하게 해/용서를 빌다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다
+
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+[SKIPEND]
+@KOJO_MALE_REACT_K39_60 ;ACT파생없음
+
+;REACT60, 고통을 참는다(65%)
+;============================
+IF 구상기입체크(65) && IS_NOWCOMNAME("고통을 참는다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT60, 비명지른다(60%)
+;==========================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT60, 스펭킹
+
+
+;/////////////////////////////
+;REACT61, 채찍·개별 리액션
+;/////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:용서를 빌다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다
+
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+[SKIPEND]
+@KOJO_MALE_REACT_K39_61 ;ACT파생없음
+
+;REACT61, 고통을 참는다(65%)
+;============================
+IF 구상기입체크(65) && IS_NOWCOMNAME("고통을 참는다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT61, 비명지른다(60%)
+;==========================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT61, 채찍
+
+
+;/////////////////////////////
+;REACT62, 바늘·개별 리액션
+;/////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:용서를 빌다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다
+
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+·페니스, 혹은클리토리스, 및 유두에바늘를 찌른다
+·회당했다개소로부터는 출혈해, 혈액 더러움이 추가된다
+[SKIPEND]
+@KOJO_MALE_REACT_K39_62 ;ACT파생없음
+
+;REACT62, 고통을 참는다(65%)
+;============================
+IF 구상기입체크(65) && IS_NOWCOMNAME("고통을 참는다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT62, 비명지른다
+;=====================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT62, 바늘
+
+
+;/////////////////////////////
+;REACT63, 밧줄·개별 리액션
+;/////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다/빈정거린다/더 하드하게 해/용서를 빌다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다/무서워한다
+
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+[SKIPEND]
+@KOJO_MALE_REACT_K39_63 ;TFLAG:ACT파생(0=구속/1=해제)
+;ACT파생 1, 해제라면 RETURN 1해 끝
+SIF TFLAG:ACT파생 == 1
+	RETURN 1
+
+;애원를 들어주고구속를 풀었다
+;==========================
+[SKIPSTART]
+REACT분류가용서를 빌다인 경우는 반드시취소가 된다
+취소처리는 TEQUIP 참조인 것으로, 다른 ACT에서도 REACT분류가용서를 빌다라면 발생 할 수 있다
+현상, 해당 REACT 이외로 이 거동을 확실히 주울 수 있는 방법은 없다
+[SKIPEND]
+IF IS_COMGRONAME("용서를 빌다")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN RESULT
+ENDIF
+
+;REACT63, 고통을 참는다(65%)
+;============================
+IF 구상기입체크(65) && IS_NOWCOMNAME("고통을 참는다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT63, 비명지른다(60%)
+;==========================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT63, 밧줄
+
+
+;/////////////////////////////////////
+;REACT64, 눈가리개·개별 리액션
+;/////////////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다/빈정거린다/더 하드하게 해/용서를 빌다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다/무서워한다
+	그 외 반응
+		COM:도구를 제거한다
+
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+[SKIPEND]
+@KOJO_MALE_REACT_K39_64 ;TFLAG:ACT파생(0=장착/1=해제)
+;ACT파생 1/해제라면 RETURN 1해 끝
+SIF TFLAG:ACT파생 == 1
+	RETURN 1
+
+;애원를 들어주고구속를 풀었다
+;==========================
+[SKIPSTART]
+REACT분류가용서를 빌다인 경우는 반드시취소가 된다
+취소처리는 TEQUIP 참조인 것으로, 다른 ACT에서도 REACT분류가용서를 빌다라면 발생 할 수 있다
+현상, 해당 REACT 이외로 이 거동을 확실히 주울 수 있는 방법은 없다
+[SKIPEND]
+IF IS_COMGRONAME("용서를 빌다")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN 1
+ENDIF
+
+;REACT64, 고통을 참는다(65%)
+;============================
+IF 구상기입체크(65) && IS_NOWCOMNAME("고통을 참는다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_GRU_30_COM_30_K39
+	RETURN RESULT
+ENDIF
+
+;REACT64, 비명지른다(60%)
+;==========================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+;REACT64, 눈가리개
+
+
+;///////////////////////////////////////
+;REACT65, 볼개그·개별 리액션
+;///////////////////////////////////////
+[SKIPSTART]
+상정되는 COM…
+	회화계 반응
+		COM:침묵한다
+	애무계 반응
+		COM:기분 나쁘게 웃는다
+	고통계 반응
+		COM:고통을 참는다/비명지른다/날뛴다/무서워한다
+	그 외 반응
+		COM:도구를 제거한다
+
+·침묵한다 이외의회화계 및 말을 수반하는 계통의 반응은 불가능이 된다
+·고유의 지문 없음. 조교대상의 반응에 응해 REACTION_MESSAGE로 범용 처리
+[SKIPEND]
+@KOJO_MALE_REACT_K39_65 ;TFLAG:ACT파생(0=장착/1=해제)
+;해제라면 여기서 종료
+SIF TFLAG:ACT파생 == 1
+	RETURN 1
+
+;애원를 들어주고구속를 푼//볼개그의 경우 COM:무서워한다의 경우에게만, 이 개소에 해당한다고 생각된다
+;==========================
+IF IS_COMGRONAME("용서를 빌다")
+	CALL PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+	RETURN RESULT
+ENDIF
+
+;REACT65, 비명지른다(60%)
+;==========================
+IF 구상기입체크(60) && IS_NOWCOMNAME("비명지른다") && TFLAG:REACT부하 < 2
+	CALL PRINT_KOJO_REACT_K39_COMMON_260
+	RETURN RESULT
+ENDIF
+
+
+
+;후부터 다시 봐, 각 REACT의 내용에 대부분 차이가 없구나… 가 되었으므로 모두 범용 처리하는 일에
+
+;///////////////////////////
+;COM고통을 참는다의 범용 처리
+;///////////////////////////
+@PRINT_KOJO_REACT_GRU_30_COM_30_K39
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC STRING
+#DIMS DYNAMIC MSTR
+FAV_RATING = GET_KFLAG_K39("상사상애")
+SYMBOL    '= HTML_PS_K39()
+STRING    '= RAND_SPLIT("후후/우대신/후후/우대신/키득/킥킥") + "…"
+MSTR      '= CNAME(MASTER, TARGET)
+
+IF 0
+;조교대상의마조끼 6 이상 또한상사상애로 REACT파생가 아프지만기분 좋아!//25%의 확률로 하층에
+ELSEIF ABL:MASTER:마조끼 >= 6 && TFLAG:REACT파생 == 1 && PERCENT(75)
+	SELECTCASE AUTORAND(2, 260)
+		CASE 0
+;OriginalString : 「もうすっかり
+			PRINT 「 이제 완전히
+			;ACT 마다의 파생을 본다
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "스펭킹"
+;OriginalString : おしり叩かれて
+					PRINT 엉덩이 얻어맞아
+				CASE "채찍"
+;OriginalString : 채찍で叩かれて
+					PRINT 채찍으로 얻어맞아
+				CASE "바늘"
+;OriginalString : 바늘で
+					PRINT 바늘로
+				CASE "밧줄"
+;OriginalString : 縛られて
+					PRINT 속박되어
+				CASE "눈가리개"
+;OriginalString : 目隠しされて
+					PRINT 눈 가림되어
+			ENDSELECT
+;OriginalString : 悦ぶ変態って感じ\@ !FAV_RATING ? です # \@ね…」
+			PRINTFORMW 기쁨변태라는 느낌\@ !FAV_RATING ? 입니다 # \@그런데…」
+			CALL HTMLPRINTW(@"「뭐, 나에게도 책임이 있다\@ FAV_RATING ? 응이다 # 의 것이지요 \@지만%SYMBOL%」")
+		CASE 1
+;OriginalString : 「あまりこんな事했다く\@ FAV_RATING ? ない # ありません \@けど…」
+			PRINTW 「너무 이런 일 하고 싶고\@ FAV_RATING ? 없다 # 없습니다 \@(이)지만…」
+			{
+			CALL HTMLPRINTW(@"「\@ FAV_RATING 
+			? %RAND_SPLIT(@"%MSTR%…, 이것, 싫지 않은 거네?/이것이 좋다고 말한다면 어쩔 수 없을까.")% %STRING%%SYMBOL% 
+			# %MSTR%가 이것을 바라고 있는 듯%RAND_SPLIT("였다/그리고했다")%의 것으로…%SYMBOL %\@」")
+			}
+	ENDSELECT
+	RETURN 1
+;조교대상의마조끼 3 이상
+ELSEIF ABL:MASTER:마조끼 > 3
+	SELECTCASE AUTORAND(4, 261)
+		CASE 0
+;OriginalString : 「痛いのを참다っていうか、悦んでるように見えるん\@ FAV_RATING ? だけど？ # ですけど… \@」
+			PRINTL 「아픈 것을 인내라고 하는지, 기쁨응 나오는 것처럼 보이는\@ FAV_RATING ? 그렇지만?  # 이지만… \@」
+;OriginalString : 「\@ FAV_RATING ? ねぇ、その辺どうなの # その辺どうなんでしょう \@？ %STRING%」
+			PRINTW 「\@ FAV_RATING ? 응, 그근처 어떻게야 # 그근처 어떨까요 \@?  %STRING%」
+		CASE 1
+;OriginalString : 「\@FAV_RATING ? ねぇ # あの \@本当は…、
+			PRINTFORM 「\@FAV_RATING ? 저기 # 저 \@사실은…,
+			;ACT 마다의 파생을 본다
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "스펭킹"
+;OriginalString : おしり叩か
+					PRINT 엉덩이고인가
+				CASE "채찍"
+;OriginalString : 채찍で叩か
+					PRINT 채찍으로 고인가
+				CASE "바늘"
+;OriginalString : 바늘で虐めら
+					PRINT 바늘로 학째등
+				CASE "밧줄"
+;OriginalString : 縛ら
+					PRINT 박등
+				CASE "눈가리개"
+;OriginalString : 目隠しさ
+					PRINT 눈 가림함
+			ENDSELECT
+;OriginalString : れるのが好きな\@ FAV_RATING ? んじゃないの # のではないですか \@？」
+			PRINTFORMW 의 것이 좋아하는\@ FAV_RATING ? 응(이)가 아니야 # 것은 아닙니까 \@?」
+			CALL HTMLPRINTW(@"「이봐요… 부끄러워하지 마. 정직하게 말해 봐\@ !FAV_RATING ? 주세요 # \@%SYMBOL%」")
+		CASE 2
+			{
+;OriginalString : 「고통\@ IS_NOWACTNAME("눈가리개") 
+			PRINTFORMW 「아픔\@ IS_NOWACTNAME("눈가리개") 
+			? 라고 할까, 공포라고 할까 # 를참다라고 할까 
+			\@, 뭔가 다른 것을참다 하고 있는 것처럼 보인다\@ FAV_RATING 
+			? 응이지만 # 의 것이지만 \@…」
+			}
+;OriginalString : 「本当のところはどうな\@ FAV_RATING ? の # んでしょう \@？ %SYMBOL%」
+			PRINTFORMW 「정말로는 어떻게\@ FAV_RATING ? 노 # 응그렇지 \@?  %SYMBOL%」
+		CASE 3
+			;ACT 마다의 파생을 본다
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "스펭킹"
+;OriginalString : 自分からお尻を突き出している
+					PRINT 자신으로부터 엉덩이를 쑥 내밀고 있다
+				CASE "채찍"
+;OriginalString : 채찍で叩かれるのを望んでる
+					PRINT 채찍으로 얻어맞는 것을 바라고 있다
+				CASE "바늘"
+;OriginalString : %CNAME(MASTER, TARGET)%自身がこれを望んでいる
+					PRINT %CNAME(MASTER, TARGET)%자신이 이것을 바라고 있다
+				CASE "밧줄"
+;OriginalString : 구속されて悦んでる
+					PRINT 구속되어 기쁨응 나온다
+				CASE "눈가리개"
+;OriginalString : 視界を奪われて悦んでる
+					PRINT 시야를 빼앗겨 기쁨응 나온다
+			ENDSELECT
+;OriginalString : ように見えるのは私の気の所為\@ !FAV_RATING ? でしょうか # \@？」
+			PRINTFORMW 같게 보이는 것은 나의 기분의 소위\@ !FAV_RATING ? 그럴까요 # \@?」
+			CALL HTMLPRINTW(@"「실은 이것이…,%HTMLFONT("<b>를 좋아하게 되었다</b>", , ,)%, 라든지.%STRING%」」")
+	ENDSELECT
+	RETURN 1
+;그 외를 처리
+ELSE
+	SELECTCASE AUTORAND(7, 263)
+		CASE 0
+			{
+;OriginalString : 「こういうのは好き\@ FAV_RATING ? じゃ # では \@なかったはずな\@ 
+			PRINTFORML 「이런 것은 좋아\@ FAV_RATING ? 그러면 # 그럼 \@없었을 것\@ 
+			FAV_RATING ? 응이지만 # 의 것이지만 \@」
+			}
+;OriginalString : 「何か私も…、変な気持ちになっ\@ FAV_RATING ? てきちゃう # てしまいます \@…」
+			PRINTFORMW 「무엇인가 나도…, 이상한 기분에\@ FAV_RATING ? 라고 와 버린다 # 라고 끝냅니다 \@…」
+		CASE 1
+;OriginalString : 「\@ FAV_RATING ? ねぇ、# あの \@実は
+			PRINTFORM 「\@ FAV_RATING ? 저기,# 저 \@실은
+			;ACT 마다의 파생을 본다
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "스펭킹"
+;OriginalString : おしり叩か
+					PRINT 엉덩이고인가
+				CASE "채찍"
+;OriginalString : 채찍で叩か
+					PRINT 채찍으로 고인가
+				CASE "바늘"
+;OriginalString : 바늘で刺さ
+					PRINT 바늘로 회야
+				CASE "밧줄"
+;OriginalString : 밧줄で縛ら
+					PRINT 줄로 박등
+				CASE "눈가리개"
+;OriginalString : 目隠しさ
+					PRINT 눈 가림함
+			ENDSELECT
+;OriginalString : れるの……%RAND_SPLIT("結構すき/けっこう好き")%だったりし\@ FAV_RATING ? ない # ませんか \@？」
+			PRINTFORMW 의……%RAND_SPLIT("상당히 비어/꽤 좋아해")%이기도 해\@ FAV_RATING ? 없다 # 전과 \@?」
+			CALL FADE_TO_CLEARLINE(15, @"「%STRING%」")
+		CASE 2
+			{
+;OriginalString : 「可哀相な気も\@ FAV_RATING ? する # します \@けど、\@ 
+			PRINTFORMW 「불쌍한 기분도\@ FAV_RATING ? 한다 # 합니다 \@하지만,\@ 
+			FAV_RATING ? 는 나, 흥분해 버릴지도, 코레 # 왠지 나…, 흥분해 버립니다 \@…」
+			}
+		CASE 3
+;OriginalString : 「なかなか참다強い\@ FAV_RATING ? わ # です \@ね…」
+			PRINTFORMW 「꽤 참을성이 많다\@ FAV_RATING ? 와 # 입니다 \@그런데…」
+		CASE 4
+;OriginalString : 「まだ余裕がありそう\@ !FAV_RATING ? です # \@ね？」
+			PRINTFORMW 「 아직 여유가 있을 것 같다\@ !FAV_RATING ? 입니다 # \@그런데?」
+		CASE 5
+;OriginalString : 本当はこういうの、嫌いじゃな\@ FAV_RATING ? いんじゃない # かったりしませんか \@？
+			PRINTFORMW 사실은 이런 것, 싫지\@ FAV_RATING ? 있는이 아니다 # 사거나 하지 않겠습니까 \@?
+		CASE 6
+;OriginalString : 「%MSTR%
+			PRINTFORM 「%MSTR%
+			;ACT 마다의 파생을 본다
+			SELECTCASE GET_ACTNAME(TFLAG:ACT)
+				CASE "스펭킹", "채찍", "바늘"
+;OriginalString : が고통に耐えるその姿……
+					PRINT 하지만 아픔에 참는 그 모습……
+				CASE "밧줄"
+;OriginalString : の구속당했다姿を見ると
+					PRINT 의 구속된 모습을 보면(자)
+				CASE "눈가리개"
+;OriginalString : の目隠し당했다姿を見ると
+					PRINT 의 눈 가림된 모습을 보면(자)
+			ENDSELECT
+;OriginalString : 、ちょっと興奮し\@ FAV_RATING ? ちゃうわね # てしまいますね \@
+			PRINTFORMW , 조금 흥분해\@ FAV_RATING ? 가격 상승 # 라고 끝내네요 \@
+			CALL PRINT_SYMBOL_K39
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;////////////////////////////////////
+;애원를 들어주고구속를 푼 것 범용 처리
+;////////////////////////////////////
+@PRINT_KOJO_REACT_GRU_30_TEQUIP_CHANCEL_K39
+#DIM  DYNAMIC FAV_RATING
+FAV_RATING = GET_KFLAG_K39("상사상애")
+;OriginalString : 「――仕方ない\@ FAV_RATING ? わね # ですね\@。%CNAME(MASTER, TARGET)%がそこまで言うなら……」
+PRINTFORMW 「――어쩔 수 없다\@ FAV_RATING ? 원이군요 # (이)군요\@.%CNAME(MASTER, TARGET)%하지만 거기까지 말한다면……」
+;OriginalString : 「\@ FAV_RATING ? ほら # さぁ \@、今
+PRINTFORM 「\@ FAV_RATING ? 이봐요 # 자 \@, 지금
+SELECTCASE GET_ACTNAME(TFLAG:ACT)
+	CASE "밧줄"
+;OriginalString : 解い
+		PRINT 해 있고
+	CASE "눈가리개"
+;OriginalString : 外し
+		PRINT 제외해
+	CASE "볼개그"
+;OriginalString : 取っ
+		PRINT 취
+ENDSELECT
+;OriginalString : てあげ\@ FAV_RATING ? るわ # ますよ \@」
+PRINTFORMW 여(어) 주고\@ FAV_RATING ? 원 # 야 \@」
+RETURN 1
+
+;/////////////////////////
+;COM비명지른다의 범용 처리
+;/////////////////////////
+@PRINT_KOJO_REACT_K39_COMMON_260
+#DIM  DYNAMIC FAV_RATING
+#DIMS DYNAMIC SYMBOL
+#DIMS DYNAMIC STRING
+#DIMS DYNAMIC AHEART
+#DIMS DYNAMIC MSTR
+FAV_RATING = GET_KFLAG_K39("상사상애")
+SYMBOL    '= HTML_PS_K39()
+AHEART    '= HTML_AH_K39()
+STRING    '= RAND_SPLIT("후후/우대신/후후/우대신/키득/킥킥") + "…"
+MSTR      '= CNAME(MASTER, TARGET)
+
+;조교대상의마조끼 5 이상 또한호의호감도가 일정 이상//25%의 확률로 네스트를 누락 하층에 흐르도록(듯이)
+IF ABL:MASTER:마조끼 >= 6 && FAV_RATING && PERCENT(75)
+	SELECTCASE AUTORAND(2, 265)
+		CASE 0
+;OriginalString : 「そんな声聴かされると、ゾクゾクしちゃって……」
+			PRINTFORMW 「그런 성청 빌려주어지면(자), 두근두근 해 버려서……」
+			;ACT볼개그가 아닌 경우는 파생
+			{
+			CALL HTMLPRINTW(@"「이제(벌써), 견딜 수 없게 되어 버린다%HTML_AH2_K39()% \@ 
+			!IS_NOWACTNAME("볼개그") ? %STRING% # \@」")
+			}
+			;ACT볼개그의 경우
+			SIF IS_NOWACTNAME("볼개그")
+				CALL HTMLPRINTW("「이봐요, 군침이 늘어지고 있어요%HTML_AH2_K39()% %STRING%」")
+		CASE 1
+;OriginalString : 「甘い声で鳴いちゃって、もうどうしようもないわね……」
+			PRINTFORML 「단 소리로 울어 버려서, 이제 어쩔 수 없네요……」
+;OriginalString : 「――なんでこんな人を好きなったのかしら」
+			PRINTFORMW 「――어째서 이런 사람을 좋아해 되었는지 해들 」
+			{
+			CALL HTMLPRINTW(@"「\@ RAND:3 
+			? 라든지, 말해 보거나 해…%HTML_AH2_K39()% %STRING% 
+			# 에서도 이렇게 되었던 것도, 나에게도 책임이 있는거네요… \@」")
+			}
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;조교대상의마조끼 3 이상
+IF ABL:MASTER:마조끼 > 3
+	SELECTCASE AUTORAND(4, 266)
+		CASE 0
+;OriginalString : 「%STRING%、もう悦んでいるようにしか聞こえ\@ FAV_RATING ? ないわね # ませんね \@」
+			PRINTFORMW 「%STRING%, 이제 기쁨응으로 있도록(듯이) 밖에 소문\@ FAV_RATING ? 없네요 # 선 \@」
+			{
+			CALL HTMLPRINTW(@"「\@ FAV_RATING 
+			? 이봐요 # 자 
+			\@, 좀 더 울어\@ FAV_RATING 
+			? ?  # … 
+			\@좀 더 나를 즐겁게 해\@ !FAV_RATING ? 주세요 # \@%SYMBOL%」")
+			}
+		CASE 1
+;OriginalString : 「そんな声で鳴かれると興奮し\@ FAV_RATING ? ちゃうんだけど # てしまいます \@…」
+			PRINTFORMW 「그런 소리로 울어지면(자) 흥분해\@ FAV_RATING ? 낳았지만 # 라고 끝냅니다 \@…」
+			{
+;OriginalString : 「\@ FAV_RATING 
+			PRINTFORMW 「\@ FAV_RATING 
+			? 응# 그 
+			\@그것…, 일부러 해\@ FAV_RATING 
+			? 것이 아닌거야 # 전과 \@?」
+			}
+		CASE 2
+;OriginalString : 「少し甘い声が混じっている\@ FAV_RATING ? わよ # ようですね \@…」
+			PRINTFORML 「조금 단 소리가 섞이고 있다\@ FAV_RATING ? 원이야 # 같네요 \@…」
+			;ACT눈가리개의 경우는 파생한다
+			{
+;OriginalString : 「実は\@ IS_NOWACTNAME("눈가리개") 
+			PRINTFORMW 「 실은\@ IS_NOWACTNAME("눈가리개") 
+			? 시야를 빼앗겨 # 
+			\@기뻐하고 있다\@ FAV_RATING 
+			? 것이 아닌거야 # 것은 아닙니까 \@?」
+			}
+		CASE 3
+;OriginalString : 「同じ悲鳴でもちょっと違う感じが\@ FAV_RATING ? するわね # しますね \@…」
+			PRINTFORMW 「같은 비명에서도 조금 다른 느낌이\@ FAV_RATING ? 해요 # 하네요 \@…」
+			{
+			CALL HTMLPRINTW(@"「그, 뭐라고 할까… 나, 조금 흥분해\@ 
+			FAV_RATING ? 아니야도 # 라고 끝냅니다 \@%SYMBOL%」")
+			}
+	ENDSELECT
+	RETURN 1
+ENDIF
+
+;;;;;;;;;;;
+;이하 그 외
+;;;;;;;;;;;
+
+;ACT볼개그의 경우
+IF IS_NOWACTNAME("볼개그")
+	SELECTCASE AUTORAND(2, 267)
+		CASE 0
+			CALL HTMLPRINTW(@"「%STRING%, 울어도 소문\@ FAV_RATING ? 없어요 #  선 \@야%SYMBOL%」")
+		CASE 1
+			{
+;OriginalString : 「流石にちょっとその상태では……、悲鳴になって\@ 
+			PRINTFORMW 「유석에 조금 그 상태에서는……, 비명이 되어\@ 
+			FAV_RATING ? 없어요?  # 없네요 \@ %STRING%」
+			}
+			{
+			CALL HTMLPRINTW(@"「그렇지만 그런 소리 귀댁 되면, 조금 이상한 기분에\@ 
+			FAV_RATING ? # 라고 끝냅니다 \@%SYMBOL%」")
+			}
+		CASE 2
+			{
+;OriginalString : 「\@ FAV_RATING 
+			PRINTFORMW 「\@ FAV_RATING 
+			? 응 # 저,  
+			\@혹시…, 조금 불안\@ FAV_RATING 
+			? 였다거나 해?  # 를 느끼고 있습니까 \@?」
+			}
+;OriginalString : 「でも私…、%MSTR%が何を言ってるか聞き取れない\@ FAV_RATING ? んだけど # のですけど \@…」
+			PRINTFORMW 「 그렇지만 나…,%MSTR%하지만 무슨 말을 하고 있어 알아 들을 수 없다\@ FAV_RATING ? 응그렇지만 # 의이지만 \@…」
+	ENDSELECT
+ELSE
+	SELECTCASE AUTORAND(4, 268)
+		CASE 0
+			{
+;OriginalString : 「\@ FAV_RATING ? ねぇ、# 気の所為でしょうか… 
+			PRINTFORMW 「\@ FAV_RATING ? 저기,# 기분탓입니까… 
+			\@조금 기쁜듯이 울고 있는 기분이\@ 
+			FAV_RATING ? 하지만?  # 하네요 \@」
+			}
+			;ACT밧줄/눈가리개의 경우
+			;OriginalString : 「사실은 \@ IS_NOWACTNAME("밧줄") ? 묶여서 # 안대 
+			SIF IS_NOWACTNAME("밧줄/눈가리개")
+				{
+				PRINTFORMW 「사실은 \@ IS_NOWACTNAME("밧줄") ? 묶여서 # 안대 
+				\@쓰는 것, 싫지 않지?  %SYMBOL%」
+				}
+		CASE 1
+			{
+			CALL HTMLPRINTW(@"「%STRING%, 그렇게 울어지면 흥분해\@ 
+			FAV_RATING ? # 라고 끝냅니다 \@%SYMBOL%」")
+			}
+		CASE 2
+			{
+;OriginalString : 「%MSTR%の悲鳴を聴く度に、ちょっと変な気持ちになっ\@ 
+			PRINTFORMW 「%MSTR%의 비명을 들을 때에, 조금 이상한 기분에\@ 
+			FAV_RATING ? 위 # 라고 끝냅니다 \@…」
+			}
+		CASE 3
+			;ACT밧줄/눈가리개의 경우
+			SIF IS_NOWACTNAME("밧줄/눈가리개")
+				{
+;OriginalString : 「\@ IS_NOWACTNAME("밧줄") ? ちょっと밧줄がきつ # 視界を奪われるのは怖 
+				PRINTFORMW 「\@ IS_NOWACTNAME("밧줄") ? 조금밧줄하지만 나무개 # 시야를 빼앗기는 것은 포 
+				\@산 것입니까? 그렇지만…」
+				}
+			{
+			CALL HTMLPRINTW(@"「그렇게 울어지면, 조금 흥분해\@ 
+			FAV_RATING ? 아니야도 # 라고 끝내네요 \@…%SYMBOL%」")
+			}
+	ENDSELECT
+ENDIF
+RETURN 1

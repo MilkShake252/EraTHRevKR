@@ -1,0 +1,51 @@
+﻿;小傘＠CPMの人
+@CHARAMAKE_K66(ARG)
+PRINTFORMW 「원망스러워―！」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「……응、 역시 놀라지 않네」
+PRINTFORMW 「저기、어떻게 하면 놀랄까?」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 장소라든지 시간이라든지 문언이라든지 여러가지 생각할 게 있잖아?
+PRINTFORMDL [2] 예금이 0이 되면 분명히 놀란다
+PRINTFORMDL [3] 아니아니, 그렇지 않아요, 놀랐다구?
+PRINTFORMDL [4] 일단, 벗읍시다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「그리고―　무시― 된다―」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「……알고 있어요. 알고 있지만」
+		CALLF CM_PROF("지성",     20)
+		CALLF CM_PROF("공격",     10)
+		CALLF CM_PROF("피학",     -20)
+		CALLF CM_PROF("낙관",     -10)
+	CASE 2
+		PRINTFORML 「예금?　에, 에.　……아, 돈 말야?」
+		CALLF CM_PROF("솔직야",   10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("모랄",   -10)
+		CALLF CM_PROF("충동",     10)
+	CASE 3
+		PRINTFORML 「……기분만 받아 둘게」
+		CALLF CM_PROF("결벽",     20)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("모랄",   10)
+		CALLF CM_PROF("신경질",   20)
+	CASE 4
+		PRINTFORML 「사나에랑 같은 말을 하네―」
+		CALLF CM_PROF("도착",     30)
+		CALLF CM_PROF("결벽",     -30)
+		CALLF CM_PROF("수치",     -30)
+		CALLF CM_PROF("충동",     20)
+		CALLF CM_PROF("지성",     -10)
+		CALLF CM_PROF("동성애",   10)
+ENDSELECT
+PRINTFORMW 「그럼, 잘자」
+RETURN 1

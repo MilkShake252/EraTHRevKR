@@ -1,0 +1,71 @@
+﻿@CHARAMAKE_K26(ARG)
+PRINTFORMW 「어때、괜찮은가……？」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「괜찮은 것 같네、곧바로지만 질문이다」
+PRINTFORMW 「１＋１는？……뭐、대답해줬으면 해」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] ２
+PRINTFORMDL [2] 田
+PRINTFORMDL [3] ３
+PRINTFORMDL [4] 정답은？
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……가능하면 대답해 주었으면 하지만……」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「……정답이군、당연히 알겠지만……」
+		CALLF CM_PROF("공격", -10)
+		CALLF CM_PROF("솔직야", 30)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("프라이드", 20)
+		CALLF CM_PROF("충동", -20)
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("결벽", 10)
+		CALLF CM_PROF("도착", -20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("모랄", 20)
+	CASE 2
+		PRINTFORML 「흠、사물을 제대로 생각하는 인간이군」
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("모랄", 10)
+	CASE 3
+		PRINTFORML 「……진심인가？」
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("지성", -20)
+		CALLF CM_PROF("호기심", 30)
+		CALLF CM_PROF("낙관", 20)
+		CALLF CM_PROF("충동", 20)
+		CALLF CM_PROF("피학", 20)
+		CALLF CM_PROF("결벽", -20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("신경질", -20)
+		CALLF CM_PROF("모랄", -20)
+	CASE 4
+		PRINTFORML 「호오、그런 식으로 대답하는 건가」
+		CALLF CM_PROF("공격", 30)
+		CALLF CM_PROF("피학", -20)
+		CALLF CM_PROF("솔직야", -20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("호기심", 20)
+		CALLF CM_PROF("도착", 20)
+		CALLF CM_PROF("결벽", 20)
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("모랄", -20)
+ENDSELECT
+PRINTFORML 「고맙다、참고가 됐어」
+PRINTFORMW 「그럼、잘 자라……」
+RETURN 1

@@ -1,0 +1,51 @@
+﻿@CHARAMAKE_K17(ARG)
+PRINTFORMW 「좋은아침～！　잠깐만 나에게 시간을 내줘♪」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORML 「어떻게하면 모두들 행복해질 수 있을까？」
+PRINTFORMW 「당신은 어떻게 생각해？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 행복은 사람 나름. 모두의 행복 같은 것은 없다
+PRINTFORMDL [2] 모두들 같은 것을 생각하면 좋다고 생각해
+PRINTFORMDL [3] 아무것도 생각하지 않고、누군가의 지시에 따르면 된다고 생각해
+PRINTFORMDL [4] 에로는 세계를 구한다
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「대답할 수 없어？　아니면 행복이 뭔지 모르는 거야？」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「상당히 드라이한 생각이구나. 하지만 그게 올바른 답일지도 몰라」
+		CALLF CM_PROF("지성", 20)
+		CALLF CM_PROF("공격", 10)
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("솔직야", -20)
+	CASE 2
+		PRINTFORML 「의사의 통일、이란 거구나. 그렇지만 그건 정말로 행복한걸까？」
+		CALLF CM_PROF("신경질", 20)
+		CALLF CM_PROF("솔직야", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("지성", -10)
+		CALLF CM_PROF("공격", -10)
+	CASE 3
+		PRINTFORML 「아무것도 생각하지 않고 움직이는 건 편하고 행복하지. 그렇지만 그건 살아있다고 할 수 있는걸까？」
+		CALLF CM_PROF("프라이드", -20)
+		CALLF CM_PROF("낙관", 10)
+		CALLF CM_PROF("피학", -10)
+		CALLF CM_PROF("수치", -20)
+	CASE 4
+		PRINTFORML 「와아、대담. 본능에 따르는 게 행복일지도 모르겠네」
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("동성애", 10)
+		CALLF CM_PROF("Ｖ를 좋아하는 사람", 10)
+		CALLF CM_PROF("Ａ를 좋아하는 사람", 10)
+		CALLF CM_PROF("결벽",   -20)
+		CALLF CM_PROF("모랄", -20)
+ENDSELECT
+PRINTFORMW 「질문은 끝. 그럼、또 만나～♪」
+RETURN 1

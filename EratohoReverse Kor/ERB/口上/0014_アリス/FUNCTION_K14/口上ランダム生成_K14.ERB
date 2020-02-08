@@ -1,0 +1,1409 @@
+﻿;==================================================
+;
+;		구상랜덤 생성 함수 두는 곳
+;
+;==================================================
+
+;-------------------------------------------------
+;함수명:RANDTEXT_K14
+;개  요점:ARGS:0～ARGS:7중의 어떤 것인지를 등 확률로 돌려준다. ＿는 아무것도 출력하지 않는다
+;인  수:ARGS… 출력하는 캐릭터 라인
+;비  고:식 안의 함수
+;-------------------------------------------------
+@RANDTEXT_K14(ARGS:0, ARGS:1, ARGS:2, ARGS:3, ARGS:4, ARGS:5, ARGS:6, ARGS:7)
+#FUNCTIONS
+LOCALS = %ARGS:0%
+FOR LOCAL, 1, 8
+	SIF RAND:(LOCAL + 1) == 0 && ARGS:LOCAL != ""
+		LOCALS = %ARGS:LOCAL%
+NEXT
+SIF LOCALS == "＿"
+	LOCALS = 
+RETURNF LOCALS
+
+;-------------------------------------------------
+;잡다한구상랜덤 생성용 함수
+;-------------------------------------------------
+@RAND_HEART_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14(HEARTB_K14(), HEART_K14())%
+RETURNF LOCALS
+
+@RAND_SYMBOL_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14(HEARTB_K14(), HEART_K14(), EIGHTHNOTE_K14(), W8NOTE_K14(), W16NOTE_K14())%
+RETURNF LOCALS
+
+@ELLIPSIS_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("…", "……", "＿")%
+RETURNF LOCALS
+
+@ELLIPSIS2_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("…", "……", "……、", "…、")%
+RETURNF LOCALS
+
+@WARD_A_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("아", "", "는")%
+RETURNF LOCALS
+
+@WARD_B_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("구", "", "")%
+RETURNF LOCALS
+
+@WARD_C_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "", "글자")%
+RETURNF LOCALS
+
+@WARD_D_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "", "＿")%
+RETURNF LOCALS
+
+@WARD_E_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("～", "～～", "、")%
+RETURNF LOCALS
+
+@WARD_F_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "", "")%
+RETURNF LOCALS
+
+@WARD_G_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("엣취", "구츄", "", "")%
+RETURNF LOCALS
+
+@WARD_H_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "＿")%
+RETURNF LOCALS
+
+@WARD_I_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "누츄", "")%
+RETURNF LOCALS
+
+@WARD_J_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("않고에", "", "", "", "")%
+RETURNF LOCALS
+
+@WARD_K_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("～", "～～")%
+RETURNF LOCALS
+
+@WARD_L_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "＿")%
+RETURNF LOCALS
+
+@WARD_M_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "", "")%
+RETURNF LOCALS
+
+@WARD_N_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14(",", "!  ", ",", "!  ")%
+RETURNF LOCALS
+
+@WARD_O_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("", "!", "", "!")%
+RETURNF LOCALS
+
+@WARD_P_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("응", "", "")%
+RETURNF LOCALS
+
+@WARD_Q_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("……", "～～")%
+RETURNF LOCALS
+
+@WARD_R_K14
+#FUNCTIONS
+LOCALS = %RANDTEXT_K14("후~, 하아", "하, 하")%
+RETURNF LOCALS
+
+;-------------------------------------------------
+;함수명:KOJO_RAND_K14
+;개  요점:구상를 랜덤으로 생성한다
+;인  수:ARGS… 행위의 분류
+;인  수:ARG…1으로 TARGET  2로 MASTER의상태변화
+;비  고:식 안의 함수
+;기본적으로@FADE, 혹은@PRINTCOLOR로 사용하는 일을 상정. 문자색지정은 그 쪽으로 통째로 맡김
+;SQN 쿠즈노하구상에 인스파이어 되어 만들었다. 작자의 mao의 사람에게는 감사를
+;라고 있고인가 너무 귀찮았으므로, 이손의 녀석은 두 번 다시 하고 싶지 않다w
+;-------------------------------------------------
+@KOJO_RAND_K14(ARGS, ARG)
+#FUNCTIONS
+LOCALS = 
+FOR LOCAL, 0, ARG
+	SIF LOCAL
+		LOCALS += ""
+IF ARG == 1 ;조교자
+	SELECTCASE ARGS
+		CASE "키스", "유두 들이마셔", "유두빨기", "젖꼭지빨기"
+			;조교자의상태변화파생
+			SELECTCASE GET_CONDITION(TARGET)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", "! 　")%%WARD_C_K14()%%ELLIPSIS2_K14()%는,%WARD_A_K14()%
+						CASE 1
+							LOCALS = %LOCALS%%WARD_A_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%…%RANDTEXT_K14("구", "", "")%, 츄
+						CASE 2
+							LOCALS = %LOCALS%%RANDTEXT_K14("할짝", "")%, 피츄%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "구", "")%, 츄웃
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "", "구")%, 쥬루%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응, 응쿠
+						CASE 4
+							LOCALS = %LOCALS%! 푸하%RANDTEXT_K14("", "＿")%, 응%ELLIPSIS2_K14()%응구
+						CASE 5
+							LOCALS = %LOCALS%%WARD_A_K14()%,%RANDTEXT_K14("엣취", "", "구")%…%WARD_C_K14()%, 츄푸
+						CASE 6
+							LOCALS = %LOCALS%응구%ELLIPSIS2_K14()%…%WARD_A_K14()%, 응츄우
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "＿")%응%RANDTEXT_K14("", "")%…… 후%ELLIPSIS2_K14()%%RANDTEXT_K14("후~", "하")%、%WARD_A_K14()%… 응쿠
+						CASE 8
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "응")%%ELLIPSIS2_K14()%%RANDTEXT_K14("츗", "")%, 츄쿠…,%WARD_A_K14()%
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%, 하아%ELLIPSIS2_K14()%응구, 츄우%RANDTEXT_K14("", "＿")%… 츄쿠
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%, 응응%RANDTEXT_K14("", "＿")%… 응쿠
+						CASE 11
+							LOCALS = %LOCALS%, 응%RANDTEXT_K14("응", "구")%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "")%, 피츄
+						CASE 12
+							LOCALS = %LOCALS%응%ELLIPSIS2_K14()%…,%WARD_A_K14()%, 응응%RANDTEXT_K14("", "＿")%… 응쿠
+						CASE 13
+							LOCALS = %LOCALS%는%RANDTEXT_K14("", "＿")%, 하아%ELLIPSIS2_K14()%%WARD_A_K14()%,%WARD_C_K14()%! 응
+						CASE 14
+							LOCALS = %LOCALS%… 하아%ELLIPSIS2_K14()%응구, 응츄%RANDTEXT_K14("", "", "＿")%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "", "구", "구")%、%WARD_C_K14()%…,%RANDTEXT_K14("츗", "", "")%, 응, 응쿳
+						CASE 16
+							LOCALS = %LOCALS%츗, 츄%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%,%WARD_A_K14()%, 응후
+						CASE 17
+							LOCALS = %LOCALS%응, 응쿠%RANDTEXT_K14("", "＿")%…%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "")%
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "구", "응")%, 츄%RANDTEXT_K14("구", "", "")%%ELLIPSIS2_K14()%응, 응츄%RANDTEXT_K14("", "", "＿")%… 응쿠, 응쿠
+						CASE 19
+							LOCALS = %LOCALS%, 읏… 응쿠,%RANDTEXT_K14("응구", "＿")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_C_K14()%, 츄쿠
+						CASE 20
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%응구, 응츄…, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "")%… 피츄
+						CASE 22
+							LOCALS = %LOCALS%엣취,%RANDTEXT_K14("", "", "구")%%ELLIPSIS2_K14()%…%WARD_A_K14()%, 응쿠
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", "!")% 는,%RANDTEXT_K14("후~", "하")%……%WARD_A_K14()%, 응쿠
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("＿", "구", "", "")%, 츄쿳…%RANDTEXT_K14("페로", "")%%RANDTEXT_K14("", "")%, 응%ELLIPSIS2_K14()%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%응, 응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응구
+						CASE 1
+							LOCALS = %LOCALS%%WARD_A_K14()%, 읏%ELLIPSIS2_K14()%%RANDTEXT_K14("", "구", "＿")%
+						CASE 2
+							LOCALS = %LOCALS%, 응츄%ELLIPSIS2_K14()%응%RANDTEXT_K14("응", "구", "＿")%
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "구", "＿")%, 응후%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "＿")%
+						CASE 4
+							LOCALS = %LOCALS%, 응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응구
+						CASE 5
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "구", "")%… 쿠츗%ELLIPSIS2_K14()%
+						CASE 6
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%WARD_A_K14()%… 응읏
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "츄")%、%RANDTEXT_K14("", "구", "")%…… 응
+						CASE 8
+							LOCALS = %LOCALS%구,%RANDTEXT_K14("구", "", "엣취", "")%… 츄루
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%… 응%RANDTEXT_K14("、", ",", "", "……", "……、")%,%RANDTEXT_K14("", "구", "츄")%
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("아", "")%…%RANDTEXT_K14("", "구", "")%, 츗
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("는", "아", "", "응")%%RANDTEXT_K14(",", "……、")%…… 츄
+						CASE 12
+							LOCALS = %LOCALS%, 읏츄…%RANDTEXT_K14("", "", "")%
+						CASE 13
+							LOCALS = %LOCALS%, 츄%RANDTEXT_K14(",", "……", "……、")%%RANDTEXT_K14("", "", "＿")%
+						CASE 14
+							LOCALS = %LOCALS%%WARD_A_K14()%%RANDTEXT_K14("", "＿")%… 날름%RANDTEXT_K14("", "＿")%……%RANDTEXT_K14("응", "구", "＿")%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", ",", "……")%응%RANDTEXT_K14(",", "、")%응구
+						CASE 16
+							LOCALS = %LOCALS%응…… 응쿠%ELLIPSIS2_K14()%%RANDTEXT_K14("츄", "", "구", "")%
+						CASE 17
+							LOCALS = %LOCALS%응%RANDTEXT_K14("", "", "")%…… 후%RANDTEXT_K14("＿", "…", "……、")%응구
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("츗", "츄", "", "")%、%RANDTEXT_K14("구", "")%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%,%RANDTEXT_K14("", "구", "", "츄")%%ELLIPSIS2_K14()%응%RANDTEXT_K14("、", ",", ",")%응구
+						CASE 20
+							LOCALS = %LOCALS%는,%RANDTEXT_K14("할짝", "", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "", "")%
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "응", "응")%%RANDTEXT_K14("……", "…", "…,")%%RANDTEXT_K14("하, 하아", "하, 하")%…… 츄%RANDTEXT_K14("", "", "")%
+						CASE 22
+							LOCALS = %LOCALS%응구,%RANDTEXT_K14("응…", "응……")%%RANDTEXT_K14("츗,", "구", "")%
+						CASE 23
+							LOCALS = %LOCALS%구,%RANDTEXT_K14("", "", "", "응")%%RANDTEXT_K14("…", "……", ",", "…,")%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_A_K14()%,%RANDTEXT_K14("응구", "", "")%%RANDTEXT_K14("…", "……", ",", "…,")%응
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "", EIGHTHNOTE_K14(), "♪")%
+			ENDIF
+		CASE "쿤닐링구스", "입으로 애무", "쿤닐링구스"
+			;조교자의상태변화파생
+			SELECTCASE GET_CONDITION(TARGET)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄%ELLIPSIS2_K14()%는… 응, 엣취
+						CASE 1
+							LOCALS = %LOCALS%… 응%RANDTEXT_K14("", "", "＿")%, 누푹, 누프%ELLIPSIS2_K14()%
+						CASE 2
+							LOCALS = %LOCALS%츄프,%WARD_C_K14()%구%ELLIPSIS2_K14()%,%WARD_C_K14()%구
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄
+						CASE 4
+							LOCALS = %LOCALS%%WARD_A_K14()%,%WARD_C_K14()%구%ELLIPSIS2_K14()%응,%RANDTEXT_K14("쿠츗", "")%,
+						CASE 5
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%구…… 는, 아%ELLIPSIS2_K14()%%WARD_A_K14()%
+						CASE 6
+							LOCALS = %LOCALS%날름날름…,%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄쿠%ELLIPSIS2_K14()%
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("글자", "")%%RANDTEXT_K14("", "", "＿")%,%RANDTEXT_K14("", "", "글자")%구%ELLIPSIS2_K14()%응, 엣취
+						CASE 8
+							LOCALS = %LOCALS%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%…%RANDTEXT_K14("", "")%, 츄%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%는, 아…%WARD_A_K14()%
+						CASE 9
+							LOCALS = %LOCALS%%WARD_C_K14()%%WARD_B_K14()%、%WARD_C_K14()%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%, 츄
+						CASE 10
+							LOCALS = %LOCALS%미끌, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%, 누프
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "할짝")%, 엣취, 엣취
+						CASE 12
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%, 응%ELLIPSIS2_K14()%구…… 츄%WARD_B_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%, 누프…, 츄%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%구
+						CASE 14
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%,%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "＿")%, 엣취
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("레로", "")%%RANDTEXT_K14("", "＿")%, 츄%RANDTEXT_K14("", "＿")%,%ELLIPSIS2_K14()%응, 쥬우
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("할짝", "")%, 엣취%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_B_K14()%, 츄우
+						CASE 17
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%…,%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%, 엣취
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%, 개%ELLIPSIS2_K14()%응,%WARD_C_K14()%구…
+						CASE 19
+							LOCALS = %LOCALS%%WARD_A_K14()%, 츄%ELLIPSIS2_K14()%엣취,%WARD_C_K14()%%RANDTEXT_K14("", "＿")%
+						CASE 20
+							LOCALS = %LOCALS%는…, 아%ELLIPSIS2_K14()%,%RANDTEXT_K14("", "글자")%… 엣취
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "＿")%…, 엣취, 엣취
+						CASE 22
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "＿")%,%ELLIPSIS2_K14()%%RANDTEXT_K14("쿠츗", "")%,
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "글자")%%RANDTEXT_K14("、", ",", "……")%%RANDTEXT_K14("", "", "＿", "…")%, 쥬루루
+						CASE 24
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "글자")%, 츄%WARD_B_K14()%…%RANDTEXT_K14("", "구츄")%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%는%ELLIPSIS2_K14()%%RANDTEXT_K14("엣취", "")%, 응%RANDTEXT_K14("", "", "＿")%…%RANDTEXT_K14("글자", "", "")%
+						CASE 1
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%페로
+						CASE 2
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%WARD_B_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%,%ELLIPSIS2_K14()%구, 츄%WARD_B_K14()%
+						CASE 4
+							LOCALS = %LOCALS%%RANDTEXT_K14("피츄", "")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%응, 츄
+						CASE 5
+							LOCALS = %LOCALS%응%ELLIPSIS2_K14()%구, 츄%WARD_B_K14()%
+						CASE 6
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%는, 아…
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "＿")%
+						CASE 8
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%… 후%ELLIPSIS2_K14()%%RANDTEXT_K14("", "구")%
+						CASE 9
+							LOCALS = %LOCALS%응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%구, 츄푸
+						CASE 10
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%페로,%RANDTEXT_K14("할짝", "")%
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "", "")%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("글자", "")%%RANDTEXT_K14("", "", "＿")%, 츄루%ELLIPSIS2_K14()%구
+						CASE 14
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "")%%RANDTEXT_K14("", "＿")%, 미끌%ELLIPSIS2_K14()%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "", "＿")%, 피챳%ELLIPSIS2_K14()%%RANDTEXT_K14("", "페로")%
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%,%ELLIPSIS2_K14()%%RANDTEXT_K14("레로", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%
+						CASE 17
+							LOCALS = %LOCALS%%RANDTEXT_K14("페로", "")%, 츗%ELLIPSIS2_K14()%구
+						CASE 18
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("할짝", "")%、%RANDTEXT_K14("", "")%
+						CASE 19
+							LOCALS = %LOCALS%%RANDTEXT_K14("개", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "글자")%, 츄쿠
+						CASE 20
+							LOCALS = %LOCALS%%RANDTEXT_K14("츄프", "")%%RANDTEXT_K14("、", "＿")%%ELLIPSIS2_K14()%, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "쿠츗")%, 츄%RANDTEXT_K14("구", "", "")%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "글자")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "쿠츗", "")%, 츄쿠%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "", "＿")%, 츄%RANDTEXT_K14("", "구")%%ELLIPSIS2_K14()%
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "", EIGHTHNOTE_K14(), "♪")%
+			ENDIF
+		CASE "펠라"
+			;조교자의상태변화파생
+			SELECTCASE GET_CONDITION(TARGET)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%,%WARD_C_K14()%…, 응%WARD_D_K14()%, 읏,%WARD_C_K14()%%RANDTEXT_K14("", "")%
+						CASE 1
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%는, 아%ELLIPSIS2_K14()%, 응
+						CASE 2
+							LOCALS = %LOCALS%%WARD_C_K14()%%WARD_F_K14()%…! 푸하… 응″%WARD_D_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%, 쥬푸……, 아, 응응
+						CASE 4
+							LOCALS = %LOCALS%는～, 아…%WARD_C_K14()%,%WARD_C_K14()%%WARD_F_K14()%%ELLIPSIS2_K14()%
+						CASE 5
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%하, 핫,%WARD_A_K14()%! 츄%RANDTEXT_K14("", "")%
+						CASE 6
+							LOCALS = %LOCALS%, 구폿%ELLIPSIS2_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 7
+							LOCALS = %LOCALS%, 츄폿%ELLIPSIS2_K14()%～, 응긋, 응쿠
+						CASE 8
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 후%ELLIPSIS2_K14()%… 뭇,%WARD_A_K14()%…～
+						CASE 9
+							LOCALS = %LOCALS%%WARD_E_K14()%～, 하무,%WARD_A_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%
+						CASE 10
+							LOCALS = %LOCALS%, 구풋%ELLIPSIS2_K14()%,～～!
+						CASE 11
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%%WARD_F_K14()%, 응
+						CASE 12
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응…, 푸하%ELLIPSIS2_K14()%%WARD_A_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 13
+							LOCALS = %LOCALS%응, 읏,%WARD_A_K14()%응%ELLIPSIS2_K14()%, 쥿
+						CASE 14
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%는, 아… 응쿠, 응쿠
+						CASE 15
+							LOCALS = %LOCALS%졸졸%ELLIPSIS2_K14()%,%WARD_C_K14()%… 아
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "츄")%, 츗,%WARD_C_K14()%…! 읏하아,%RANDTEXT_K14("후~", "하")%
+						CASE 17
+							LOCALS = %LOCALS%는%WARD_E_K14()%, 핫,%WARD_A_K14()%! 응, 쥬%WARD_F_K14()%
+						CASE 18
+							LOCALS = %LOCALS%, 구%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%, 응… 응쿠, 응구웃
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 20
+							LOCALS = %LOCALS%는%WARD_D_K14()%… 아%ELLIPSIS2_K14()%%WARD_A_K14()%, 후, 응읏! 응쿠
+						CASE 21
+							LOCALS = %LOCALS%하, 하%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_C_K14()%%RANDTEXT_K14("＿", "", "")%, 쥬푸, 응
+						CASE 22
+							LOCALS = %LOCALS%%WARD_D_K14()%, 응…, 읏하아,%WARD_A_K14()%%ELLIPSIS2_K14()%
+						CASE 23
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응긋%ELLIPSIS2_K14()%%WARD_F_K14()%, 후, 응읏
+						CASE 24
+							LOCALS = %LOCALS%, 구폿%ELLIPSIS2_K14()%%WARD_F_K14()%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%후~%WARD_E_K14()%하%ELLIPSIS2_K14()%%WARD_A_K14()%, 피츄
+						CASE 1
+							LOCALS = %LOCALS%는%WARD_D_K14()%%ELLIPSIS2_K14()%%WARD_A_K14()%, 응읏! 응쿠
+						CASE 2
+							LOCALS = %LOCALS%, 응%ELLIPSIS2_K14()%%WARD_D_K14()%, 츄푸
+						CASE 3
+							LOCALS = %LOCALS%… 아%ELLIPSIS2_K14()%%RANDTEXT_K14("", "페로")%, 할짝…… 응
+						CASE 4
+							LOCALS = %LOCALS%%WARD_A_K14()%… 응%WARD_D_K14()%, 응쿳, 츄우
+						CASE 5
+							LOCALS = %LOCALS%응, 핫%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄루
+						CASE 6
+							LOCALS = %LOCALS%,%WARD_A_K14()%%ELLIPSIS2_K14()%아, 응쿠
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%,
+						CASE 8
+							LOCALS = %LOCALS%%WARD_D_K14()%%ELLIPSIS2_K14()%, 응, 아
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응…, 츄%WARD_B_K14()%
+						CASE 10
+							LOCALS = %LOCALS%%WARD_B_K14()%, 츄포…%WARD_D_K14()%, 후응, 응
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%후~%ELLIPSIS2_K14()%%WARD_A_K14()%, 누츄%ELLIPSIS2_K14()%응
+						CASE 12
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "질척")%, 츄루%ELLIPSIS2_K14()%%WARD_B_K14()%, 츄%WARD_B_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "엣취")%, 츄룻%ELLIPSIS2_K14()%,%WARD_A_K14()%, 응쿠
+						CASE 14
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응긋%ELLIPSIS2_K14()%, 츄푸
+						CASE 15
+							LOCALS = %LOCALS%%WARD_B_K14()%, 츄%RANDTEXT_K14("", "", "～")%%ELLIPSIS2_K14()%응, 응쿠
+						CASE 16
+							LOCALS = %LOCALS%는… 아, 응응%WARD_D_K14()%%ELLIPSIS2_K14()%응구, 응쿠
+						CASE 17
+							LOCALS = %LOCALS%%WARD_E_K14()%응%WARD_D_K14()%, 읏%ELLIPSIS2_K14()%, 츄우
+						CASE 18
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응쿠%ELLIPSIS2_K14()%%WARD_D_K14()%, 츄%WARD_B_K14()%
+						CASE 19
+							LOCALS = %LOCALS%하, 핫%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄푸
+						CASE 20
+							LOCALS = %LOCALS%%WARD_D_K14()%%ELLIPSIS2_K14()%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%
+						CASE 21
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄파
+						CASE 22
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%WARD_D_K14()%%ELLIPSIS2_K14()%는%WARD_D_K14()%, 응쿠
+						CASE 23
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%응구%WARD_D_K14()%, 츗푸
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "페로")%, 피챠%RANDTEXT_K14("", "＿")%…… 응%WARD_D_K14()%, 응쿠
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "", EIGHTHNOTE_K14(), "♪")%
+			ENDIF
+		CASE "애무", "자위"
+			;조교자상태변화파생
+			SELECTCASE GET_CONDITION(TARGET)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_D_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 1
+							LOCALS = %LOCALS%%RANDTEXT_K14("쿠뉴", "그뉴")%、%WARD_C_K14()%구%WARD_H_K14()%%ELLIPSIS2_K14()%, 누츄
+						CASE 2
+							LOCALS = %LOCALS%%WARD_I_K14()%、%WARD_G_K14()%…%WARD_H_K14()%,%ELLIPSIS2_K14()%구
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("부비부비", "부비부비")%…,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_G_K14()%
+						CASE 4
+							LOCALS = %LOCALS%%WARD_G_K14()%…, 뉴루,%WARD_C_K14()%구%ELLIPSIS2_K14()%구
+						CASE 5
+							LOCALS = %LOCALS%말랑말랑%ELLIPSIS2_K14()%%WARD_I_K14()%, 츄쿠
+						CASE 6
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_G_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%피츄…
+						CASE 7
+							LOCALS = %LOCALS%,%ELLIPSIS2_K14()%%WARD_G_K14()%, 구츄
+						CASE 8
+							LOCALS = %LOCALS%프츄,%WARD_G_K14()%%ELLIPSIS2_K14()%,
+						CASE 9
+							LOCALS = %LOCALS%뉴프,%WARD_I_K14()%……, 동글동글
+						CASE 10
+							LOCALS = %LOCALS%%WARD_C_K14()%, 츄푸%ELLIPSIS2_K14()%%WARD_G_K14()%,
+						CASE 11
+							LOCALS = %LOCALS%%WARD_I_K14()%、%WARD_G_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%WARD_G_K14()%%WARD_G_K14()%……, 푸츄
+						CASE 13
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구, 츄쿠
+						CASE 14
+							LOCALS = %LOCALS%%WARD_I_K14()%…, 동글동글%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "츄크")%、%WARD_C_K14()%구
+						CASE 15
+							LOCALS = %LOCALS%프츄,%RANDTEXT_K14("누츄", "엣취")%……, 프츄프튼
+						CASE 16
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%만지작만지작,%WARD_C_K14()%구,
+						CASE 17
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%RANDTEXT_K14("그", "쿠")%츗%ELLIPSIS2_K14()%, 누츄
+						CASE 18
+							LOCALS = %LOCALS%,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%WARD_C_K14()%구…,%WARD_G_K14()%
+						CASE 20
+							LOCALS = %LOCALS%%WARD_H_K14()%、%RANDTEXT_K14("", "구")%…%WARD_H_K14()%, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%%WARD_G_K14()%%WARD_H_K14()%、%RANDTEXT_K14("누츄", "")%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%WARD_C_K14()%, 츄푸%WARD_H_K14()%%ELLIPSIS2_K14()%구
+						CASE 23
+							LOCALS = %LOCALS%슥슥%WARD_H_K14()%…、%WARD_G_K14()%, 구츄%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%동글동글…%WARD_G_K14()%、%WARD_C_K14()%구%ELLIPSIS2_K14()%구
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_G_K14()%, 엣취%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 1
+							LOCALS = %LOCALS%쿠뉴, 츄쿠%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%
+						CASE 2
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14("엣취", "")%…%WARD_H_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%부비부비…%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 4
+							LOCALS = %LOCALS%…%WARD_H_K14()%, 뉴루%ELLIPSIS2_K14()%구
+						CASE 5
+							LOCALS = %LOCALS%에, 누츄%WARD_H_K14()%%ELLIPSIS2_K14()%구
+						CASE 6
+							LOCALS = %LOCALS%%WARD_H_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%피츄
+						CASE 7
+							LOCALS = %LOCALS%%WARD_H_K14()%,%WARD_H_K14()%%ELLIPSIS2_K14()%엣취
+						CASE 8
+							LOCALS = %LOCALS%프츄,%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 9
+							LOCALS = %LOCALS%뉴프%ELLIPSIS2_K14()%누츄
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "")%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%누츄,%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%%WARD_H_K14()%, 푸츄
+						CASE 13
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구, 츄쿠
+						CASE 14
+							LOCALS = %LOCALS%%WARD_I_K14()%…%WARD_H_K14()%, 동글동글%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 15
+							LOCALS = %LOCALS%프츄%ELLIPSIS2_K14()%누츄
+						CASE 16
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("만지작만지작", "")%%RANDTEXT_K14("", "＿")%、%WARD_C_K14()%구
+						CASE 17
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 18
+							LOCALS = %LOCALS%,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%구, 츄쿠%WARD_H_K14()%…%WARD_H_K14()%、%WARD_G_K14()%
+						CASE 20
+							LOCALS = %LOCALS%%WARD_H_K14()%, 푸츄…%WARD_H_K14()%、%WARD_C_K14()%구
+						CASE 21
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_I_K14()%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 23
+							LOCALS = %LOCALS%%WARD_H_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_C_K14()%%WARD_B_K14()%%ELLIPSIS2_K14()%구
+					ENDSELECT
+			ENDSELECT
+			LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿")%
+		CASE "파이즈리"
+			;조교자상태변화파생
+			SELECTCASE GET_CONDITION(TARGET)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 1
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%않고에, …, 무뉴
+						CASE 2
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%두, 즈즛, 즈츄
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%, 즈륫,
+						CASE 4
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%, 무뉴…, , 누츄
+						CASE 5
+							LOCALS = %LOCALS%규%WARD_K_K14()%, 무뉴%RANDTEXT_K14("", "＿")%… 말랑말랑
+						CASE 6
+							LOCALS = %LOCALS%누츄%WARD_L_K14()%%ELLIPSIS2_K14()%, 꾹,～
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%, 즈륫%ELLIPSIS2_K14()%… 무뉴
+						CASE 8
+							LOCALS = %LOCALS%, 무%RANDTEXT_K14("", "에")%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%규
+						CASE 9
+							LOCALS = %LOCALS%굽%WARD_L_K14()%%ELLIPSIS2_K14()%물렁물렁, …, 즈즈
+						CASE 10
+							LOCALS = %LOCALS%질퍽질퍽%RANDTEXT_K14("!  ", "、")%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%음냐음냐%ELLIPSIS2_K14()%, 즈츗… 츄
+						CASE 12
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 누츄
+						CASE 13
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%물렁물렁…,,
+						CASE 14
+							LOCALS = %LOCALS%에%ELLIPSIS2_K14()%%WARD_J_K14()%%WARD_H_K14()%, 물컹, 누츄
+						CASE 15
+							LOCALS = %LOCALS%, 즈뉴%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%
+						CASE 16
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%, 츄쿠
+						CASE 17
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%,
+						CASE 18
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%%WARD_J_K14()%%WARD_H_K14()%… 뉴푸
+						CASE 19
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%꾹, 규
+						CASE 20
+							LOCALS = %LOCALS%않고에, 뉴%RANDTEXT_K14("", "")%…, 구늇, 물렁물렁
+						CASE 21
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%, 즈%RANDTEXT_K14("", "에")%, 굽
+						CASE 22
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 즈츄츄
+						CASE 23
+							LOCALS = %LOCALS%규%WARD_K_K14()%! 즈륫,
+						CASE 24
+							LOCALS = %LOCALS%않고에,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%에, 물컹
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 1
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%…, 무뉴
+						CASE 2
+							LOCALS = %LOCALS%두, 즛%ELLIPSIS2_K14()%
+						CASE 3
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%,
+						CASE 4
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%…,
+						CASE 5
+							LOCALS = %LOCALS%규%WARD_K_K14()%, 무뉴
+						CASE 6
+							LOCALS = %LOCALS%누츄%WARD_L_K14()%,%ELLIPSIS2_K14()%～
+						CASE 7
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%, 누츄%ELLIPSIS2_K14()%에
+						CASE 8
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%,%ELLIPSIS2_K14()%규
+						CASE 9
+							LOCALS = %LOCALS%굽%ELLIPSIS2_K14()%물렁물렁,
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%, 뉴%RANDTEXT_K14("", "")%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 즈츄
+						CASE 12
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 14
+							LOCALS = %LOCALS%에%ELLIPSIS2_K14()%, 무뉴
+						CASE 15
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%않고에
+						CASE 16
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%… 츄
+						CASE 17
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%…, 즈츄
+						CASE 18
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%규
+						CASE 20
+							LOCALS = %LOCALS%않고에%ELLIPSIS2_K14()%
+						CASE 21
+							LOCALS = %LOCALS%두, 즈츄%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%두 츄츄
+						CASE 23
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%않고에
+					ENDSELECT
+			ENDSELECT
+			LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("", "!", "", "!", "＿")%
+		CASEELSE
+			CALLF PRINT_ERRORMESSAGE(@"@KOJO_RAND_K14에 무효인 정의가 도 사라질 수 있는 했다")
+	ENDSELECT
+ELSEIF ARG == 2 ;조교대상
+	SELECTCASE ARGS
+		CASE "키스", "유두 들이마셔", "유두빨기", "젖꼭지빨기"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", "! 　")%%WARD_C_K14()%%ELLIPSIS2_K14()%는,%WARD_A_K14()%
+						CASE 1
+							LOCALS = %LOCALS%%WARD_A_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%…%RANDTEXT_K14("구", "", "")%, 츄
+						CASE 2
+							LOCALS = %LOCALS%%RANDTEXT_K14("할짝", "")%, 피츄%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "구", "")%, 츄웃
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "", "구")%, 쥬루%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응, 응쿠
+						CASE 4
+							LOCALS = %LOCALS%! 푸하%RANDTEXT_K14("", "＿")%, 응%ELLIPSIS2_K14()%응구
+						CASE 5
+							LOCALS = %LOCALS%%WARD_A_K14()%,%RANDTEXT_K14("엣취", "", "구")%…%WARD_C_K14()%, 츄푸
+						CASE 6
+							LOCALS = %LOCALS%응구%ELLIPSIS2_K14()%…%WARD_A_K14()%, 응츄우
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "＿")%응%RANDTEXT_K14("", "")%…… 후%ELLIPSIS2_K14()%%RANDTEXT_K14("후~", "하")%、%WARD_A_K14()%… 응쿠
+						CASE 8
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "응")%%ELLIPSIS2_K14()%%RANDTEXT_K14("츗", "")%, 츄쿠…,%WARD_A_K14()%
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%, 하아%ELLIPSIS2_K14()%응구, 츄우%RANDTEXT_K14("", "＿")%… 츄쿠
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%, 응응%RANDTEXT_K14("", "＿")%… 응쿠
+						CASE 11
+							LOCALS = %LOCALS%, 응%RANDTEXT_K14("응", "구")%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "")%, 피츄
+						CASE 12
+							LOCALS = %LOCALS%응%ELLIPSIS2_K14()%…,%WARD_A_K14()%, 응응%RANDTEXT_K14("", "＿")%… 응쿠
+						CASE 13
+							LOCALS = %LOCALS%는%RANDTEXT_K14("", "＿")%, 하아%ELLIPSIS2_K14()%%WARD_A_K14()%,%WARD_C_K14()%! 응
+						CASE 14
+							LOCALS = %LOCALS%… 하아%ELLIPSIS2_K14()%응구, 응츄%RANDTEXT_K14("", "", "＿")%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "", "구", "구")%、%WARD_C_K14()%…,%RANDTEXT_K14("츗", "", "")%, 응, 응쿳
+						CASE 16
+							LOCALS = %LOCALS%츗, 츄%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%,%WARD_A_K14()%, 응후
+						CASE 17
+							LOCALS = %LOCALS%응, 응쿠%RANDTEXT_K14("", "＿")%…%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "")%
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "구", "응")%, 츄%RANDTEXT_K14("구", "", "")%%ELLIPSIS2_K14()%응, 응츄%RANDTEXT_K14("", "", "＿")%… 응쿠, 응쿠
+						CASE 19
+							LOCALS = %LOCALS%, 읏… 응쿠,%RANDTEXT_K14("응구", "＿")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_C_K14()%, 츄쿠
+						CASE 20
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%응구, 응츄…, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "")%… 피츄
+						CASE 22
+							LOCALS = %LOCALS%엣취,%RANDTEXT_K14("", "", "구")%%ELLIPSIS2_K14()%…%WARD_A_K14()%, 응쿠
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", "!")% 는,%RANDTEXT_K14("후~", "하")%……%WARD_A_K14()%, 응쿠
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("＿", "구", "", "")%, 츄쿳…%RANDTEXT_K14("페로", "")%%RANDTEXT_K14("", "")%, 응%ELLIPSIS2_K14()%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%응, 응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응구
+						CASE 1
+							LOCALS = %LOCALS%%WARD_A_K14()%, 읏%ELLIPSIS2_K14()%%RANDTEXT_K14("", "구", "＿")%
+						CASE 2
+							LOCALS = %LOCALS%, 응츄%ELLIPSIS2_K14()%응%RANDTEXT_K14("응", "구", "＿")%
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "구", "＿")%, 응후%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "＿")%
+						CASE 4
+							LOCALS = %LOCALS%, 응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%응구
+						CASE 5
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "구", "")%… 쿠츗%ELLIPSIS2_K14()%
+						CASE 6
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%WARD_A_K14()%… 응읏
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "츄")%、%RANDTEXT_K14("", "구", "")%…… 응
+						CASE 8
+							LOCALS = %LOCALS%구,%RANDTEXT_K14("구", "", "엣취", "")%… 츄루
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%… 응%RANDTEXT_K14("、", ",", "", "……", "……、")%,%RANDTEXT_K14("", "구", "츄")%
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("아", "")%…%RANDTEXT_K14("", "구", "")%, 츗
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("는", "아", "", "응")%%RANDTEXT_K14(",", "……、")%…… 츄
+						CASE 12
+							LOCALS = %LOCALS%, 읏츄…%RANDTEXT_K14("", "", "")%
+						CASE 13
+							LOCALS = %LOCALS%, 츄%RANDTEXT_K14(",", "……", "……、")%%RANDTEXT_K14("", "", "＿")%
+						CASE 14
+							LOCALS = %LOCALS%%WARD_A_K14()%%RANDTEXT_K14("", "＿")%… 날름%RANDTEXT_K14("", "＿")%……%RANDTEXT_K14("응", "구", "＿")%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14(",", ",", "……")%응%RANDTEXT_K14(",", "、")%응구
+						CASE 16
+							LOCALS = %LOCALS%응…… 응쿠%ELLIPSIS2_K14()%%RANDTEXT_K14("츄", "", "구", "")%
+						CASE 17
+							LOCALS = %LOCALS%응%RANDTEXT_K14("", "", "")%…… 후%RANDTEXT_K14("＿", "…", "……、")%응구
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("츗", "츄", "", "")%、%RANDTEXT_K14("구", "")%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%,%RANDTEXT_K14("", "구", "", "츄")%%ELLIPSIS2_K14()%응%RANDTEXT_K14("、", ",", ",")%응구
+						CASE 20
+							LOCALS = %LOCALS%는,%RANDTEXT_K14("할짝", "", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "", "")%
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("응", "응", "응")%%RANDTEXT_K14("……", "…", "…,")%%RANDTEXT_K14("하, 하아", "하, 하")%…… 츄%RANDTEXT_K14("", "", "")%
+						CASE 22
+							LOCALS = %LOCALS%응구,%RANDTEXT_K14("응…", "응……")%%RANDTEXT_K14("츗,", "구", "")%
+						CASE 23
+							LOCALS = %LOCALS%구,%RANDTEXT_K14("", "", "", "응")%%RANDTEXT_K14("…", "……", ",", "…,")%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_A_K14()%,%RANDTEXT_K14("응구", "", "")%%RANDTEXT_K14("…", "……", ",", "…,")%응
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "")%
+			ENDIF
+		CASE "쿤닐링구스", "입으로 애무", "쿤닐링구스"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄%ELLIPSIS2_K14()%는… 응, 엣취
+						CASE 1
+							LOCALS = %LOCALS%… 응%RANDTEXT_K14("", "", "＿")%, 누푹, 누프%ELLIPSIS2_K14()%
+						CASE 2
+							LOCALS = %LOCALS%츄프,%WARD_C_K14()%구%ELLIPSIS2_K14()%,%WARD_C_K14()%구
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄
+						CASE 4
+							LOCALS = %LOCALS%%WARD_A_K14()%,%WARD_C_K14()%구%ELLIPSIS2_K14()%응,%RANDTEXT_K14("쿠츗", "")%,
+						CASE 5
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%구…… 는, 아%ELLIPSIS2_K14()%%WARD_A_K14()%
+						CASE 6
+							LOCALS = %LOCALS%날름날름…,%WARD_C_K14()%%RANDTEXT_K14("", "＿")%, 츄쿠%ELLIPSIS2_K14()%
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("글자", "")%%RANDTEXT_K14("", "", "＿")%,%RANDTEXT_K14("", "", "글자")%구%ELLIPSIS2_K14()%응, 엣취
+						CASE 8
+							LOCALS = %LOCALS%%WARD_C_K14()%%RANDTEXT_K14("", "＿")%…%RANDTEXT_K14("", "")%, 츄%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%는, 아…%WARD_A_K14()%
+						CASE 9
+							LOCALS = %LOCALS%%WARD_C_K14()%%WARD_B_K14()%、%WARD_C_K14()%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%, 츄
+						CASE 10
+							LOCALS = %LOCALS%미끌, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%, 누프
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "할짝")%, 엣취, 엣취
+						CASE 12
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%, 응%ELLIPSIS2_K14()%구…… 츄%WARD_B_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%, 누프…, 츄%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%구
+						CASE 14
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%,%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "", "＿")%, 엣취
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("레로", "")%%RANDTEXT_K14("", "＿")%, 츄%RANDTEXT_K14("", "＿")%,%ELLIPSIS2_K14()%응, 쥬우
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("할짝", "")%, 엣취%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_B_K14()%, 츄우
+						CASE 17
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%…,%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%, 엣취
+						CASE 18
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%, 개%ELLIPSIS2_K14()%응,%WARD_C_K14()%구…
+						CASE 19
+							LOCALS = %LOCALS%%WARD_A_K14()%, 츄%ELLIPSIS2_K14()%엣취,%WARD_C_K14()%%RANDTEXT_K14("", "＿")%
+						CASE 20
+							LOCALS = %LOCALS%는…, 아%ELLIPSIS2_K14()%,%RANDTEXT_K14("", "글자")%… 엣취
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "＿")%…, 엣취, 엣취
+						CASE 22
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "＿")%,%ELLIPSIS2_K14()%%RANDTEXT_K14("쿠츗", "")%,
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "글자")%%RANDTEXT_K14("、", ",", "……")%%RANDTEXT_K14("", "", "＿", "…")%, 쥬루루
+						CASE 24
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "글자")%, 츄%WARD_B_K14()%…%RANDTEXT_K14("", "구츄")%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%는%ELLIPSIS2_K14()%%RANDTEXT_K14("엣취", "")%, 응%RANDTEXT_K14("", "", "＿")%…%RANDTEXT_K14("글자", "", "")%
+						CASE 1
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%페로
+						CASE 2
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%WARD_B_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%,%ELLIPSIS2_K14()%구, 츄%WARD_B_K14()%
+						CASE 4
+							LOCALS = %LOCALS%%RANDTEXT_K14("피츄", "")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%응, 츄
+						CASE 5
+							LOCALS = %LOCALS%응%ELLIPSIS2_K14()%구, 츄%WARD_B_K14()%
+						CASE 6
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%는, 아…
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "＿")%
+						CASE 8
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "할짝")%… 후%ELLIPSIS2_K14()%%RANDTEXT_K14("", "구")%
+						CASE 9
+							LOCALS = %LOCALS%응%RANDTEXT_K14("", "", "＿")%%ELLIPSIS2_K14()%구, 츄푸
+						CASE 10
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%페로,%RANDTEXT_K14("할짝", "")%
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "", "")%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("글자", "")%%RANDTEXT_K14("", "", "＿")%, 츄루%ELLIPSIS2_K14()%구
+						CASE 14
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "")%%RANDTEXT_K14("", "＿")%, 미끌%ELLIPSIS2_K14()%
+						CASE 15
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "", "", "＿")%, 피챳%ELLIPSIS2_K14()%%RANDTEXT_K14("", "페로")%
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%,%ELLIPSIS2_K14()%%RANDTEXT_K14("레로", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%
+						CASE 17
+							LOCALS = %LOCALS%%RANDTEXT_K14("페로", "")%, 츗%ELLIPSIS2_K14()%구
+						CASE 18
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("할짝", "")%、%RANDTEXT_K14("", "")%
+						CASE 19
+							LOCALS = %LOCALS%%RANDTEXT_K14("개", "")%%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "글자")%, 츄쿠
+						CASE 20
+							LOCALS = %LOCALS%%RANDTEXT_K14("츄프", "")%%RANDTEXT_K14("、", "＿")%%ELLIPSIS2_K14()%, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "쿠츗")%, 츄%RANDTEXT_K14("구", "", "")%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "글자")%, 츄%WARD_B_K14()%%ELLIPSIS2_K14()%
+						CASE 23
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "쿠츗", "")%, 츄쿠%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("구", "", "＿")%, 츄%RANDTEXT_K14("", "구")%%ELLIPSIS2_K14()%
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "")%
+			ENDIF
+		CASE "펠라"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%,%WARD_C_K14()%…, 응%WARD_D_K14()%, 읏,%WARD_C_K14()%%RANDTEXT_K14("", "")%
+						CASE 1
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%는, 아%ELLIPSIS2_K14()%, 응
+						CASE 2
+							LOCALS = %LOCALS%%WARD_C_K14()%%WARD_F_K14()%…! 푸하… 응″%WARD_D_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%, 쥬푸……, 아, 응응
+						CASE 4
+							LOCALS = %LOCALS%는～, 아…%WARD_C_K14()%,%WARD_C_K14()%%WARD_F_K14()%%ELLIPSIS2_K14()%
+						CASE 5
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%하, 핫,%WARD_A_K14()%! 츄%RANDTEXT_K14("", "")%
+						CASE 6
+							LOCALS = %LOCALS%, 구폿%ELLIPSIS2_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 7
+							LOCALS = %LOCALS%, 츄폿%ELLIPSIS2_K14()%～, 응긋, 응쿠
+						CASE 8
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 후%ELLIPSIS2_K14()%… 뭇,%WARD_A_K14()%…～
+						CASE 9
+							LOCALS = %LOCALS%%WARD_E_K14()%～, 하무,%WARD_A_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%
+						CASE 10
+							LOCALS = %LOCALS%, 구풋%ELLIPSIS2_K14()%,～～!
+						CASE 11
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%%WARD_F_K14()%, 응
+						CASE 12
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응…, 푸하%ELLIPSIS2_K14()%%WARD_A_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 13
+							LOCALS = %LOCALS%응, 읏,%WARD_A_K14()%응%ELLIPSIS2_K14()%, 쥿
+						CASE 14
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%는, 아… 응쿠, 응쿠
+						CASE 15
+							LOCALS = %LOCALS%졸졸%ELLIPSIS2_K14()%,%WARD_C_K14()%… 아
+						CASE 16
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "츄")%, 츗,%WARD_C_K14()%…! 읏하아,%RANDTEXT_K14("후~", "하")%
+						CASE 17
+							LOCALS = %LOCALS%는%WARD_E_K14()%, 핫,%WARD_A_K14()%! 응, 쥬%WARD_F_K14()%
+						CASE 18
+							LOCALS = %LOCALS%, 구%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%, 응… 응쿠, 응구웃
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%,%WARD_C_K14()%%WARD_F_K14()%
+						CASE 20
+							LOCALS = %LOCALS%는%WARD_D_K14()%… 아%ELLIPSIS2_K14()%%WARD_A_K14()%, 후, 응읏! 응쿠
+						CASE 21
+							LOCALS = %LOCALS%하, 하%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%%WARD_C_K14()%%RANDTEXT_K14("＿", "", "")%, 쥬푸, 응
+						CASE 22
+							LOCALS = %LOCALS%%WARD_D_K14()%, 응…, 읏하아,%WARD_A_K14()%%ELLIPSIS2_K14()%
+						CASE 23
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응긋%ELLIPSIS2_K14()%%WARD_F_K14()%, 후, 응읏
+						CASE 24
+							LOCALS = %LOCALS%, 구폿%ELLIPSIS2_K14()%%WARD_F_K14()%
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%후~%WARD_E_K14()%하%ELLIPSIS2_K14()%%WARD_A_K14()%, 피츄
+						CASE 1
+							LOCALS = %LOCALS%는%WARD_D_K14()%%ELLIPSIS2_K14()%%WARD_A_K14()%, 응읏! 응쿠
+						CASE 2
+							LOCALS = %LOCALS%, 응%ELLIPSIS2_K14()%%WARD_D_K14()%, 츄푸
+						CASE 3
+							LOCALS = %LOCALS%… 아%ELLIPSIS2_K14()%%RANDTEXT_K14("", "페로")%, 할짝…… 응
+						CASE 4
+							LOCALS = %LOCALS%%WARD_A_K14()%… 응%WARD_D_K14()%, 응쿳, 츄우
+						CASE 5
+							LOCALS = %LOCALS%응, 핫%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄루
+						CASE 6
+							LOCALS = %LOCALS%,%WARD_A_K14()%%ELLIPSIS2_K14()%아, 응쿠
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("후~, 하아", "하, 하")%%ELLIPSIS2_K14()%,
+						CASE 8
+							LOCALS = %LOCALS%%WARD_D_K14()%%ELLIPSIS2_K14()%, 응, 아
+						CASE 9
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응…, 츄%WARD_B_K14()%
+						CASE 10
+							LOCALS = %LOCALS%%WARD_B_K14()%, 츄포…%WARD_D_K14()%, 후응, 응
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "＿")%후~%ELLIPSIS2_K14()%%WARD_A_K14()%, 누츄%ELLIPSIS2_K14()%응
+						CASE 12
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "질척")%, 츄루%ELLIPSIS2_K14()%%WARD_B_K14()%, 츄%WARD_B_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "엣취")%, 츄룻%ELLIPSIS2_K14()%,%WARD_A_K14()%, 응쿠
+						CASE 14
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응긋%ELLIPSIS2_K14()%, 츄푸
+						CASE 15
+							LOCALS = %LOCALS%%WARD_B_K14()%, 츄%RANDTEXT_K14("", "", "～")%%ELLIPSIS2_K14()%응, 응쿠
+						CASE 16
+							LOCALS = %LOCALS%는… 아, 응응%WARD_D_K14()%%ELLIPSIS2_K14()%응구, 응쿠
+						CASE 17
+							LOCALS = %LOCALS%%WARD_E_K14()%응%WARD_D_K14()%, 읏%ELLIPSIS2_K14()%, 츄우
+						CASE 18
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응쿠%ELLIPSIS2_K14()%%WARD_D_K14()%, 츄%WARD_B_K14()%
+						CASE 19
+							LOCALS = %LOCALS%하, 핫%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄푸
+						CASE 20
+							LOCALS = %LOCALS%%WARD_D_K14()%%ELLIPSIS2_K14()%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%
+						CASE 21
+							LOCALS = %LOCALS%응%WARD_D_K14()%, 응%ELLIPSIS2_K14()%%WARD_A_K14()%, 츄파
+						CASE 22
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%WARD_D_K14()%%ELLIPSIS2_K14()%는%WARD_D_K14()%, 응쿠
+						CASE 23
+							LOCALS = %LOCALS%%WARD_A_K14()%, 응%ELLIPSIS2_K14()%응구%WARD_D_K14()%, 츗푸
+						CASE 24
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "페로")%, 피챠%RANDTEXT_K14("", "＿")%…… 응%WARD_D_K14()%, 응쿠
+					ENDSELECT
+			ENDSELECT
+			IF AFFECTION("상사상애")
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿", RAND_SYMBOL_K14())%
+			ELSE
+				LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("＿", "")%
+			ENDIF
+		CASE "이라마치오"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%는%WARD_N_K14()%%RANDTEXT_K14("후~", "하")%%ELLIPSIS2_K14()%%WARD_P_K14()%!? 응응응～～!
+						CASE 1
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14("는", "＿")%……%WARD_P_K14()%, 구우…%WARD_O_K14()%
+						CASE 2
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%구,%WARD_P_K14()%! 응응%WARD_K_K14()%
+						CASE 3
+							LOCALS = %LOCALS%%WARD_C_K14()%, 쥬루루…%WARD_N_K14()%%RANDTEXT_K14("응", "")%, 응긋……
+						CASE 4
+							LOCALS = %LOCALS%응,%WARD_P_K14()%…! 푸하… 응뭇! 응응%WARD_Q_K14()%!
+						CASE 5
+							LOCALS = %LOCALS%…%WARD_P_K14()%!? 후, 응응응%WARD_K_K14()%! 하아, 하아……
+						CASE 6
+							LOCALS = %LOCALS%%WARD_F_K14()%～, 푸하%ELLIPSIS2_K14()%! 응구…%WARD_O_K14()%
+						CASE 7
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%구%ELLIPSIS2_K14()%응,%WARD_P_K14()%, 응응%WARD_K_K14()%!
+						CASE 8
+							LOCALS = %LOCALS%%WARD_P_K14()%! 응응응%WARD_K_K14()%! 푸하……%WARD_P_K14()%, 응응
+						CASE 9
+							LOCALS = %LOCALS%, 쥬풋%ELLIPSIS2_K14()%, 응뭇, 응쿠…
+						CASE 10
+							LOCALS = %LOCALS%는…%RANDTEXT_K14("하, 하", "후~, 하아")%%ELLIPSIS2_K14()%!? 응구, 응읏
+						CASE 11
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "응")%, 쥬푸%ELLIPSIS2_K14()%응구,%WARD_P_K14()%……%WARD_O_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%RANDTEXT_K14("하, 하", "후~, 하아")%%ELLIPSIS2_K14()%! 응므우…%WARD_O_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%WARD_C_K14()%, 질척…, 푸하%WARD_H_K14()%%ELLIPSIS2_K14()%!
+						CASE 14
+							LOCALS = %LOCALS%응응%WARD_M_K14()%!? 쿨럭%ELLIPSIS2_K14()%, 우…%WARD_P_K14()%!
+						CASE 15
+							LOCALS = %LOCALS%%WARD_C_K14()%구, 질퍽질퍽,%WARD_G_K14()%…%WARD_O_K14()%
+						CASE 16
+							LOCALS = %LOCALS%%WARD_P_K14()%, 응붓%ELLIPSIS2_K14()%%WARD_C_K14()%,%WARD_C_K14()%…%WARD_O_K14()%
+						CASE 17
+							LOCALS = %LOCALS%%WARD_P_K14()%, 읏%WARD_K_K14()%～! 푸하%WARD_H_K14()%, 응무%WARD_M_K14()%…!
+						CASE 18
+							LOCALS = %LOCALS%%WARD_P_K14()%!   응%WARD_D_K14()%, 응%RANDTEXT_K14("응", "응응")%%WARD_K_K14()%%WARD_O_K14()%
+						CASE 19
+							LOCALS = %LOCALS%질퍽질퍽%ELLIPSIS2_K14()%%WARD_F_K14()%%WARD_O_K14()%
+						CASE 20
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "레로")%%ELLIPSIS2_K14()%%WARD_H_K14()%, 응부…%WARD_P_K14()%!
+						CASE 21
+							LOCALS = %LOCALS%응응!  %WARD_P_K14()%! 응,%WARD_P_K14()%%ELLIPSIS2_K14()%, 응…%WARD_O_K14()%
+						CASE 22
+							LOCALS = %LOCALS%응%WARD_B_K14()%、%WARD_P_K14()%%ELLIPSIS2_K14()%, 읏, 응구%WARD_M_K14()%…!
+						CASE 23
+							LOCALS = %LOCALS%%WARD_C_K14()%%ELLIPSIS2_K14()%응응%WARD_M_K14()%, 쥬%WARD_F_K14()%……%WARD_O_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_P_K14()%, 응후%ELLIPSIS2_K14()%%WARD_C_K14()%… 응우, 쥬루…
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%, 응응%WARD_Q_K14()%! 하,%WARD_P_K14()%…
+						CASE 1
+							LOCALS = %LOCALS%는%WARD_H_K14()%, 하아%ELLIPSIS2_K14()%! 응읏……
+						CASE 2
+							LOCALS = %LOCALS%%WARD_C_K14()%%WARD_H_K14()%,%ELLIPSIS2_K14()%, 응무…%WARD_O_K14()%
+						CASE 3
+							LOCALS = %LOCALS%…%WARD_P_K14()%! 응뭇,%RANDTEXT_K14("응응", "응응응")%…%WARD_O_K14()%
+						CASE 4
+							LOCALS = %LOCALS%, 응%WARD_M_K14()%%WARD_Q_K14()%! 하,%WARD_P_K14()%
+						CASE 5
+							LOCALS = %LOCALS%…!? 응구%WARD_H_K14()%, 응응응%WARD_Q_K14()%!
+						CASE 6
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_G_K14()%…%WARD_N_K14()%!
+						CASE 7
+							LOCALS = %LOCALS%%WARD_P_K14()%!? 응뭇%ELLIPSIS2_K14()%응응응…%WARD_O_K14()%
+						CASE 8
+							LOCALS = %LOCALS%응%RANDTEXT_K14("구", "")%%ELLIPSIS2_K14()%응…%WARD_O_K14()%
+						CASE 9
+							LOCALS = %LOCALS%%ELLIPSIS_K14()%……%WARD_C_K14()%%ELLIPSIS2_K14()%…
+						CASE 10
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%…%WARD_O_K14()%
+						CASE 11
+							LOCALS = %LOCALS%응응%ELLIPSIS2_K14()%…%WARD_O_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%WARD_P_K14()%!? 쿨럭%ELLIPSIS2_K14()%응응……%WARD_O_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("", "")%, 쥬%WARD_F_K14()%…
+						CASE 14
+							LOCALS = %LOCALS%응응%ELLIPSIS2_K14()%%WARD_P_K14()%, 응읏…
+						CASE 15
+							LOCALS = %LOCALS%… 응응%WARD_N_K14()%%RANDTEXT_K14("응", "", "＿")%, 응, 우구…
+						CASE 16
+							LOCALS = %LOCALS%%WARD_P_K14()%, 응무%WARD_M_K14()%!
+						CASE 17
+							LOCALS = %LOCALS%%WARD_P_K14()%%WARD_M_K14()%……,%RANDTEXT_K14("응", "", "＿")%……%WARD_O_K14()%
+						CASE 18
+							LOCALS = %LOCALS%…%WARD_C_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14(", 날름", "레로, 레로")%……
+						CASE 19
+							LOCALS = %LOCALS%응%ELLIPSIS2_K14()%%WARD_C_K14()%%WARD_F_K14()%, 응구%WARD_M_K14()%……!
+						CASE 20
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%WARD_F_K14()%……
+						CASE 21
+							LOCALS = %LOCALS%… 응응%WARD_N_K14()%%WARD_P_K14()%%ELLIPSIS2_K14()%응
+						CASE 22
+							LOCALS = %LOCALS%응응%WARD_K_K14()%! 쿨럭, 쿨럭쿨럭 …
+						CASE 23
+							LOCALS = %LOCALS%%WARD_M_K14()%%ELLIPSIS2_K14()%, 어흠…
+						CASE 24
+							LOCALS = %LOCALS%응%RANDTEXT_K14("", "", "")%%ELLIPSIS2_K14()%,%WARD_A_K14()%… 무긋
+					ENDSELECT
+			ENDSELECT
+		CASE "애무", "자위"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_D_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 1
+							LOCALS = %LOCALS%%RANDTEXT_K14("쿠뉴", "그뉴")%、%WARD_C_K14()%구%WARD_H_K14()%%ELLIPSIS2_K14()%, 누츄
+						CASE 2
+							LOCALS = %LOCALS%%WARD_I_K14()%、%WARD_G_K14()%…%WARD_H_K14()%,%ELLIPSIS2_K14()%구
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("부비부비", "부비부비")%…,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_G_K14()%
+						CASE 4
+							LOCALS = %LOCALS%%WARD_G_K14()%…, 뉴루,%WARD_C_K14()%구%ELLIPSIS2_K14()%구
+						CASE 5
+							LOCALS = %LOCALS%말랑말랑%ELLIPSIS2_K14()%%WARD_I_K14()%, 츄쿠
+						CASE 6
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_G_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%피츄…
+						CASE 7
+							LOCALS = %LOCALS%,%ELLIPSIS2_K14()%%WARD_G_K14()%, 구츄
+						CASE 8
+							LOCALS = %LOCALS%프츄,%WARD_G_K14()%%ELLIPSIS2_K14()%,
+						CASE 9
+							LOCALS = %LOCALS%뉴프,%WARD_I_K14()%……, 동글동글
+						CASE 10
+							LOCALS = %LOCALS%%WARD_C_K14()%, 츄푸%ELLIPSIS2_K14()%%WARD_G_K14()%,
+						CASE 11
+							LOCALS = %LOCALS%%WARD_I_K14()%、%WARD_G_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%WARD_G_K14()%%WARD_G_K14()%……, 푸츄
+						CASE 13
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구, 츄쿠
+						CASE 14
+							LOCALS = %LOCALS%%WARD_I_K14()%…, 동글동글%ELLIPSIS2_K14()%%RANDTEXT_K14("구", "츄크")%、%WARD_C_K14()%구
+						CASE 15
+							LOCALS = %LOCALS%프츄,%RANDTEXT_K14("누츄", "엣취")%……, 프츄프튼
+						CASE 16
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%만지작만지작,%WARD_C_K14()%구,
+						CASE 17
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%RANDTEXT_K14("그", "쿠")%츗%ELLIPSIS2_K14()%, 누츄
+						CASE 18
+							LOCALS = %LOCALS%,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%WARD_C_K14()%구…,%WARD_G_K14()%
+						CASE 20
+							LOCALS = %LOCALS%%WARD_H_K14()%、%RANDTEXT_K14("", "구")%…%WARD_H_K14()%, 츄쿠
+						CASE 21
+							LOCALS = %LOCALS%%WARD_G_K14()%%WARD_H_K14()%、%RANDTEXT_K14("누츄", "")%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%WARD_C_K14()%, 츄푸%WARD_H_K14()%%ELLIPSIS2_K14()%구
+						CASE 23
+							LOCALS = %LOCALS%슥슥%WARD_H_K14()%…、%WARD_G_K14()%, 구츄%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%동글동글…%WARD_G_K14()%、%WARD_C_K14()%구%ELLIPSIS2_K14()%구
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_G_K14()%, 엣취%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 1
+							LOCALS = %LOCALS%쿠뉴, 츄쿠%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%
+						CASE 2
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%RANDTEXT_K14("엣취", "")%…%WARD_H_K14()%,
+						CASE 3
+							LOCALS = %LOCALS%부비부비…%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 4
+							LOCALS = %LOCALS%…%WARD_H_K14()%, 뉴루%ELLIPSIS2_K14()%구
+						CASE 5
+							LOCALS = %LOCALS%에, 누츄%WARD_H_K14()%%ELLIPSIS2_K14()%구
+						CASE 6
+							LOCALS = %LOCALS%%WARD_H_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%피츄
+						CASE 7
+							LOCALS = %LOCALS%%WARD_H_K14()%,%WARD_H_K14()%%ELLIPSIS2_K14()%엣취
+						CASE 8
+							LOCALS = %LOCALS%프츄,%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 9
+							LOCALS = %LOCALS%뉴프%ELLIPSIS2_K14()%누츄
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("엣취", "")%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%누츄,%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 12
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%%WARD_H_K14()%, 푸츄
+						CASE 13
+							LOCALS = %LOCALS%%WARD_H_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구, 츄쿠
+						CASE 14
+							LOCALS = %LOCALS%%WARD_I_K14()%…%WARD_H_K14()%, 동글동글%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 15
+							LOCALS = %LOCALS%프츄%ELLIPSIS2_K14()%누츄
+						CASE 16
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%%RANDTEXT_K14("만지작만지작", "")%%RANDTEXT_K14("", "＿")%、%WARD_C_K14()%구
+						CASE 17
+							LOCALS = %LOCALS%%WARD_C_K14()%구,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 18
+							LOCALS = %LOCALS%,%WARD_I_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%%WARD_C_K14()%구, 츄쿠%WARD_H_K14()%…%WARD_H_K14()%、%WARD_G_K14()%
+						CASE 20
+							LOCALS = %LOCALS%%WARD_H_K14()%, 푸츄…%WARD_H_K14()%、%WARD_C_K14()%구
+						CASE 21
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_I_K14()%%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%WARD_C_K14()%,%WARD_C_K14()%%ELLIPSIS2_K14()%%WARD_C_K14()%구
+						CASE 23
+							LOCALS = %LOCALS%%WARD_H_K14()%、%WARD_G_K14()%%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_G_K14()%、%WARD_C_K14()%%WARD_B_K14()%%ELLIPSIS2_K14()%구
+					ENDSELECT
+			ENDSELECT
+			LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("!", "", "＿")%
+		CASE "파이즈리"
+			;조교대상상태변화파생
+			SELECTCASE GET_CONDITION(MASTER)
+				CASE "정욕", "울상"
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 1
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%않고에, …, 무뉴
+						CASE 2
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%두, 즈즛, 즈츄
+						CASE 3
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%%ELLIPSIS2_K14()%, 즈륫,
+						CASE 4
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%, 무뉴…, , 누츄
+						CASE 5
+							LOCALS = %LOCALS%규%WARD_K_K14()%, 무뉴%RANDTEXT_K14("", "＿")%… 말랑말랑
+						CASE 6
+							LOCALS = %LOCALS%누츄%WARD_L_K14()%%ELLIPSIS2_K14()%, 꾹,～
+						CASE 7
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%, 즈륫%ELLIPSIS2_K14()%… 무뉴
+						CASE 8
+							LOCALS = %LOCALS%, 무%RANDTEXT_K14("", "에")%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%규
+						CASE 9
+							LOCALS = %LOCALS%굽%WARD_L_K14()%%ELLIPSIS2_K14()%물렁물렁, …, 즈즈
+						CASE 10
+							LOCALS = %LOCALS%질퍽질퍽%RANDTEXT_K14("!  ", "、")%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%음냐음냐%ELLIPSIS2_K14()%, 즈츗… 츄
+						CASE 12
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 누츄
+						CASE 13
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%물렁물렁…,,
+						CASE 14
+							LOCALS = %LOCALS%에%ELLIPSIS2_K14()%%WARD_J_K14()%%WARD_H_K14()%, 물컹, 누츄
+						CASE 15
+							LOCALS = %LOCALS%, 즈뉴%RANDTEXT_K14("", "＿")%%ELLIPSIS2_K14()%
+						CASE 16
+							LOCALS = %LOCALS%,%WARD_C_K14()%%ELLIPSIS2_K14()%, 츄쿠
+						CASE 17
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%,
+						CASE 18
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%%WARD_J_K14()%%WARD_H_K14()%… 뉴푸
+						CASE 19
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%꾹, 규
+						CASE 20
+							LOCALS = %LOCALS%않고에, 뉴%RANDTEXT_K14("", "")%…, 구늇, 물렁물렁
+						CASE 21
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%, 즈%RANDTEXT_K14("", "에")%, 굽
+						CASE 22
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 즈츄츄
+						CASE 23
+							LOCALS = %LOCALS%규%WARD_K_K14()%! 즈륫,
+						CASE 24
+							LOCALS = %LOCALS%않고에,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%에, 물컹
+					ENDSELECT
+				CASEELSE ;그 외
+					SELECTCASE RAND:25
+						CASE 0
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 1
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%…, 무뉴
+						CASE 2
+							LOCALS = %LOCALS%두, 즛%ELLIPSIS2_K14()%
+						CASE 3
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%,
+						CASE 4
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%…,
+						CASE 5
+							LOCALS = %LOCALS%규%WARD_K_K14()%, 무뉴
+						CASE 6
+							LOCALS = %LOCALS%누츄%WARD_L_K14()%,%ELLIPSIS2_K14()%～
+						CASE 7
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%, 누츄%ELLIPSIS2_K14()%에
+						CASE 8
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%,%ELLIPSIS2_K14()%규
+						CASE 9
+							LOCALS = %LOCALS%굽%ELLIPSIS2_K14()%물렁물렁,
+						CASE 10
+							LOCALS = %LOCALS%%RANDTEXT_K14("", "")%, 뉴%RANDTEXT_K14("", "")%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 11
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%, 즈츄
+						CASE 12
+							LOCALS = %LOCALS%,%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 13
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%물렁물렁
+						CASE 14
+							LOCALS = %LOCALS%에%ELLIPSIS2_K14()%, 무뉴
+						CASE 15
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%않고에
+						CASE 16
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%… 츄
+						CASE 17
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%…, 즈츄
+						CASE 18
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%
+						CASE 19
+							LOCALS = %LOCALS%즈류%WARD_L_K14()%, 즈츄%WARD_L_K14()%%ELLIPSIS2_K14()%규
+						CASE 20
+							LOCALS = %LOCALS%않고에%ELLIPSIS2_K14()%
+						CASE 21
+							LOCALS = %LOCALS%두, 즈츄%ELLIPSIS2_K14()%
+						CASE 22
+							LOCALS = %LOCALS%%ELLIPSIS2_K14()%두 츄츄
+						CASE 23
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%
+						CASE 24
+							LOCALS = %LOCALS%%WARD_J_K14()%%WARD_H_K14()%%ELLIPSIS2_K14()%않고에
+					ENDSELECT
+			ENDSELECT
+			LOCALS = %LOCALS%%ELLIPSIS_K14()%%RANDTEXT_K14("", "!", "", "!", "＿")%
+		CASEELSE
+			CALLF PRINT_ERRORMESSAGE(@"@KOJO_RAND_K14에 무효인 정의가 도 사라질 수 있는 했다")
+	ENDSELECT
+ENDIF
+NEXT
+RETURNF LOCALS

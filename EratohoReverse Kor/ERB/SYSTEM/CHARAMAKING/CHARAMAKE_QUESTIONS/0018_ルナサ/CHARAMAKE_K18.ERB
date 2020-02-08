@@ -1,0 +1,50 @@
+﻿;ルナサ@咲の人
+@CHARAMAKE_K18(ARG)
+PRINTFORMW 「…눈、떴어？　잠깐만 나와 어울려줘」
+PRINTL 
+CALL CHARA_CUTIN(CSTR:10, CSTR:11, CSTR:로마자)
+PRINTL 
+PRINTFORMW 「당신은 기운이 없을 때、어떻게 다시 건강을 되찾아？」
+PRINTL 
+PRINTFORMDL [0] 대답하지 않는다
+PRINTFORMDL [1] 음악을 듣는다
+PRINTFORMDL [2] 책을 읽는다
+PRINTFORMDL [3] 신체를 움직인다
+PRINTFORMDL [4] 신체를 움직인다(성적으로)
+CALL INPUTINT(0, 1, 2, 3, 4)
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML 「……그래」
+		CALLF CM_PROF("충동", -10)
+		CALLF CM_PROF("호기심", -10)
+		CALLF CM_PROF("수치", 10)
+		CALLF CM_PROF("신경질", 10)
+	CASE 1
+		PRINTFORML 「음악은 좋지…내 음악도 들을래？」
+		PRINTFORML 「에、필요없어？　유감…」
+		CALLF CM_PROF("지성", 10)
+		CALLF CM_PROF("프라이드", 10)
+		CALLF CM_PROF("충동", 10)
+		CALLF CM_PROF("수치", -10)
+	CASE 2
+		PRINTFORML 「내용에 따라서 좀 더 기운 없어질때도 있지만…책도 나쁘지는 않지」
+		CALLF CM_PROF("솔직야", -10)
+		CALLF CM_PROF("신경질", 10)
+		CALLF CM_PROF("호기심", 10)
+		CALLF CM_PROF("지성", 20)
+	CASE 3
+		PRINTFORML 「운동으로 기분을 고양시키는 것도 있을지도…」
+		CALLF CM_PROF("공격", 20)
+		CALLF CM_PROF("피학", 10)
+		CALLF CM_PROF("도착", 10)
+		CALLF CM_PROF("결벽", -20)
+	CASE 4
+		PRINTFORML 「……！？　…엣찌」
+		CALLF CM_PROF("Ｃ를 좋아하는 사람", 20)
+		CALLF CM_PROF("Ｂ를 좋아하는 사람", 20)
+		CALLF CM_PROF("모랄", -30)
+		CALLF CM_PROF("수치", -20)
+ENDSELECT
+PRINTFORMW 「질문은 끝、천천히 쉬어」
+RETURN 1
+

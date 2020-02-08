@@ -1,0 +1,241 @@
+﻿;────────────────────────────────────
+;새로운조교자의 추가
+;────────────────────────────────────
+@NEW_TRAINER
+#DIM LCOUNT, 1
+#DIM PRINTCOUNT, 1
+
+;선택지를 호출한다
+LOCALS = 
+LOCALS += "<식별>NEW_TRAINER"
+LOCALS += "<대상>등장가능"
+LOCALS += "<상부>NEW_TRAINER_T"
+LOCALS += "<조건>NEW_TRAINER_R"
+LOCALS += "<구상>조교자"
+LOCALS += "<취소>그만둔다"
+LOCALS += "<항목>이름/두명"
+CALL SELECT_CHARA_LIST(LOCALS)
+IF RESULT != -1
+	;마력소비
+	CFLAG:마력 -= 1000
+	;소환자 기억
+	LOCAL:1 = TARGET
+	;소환 처리
+	ADDCHARA RESULT
+	;조교자를 지금 소환했다캐릭터에게 교대
+	TARGET = CHARANUM - 1
+	;등장플래그를 꺾는다
+	FLAG:(RESULT + 99) = 0
+	;추가조교자수를 가산
+	FLAG:추가조교자수++
+	;처녀·동정상실상황을기록
+	CFLAG:처녀상실된 = !TALENT:처녀
+	CFLAG:동정상실된 = !TALENT:동정
+	;RESULT 초기화
+	RESULT = 0
+	;소환 캐릭터의 컷 인
+	PRINTL
+	CALL CHARA_CUTIN(CSTR:두명, CSTR:등장명, CSTR:로마자)
+	PRINTL
+	;조교자를 소환했다구상
+	CALL KOJO_EVENT(111, LOCAL:1, LOCAL:1)
+	SIF RESULT
+		PRINTL 
+	PRINTFORMW 조교자를 「%NAME:TARGET%」로 설정합니다
+	;주인님측에서 허가하고 있는 경우, 조교자로서 소환당했다구상
+	SIF RESULT != 12
+		CALL KOJO_EVENT(112, 1)
+	;게이지 셋업
+	CALL BASE_TRAINER_SETUP
+	;벌써취득했다보너스를 새로운조교자에 적용
+	;CALL BONUS_APPLY
+	RETURN 1
+ENDIF
+RETURN 0
+
+@NEW_TRAINER_T
+DRAWLINE
+;OriginalString : DAY+1
+PRINTV DAY+1
+;OriginalString : 日目
+PRINT 일째
+IF TIME == 0
+	PRINTL  낮
+ELSE
+	PRINTL  밤
+ENDIF
+SIF TARGET >= 0
+	PRINTFORM %CALLNAME:TARGET%가 조교중
+SIF ASSI >= 0
+	PRINTFORM （조수:%CALLNAME:ASSI%）
+PRINTFORML (남은 마력　{CFLAG:마력})
+
+@NEW_TRAINER_R(ARG)
+;등장플래그가 서 있으면 표시
+IF FLAG:(ARG + 99) > 0
+	;소환 가능의 판정
+	IF CSTR:소환가능조수 == "" || STRFIND(CSTR:소환가능조수, @"%CSVNAME(ARG)%/") >= 0
+		RETURN 1
+	ENDIF
+ENDIF
+RETURN 0
+
+;────────────────────────────────────
+;조교자의 게이지 셋업
+;────────────────────────────────────
+@BASE_TRAINER_SETUP
+;조교자의사정/모유/소변게이지를 셋업
+CALL BASE_SETUP_PENIS(TARGET)
+MAXBASE:모유 = 0
+MAXBASE:소변 = 0
+SIF TALENT:모유체질
+	MAXBASE:모유 = 10000
+SIF TALENT:오줌싸개
+	MAXBASE:소변 = 10000
+
+;조교자의이성/흥미/초조함/만족게이지를 셋업
+MAXBASE:이성 = 1000
+MAXBASE:흥미 = 1000
+MAXBASE:초조함 = 1000
+MAXBASE:만족 = 1000
+
+;겁쟁이/꿋꿋함
+IF TALENT:겁쟁이
+	MAXBASE:이성 -= 50
+ELSEIF TALENT:꿋꿋함
+	MAXBASE:이성 += 50
+ENDIF
+;반항적/솔직
+IF TALENT:반항적
+	MAXBASE:초조함 -= 50
+ELSEIF TALENT:솔직
+	MAXBASE:초조함 += 50
+ENDIF
+;얌전한/건방짐
+IF TALENT:얌전한
+	MAXBASE:초조함 -= 50
+ELSEIF TALENT:건방짐
+	MAXBASE:초조함 += 50
+ENDIF
+;프라이드높음/프라이드낮음
+IF TALENT:프라이드높음
+	MAXBASE:이성 += 50
+	MAXBASE:초조함 -= 25
+	MAXBASE:만족 += 25
+ELSEIF TALENT:프라이드낮음
+	MAXBASE:이성 -= 50
+	MAXBASE:초조함 += 25
+	MAXBASE:만족 -= 25
+ENDIF
+;감정결여/감정 풍부한
+IF TALENT:감정결여
+	MAXBASE:이성 += 50
+ELSEIF TALENT:정서적
+	MAXBASE:이성 -= 50
+ENDIF
+;자제심/충동적
+IF TALENT:MASTER:자제심
+	MAXBASE:이성 += 50
+	MAXBASE:초조함 += 50
+ELSEIF TALENT:충동적
+	MAXBASE:이성 -= 50
+	MAXBASE:초조함 -= 50
+ENDIF
+;무관심/호기심
+IF TALENT:MASTER:무관심
+	MAXBASE:흥미 -= 50
+	MAXBASE:만족 -= 50
+ELSEIF TALENT:호기심
+	MAXBASE:흥미 += 50
+	MAXBASE:만족 += 50
+ENDIF
+;튀고싶어함
+IF TALENT:튀고싶어함
+	MAXBASE:초조함 -= 50
+	MAXBASE:만족 += 50
+ENDIF
+;억압/해방
+IF TALENT:MASTER:억압
+	MAXBASE:흥미 -= 50
+	MAXBASE:만족 -= 50
+ELSEIF TALENT:해방
+	MAXBASE:흥미 += 50
+	MAXBASE:만족 += 50
+ENDIF
+;자위하기쉬움
+SIF TALENT:자위하기쉬움
+	MAXBASE:이성 -= 50
+;변태적
+SIF TALENT:변태적
+	MAXBASE:이성 -= 50
+;남성혐오
+SIF TALENT:남성혐오 && TALENT:MASTER:남자
+	MAXBASE:흥미 -= 50
+;유치
+IF TALENT:유치
+	MAXBASE:이성 -= 50
+	MAXBASE:흥미 += 25
+	MAXBASE:초조함 -= 50
+ENDIF
+;광기
+IF TALENT:광기
+	MAXBASE:이성 -= 200
+	MAXBASE:초조함 -= 100
+	MAXBASE:만족 += 200
+ENDIF
+;금단의지식
+SIF TALENT:금단의지식
+	MAXBASE:이성 += 100
+
+;극단적인 수치를 갭
+SIF MAXBASE:이성 < 500
+	MAXBASE:이성 = 500
+SIF MAXBASE:이성 > 1500
+	MAXBASE:이성 = 1500
+SIF MAXBASE:흥미 < 500
+	MAXBASE:흥미 = 500
+SIF MAXBASE:흥미 > 1500
+	MAXBASE:흥미 = 1500
+SIF MAXBASE:초조함 < 500
+	MAXBASE:초조함 = 500
+SIF MAXBASE:초조함 > 1500
+	MAXBASE:초조함 = 1500
+SIF MAXBASE:만족 < 500
+	MAXBASE:초조함 = 500
+SIF MAXBASE:만족 > 1500
+	MAXBASE:초조함 = 1500
+B = 0
+REPEAT CFLAG:조교레벨 + 1
+	B += 100 + COUNT * COUNT * 10
+REND
+
+CFLAG:필요경험치 = B
+
+;게이지를 초기화한다
+BASE:체력 = MAXBASE:체력
+BASE:기력 = MAXBASE:기력
+BASE:사정 = MAXBASE:사정
+BASE:모유 = MAXBASE:모유
+BASE:소변 = 0
+BASE:이성 = MAXBASE:이성
+BASE:흥미 = MAXBASE:흥미
+BASE:초조함 = 0
+BASE:만족 = 0
+
+;하는 김에의상의 초기화를 호출합니다
+CALL CLOTHES_SETUP(TARGET)
+
+;정력 설정 함수
+;※현상페니스를 잃을 때에사정게이지나정력한계를 다시 만들고 있으므로,
+;  장래적으로 MASTER의 페니스유무가변화 하는 사양이나 TARGET로정력한계를 사용하는 사양으로 한다면
+;  페니스가 없는상태에서도 이 2개를 어디엔가 보존해 두는필요가 있다고 생각한다@이것 보고
+@BASE_SETUP_PENIS(ARG)
+
+;사정게이지를 설정한다
+IF PENIS(ARG)
+	MAXBASE:ARG:사정 = 15000 - 5000 * TALENT:ARG:정력박약 + 5000 * TALENT:ARG:정력절륜
+ELSE
+	MAXBASE:ARG:사정 = 0
+ENDIF
+;정력한계를 설정한다
+CFLAG:ARG:정력한계 = MAXBASE:ARG:사정 / 500 + 5
