@@ -5,7 +5,7 @@
 CALL VERSION_UP
 
 DRAWLINE
-PRINTFORML {FLAG:연수+1}년 {FLAG:일수+1}일째 (%GET_TIME()%) %GET_SEASON()% %GET_DAY()%요일   남편님:%CALLNAME:1%
+PRINTFORML {FLAG:연수+1}년 {FLAG:일수+1}일째 (%GET_TIME()%) %GET_SEASON()% %GET_DAY()%요일   주인님:%CALLNAME:1%
 SIF TARGET >= 0
 	PRINTFORML %플레이어를% %타겟이% 조교중
 SIF ASSI:1 >= 0

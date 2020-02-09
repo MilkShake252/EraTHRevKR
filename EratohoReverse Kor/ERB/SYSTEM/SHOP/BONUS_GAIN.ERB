@@ -589,6 +589,7 @@ SELECTCASE RESULT
 		PRINTFORML \@ ITEM:33 ? [--] 삼각목마을 가지고 있습니다             # [ 7] 삼각목마　　　　　　　　　　　　　　　　　　　 마력2000 \@
 		PRINTFORML \@ ITEM:40 ? [--] 거울을 가지고 있습니다                 # [ 8] 거울　　　　　　　　　　　　　　　　　　　　　 마력1000 \@
 		PRINTFORML \@ ITEM:42 ? [--] 개목걸이을 가지고 있습니다                 # [ 9] 개목걸이　　　　　　　　　　　　　　　　　　　　　 마력1500 \@
+		PRINTFORML \@ ITEM:43 ? [--] 저온초를 가지고 있습니다                 # [10] 저온초　　　　　　　　　　　　　　　　　　　　　 마력1000 \@
 		$INPUT_LOOP_ITEM2
 		INPUT
 		SELECTCASE RESULT
@@ -755,6 +756,24 @@ SELECTCASE RESULT
 					CALL KOJO_EVENT(110, 31)
 					CALL VOIDLINE_IF(RESULT)
 					PRINTFORMW %CALLNAME%(은)는 목걸이를 연성하였습니다
+				ENDIF
+			CASE 10
+				IF ITEM:43
+					CLEARLINE 1
+					GOTO INPUT_LOOP_ITEM2
+				ELSEIF CFLAG:마력 < 1000
+					CLEARLINE 1
+					REUSELASTLINE 마력이 부족한 것 같다…
+					GOTO INPUT_LOOP_ITEM2
+				ENDIF
+				CALL PRINT_DIALOG(@"「저온초」를 연성합니다. 하시겠습니까?",1,1,1)
+				CALL PRINT_CHOICE(,"예",1,"아니오",2,)
+				IF RESULT == 1
+					CFLAG:마력 -= 1000
+					ITEM:43 = 1
+					CALL KOJO_EVENT(110, 37)
+					CALL VOIDLINE_IF(RESULT)
+					PRINTFORMW %CALLNAME%(은)는 저온초를 연성하였습니다
 				ENDIF
 			CASEELSE
 				CLEARLINE 1

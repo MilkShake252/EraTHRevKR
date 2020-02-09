@@ -188,23 +188,38 @@ ENDIF
 
 @MASTER_PREGNACY
 ;부친 불명의 관계로, 조교자가노예（주인공）를임신시켰다경우의구상는 아직 쓸 수 없습니다.
+;를 죄다 뜯어고쳐서, 그냥 이 단계부터 밝혀지는걸로! @MilkShake(20/02/09)
 ;KOJO_EVENT(9)를 테두리로서 준비해 둡니다.
 IF CFLAG:MASTER:임신 == 5
 	DRAWLINE
 ;OriginalString : %CALLNAME:MASTER%의 お腹がわずかに膨らんでいる
-	PRINTFORMW %CALLNAME:MASTER%의 배가 조금 부풀어 올랐다
+	PRINTFORMW %CALLNAME:MASTER%의 배가 조금 부풀어 올랐다.
 	;이 시점에서 부친 불명
+	;은 개뿔 뜯어고친다
+		;부친 검색
+		LOCAL:1 = 0
+		FOR LOCAL,1,CHARANUM
+			IF CFLAG:MASTER:46 == CFLAG:LOCAL:91
+				LOCAL:1 = LOCAL
+				BREAK
+			ENDIF
+		NEXT
+		LOCAL:2 = TARGET
+		TARGET = LOCAL:1
 ;OriginalString : どうやら임신してしまったようだ･･･
-	PRINTFORMW 아무래도 임신해버린 것 같다･･･
+	PRINTFORMW 아무래도 임신해버린 것 같다…
+	PRINTFORMW 아이의 아버지는 아무래도 %CALLNAME:(LOCAL:1)%이지 않을까 생각했다.
+	PRINTFORMW %CALLNAME:MASTER%의 유두에서, 모유가 나오기 시작했다…
 	TALENT:MASTER:임신 = 1
 	TALENT:MASTER:모유체질 = 1
 	MAXBASE:MASTER:모유 = 10000
+	;여기서 굴복각인 취득. ...인데, 어떤코드인지 몰라서 지금은 보류.
 ENDIF
 IF TALENT:MASTER:임신
 	IF CFLAG:MASTER:임신 == 15
 		DRAWLINE
-		PRINTFORMW %CALLNAME:MASTER%의 배가 많이 부풀어 올랐다
-		PRINTFORMW 이제 곧 태어날 것 같다
+		PRINTFORMW %CALLNAME:MASTER%의 배가 많이 부풀어 올랐다.
+		PRINTFORMW 이제 곧 아이가 태어날 것 같다.
 	ELSEIF CFLAG:MASTER:임신 >= 16 + RAND:3
 			;부친 검색
 			LOCAL:1 = 0
@@ -216,8 +231,8 @@ IF TALENT:MASTER:임신
 			NEXT
 			LOCAL = 0
 			DRAWLINE
-			PRINTFORMW %CALLNAME:MASTER%의 복부에서 격통이 전해졌다
-			PRINTFORMW 마침내 아이가 태어나는 것 같다
+			PRINTFORMW %CALLNAME:MASTER%의 복부에서 격통이 전해졌다.
+			PRINTFORMW 마침내 아이가 태어나는 것 같다.
 ;OriginalString : ………
 			PRINTFORMW ………
 ;OriginalString : ……
@@ -244,10 +259,43 @@ IF TALENT:MASTER:임신
 				LOCAL = 1
 			ENDIF
 ;OriginalString : を無事出産しま했다
-			PRINTFORMW 를 무사히 출산했습니다
+			PRINTFORMW 를 무사히 출산했습니다.
 			SIF LOCAL:1
 ;OriginalString : 生まれた子供はどことなく%CALLNAME:(LOCAL:1)%に似ている…
 				PRINTFORML 태어난 아이는 어딘지 %CALLNAME:(LOCAL:1)%를 닮은 것 같습니다…
+				PRINTFORML %CALLNAME:(LOCAL:1)%은 아이를 품에 안은 %CALLNAME:MASTER%에게 다가와
+				IF TALENT:TARGET:연모
+					PRINTFORML %CALLNAME:MASTER%를 꼭 껴안고는, 사랑스러워 어쩔줄 모르는 눈빛으로 감격의 눈물을 흘리며
+					PRINTFORML 품 안에 있는 아이와 %CALLNAME:MASTER%를 바라보면서, 다시금 사랑을 속삭여 주었습니다…
+					PRINTFORMW 사랑하는 %CALLNAME:(LOCAL:1)%과의 사이에서 낳은, 사랑스러운 우리 아이를 보며, %CALLNAME:MASTER%는 모성에 눈을 떴습니다!
+				ELSEIF TALENT:MASTER:예속 && TALENT:TARGET:주인님
+					PRINTFORML %CALLNAME:MASTER%를 안아주며, 아이를 낳느라 수고 많았다며 머리를 쓰다듬어 주었습니다.
+					PRINTFORML 주인님의 아이를 낳았다는 기쁨과 주인님의 애정어린 칭찬에, 출산의 고통이 잊히는 듯 했습니다…
+					PRINTFORMW 주인님과의 아이를 내려다보며, %CALLNAME:MASTER%는 모성에 눈을 떴습니다!
+				ELSE
+					SELECTCASE CFLAG:TARGET:호의
+						CASE IS > 3000
+							PRINTFORML 기쁜 듯이 아이를 바라보며, 아이를 한 번 안아봐도 되겠냐고 물어봤습니다.
+							PRINTFORML 조심스레 아이를 건네자, %CALLNAME:(LOCAL:1)%은 품 안에 있는 아이를 어딘가 애틋한 눈빛으로 내려다보고 있었습니다…
+							PRINTFORMW 예상치 못했던 출산이었지만, 기뻐하는 듯한 %CALLNAME:(LOCAL:1)%을 보며 %CALLNAME:MASTER% 역시 아이에 대한 모성이 샘솟는 듯 했습니다…
+						CASE IS > 1000
+							PRINTFORML 아이의 볼을 콕콕 찔러보면서, 아이를 신기한 듯이 바라보고 있었습니다…
+							PRINTFORML 이윽고 %CALLNAME:(LOCAL:1)%은 %CALLNAME:MASTER%에게 자기도 아기랑 함께 %CALLNAME:MASTER%의 모유를 먹고싶다고 졸라졌습니다…
+							PRINTFORMW 부정적이기 보다는 긍정적에 가까운 %CALLNAME:(LOCAL:1)%의 태도에, 비록 원하지는 않았던 출산이었지만 아이에 대한 애정을 느끼고 있었던 %CALLNAME:MASTER%는 안심했습니다.
+						CASEELSE
+							IF MARK:반항각인 >= 3
+								PRINTFORML 아이를 보려고 하자, %CALLNAME:MASTER%는 아이를 더 강하게 끌어안으며, %CALLNAME:(LOCAL:1)%에게서 보호하려는 듯 뒤로 물러났습니다…
+								PRINTFORMW %CALLNAME:MASTER%는 아이 아버지의 존재를 부정하며, 이 아이는 내 아이일 뿐이라고 생각하면서, 이 고된 노예생활의 희망을 아이라고 느끼기 시작한 것 같습니다.
+							ELSEIF MARK:반항각인 >= 1
+								PRINTFORML 아이를 보려고 하자, %CALLNAME:MASTER%는 아이를 더 깊게 끌어안곤, %CALLNAME:(LOCAL:1)%을 불신의 눈빛으로 바라보았습니다.
+								PRINTFORML %CALLNAME:MASTER%는 원치 않게 %CALLNAME:(LOCAL:1)% 에게 임신당했지만, 아이는 %CALLNAME:(LOCAL:1)%과 다르다고 생각하며 애정을 느끼기 사작한 것 같습니다…
+							ELSE
+								PRINTFORML 아이를 보려고 하자, %CALLNAME:MASTER%는 머뭇거리면서도 아이를 보여주었습니다.
+								PRINTFORML %CALLNAME:(LOCAL:1)%은 아이를 신기한 듯 바라보면서도 질투심 어린 태도로 대하고 있었습니다…
+								PRINTFORMW 자신의 아이에게 질투하는 %CALLNAME:(LOCAL:1)%의 태도에 %CALLNAME:MASTER%는 곤란해 하면서도, 아이가 사랑스러워 보였습니다.
+							ENDIF
+					ENDSELECT
+				ENDIF
 			LOCAL:2 = TARGET
 			TARGET = LOCAL:1
 			TARGET = LOCAL:2

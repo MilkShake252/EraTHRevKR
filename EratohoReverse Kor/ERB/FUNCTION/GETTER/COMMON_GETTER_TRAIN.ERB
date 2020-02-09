@@ -130,14 +130,15 @@ IF LOCALS == ""
 	LOCALS += "기분/호의/지식/농락해라/위협하는/의상/합의/징계/노성/웃음/"
 	LOCALS += "손으로/가슴을/입으로/Ａ손/Ａ입/키스/Ｃ만짐/Ｂ만짐/발로/Ｖ손/"
 	LOCALS += "로터/바이/A바이/A비/Ｃ사랑/유두/Ｐ밴/압도///"
-	LOCALS += "정상/후배/승마/대면/배면/ＡＳ/////"
-	LOCALS += "자위/공개/보이기/전신거울/야외/방뇨/코스////"
+	LOCALS += "정상/후배/승마/대면/배면/Ａ정상/Ａ후배/Ａ승마/Ａ대면/Ａ배면/"
+	LOCALS += "자위/공개/보이기/전신거울/야외/방뇨/코스/V조/A조/삽조/"
 	LOCALS += "손으로/입으로/가슴을/스마타//발핥/이라/가슴을///"
 	LOCALS += "스팽/채찍/바늘/밧줄/가림/재갈/매도/목마/관장//"
-	LOCALS += "Fist/ＡFi/양Fi/방치/공중/Ｐ밴/////"
+	LOCALS += "Fist/ＡFi/양Fi/방치/공중/Ｐ밴/밟기/촛불///"
 	LOCALS += "촉수//////////"
-	LOCALS += "휴식/영양/치료///Ｍ정/Ｍ후/Ｍ대/Ｍ배/ＭAS/"
-	LOCALS += "///Ｍ기승"
+	LOCALS += "휴식/영양/치료/다정//Ｍ정/Ｍ후/Ｍ대/Ｍ배/ＭAS/"
+	LOCALS += "///Ｍ기승/ＭA승//////"
+	LOCALS += "고백//////////"
 ENDIF
 RETURNF LOCALS
 
@@ -552,25 +553,25 @@ RETURNF 0
 VARSET LOCAL, -1
 SELECTCASE ARG:0
 	CASE 0
-		LOCAL = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 66
+		LOCAL = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 66, 93, 110
 	CASE 1
 		LOCAL = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 27
 	CASE 2
 		LOCAL = 20, 21, 22, 23, 24, 25, 26, 68
 	CASE 3
-		LOCAL = 30, 31, 32, 33, 34, 35
+		LOCAL = 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
 	CASE 4
-		LOCAL = 40, 41, 42, 43, 44, 45, 46, 73
+		LOCAL = 40, 41, 42, 43, 44, 45, 46, 73, 47, 48, 49
 	CASE 5
 		LOCAL = 50, 51, 52, 53, 55, 56, 57
 	CASE 6
-		LOCAL = 60, 61, 62, 63, 64, 65, 66, 67, 68, 56
+		LOCAL = 60, 61, 62, 63, 64, 65, 66, 67, 68, 56, 69, 76, 77
 	CASE 7
-		LOCAL = 70, 71, 72, 73, 74, 75, 9, 18, 55, 67
+		LOCAL = 70, 71, 72, 73, 74, 75, 9, 18, 55, 67, 69, 76, 77
 	CASE 9
-		LOCAL = 90, 91, 92
+		LOCAL = 90, 91, 92, 93
 	CASE 10
-		LOCAL = 95, 96, 103, 97, 98, 99
+		LOCAL = 95, 96, 103, 97, 98, 99, 104
 ENDSELECT
 ;ARG:1이 부라면 소속 ACT수
 SIF ARG:1 < 0
@@ -802,9 +803,9 @@ RETURNF LOCAL:GET_COMCORNUM(ARGS)
 @GET_COMCORTYPE(ARG = -1)
 #FUNCTIONS
 ARG = ARG != -1 ? ARG # TFLAG:ACT
-IF GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "기승위"
+IF GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "기승위" || GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "기승위 애널"
 	RETURNF "행위"
-ELSEIF GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "역강간"
+ELSEIF GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "역강간" || GET_ACTNAME(GET_NORMALACTNUM(ARG)) == "역애널강간"
 	RETURNF "인내"
 ELSEIF MENUMATCH(ARG, "성교") 
 	RETURNF "인내"
@@ -884,18 +885,18 @@ RETURNF 0
 LOCAL = -1
 IF 0
 ;ACT에 의한 판정
-ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "기승위"
+ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "기승위" || GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "기승위 애널"
 	LOCAL = MASTER
-ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "역강간"
+ELSEIF GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "역강간" || GET_ACTNAME(GET_NORMALACTNUM(TFLAG:ACT)) == "역애널강간"
 	LOCAL = TARGET
 ELSEIF MENUMATCH(TFLAG:ACT, "성교") 
 	LOCAL = TARGET
 ELSEIF MENUMATCH(TFLAG:ACT, "성봉") 
 	LOCAL = MASTER
 ;TEQUIP에 의한 판정
-ELSEIF TEQUIP:성교중 == 3
+ELSEIF TEQUIP:성교중 == 3 || TEQUIP:성교중 == 8
 	LOCAL = MASTER
-ELSEIF TEQUIP:성교봉사중 == 3
+ELSEIF TEQUIP:성교봉사중 == 3 || TEQUIP:성교봉사중 == 7
 	LOCAL = TARGET
 ELSEIF TEQUIP:성교중
 	LOCAL = TARGET
@@ -925,11 +926,11 @@ RETURNF ARG == -2 ? LOCAL # ARG == LOCAL
 @POSITION(ARG)
 #FUNCTION
 SELECTCASE ARG
-	;정상위/후배위/기승위/대면좌위/배면좌위/항문섹스
-	CASE 30 TO 35
+	;정상위/후배위/기승위/대면좌위/배면좌위/정상위애널/후배위애널/애널기승위/대면좌위애널/배면좌위애널
+	CASE 30 TO 39
 		RETURNF ARG - 29
-	;역강간
-	CASE 103
+	;역강간/역애널강간
+	CASE 103, 104
 		RETURNF 3
 	;정상위시킨다/후배위시킨다
 	CASE 95, 96
@@ -965,9 +966,9 @@ RETURNF 0
 #FUNCTION
 ARG = ARG == MASTER ? MASTER # TARGET
 SIF ARG == TARGET
-	RETURNF TEQUIP:성교중 == 6 ? TEQUIP:성교중 # 0
+	RETURNF INRANGE(TEQUIP:성교중, 6, 10) ? TEQUIP:성교중 # 0
 SIF ARG == MASTER
-	RETURNF TEQUIP:성교봉사중 == 6 ? TEQUIP:성교봉사중 # 0
+	RETURNF INRANGE(TEQUIP:성교중, 6, 7) ? TEQUIP:성교봉사중 # 0
 RETURNF 0
 
 ;-------------------------------------------------
@@ -995,9 +996,9 @@ RETURNF 0
 #FUNCTION
 ARG = ARG == MASTER ? MASTER # TARGET
 SIF ARG == TARGET
-	RETURNF TFLAG:전턴성교 == 6 ? TFLAG:전턴성교 # 0
+	RETURNF INRANGE(TFLAG:전턴성교, 6, 10) ? TFLAG:전턴성교 # 0
 SIF ARG == MASTER
-	RETURNF TFLAG:전턴성교봉사 == 6 ? TFLAG:전턴성교봉사 # 0
+	RETURNF INRANGE(TFLAG:전턴성교봉사, 6, 7) ? TFLAG:전턴성교봉사 # 0
 RETURNF 0
 
 ;-------------------------------------------------
@@ -1123,8 +1124,11 @@ ENDSELECT
 #FUNCTION
 #LOCALSIZE 1
 ;TEQUIP에 의한 판정 1(우선도고)
+;목조르고 있다
+SIF TEQUIP:목조르기중
+	RETURNF ARG ? 0 # 2
 ;항문섹스시킨다
-SIF TEQUIP:성교봉사중 == 6
+SIF TEQUIP:성교봉사중 == 6 || TEQUIP:성교봉사중 == 7
 	RETURNF ARG ? 5 # 2
 ;성교봉사중(항문섹스 이외)
 SIF TEQUIP:성교봉사중
@@ -1226,7 +1230,7 @@ SELECTCASE TFLAG:ACT
 		SIF SOURCE:MASTER:쾌Ｃ > 0
 			RETURNF ARG ? 4 # 2
 	;항문섹스시킨다(저항당했다)
-	CASE 99
+	CASE 99, 104
 		;쾌Ｃ를 얻고 있다
 		SIF SOURCE:MASTER:쾌Ｃ > 0
 			RETURNF ARG ? 5 # 2
@@ -1308,8 +1312,11 @@ SIF TALENT:MASTER:남자
 	RETURNF 0
 
 ;TEQUIP에 의한 판정 1(우선도고)
+;목조르고 있다
+SIF TEQUIP:목조르기중
+	RETURNF ARG ? 0 # 2
 ;성교중(항문섹스 제외함)
-IF TEQUIP:성교중 && TEQUIP:성교중 != 6
+IF TEQUIP:성교중 = 1 || TEQUIP:성교중 = 2 || TEQUIP:성교중 = 3 || TEQUIP:성교중 = 4 || TEQUIP:성교중 = 5
 	;애무자 판정
 	SIF !ARG
 		RETURNF 2
@@ -1413,7 +1420,7 @@ SIF TEQUIP:바이브
 #LOCALSIZE 1
 ;TEQUIP에 의한 판정 1(우선도고)
 ;항문섹스중
-IF TEQUIP:성교중 == 6
+IF TEQUIP:성교중 == 6 || TEQUIP:성교중 == 7 || TEQUIP:성교중 == 8 || TEQUIP:성교중 == 9 || TEQUIP:성교중 == 10
 	;애무자 판정
 	SIF !ARG
 		RETURNF 2
@@ -1483,7 +1490,7 @@ SELECTCASE TFLAG:ACT
 	CASE 23
 		RETURNF ARG ? 102 # 2
 	;항문섹스(저항당했다)
-	CASE 35
+	CASE 35 TO 39
 		;애무자 판정
 		SIF !ARG
 			RETURNF 2
@@ -1560,8 +1567,8 @@ SELECTCASE TFLAG:ACT
 			RETURNF 2
 		;애무물 판정(유두흡 있고의 경우는입)
 		RETURNF TFLAG:ACT파생 == 1 ? 1 # 2
-	;배면좌위
-	CASE 34
+	;배면좌위/배면좌위 애널
+	CASE 34, 39
 		RETURNF ARG ? 2 # 2
 	;파이즈리
 	CASE 52
@@ -1688,7 +1695,7 @@ RETURNF ARG:1 ? GETBIT(LOCAL:0, ARG:1 - 1) # LOCAL:0
 #FUNCTION
 ;TEQUIP에 의한 판정 1(우선도고)
 ;항문섹스(조교자에페니스가 있는 경우만)
-SIF PENIS(TARGET) && TEQUIP:성교중 == 6
+SIF PENIS(TARGET) && TEQUIP:성교중 == 6 || TEQUIP:성교중 == 7 || TEQUIP:성교중 == 8 || TEQUIP:성교중 == 9 || TEQUIP:성교중 == 10
 	RETURNF ARG ? 5 # 1
 ;성교중(항문섹스 이외)(조교자에페니스가 있는 경우만)
 SIF PENIS(TARGET) && TEQUIP:성교중
@@ -1746,7 +1753,7 @@ SELECTCASE TFLAG:ACT
 	CASE 30 TO 34
 		RETURNF ARG ? 4 # 1
 	;항문섹스(저항당했다)
-	CASE 35
+	CASE 35 TO 39
 		RETURNF ARG ? 5 # 1
 	;입으로 애무를 강요
 	CASE 51
@@ -1818,7 +1825,7 @@ SIF TALENT:TARGET:남자
 
 ;TEQUIP에 의한 판정 1(우선도고)
 ;성교봉사중(항문섹스시킨다 이외)
-IF TEQUIP:성교봉사중 && TEQUIP:성교봉사중 != 6
+IF TEQUIP:성교봉사중 && TEQUIP:성교봉사중 != 6 || TEQUIP:성교봉사중 != 7
 	SIF TEQUIP:페니스밴드
 		RETURNF ARG ? 103 # 1
 	RETURNF ARG ? 3 # 1
@@ -1863,7 +1870,7 @@ SIF GETBIT(TEQUIP:자위중, 1) && SOURCE:쾌Ｖ > 0
 SIF TEQUIP:안면승마항문
 	RETURNF ARG ? 1 # 1
 ;항문섹스시킨다
-SIF TEQUIP:성교봉사중 == 6
+SIF TEQUIP:성교봉사중 == 6 || TEQUIP:성교봉사중 == 7
 	RETURNF ARG ? 3 # 1
 
 ;조교자액션에 의한 판정 1(우선도고)
@@ -1878,7 +1885,7 @@ SELECTCASE TFLAG:ACT
 		SIF TFLAG:ACT파생 == 3
 			RETURNF ARG ? 1 # 1
 	;항문섹스시킨다(저항당했다)
-	CASE 99
+	CASE 99, 104
 		RETURNF ARG ? 3 # 1
 ENDSELECT
 
@@ -2000,6 +2007,9 @@ IF !ARG:1
 		;징계한다고 위협한다
 		CASE 7
 			RETURNF "징계·"
+		;사랑을 고백한다
+		CASE 110
+			RETURNF "연심을 속삭여져"
 		;손으로 애무/가슴애무/성기를 서로 비빈다/파이즈리한다
 		CASE 10, 11, 16, 17
 			RETURNF "에로하게 손대어져"
@@ -2030,9 +2040,15 @@ IF !ARG:1
 		;후배위/배면좌위
 		CASE 31, 34
 			RETURNF "뒤로부터 범해져"
-		;항문섹스
-		CASE 35
+		;기승위/기승위 애널
+		CASE 32, 37
+			RETURNF "스스로 올라타"
+		;정상위 애널/대면좌위 애널
+		CASE 35, 38
 			RETURNF "뒤를 범해져"
+		;후배위 애널/배면좌위 애널
+		CASE 36, 39
+			RETURNF "등 뒤에서 뒤를 범해져"
 		;자위
 		CASE 40
 			RETURNF "자위 당해"
@@ -2051,6 +2067,12 @@ IF !ARG:1
 		;방뇨
 		CASE 45
 			RETURNF "흘려"
+		;V/A에 삽입해달라고 조르기
+		CASE 47, 48
+			RETURNF "스스로 쑤시면서 조르며"
+		;삽입시켜 달라고 조르기
+		CASE 49
+			RETURNF "스스로 어루만지면서 조르며"
 		;손으로 애무를 강요
 		CASE 50
 			RETURNF "손대어"
@@ -2078,12 +2100,21 @@ IF !ARG:1
 		;관장세트
 		CASE 68
 			RETURNF "관장당해"
+		;목조르기
+		CASE 69
+			RETURNF "목을 졸라져"
 		;피스트퍽/애널피스트/양쪽피스트
 		CASE 70 TO 72
 			RETURNF "팔을 넣어"
 		;공중육변기플레이
 		CASE 74
 			RETURNF "화장실이 되어"
+		;짓밟기
+		CASE 76
+			RETURNF "발로 짓밟혀"
+		;촛농 떨어트리기
+		CASE 77
+			RETURNF "떨어지는 촛농을 맞으며"
 		;촉수소환		미구현
 		;CASE 80
 		;	RETURNF "촉수"
@@ -2096,11 +2127,14 @@ IF !ARG:1
 		;치료한다
 		CASE 92
 			RETURNF "치료되어"
+		;다정하게 대해진다
+		CASE 93
+			RETURNF "사랑받는 것 처럼 다정하게 대해져"
 		;정상위시킨다/후배위시킨다/대면좌위시킨다/배면좌위시킨다
 		CASE 95 TO 98
 			RETURNF "섹스 당해"
 		;항문섹스시킨다
-		CASE 99
+		CASE 99, 104
 			RETURNF "뒤로 삽입당해"
 		;그 외
 		CASEELSE
@@ -2148,11 +2182,11 @@ IF ARG == TARGET
 			LOCAL:0 |= 1p3
 		;Ａ성교경험체크
 		;항문섹스, 항문두 구멍 고문
-		CASE 35, 309
+		CASE 35 TO 39 , 309
 			LOCAL:0 |= 1p4
 		;성교경험체크
 		;정상위시킨다～역강간, 항문섹스시킨다, Ｗ역강간
-		CASE 95 TO 103, 310
+		CASE 95 TO 104, 310
 			LOCAL:0 |= 1p5
 		;Ｖ확장경험체크
 		;피스트퍽
@@ -2347,7 +2381,7 @@ IF !ARG
 		;애널애무, 짝 맞추기 놀이/스마타 하는, 파이즈리한다, 손가락삽입
 		;애널비즈
 		;정상위, 후배위, 기승위, 대면좌위, 배면좌위, 항문섹스, 역강간
-		CASE 13, 16, 17, 19, 23, 30 TO 36, 95 TO 103, 303 TO 311
+		CASE 13, 16, 17, 19, 23, 30 TO 39, 95 TO 104, 303 TO 311
 			LOCAL = 1
 		;도구장착시만윤활판정이 있는플레이
 		;바이브, 애널바이브, 페니스밴드

@@ -183,6 +183,7 @@ CALL ADD_CRI_VAR("관장세트"    , LOCAL * 3)
 CALL ADD_CRI_VAR("삼각목마"      , LOCAL * 8)
 CALL ADD_CRI_VAR("거울"          , LOCAL)
 CALL ADD_CRI_VAR("개목걸이"          , LOCAL)
+CALL ADD_CRI_VAR("저온초"            , LOCAL * 4)
 
 ;------------------------------------------
 ;고문도구
@@ -201,6 +202,7 @@ CALL ADD_CRI_VAR("관장세트"    , LOCAL * 4)
 CALL ADD_CRI_VAR("삼각목마"      , LOCAL * 8)
 CALL ADD_CRI_VAR("거울"          , LOCAL)
 CALL ADD_CRI_VAR("개목걸이"          , LOCAL * 2)
+CALL ADD_CRI_VAR("저온초"    , LOCAL * 4)
 
 ;------------------------------------------
 ;조교대상의Ｃ감각
@@ -273,6 +275,7 @@ CALL ADD_CRI_VAR("관장세트"    , LOCAL * 2)
 CALL ADD_CRI_VAR("삼각목마"      , LOCAL * 3)
 CALL ADD_CRI_VAR("거울"          , LOCAL)
 CALL ADD_CRI_VAR("개목걸이"          , LOCAL)
+CALL ADD_CRI_VAR("저온초"            , LOCAL * 2)
 
 ;------------------------------------------
 ;새드마조
@@ -281,13 +284,14 @@ CALL ADD_CRI_VAR("개목걸이"          , LOCAL)
 ;소질에 의해 작용의 방향을 결정
 LOCAL = TALENT:새드
 ;소질에 의해 작용의 강도를 결정
-LOCAL = LOCAL * POWER(2, TALENT:MASTER:고통에약함 - TALENT:MASTER:고통에강함 + TALENT:MASTER:연모 + 12) / 1024
+LOCAL = LOCAL * POWER(2, TALENT:MASTER:고통에약함 - TALENT:MASTER:고통에강함 + TALENT:MASTER:예속 + 12) / 1024
 CALL ADD_CRI_VAR("채찍"            , LOCAL * 2)
 CALL ADD_CRI_VAR("밧줄"            , LOCAL * 3)
 CALL ADD_CRI_VAR("볼개그"  , LOCAL)
 CALL ADD_CRI_VAR("바늘"            , LOCAL * 3)
 CALL ADD_CRI_VAR("관장세트"    , LOCAL * 2)
 CALL ADD_CRI_VAR("삼각목마"      , LOCAL * 3)
+CALL ADD_CRI_VAR("저온초"    , LOCAL * 2)
 
 ;------------------------------------------
 ;도구단체 판정

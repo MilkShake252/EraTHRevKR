@@ -591,6 +591,31 @@ IF NOWEX:MASTER:방뇨
 	ENDIF
 ENDIF
 
+;조교대상 분유 @MilkShake (20/02/08)
+;나중에 아이가 조교자로 추가되면, 아이 전용 구상도 넣고싶다
+IF NOWEX:MASTER:분유
+	PRINTFORML %플레이어의% 가슴은 자극을 견디지 못하고,
+	PRINTFORM %타겟의%
+	IF (IS_NOWACTNAME("가슴애무"))
+		IF TFLAG:ACT파생 = 1
+			PRINTFORMW 입 안에 직통으로 따뜻한 모유를 뿜어내고 말았다…
+			PRINTFORML %타겟은% 한 방울도 남김없이 받아먹으려는 듯, %플레이어의% 유방을 주무르면서
+			PRINTFORMW 유두를 강하게 빨아들였다…
+		ELSE
+			PRINTFORMW 손을, 따뜻한 모유로 흠뻑 적시고야 말았다…
+			PRINTFORML %타겟은% 아예 컵을 가지고 와서, 젖소의 젖을 짜듯이 %플레이어의% 유방을
+			PRINTFORMW \@ TALENT:TARGET:새드 ? 쥐어짜기 # 주무르기 \@ 시작했다…
+		ENDIF
+	ELSEIF (IS_NOWACTNAME("파이즈리"))
+		PRINTFORMW 페니스에 따뜻한 모유를 끼얹고야 말았다…
+		SIF FAVOR(0, 1000)
+		PRINTFORML %플레이어는% \@ NOWEX:TARGET:사정 ? %타겟의% 정액과 자신의 모유가 뒤섞여 # 자신의 모유로 흠뻑 \@ 적셔진 페니스를 입 안에 물고,
+		PRINTFORMW %타겟의% 페니스를 청소하듯 빨아들이며, 혀로 핥아 마무리했다…
+	ELSE
+		PRINTFORMW 면전에서 모유를 분수처럼 뿜어내고 말았다…
+	ENDIF
+ENDIF
+
 ;지문스킵완료
 $SKIP
 
