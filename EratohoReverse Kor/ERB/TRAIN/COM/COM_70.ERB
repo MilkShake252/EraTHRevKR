@@ -62,3 +62,33 @@ CALL SET_COMIMP("좋은인상")
 CALL ADD_DEPEND(+10, +6)
 RETURN 1
 
+;────────────────────────────────────
+;071, 키스한다
+;────────────────────────────────────
+@COM71
+;달성, 열락 SOURCE증가
+SOURCE:MASTER:애정 += 35 + CFLAG:M호의 / 40 + GET_ABL(MASTER, "봉사정신") * 3
+SOURCE:MASTER:달성 += (CFLAG:M호의 + 500) * (GET_ABL(MASTER, "봉사정신") + 10) * (GET_ABL(MASTER, "기교") + 10) / 10000
+SOURCE:MASTER:열락 += (CFLAG:M호의 + 100) * (GET_TRAINLV(TARGET) + 10) / 50
+;COM분류
+CALL SET_COMGRO("적극적으로 한다")
+;COM인상
+CALL SET_COMIMP("좋은인상")
+;참는다 플래그 해소
+TCVAR:MASTER:참다 = 0
+;ACT가 키스가 아닐 시, 더러움 이동
+IF !IS_NOWACTNAME("키스")
+	IF IS_NOWACTNAME("발핥기강제")
+		;더러움 이동
+		CALL MOVE_STAIN("발", TARGET, "입", MASTER)
+	ELSE
+		;더러움 이동
+		CALL MOVE_STAIN("입", TARGET, "입", MASTER)
+	ENDIF
+ENDIF
+;의존도 변화
+;원래는 조교자가 5고 조교 대상이 10이었는데, 어차피 둘 다 애정경험 있을 정도면 조교자도 이미 갈데까지 빠져버린 상태라서 걍 10, 10으로 고침
+CALL ADD_DEPEND(+10, +10)
+RETURN 1
+;키스 경험 추가는 @EXP_CHECK에서 실시
+

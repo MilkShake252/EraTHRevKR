@@ -51,6 +51,9 @@ NEXT
 
 ;────────────────────────────────────
 ;처녀상실의 체크
+;조교 대상의 처녀 상실, 동정 상실의 경우, 20,50에서 200,500으로 변경.
+;조교자의 처녀 상실, 동정 상실의 경우 250, 50으로 변경.
+;의존도라는 값 자체가 잘 오르지 않기도 하고, 뭣보다 처음을 자길 납치한 사람한테 뺏기는데 얼마나 절망스럽겠음? @MilkShake(20/02/04) 
 ;────────────────────────────────────
 IF TCVAR:MASTER:처녀상실 && TALENT:MASTER:처녀
 	;지문 표시
@@ -67,10 +70,10 @@ IF TCVAR:MASTER:처녀상실 && TALENT:MASTER:처녀
 		PRINTL Ｖ경험+1
 	ENDIF
 	;의존도변화
-	CALL ADD_DEPEND(20, 50)
+	CALL ADD_DEPEND(200, 500)
 ENDIF
 
-;처녀시
+;조교자 처녀시
 IF TCVAR:처녀상실 && TALENT:처녀
 	;지문 표시
 	PRINTFORMW 처녀 상실（%CALLNAME:TARGET%）
@@ -85,7 +88,7 @@ IF TCVAR:처녀상실 && TALENT:처녀
 		PRINTFORML （%CALLNAME:TARGET%）Ｖ경험+1
 	ENDIF
 	;의존도변화
-	CALL ADD_DEPEND(50, 20)
+	CALL ADD_DEPEND(250, 50)
 ENDIF
 
 
@@ -103,11 +106,11 @@ IF TCVAR:MASTER:동정상실 && TALENT:MASTER:동정
 	TCVAR:MASTER:조교중동정상실 = 1
 	CFLAG:MASTER:동정상실된 = 1
 	;의존도변화
-	CALL ADD_DEPEND(20, 50)
+	CALL ADD_DEPEND(200, 500)
 ENDIF
 
 
-;동정시
+;조교자 동정시
 IF TCVAR:동정상실 && TALENT:동정
 	;지문 표시
 	PRINTFORMW 동정 상실（%CALLNAME:TARGET%）
@@ -116,7 +119,7 @@ IF TCVAR:동정상실 && TALENT:동정
 	TCVAR:조교중동정상실 = 1
 	CFLAG:동정상실된 = 1
 	;의존도변화
-	CALL ADD_DEPEND(50, 20)
+	CALL ADD_DEPEND(250, 50)
 ENDIF
 
 ;────────────────────────────────────
@@ -298,10 +301,10 @@ IF IS_NOWACTNAME("입으로 애무/파이즈리한다") || (IS_NOWACTNAME("가�
 ENDIF
 
 ;키스경험추가
-IF IS_NOWACTNAME("키스")
+IF IS_NOWACTNAME("키스") || (!IS_NOWACTNAME("발핥기강제") && IS_NOWCOMNAME("키스한다"))
 	EXP:키스경험 += 1
 	EXP:MASTER:키스경험 += 1
-	;조수참가시에는조수에도 가산
+	;조수참가시에는조수한테 가산
 	IF ASSI:1 > 0 && TCVAR:(ASSI:1):조수방침 == 1
 		EXP:(ASSI:1):키스경험 += 1
 		PRINTL （세 명）키스 경험+1
@@ -388,8 +391,10 @@ ENDIF
 ;애정경험
 ;이 장래적으로 새댁플레이헤비 로테이션 같은 것을 일으킬 것 같은
 ;경험는 지금 어떻게든 해 두는 것이 좋아서는 없을까도 생각하는금일 요즘@이것 보고
+;사랑을 고백한다나 다정하게 대한다, 상냥하게 위로한다, 자신에의 감정을 묻는다에도 추가해볼까 고민
+;일단 '키스한다' 커멘드도 애정경험이 오르게 변경. @MilkShake (20/02/04)
 ;────────────────────────────────────
-IF CUP:MASTER:공순 > 5000 || IS_NOWCOMNAME("애정을 담아 한다")
+IF CUP:MASTER:공순 > 5000 || IS_NOWCOMNAME("애정을 담아 한다") || IS_NOWCOMNAME("키스한다")
 	EXP:애정경험 += 1
 	EXP:MASTER:애정경험 += 1
 	PRINTL （두 명）애정 경험+1

@@ -73,6 +73,10 @@ SIF M호의증감 < 0
 SIF M호의증감 != 0
 	M호의증감 = ABLOSI_10(M호의증감 * 50)
 
+;주인님의 경우, 조교 대상이 복종을 맹세했다면 추가로 증가
+SIF TALENT:MASTER:예속 && TALENT:TARGET:주인님
+	M호의증감 += 1
+
 ;호감도를 증감
 CFLAG:M호의 += M호의증감
 
@@ -102,6 +106,10 @@ NEXT
 ;조교대상에매혹소질이 있으면 추가로 증가
 SIF TALENT:MASTER:매혹
 	T호의증감 += 1
+
+;조교 대상에게 연정을 품고있으면 더욱 추가로 증가
+SIF TALENT:TARGET:연모
+	T호의증감 += 10
 
 ;초조함로 상쇄
 IF BASE:초조함 > 0
@@ -661,7 +669,7 @@ NEXT
 ;조교대상기력 0에 의한저항불능의 처리
 ;────────────────────────────────────
 IF !TFLAG:저항불능 && BASE:MASTER:기력 <= 0
-	PRINTFORMW 계속해서 지나치게 긴장했던 %플레이어는%、이제 기력이 한계인 것 같다…
+	PRINTFORMW 계속해서 지나치게 긴장했던 %플레이어는%, 이제 기력이 한계인 것 같다…
 	TFLAG:저항불능 = 1
 ENDIF
 
@@ -703,7 +711,7 @@ BASE:기력 += T기력회복
 ;저항불능의 회복 처리
 ;────────────────────────────────────
 IF TFLAG:저항불능 && BASE:MASTER:기력 >= MAXBASE:MASTER:기력/2
-	PRINTFORMW 되는대로였던 %플레이어는%、다소 기력을 되찾은 것 같다…
+	PRINTFORMW 되는대로였던 %플레이어는%, 다소 기력을 되찾은 것 같다…
 	TFLAG:저항불능 = 0
 ENDIF
 
@@ -754,16 +762,16 @@ ENDIF
 IF TFLAG:고통에따른이성저하 == 0 || ABL:MASTER:마조끼 > 0
 	;이성가 200 미만에 저하
 	IF BASE:MASTER:이성 < 200 && BASE:MASTER:이성 + DOWNBASE:MASTER:이성 > 200
-		PRINTFORML 지나친 쾌감에 %CALLNAME:MASTER%의 시야는 뿌옇게 흐려져、머릿속은 쾌감으로만 가득 차 있다.
+		PRINTFORML 지나친 쾌감에 %CALLNAME:MASTER%의 시야는 뿌옇게 흐려져, 머릿속은 쾌감으로만 가득 차 있다.
 	;이성가 500 미만에 저하
 	ELSEIF BASE:MASTER:이성 < 500 && BASE:MASTER:이성 + DOWNBASE:MASTER:이성 > 500
-		PRINTFORML %타겟이% 주는 쾌감이 이성을 녹여、저항할 기력을 빼앗아간다…
+		PRINTFORML %타겟이% 주는 쾌감이 이성을 녹여, 저항할 기력을 빼앗아간다…
 	ENDIF
 ;마조끼가 없고고통
 ELSE
 	;이성가 200 미만에 저하
 	IF BASE:MASTER:이성 < 200 && BASE:MASTER:이성 + DOWNBASE:MASTER:이성 > 200
-		PRINTFORML 지나친 격통에 %CALLNAME:MASTER%의 사고는 완전하게 마비되어、눈동자는 탁하게 흐려져버렸다.
+		PRINTFORML 지나친 격통에 %CALLNAME:MASTER%의 사고는 완전하게 마비되어, 눈동자는 탁하게 흐려져버렸다.
 	;이성가 500 미만에 저하
 	ELSEIF BASE:MASTER:이성 < 500 && BASE:MASTER:이성 + DOWNBASE:MASTER:이성 > 500
 		PRINTFORML %타겟이% 주는 격통이 %CALLNAME:MASTER%의 이성을 빼앗는다…
@@ -1034,17 +1042,17 @@ SIF TCVAR:상태변화 && TCVAR:상태변화지속 > 2
 ;강발기
 IF TCVAR:MASTER:발기도 >= 1300 && TCVAR:MASTER:전발기도 < 1300
 	IF TCVAR:MASTER:전립선자극 > 1
-		PRINTFORML 안 쪽에서 희롱당해、%CALLNAME:MASTER%의 남성기가 의사와는 관계없이 반응한다…。
-		PRINTFORML 검붉게 충혈해 우뚝 솟은 페니스를 보고、%타겟은% 혀를 핥았다…。
+		PRINTFORML 안 쪽에서 희롱당해, %CALLNAME:MASTER%의 남성기가 의사와는 관계없이 반응한다…。
+		PRINTFORML 검붉게 충혈해 우뚝 솟은 페니스를 보고, %타겟은% 혀를 핥았다…。
 	ELSEIF TCVAR:MASTER:전립선자극 == 1
-		PRINTFORML 안 쪽에서 뿌리 뒤편을 문질러져、%CALLNAME:MASTER%의 남성기는 격렬하게 맥박치고 있다…。
+		PRINTFORML 안 쪽에서 뿌리 뒤편을 문질러져, %CALLNAME:MASTER%의 남성기는 격렬하게 맥박치고 있다…。
 	ELSE
-		PRINTFORML %CALLNAME:MASTER%의 남성기는 배에 닿을 정도로 발기해、격렬하게 맥박치고 있다.
+		PRINTFORML %CALLNAME:MASTER%의 남성기는 배에 닿을 정도로 발기해, 격렬하게 맥박치고 있다.
 	ENDIF
 ;중발기
 ELSEIF TCVAR:MASTER:발기도 >= 1000 && TCVAR:MASTER:전발기도 < 1000
 	IF TCVAR:MASTER:전립선자극
-		PRINTFORML 안 쪽에서 뿌리 뒤편을 문질러져、%CALLNAME:MASTER%의 남성기는 점점 커지고 있다…。
+		PRINTFORML 안 쪽에서 뿌리 뒤편을 문질러져, %CALLNAME:MASTER%의 남성기는 점점 커지고 있다…。
 	ELSE
 		PRINTFORML %CALLNAME:MASTER%의 남성기는 힘차게 고개를 쳐들고 있다…。
 	ENDIF
@@ -1069,9 +1077,9 @@ IF !TALENT:MASTER:남자
 	;윤활 충분히
 	IF PALAM:MASTER:윤활 >= 1000 && TCVAR:MASTER:전윤활 < 1000
 		IF TEQUIP:로션
-			PRINTFORML %CALLNAME:MASTER%의 샘에서는 한없이 애액이 흘러넘쳐、로션을 사용하는 의미가 없다….
+			PRINTFORML %CALLNAME:MASTER%의 샘에서는 한없이 애액이 흘러넘쳐, 로션을 사용하는 의미가 없다….
 		ELSE
-			PRINTFORML %CALLNAME:MASTER%의 샘에서는 한없이 애액이 흘러넘쳐、마치 홍수와 같다….
+			PRINTFORML %CALLNAME:MASTER%의 샘에서는 한없이 애액이 흘러넘쳐, 마치 홍수와 같다….
 		ENDIF
 	;강윤활
 	ELSEIF PALAM:MASTER:윤활 >= 500 && TCVAR:MASTER:전윤활 < 500
@@ -1080,7 +1088,7 @@ IF !TALENT:MASTER:남자
 		ELSEIF MV_PLAYER(1) > 1
 			PRINTFORML %CALLNAME:MASTER%의 여성기는 이물을 환영하듯이 진한 애액을 분비하기 시작했다….
 		ELSE
-			PRINTFORML %CALLNAME:MASTER%의 여성기는 꿀을 늘어뜨린 채、삽입을 바라며 떨리고 있다….
+			PRINTFORML %CALLNAME:MASTER%의 여성기는 꿀을 늘어뜨린 채, 삽입을 바라며 떨리고 있다….
 		ENDIF
 	;중윤활
 	ELSEIF PALAM:MASTER:윤활 >= 250 && TCVAR:MASTER:전윤활 < 250
@@ -1108,13 +1116,13 @@ ENDIF
 IF TALENT:MASTER:오줌싸개
 	;강소변
 	IF BASE:MASTER:소변 > 7 * MAXBASE:MASTER:소변 / 8
-		PRINTFORML %플레이어는% 거칠게 숨을 몰아쉬며、무릎을 모아잡고 가까스로 소변을 견디고 있다….
+		PRINTFORML %플레이어는% 거칠게 숨을 몰아쉬며, 무릎을 모아잡고 가까스로 뇨의를 견디고 있다….
 	;중소변
 	ELSEIF BASE:MASTER:소변 > 2 * MAXBASE:MASTER:소변 / 3
-        	PRINTFORML %플레이어는% 뺨을 붉히고、허벅지를 꽉 모은채로 소변을 견디고 있다….
+        	PRINTFORML %플레이어는% 뺨을 붉히고, 허벅지를 꽉 모은채로 뇨의를 견디고 있다….
 	;약소변
 	ELSEIF BASE:MASTER:소변 > MAXBASE:MASTER:소변 / 2
-        	PRINTFORML %플레이어는% 소변을 느끼고 있다….
+        	PRINTFORML %플레이어는% 뇨의를 느끼고 있다….
 	ENDIF
 ENDIF
 
@@ -1261,7 +1269,7 @@ IF TFLAG:소프트방침히트 > 0
 		쿨치 += RAND:2
 	SIF TALENT:일선을넘지않음
 		쿨치 += 1
-	SIF TALENT:도Ｍ
+	SIF TALENT:MASTER:도Ｍ
 		쿨치 -= RAND:4
 	SIF TALENT:심술궂음
 		쿨치 -= RAND:2
@@ -1306,7 +1314,7 @@ IF TFLAG:노멀방침히트 > 0
 		쿨치 += 1
 	SIF TALENT:일선을넘지않음
 		쿨치 += 2
-	SIF TALENT:도Ｍ
+	SIF TALENT:MASTER:도Ｍ
 		쿨치 -= RAND:2
 	SIF TALENT:신중함
 		쿨치 += 1
@@ -1315,7 +1323,9 @@ IF TFLAG:노멀방침히트 > 0
 	SIF TALENT:매혹
 		쿨치 += RAND:2
 	;조교대상소질에 의해 쿨 다운량 변동
-	SIF TALENT:MASTER:연모
+	SIF TALENT:MASTER:예속 && TALENT:TARGET:주인님
+		쿨치 += RAND:3
+	SIF TALENT:연모
 		쿨치 += RAND:3
 	;얼라이먼트가 0에 가까우면 추가 쿨 다운(+1～2)
 	LOCAL = ABS(CFLAG:얼라이먼트)
@@ -1374,7 +1384,7 @@ IF TFLAG:하드방침히트 > 0
 		쿨치 += 1
 	;조교대상소질에 의해 쿨 다운량 변동
 	SIF TALENT:MASTER:도Ｍ
-		쿨치 += 1
+		쿨치 += 3
 	SIF TALENT:MASTER:예속
 		쿨치 += 2
 	;쿨치가 정이라면 쿨 다운 실행
@@ -1629,6 +1639,9 @@ IF TFLAG:성교히트 > 0
 	;남성혐오, 레즈끼, ＢＬ끼가 모두 없을 때, 조교자·조교대상가 동성이라면(-3)
 	SIF !TALENT:남성혐오 && ABL:레즈끼 < 1 && ABL:ＢＬ끼 < 1 && TALENT:MASTER:남자 == TALENT:남자
 			쿨치 -= 3
+	;조교 대상이 연모라면 보너스
+	SIF	TALENT:TARGET:연모
+		쿨치 += 2
 	;리액션에 의한 배율
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
@@ -1681,6 +1694,8 @@ IF TFLAG:수치히트 > 0
 	;조교대상소질에 의해 쿨 다운량 변동
 	SIF TALENT:MASTER:자위하기쉬움
 		쿨치 += 1
+	SIF TALENT:MASTER:예속
+		쿨치 += 2
 	;리액션에 의한 배율
 	쿨치 = COOL_BYREACT(쿨치)
 	;쿨치가 정이라면 쿨 다운 실행
@@ -1734,7 +1749,9 @@ IF TFLAG:봉사히트 > 0
 	SIF TALENT:쾌감을부정
 		쿨치 -= 2
 	;조교대상소질에 의해 쿨 다운량 변동
-	SIF TALENT:MASTER:연모
+	SIF TALENT:MASTER:예속
+		쿨치 += 1
+	SIF TALENT:TARGET:연모
 		쿨치 += 1
 	;조교자가남성혐오때, 남자가조교대상라면(-1)
 	SIF TALENT:남성혐오 && TALENT:MASTER:남자
@@ -1954,29 +1971,31 @@ ENDIF
 ;────────────────────────────────────
 ;성교계 동일 체위 억제 처리
 ;PLAYER_ACTM계로부터 이동@이것 보고
+;나중에 수정해야 할 곳. 일단 몰라서 보류... 는 개뿔 토사구팽ㅋㅋㅋ	@MilkShake (20/02/11)
 ;────────────────────────────────────
 ;성교계
-FOR LCOUNT, 0, 5
+;LOCAL = 30, 31, 32, 33, 34
+;FOR LCOUNT, 0, 10
 	;해당 체위라면+100
-	IF TFLAG:전ACT == LCOUNT + 30
-		TFLAG:(356 + LCOUNT) += 100
+;	IF TFLAG:전ACT == LCOUNT + 30
+;		TFLAG:(356 + LCOUNT) += 100
 	;그 이외라면 2/3
-	ELSE
-		TFLAG:(356 + LCOUNT) = TFLAG:(356 + LCOUNT) * 2 / 3
-	ENDIF
-NEXT
+;	ELSE
+;		TFLAG:(356 + LCOUNT) = TFLAG:(356 + LCOUNT) * 2 / 3
+;	ENDIF
+;NEXT
 
 ;성교봉사
-LOCAL = 95, 96, 103, 97, 98
-FOR LCOUNT, 0, 5
+;LOCAL = 95, 96, 103, 97, 98
+;FOR LCOUNT, 0, 6
 	;해당 체위라면+100
-	IF TFLAG:전ACT == LOCAL:LCOUNT
-		TFLAG:(351 + LCOUNT) += 100
+;	IF TFLAG:전ACT == LOCAL:LCOUNT
+;		TFLAG:(351 + LCOUNT) += 100
 	;그 이외라면 2/3
-	ELSE
-		TFLAG:(351 + LCOUNT) = TFLAG:(351 + LCOUNT) * 2 / 3
-	ENDIF
-NEXT
+;	ELSE
+;		TFLAG:(351 + LCOUNT) = TFLAG:(351 + LCOUNT) * 2 / 3
+;	ENDIF
+;NEXT
 
 ;────────────────────────────────────
 ;가게 하는, 초조하게 한다
@@ -2439,7 +2458,7 @@ ELSEIF TFLAG:경과시간 > 10
 		;조교자체력+기력는 충분히
 		IF BASE:MASTER:체력 + BASE:MASTER:기력 > 600
 			;지문, 구상표시
-			PRINTFORML 너무 격렬한 조교 때문에 %플레이어는% 피로가 쌓여있는 것 같다、%타겟은% 조교를 마쳤다
+			PRINTFORML 너무 격렬한 조교 때문에 %플레이어는% 피로가 쌓여있는 것 같다, %타겟은% 조교를 마쳤다
 			PRINTL
 			CALL KOJO_EVENT(13, 1)
 		;조교자체력+기력가 불발
@@ -2510,7 +2529,7 @@ IF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:사정
 				TEQUIP:접촉입 = 0
 				PRINTFORML %타겟은% 입술을 모으고 느긋하게 페니스에서 입을 떼
 				{
-				PRINTFORMW \@ DEEP_THROAT ? 입가에 살짝 뭍은 정액을 손가락으로 닦아、%CALLNAME:MASTER%에가 과시하는 것처럼 핥아먹는다 # %CALLNAME:MASTER%에게 입안에 모인 정액을 보이고 나서 꿀꺽 삼켰다\@…
+				PRINTFORMW \@ DEEP_THROAT ? 입가에 살짝 뭍은 정액을 손가락으로 닦아, %CALLNAME:MASTER%에가 과시하는 것처럼 핥아먹었다 # %CALLNAME:MASTER%에게 입안에 모인 정액을 보이고 나서 꿀꺽 삼켰다\@…
 				}
 			;계속
 			ELSE
@@ -2532,7 +2551,7 @@ ELSEIF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:Ｃ절정 && !PENIS(MASTER)
 					PRINTFORMW %타겟은% 마치 진짜 페니스와 같이 뛰는 %CALLNAME:MASTER%의 모조 페니스에서 손을 떼어 놓았다…
 				;계속
 				ELSE
-					PRINTFORML %타겟은% 절정으로 인해 조이는 질내의 페니스 밴드를 풀었다.
+					PRINTFORML %타겟은% 절정으로 인해 조이는 질내에 박혀있는 페니스 밴드에서 힘을 풀었다.
 					PRINTFORMW 느긋한 전후 운동으로 %CALLNAME:MASTER%의 절정에 여운을 주고 있다…
 				ENDIF
 			;애무
@@ -2544,7 +2563,7 @@ ELSEIF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:Ｃ절정 && !PENIS(MASTER)
 					PRINTFORMW %타겟은% 손에 묻은 %CALLNAME:MASTER%의 애액을 맛있다는 듯 핥아 먹고 있다…
 				;계속
 				ELSE
-					PRINTFORML %타겟은% 질 전체에 애액을 발라 넓혀、
+					PRINTFORML %타겟은% 보지 전체에 애액을 발라 넓혀, 
 					PRINTFORMW 느긋하게 애무하며 %CALLNAME:MASTER%에게 절정의 여운을 주고 있다…
 				ENDIF
 			ENDIF
@@ -2554,11 +2573,11 @@ ELSEIF TEQUIP:조교대상Ｃ사용 && NOWEX:MASTER:Ｃ절정 && !PENIS(MASTER)
 			IF RAND:2
 				TEQUIP:조교대상Ｃ사용 = 0
 				TEQUIP:접촉입 = 0
-				PRINTFORML %타겟은% 키스를 하기 위해 느긋하게 클리토리스를 빨아
-				PRINTFORMW 아쉽고 아까운 듯 간신히 입을 떼어 놓았다.
+				PRINTFORML %타겟은% 키스하듯이 느긋하게 클리토리스를 핥고 빨며
+				PRINTFORMW 아쉽고 미련이 남는다는 듯 간신히 입을 떼어 놓았다.
 			;계속
 			ELSE
-				PRINTFORML %타겟은% 클리토리스를 빨아들여 혀끝에서 계속해서 핥고
+				PRINTFORML %타겟은% 클리토리스를 빨아들여 혀끝에서 계속해서 핥으며
 				PRINTFORMW 강제적으로 %CALLNAME:MASTER%에게 깊은 절정감을 보내려 하고 있다…
 			ENDIF
 	ENDSELECT

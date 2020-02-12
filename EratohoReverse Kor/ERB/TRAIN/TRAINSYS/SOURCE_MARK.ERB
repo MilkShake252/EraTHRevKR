@@ -82,6 +82,10 @@ FOR LOCAL, 0, 5
 			TALENT:MASTER:꿋꿋함 = 0
 ;OriginalString : そして%CALLNAME:MASTER%は[꿋꿋함]を失った
 			PRINTFORMW 그리고 %플레이어는% [꿋꿋함]을 잃었다
+		;음란을 취득했을 시, 마조끼와 고통중독이 5 이상이면 도M획득(다른 기회도 있음)
+		ELSEIF LOCAL == 0 && ARG:0 == 10 && TALENT:MASTER:음란 && ABL:MASTER:마조끼 > 4 && ABL:MASTER:고통중독 > 4 && !TALENT:MASTER:도Ｍ
+			TALENT:MASTER:도Ｍ = 1
+			PRINTFORMW %플레이어는% 고통을 진심으로 즐기게 되어, [도Ｍ]을 얻었다
 		;쾌락각인Lv5취득시, 쾌감을부정를 잃는다
 		ELSEIF LOCAL == 1 && ARG:1 == 5 && TALENT:MASTER:쾌감을부정
 			TALENT:MASTER:쾌감을부정 = 0
@@ -94,9 +98,17 @@ FOR LOCAL, 0, 5
 		ELSEIF LOCAL == 1 && ARG:1 == 7 && TALENT:MASTER:억압
 		;쾌락각인Lv10취득시, 쾌감에솔직를 얻는다
 		ELSEIF LOCAL == 1 && ARG:1 == 10 && !TALENT:MASTER:쾌감에솔직
-			TALENT:MASTER:쾌감에솔직 = 1
+			IF !TALENT:MASTER:쾌감에솔직
+				TALENT:MASTER:쾌감에솔직 = 1
 ;OriginalString : そして%CALLNAME:MASTER%は[쾌감에솔직]を得た
-			PRINTFORMW 그리고 %플레이어는% [쾌감에솔직]을 얻었다
+				PRINTFORMW 그리고 %플레이어는% [쾌감에솔직]을 얻었다
+			;원래 쾌감에 솔직을 가지고 있을 경우, 욕망이 5 이상이거나 호색적 역시 갖고있을 경우 음란을 획득한다.
+			ELSEIF TALENT:MASTER:쾌감에솔직 && ABL:MASTER:욕망 >= 5	|| TALENT:MASTER:쾌감에솔직 && TALENT:MASTER:색정적
+				PRINTFORMW 그리고 %플레이어는% [음란]을 얻었다
+				SIF TALENT:MASTER:청초
+					PRINTFORMW 음란한 행위를 좋아하게 된 %플레이어는% [청초]를 잃었다
+					TALENT:MASTER:청초 = 0
+			ENDIF
 		;굴복각인Lv7취득시, 반항적를 잃는다
 		ELSEIF LOCAL == 2 && ARG:2 == 7 && TALENT:MASTER:반항적
 			TALENT:MASTER:반항적 = 0
@@ -268,6 +280,8 @@ SIF TFLAG:징계·플래그 && (CUP:MASTER:공포 || CUP:MASTER:고통)
 	CALL MARK_CHECK_GET("징계·")		;【굴복:48】징계·(징계·때, 공포/고통가 발생)
 SIF TEQUIP:삼각목마
 	CALL MARK_CHECK_GET("삼각목마")		;【굴복:52】삼각목마
+SIF IS_NOWACTNAME("촛불")
+	CALL MARK_CHECK_GET("촛농고문")		;【굴복:65】촛농을 맞았다 @MilkShake(20/02/11)
 
 ;-------------------------------------------------
 ;결정적 상황에 의한굴복
@@ -312,6 +326,7 @@ RETURN RESULT
 ;
 ;56실신는 EVENTCOMEND로
 ;57, 58처녀, 동정상실는 EXPCHECK로
+;63, 64 임신당함/임신시킴은 EVENT_S로 @MilkShake(20/02/11)
 ;그 밖에도 있을지도, 입니다 라고? 있으면 곤란합니다(강간눈)
 
 

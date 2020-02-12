@@ -97,6 +97,8 @@ IF CFLAG:ARG:임신 == 5
 		TALENT:ARG:임신 = 1
 		TALENT:ARG:모유체질 = 1
 		MAXBASE:ARG:모유 = 10000
+		;일단 넣어보고, 제대로 획득 안되면 그 때 가서 고쳐보기로
+		CALL MARK_CHECK_GET("임신시킴")
 ENDIF
 IF TALENT:ARG:임신
 	IF CFLAG:ARG:임신 == 15
@@ -119,7 +121,7 @@ IF TALENT:ARG:임신
 ;OriginalString : 
 			PRINTFORMW 
 			PRINTFORM %조사처리(CALLNAME:ARG,"는")% %CALLNAME:MASTER%
-			PRINTFORM 에게 격려받으면서、
+			PRINTFORM 에게 격려받으면서, 
 		IF RAND:2 == 0
 ;OriginalString : 母親似のかわいい여자
 			PRINTFORM 어머니와 닮은 꼴인 귀여운 여자아이
@@ -141,8 +143,8 @@ IF TALENT:ARG:임신
 ;OriginalString : を無事出産しま했다。
 		PRINTFORMW 를 무사히 출산했습니다.
 		CALL KOJO_EVENT(8, 3 + LOCAL)
-;OriginalString : 赤ん坊を抱っこ했다%CALLNAME:ARG%は、我が子と%CALLNAME:MASTER%に向けて微笑んでいます。
-		PRINTFORMW 아기를 안고 있는 %조사처리(CALLNAME:ARG,"는")%、아이와 %CALLNAME:MASTER%에게 미소짓고 있습니다.
+;OriginalString : 赤ん坊を抱っこ했다%CALLNAME:ARG%は, 我が子と%CALLNAME:MASTER%に向けて微笑んでいます。
+		PRINTFORMW 아기를 안고 있는 %조사처리(CALLNAME:ARG,"는")%, 아이와 %CALLNAME:MASTER%에게 미소짓고 있습니다.
 	ENDIF
 ENDIF
 
@@ -214,6 +216,8 @@ IF CFLAG:MASTER:임신 == 5
 	TALENT:MASTER:모유체질 = 1
 	MAXBASE:MASTER:모유 = 10000
 	;여기서 굴복각인 취득. ...인데, 어떤코드인지 몰라서 지금은 보류.
+	;일단 넣어보고, 제대로 획득 안되면 그 때 가서 고쳐보기로
+	CALL MARK_CHECK_GET("임신당함")
 ENDIF
 IF TALENT:MASTER:임신
 	IF CFLAG:MASTER:임신 == 15
