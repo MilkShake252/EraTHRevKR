@@ -289,7 +289,7 @@ IF TALENT:MASTER:임신
 						CASEELSE
 							IF MARK:반항각인 >= 3
 								PRINTFORML 아이를 보려고 하자, %CALLNAME:MASTER%는 아이를 더 강하게 끌어안으며, %CALLNAME:(LOCAL:1)%에게서 보호하려는 듯 뒤로 물러났습니다…
-								PRINTFORMW %CALLNAME:MASTER%는 아이 아버지의 존재를 부정하며, 이 아이는 내 아이일 뿐이라고 생각하면서, 이 고된 노예생활의 희망을 아이라고 느끼기 시작한 것 같습니다.
+								PRINTFORMW %CALLNAME:MASTER%는 아이 아버지의 존재를 부정하며, 이 아이는 내 아이일 뿐이라고 생각하면서, 이 고된 감금생활의 희망을 아이라고 느끼기 시작한 것 같습니다.
 							ELSEIF MARK:반항각인 >= 1
 								PRINTFORML 아이를 보려고 하자, %CALLNAME:MASTER%는 아이를 더 깊게 끌어안곤, %CALLNAME:(LOCAL:1)%을 불신의 눈빛으로 바라보았습니다.
 								PRINTFORML %CALLNAME:MASTER%는 원치 않게 %CALLNAME:(LOCAL:1)% 에게 임신당했지만, 아이는 %CALLNAME:(LOCAL:1)%과 다르다고 생각하며 애정을 느끼기 사작한 것 같습니다…
@@ -324,6 +324,6 @@ DRAWLINE
 CALL KOJO_EVENT(7)
 CALL VOIDLINE_IF(RESULT)
 PRINTFORML 격렬한 조교때문에 축 늘어져 있는 %CALLNAME:MASTER%에게
-PRINTFORML %타겟은% 자신의 노예인 것을 나타내는 목걸이를 장착시켰다…
+PRINTFORML %타겟은% 자신의 노예인 것을 나타내는 목걸이를 장착시키곤, 함부로 벗지 못하게 자물쇠를 채워버렸다…
 PRINTFORMW 【노예의 목걸이】를 손에 넣었습니다.
 ITEM:노예목걸이 = 1

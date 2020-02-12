@@ -155,7 +155,11 @@ SELECTCASE TFLAG:ACT
 		CALL SEX_SET()
 	;풋잡하기
 	CASE 18
-		CALL TOUCH_SET("발", "Ｐ")
+		IF TFLAG:ACT파생
+			CALL TOUCH_SET("발", "Ｃ")
+		ELSE
+			CALL TOUCH_SET("발", "Ｐ")
+		ENDIF
 		;삽입해제
 		CALL SEX_SET()
 	;로터
@@ -183,12 +187,23 @@ SELECTCASE TFLAG:ACT
 	;배면좌위
 	CASE 34
 		CALL TOUCH_SET("Ｐ", "Ｖ", 1)
-	;항문
+	;정상위~배면좌위 애널 @MilkShake (20/02/13)
 	CASE 35
+		CALL TOUCH_SET("Ｐ", "Ａ", 1)
+	CASE 36
+		CALL TOUCH_SET("Ｐ", "Ａ", 1)
+	CASE 37
+		CALL TOUCH_SET("Ｐ", "Ａ", 1)
+	CASE 38
+		CALL TOUCH_SET("Ｐ", "Ａ", 1)
+	CASE 39
 		CALL TOUCH_SET("Ｐ", "Ａ", 1)
 	;역강간
 	CASE 103
 		CALL TOUCH_SET("Ｖ", "Ｐ", 1)
+	;역애널강간 @MilkShake (20/02/13)
+	CASE 104
+		CALL TOUCH_SET("Ａ", "Ｐ", 1)
 	;수음/애무강제
 	CASE 50
 		;수음
@@ -303,16 +318,16 @@ ENDIF
 
 ;성교상태가 해제당했다경우, 지문 표시
 IF LOCAL:1 > TEQUIP:성교봉사중 && !TEQUIP:성교봉사중
-	PRINTFORMW %타겟은% %CALLNAME:MASTER%의 \@ TEQUIP:페니스밴드 ? 모조품 # 페니스 \@를 해방했다…
+	PRINTFORMW %타겟은% %CALLNAME:MASTER%의 \@ TEQUIP:페니스밴드 ? 딜도 # 페니스 \@를 해방했다…
 	PRINTL 
 ELSEIF LOCAL:0 > TEQUIP:성교중 && !TEQUIP:성교중
-	PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%으로부터\@ TEQUIP:조교자페니스밴드 ? 모조품 # 페니스 \@를 뽑아냈다…
+	PRINTFORMW %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%으로부터\@ TEQUIP:조교자페니스밴드 ? 딜도 # 페니스 \@를 뽑아냈다…
 	PRINTL 
 ENDIF
 
 ;Ｃ사용상태가 해제당했다경우, 지문 표시
 IF LOCAL:2 == 2 && !TEQUIP:조교대상Ｃ사용
-	PRINTFORMW %타겟은% %CALLNAME:MASTER%의 고간에서 입을 떼고、얼굴을 들어올렸다…
+	PRINTFORMW %타겟은% %CALLNAME:MASTER%의 고간에서 입을 떼고, 얼굴을 들어올렸다…
 	PRINTL 
 ELSEIF LOCAL:2 == 1 && !TEQUIP:조교대상Ｃ사용
 	PRINTFORMW %타겟은% %CALLNAME:MASTER%의 \@ PENIS(MASTER) ? 페니스 # 클리토리스 \@에서 손을 떼었다…

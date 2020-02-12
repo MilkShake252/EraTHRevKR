@@ -299,6 +299,63 @@ IF TEQUIP:거울 && !IS_NOWACTNAME("수치플레이")
 ENDIF
 
 ;────────────────────────────────────
+;목조르기중 @MilkShake(20/02/13)
+;고통, 구속, 이탈, 중독충족, 트라우마, 욕정
+;────────────────────────────────────
+IF TEQUIP:목조르기중
+	A = 500 + GET_ABL(TARGET, "가학") * GET_ABL(TARGET, "기교") / 2 + (MARK:반항각인 + 1) * (TALENT:새드 * 3 + 2) * 20
+	B = 200 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10)
+	C = 3000 + (MARK:반항각인 + 1) * CFLAG:MASTER:조교레벨 * 50 - GET_ABL(MASTER, "마조끼") * 30 - GET_ABL(MASTER, "고통중독") * 80 / (TALENT:MASTER:도Ｍ + 2) 
+	D = 0
+	E = 0
+	F = 0
+	SOURCE:MASTER:고통 += A
+	SOURCE:MASTER:구속 += B
+	SOURCE:MASTER:이탈 += C
+	SIF TALENT:MASTER:도Ｍ
+		D = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") + 10) * A / 80000
+		F = GET_ABL(MASTER, "마조끼") * GET_ABL(MASTER, "구속중독") * GET_ABL(MASTER, "고통중독") * GET_ABL(MASTER, "욕정") * 10 * A / 80000
+	SOURCE:MASTER:중독충족 += D
+	CUP:MASTER:욕정 = F / 3
+	SOURCE:MASTER:트라우마 += E
+
+;이 밑의 삼각목마는 삭제해야 함.
+;────────────────────────────────────
+;삼각목마승마중（쾌Ｖ, 애정역, 고통, 구속, 이탈, 중독충족, 트라우마）
+;────────────────────────────────────
+IF TEQUIP:삼각목마
+	A = 0
+	B = 1000 + GET_ABL(TARGET, "가학") * GET_ABL(TARGET, "기교") / 2 + GET_TRAINLV(TARGET) * (TALENT:새드 * 3 + 2) * 20
+	C = 50 + (MARK:반항각인 + 1) * (GET_ABL(TARGET, "기교") + 10) 
+	D = 1800 + B / 2 - CFLAG:MASTER:조교레벨 * 50 - GET_ABL(MASTER, "마조끼") * 20 - GET_ABL(MASTER, "고통중독") * 60
+	E = 0
+	F = 0
+	G = 0
+	SIF ABL:MASTER:마조끼 > 3
+		A = (GET_ABL(MASTER, "마조끼") - 30) * GET_ABL(MASTER, "고통중독") * (TALENT:MASTER:도Ｍ + 2) / 2
+	SOURCE:MASTER:쾌Ｖ += A
+	SOURCE:MASTER:고통 += B
+	SOURCE:MASTER:구속 += C
+	SIF D < 0
+		D = 0
+	SOURCE:MASTER:이탈 += D
+	SIF ABL:MASTER:고통중독 > 3
+		E = GET_ABL(MASTER, "마조끼") * (GET_ABL(MASTER, "고통중독") - 30) * (GET_ABL(MASTER, "고통중독") + 10) * B / 80000
+	SOURCE:MASTER:중독충족 += E
+	F = B / 2 + C / 5 - E
+	SOURCE:MASTER:트라우마 += F
+	SIF CFLAG:MASTER:트라우마 == 67
+		TIMES SOURCE:MASTER:트라우마 , 1.50
+	G = E - B - D - F
+	SIF G < 0
+		SOURCE:MASTER:애정 += G
+	TCVAR:MASTER:금회발기 += (GET_ABL(MASTER, "마조끼") - 20) * 5
+	;장비시에 깨지기 때문에 만약을 위해이지만.
+	;MASTER가처녀라면, 처녀상실가 일어난다
+	TCVAR:MASTER:처녀상실 = TALENT:MASTER:처녀
+ENDIF
+
+;────────────────────────────────────
 ;조교대상가자위중（쾌Ｃ, 쾌Ｖ, 쾌Ａ, 쾌Ｂ, 성행위, 노출, 이탈, 중독충족）
 ;────────────────────────────────────
 ;이 턴으로자위의 명령을 출했다경우는거부 될 가능성이 있으므로 처리를 뒷전 합니다

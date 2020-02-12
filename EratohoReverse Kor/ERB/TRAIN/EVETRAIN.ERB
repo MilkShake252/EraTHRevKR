@@ -116,14 +116,21 @@ IF (!CFLAG:만족보 && CFLAG:소모 <= 5 && CFLAG:MASTER:소모 <= 5 && CFLAG:�
 			TFLAG:금일의방침 = !RAND:12
 	ENDSELECT
 	;확률로 언제나 대로가 아닌방침를 취하도록(듯이)
-	IF !RAND:5
-		LOCAL = RAND:4
+	;연모나 예속시, 귀여워해나 성교, 봉사계가 랜덤으로 나오게 추가 @MilkShake (20/02/13)
+	IF !RAND:6
+		LOCAL = RAND:5
 		IF BASE:MASTER:체력 < 2 * MAXBASE:MASTER:체력 / 3 && LOCAL == 0
 			TFLAG:금일의방침 = 4
 		ELSEIF	BASE:MASTER:사정 < 9 * MAXBASE:MASTER:체력 / 10 && LOCAL == 1
 			TFLAG:금일의방침 = 3
 		ELSEIF ITEM:개목걸이  && LOCAL == 2
 			TFLAG:금일의방침 = 6
+		ELSEIF TALENT:TARGET:연모 && !TALENT:MASTER:남자 && (TALENT:TARGET:후타나리 || TALENT:TARGET:남자) && LOCAL == 3
+			TFLAG:금일의방침 = 9
+		ELSEIF TALENT:MASTER:예속 && TALENT:TARGET:주인님 && LOCAL == 4
+			TFLAG:금일의방침 = 10
+		ELSEIF CFLAG:호의 >= 5000 || TALENT:TARGET:연모
+			TFLAG:금일의방침 = 11
 		;ELSEIF GETBIT(FLAG:60, 0)  && LOCAL == 3
 		;	TFLAG:금일의방침 = 9
 		;징계·은반발의존에했다겉껍데기 사양이 정해지지 않기 때문에 뒷전
@@ -286,31 +293,32 @@ ENDIF
 SELECTCASE POLICY("금일")
 	CASE "통상"
 	CASE "항문"
-		PRINTFORMW 이번에 %타겟은% %CALLNAME:MASTER%의 \@ CFLAG:만족보 ? 요청에 의해、 # \@애널을 개발하기로 했다…
+		PRINTFORMW 이번에 %타겟은% %CALLNAME:MASTER%의 \@ CFLAG:만족보 ? 요청에 의해,  # \@애널을 개발하기로 했다…
 	CASE "징계·"
-		PRINTFORMW %타겟은% %CALLNAME:MASTER%\@ CFLAG:만족보 ? 의 요청에 의해、 # 에게 \@벌을 주기로 했다…
+		PRINTFORMW %타겟은% %CALLNAME:MASTER%\@ CFLAG:만족보 ? 의 요청에 의해,  # 에게 \@벌을 주기로 했다…
 	CASE "하드"
-		PRINTFORMW %타겟은% \@ CFLAG:만족보 ? %CALLNAME:MASTER%의 요청에 의해、 # \@평소보다 격렬하게 조교하기로 했다…
+		PRINTFORMW %타겟은% \@ CFLAG:만족보 ? %CALLNAME:MASTER%의 요청에 의해,  # \@평소보다 격렬하게 조교하기로 했다…
 	CASE "노닥노닥"
-		PRINTFORMW %타겟은% %CALLNAME:MASTER%에게 손짓해、상냥하게 껴안았다
+		PRINTFORMW %타겟은% %CALLNAME:MASTER%에게 손짓해, 상냥하게 껴안았다
 	CASE "이상"     ;기학과정욕라고 말해도 요컨데이상계라고 하는 것만으로 미묘한 생각은 든다
 		PRINTFORMW %타겟은% 가학심과 욕정으로 가득한 눈동자로 %플레이어를% 응시했다
 	CASE "야외"
-		PRINTFORMW %타겟은% %CALLNAME:MASTER%에게 목줄을 채우고、외출 준비를 시작했다…
+		PRINTFORMW %타겟은% %CALLNAME:MASTER%에게 목줄을 채우고, 외출 준비를 시작했다…
 	;이하, 포상으로 밖에 나오지 않는다
 	CASE "애만들기"
 		PRINTFORMW %타겟은% 아이를 만드는 것에 대한 기대감으로 %CALLNAME:MASTER%에게 달라붙어 왔다…
 	CASE "휴식"
 		;휴식. INFO.ERB에 처리를 이동
 	CASE "안아"
-		{
-		PRINTFORMW %타겟은% 지금부터 안기는 것을 기대하며 뜨겁게 달아오른 %CALLNAME:MASTER%(을)를 \@ 
-		!TALENT:새드 ? 부드럽게 # \@ 안아왔다…
-		}
+		PRINTFORMW %타겟은% \@ CFLAG:만족보 ? 임신할 때 까지 안아주겠다며 말하곤, # 지금부터 안기는 것을 기대하며 뜨겁게 달아오른 \@ %CALLNAME:MASTER%(을)를 \@ !TALENT:새드 ? 부드럽게 # 배를 쓰다듬으며 \@ 안아왔다…
 	CASE "봉사"
-		PRINTFORMW %타겟은% 기특한 제의에 만족한 미소를 띄우면서, %CALLNAME:MASTER%(을)를 부르며 머리를 상냥하게 어루만졌다…
+		SIF CFLAG:202
+			PRINTFORMW %타겟은% 기특한 제의에 만족한 미소를 띄우면서, %CALLNAME:MASTER%(을)를 부르며 머리를 상냥하게 어루만졌다…
+		PRINTFORMW %타겟은% %플레이어의% 머리를 쓰다듬으면서, 이번엔 자기를 만족시켜달라고 말했다…
 	CASE "귀여워해"
-		PRINTFORMW %타겟은% 미소지으면서 %CALLNAME:MASTER%에 가까이 붙고, 살그머니 입맞춤했다…
+		SIF CFLAG:202
+			PRINTFORMW %타겟은% 미소지으면서 %CALLNAME:MASTER%에 가까이 붙고, 살그머니 입맞춤했다…
+		PRINTFORMW %타겟은% %플레이어의% \@ TALENT:TARGET:작은체형 && !TALENT:MASTER:작은체형 || !TALENT:TARGET:장신 && TALENT:MASTER:장신 ? 등을 껴안으며 # 이마에 입맞추며, \@ 실컷 귀여워 해주겠다며 속삭였다…
 ENDSELECT
 
 ;금일의방침지문을 빠지고 나서 리셋트
@@ -320,7 +328,7 @@ IF FLAG:오토모드 > 0 && FLAG:오토모드표시설정 == 1
 	CALL SHOW_AUTOMODE_UPCHECK, 1
 	SKIPDISP 0
 	DRAWLINE
-	PRINTFORML {FLAG:연수+1}년{FLAG:일수+1}일째(%GET_TIME()%) %GET_SEASON()% %GET_DAY()%의 행   남편님:%CALLNAME:1%
+	PRINTFORML {FLAG:연수+1}년{FLAG:일수+1}일째(%GET_TIME()%) %GET_SEASON()% %GET_DAY()%의 행   주인님:%CALLNAME:1%
 	DRAWLINE
 	SKIPDISP 1
 ENDIF
