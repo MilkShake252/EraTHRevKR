@@ -1,0 +1,629 @@
+﻿;------------------------------------
+;커멘드 필터링	@MilkShake (20/02/16)
+;------------------------------------
+@COMMAND_FILTER
+DRAWLINE
+CALL HTMLPRINTL(@"%HTMLBUTTON("[00] - 회화계", "00", "회화계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[10] - 애무계", "10", "애무계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[20] - 도구계", "20", "도구계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[30] - 성교계", "30", "성교계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[40] - 수치계", "40", "수치계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[50] - 봉사계", "50", "봉사계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[60] - 가학계", "60", "가학계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[70] - 이상계", "70", "이상계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTPLAIN(@"%HTMLPLAIN("[80] - 특수계", "80", "특수계 커멘드 필터를 실시합니다… 만, 현재 리버스에는 특수계 커멘드가 없습니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[90] - 휴식 및 성봉계", "90", "휴식 및 성봉계 커멘드 필터를 실시합니다")%")
+CALL HTMLPRINTL(@"%HTMLBUTTON("[999] - 필터링 종료", "999", "설정을 종료하고 SHOP 메뉴로 돌아갑니다")%")
+DRAWLINE
+
+IF RESULT == 00
+	CALL FILTER_TALK
+ELSEIF RESULT == 10
+	CALL FILTER_TOUCH
+ELSEIF RESULT == 20
+	CALL FILTER_TOYS
+ELSEIF RESULT == 30
+	CALL FILTER_RAPE
+ELSEIF RESULT == 40
+	CALL FILTER_DARKHISTORY
+ELSEIF RESULT == 50
+	CALL FILTER_FOOT_BATHS
+ELSEIF RESULT == 60
+	CALL FILTER_VIOLENCE
+ELSEIF RESULT == 70
+	CALL FILTER_LUNATIC
+ELSEIF RESULT == 80
+	PRINTW SHOP 화면으로 돌아갑니다.
+	CALL SHOP("SHOW_SHOP")
+ELSEIF RESULT == 90
+	CALL FILTER_REST_AND_RAPE
+ELSEIF RESULT == 999
+	CALL SHOP("SHOW_SHOP")
+ENDIF
+
+;------------------------------------
+;회화계 커멘드 필터
+;------------------------------------
+@FILTER_TALK
+
+PRINTFORML [00] - 지금 기분을 물어본다
+PRINTFORML [01] - 자신을 어떻게 생각하는지 물어본다
+PRINTFORML [02] - 성적인 이야기를 한다
+PRINTFORML [03] - 상냥하게 위로한다
+PRINTFORML [04] - 엄하게 위협한다
+PRINTFORML [05] - 의상 변경을 요구한다
+PRINTFORML [06] - 합의를 요구한다
+PRINTFORML [07] - 징계한다고 위협한다
+PRINTFORML [08] - 고함치다
+PRINTFORML [09] - 기분 나쁘게 웃는다
+;PRINTFORML [110] - 사랑을 고백한다
+PRINTFORML [999] - 커멘드 필터 설정 메뉴로 돌아갑니다
+
+SELECTCASE RESULT
+	CASE 00
+		IF CFLAG:1000 = 100
+			PRINTFORMW 지금의 기분을 물어본다를 ON 합니다.
+			CFLAG:1000 = 0
+		ELSE
+			PRINTFORMW 지금의 기분을 물어본다를 OFF 합니다.
+			CFLAG:1000 = 100
+		ENDIF
+	CASE 01
+		IF CFLAG:1001 = 100
+			PRINTFORMW 자신에 대해 어떻게 생각하는지 물어본다를 ON 합니다.
+			CFLAG:1001 = 0
+		ELSE
+			PRINTFORMW 자신에 대해 어떻게 생각하는지 물어본다를 OFF 합니다.
+			CFLAG:1001 = 100
+		ENDIF
+	CASE 02
+		IF CFLAG:1002 = 100
+			PRINTFORMW 음담패설을 한다를 ON 합니다.
+			CFLAG:1002 = 0
+		ELSE
+			PRINTFORMW 음담패설을 한다를 OFF 합니다.
+			CFLAG:1002 = 100
+		ENDIF
+	CASE 03
+		IF CFLAG:1003 = 100
+			PRINTFORMW 상냥하게 위로한다를 ON 합니다.
+			CFLAG:1003 = 0
+		ELSE
+			PRINTFORMW 상냥하게 위로한다를 OFF 합니다.
+			CFLAG:1003 = 100
+		ENDIF
+	CASE 04
+		IF CFLAG:1004 = 100
+			PRINTFORMW 살벌하게 위협한다를 ON 합니다.
+			CFLAG:1004 = 0
+		ELSE
+			PRINTFORMW 살벌하게 위협한다를 OFF 합니다.
+			CFLAG:1004 = 100
+		ENDIF
+	CASE 05
+		IF CFLAG:1005 = 100
+			PRINTFORMW 의상 변경을 요구한다를 ON 합니다.
+			CFLAG:1005= 0
+		ELSE
+			PRINTFORMW 의상 변경을 요구한다를 OFF 합니다. 
+			CFLAG:1005 = 100
+		ENDIF
+	CASE 06
+		IF CFLAG:1006 = 100
+			PRINTFORMW 합의를 요구한다를 ON 합니다.
+			CFLAG:1006 = 0
+		ELSE
+			PRINTFORMW 합의를 요구한다를 OFF 합니다.
+			CFLAG:1006 = 100
+		ENDIF
+	CASE 07
+		IF CFLAG:1007 = 100
+			PRINTFORMW 징계한다고 위협한다를 ON 합니다.
+			CFLAG:1007 = 0
+		ELSE
+			PRINTFORMW 징계한다고 위협한다를 OFF 합니다.
+			CFLAG:1007 = 100
+		ENDIF
+	CASE 08
+		IF CFLAG:1008 = 100
+			PRINTFORMW 고함친다를 ON 합니다.
+			CFLAG:1008 = 0
+		ELSE
+			PRINTFORMW 고함친다를 OFF 합니다.
+			CFLAG:1008 = 100
+		ENDIF
+	CASE 09
+		IF CFLAG:1009 = 100
+			PRINTFORMW 섬뜩하게 웃는다를 ON 합니다.
+			CFLAG:1009 = 0
+		ELSE
+			PRINTFORMW 섬뜩하게 웃는다를 OFF 합니다.
+			CFLAG:1009 = 100
+		ENDIF
+	;CASE 110
+		;IF CFLAG:1110 = 100
+			;PRINTFORMW 사랑을 고백한다를 ON 합니다.
+			;CFLAG:1110 = 0
+		;ELSE
+			;PRINTFORMW 사랑을 고백한다를 OFF 합니다.
+			;CFLAG:1110 = 100
+		;ENDIF
+	CASE 999
+		CALL COMMAND_FILTER
+ENDSELECT
+
+;------------------------------------
+;애무계 커멘드 필터
+;------------------------------------
+@FILTER_TOUCH
+
+PRINTFORML [10] - 손으로 애무
+PRINTFORML [11] - 가슴애무
+PRINTFORML [12] - 입으로 애무
+PRINTFORML [13] - 애널애무
+PRINTFORML [14] - 항문펠라
+PRINTFORML [15] - 키스
+PRINTFORML [16] - 성기를 서로 비빈다
+PRINTFORML [17] - 파이즈리한다
+PRINTFORML [18] - 풋잡하기
+PRINTFORML [19] - 손가락 삽입
+PRINTFORML [27] - 밀어 넘어트린다
+PRINTFORML [999] - 커멘드 필터 설정 메뉴로 돌아갑니다
+
+SELECTCASE RESULT
+	CASE 10
+		IF CFLAG:1010 = 100
+			PRINTFORMW 수음한다를 ON 합니다.
+			CFLAG:1010 = 0
+		ELSE
+			PRINTFORMW 수음한다를 OFF 합니다.
+			CFLAG:1010 = 100
+		ENDIF
+	CASE 11
+		IF CFLAG:1011 = 100
+			PRINTFORMW 가슴을 애무한다를 ON 합니다.
+			CFLAG:1011 = 0
+		ELSE
+			PRINTFORMW 가슴을 애무한다를 OFF 합니다.
+			CFLAG:1011 = 100
+		ENDIF
+	CASE 12
+		IF CFLAG:1012 = 100
+			PRINTFORMW 구음한다를 ON 합니다.
+			CFLAG:1012 = 0
+		ELSE
+			PRINTFORMW 구음한다를 OFF 합니다.
+			CFLAG:1012 = 100
+	CASE 13
+		IF CFLAG:1013 = 100
+			PRINTFORMW 애널 핑거링을 ON 합니다.
+			CFLAG:1013 = 0
+		ELSE
+			PRINTFORMW 애널 핑거링을 OFF 합니다.
+			CFLAG:1013 = 100
+		ENDIF
+	CASE 14
+		IF CFLAG:1014 = 100
+			PRINTFORMW 리밍을 ON 합니다.
+			CFLAG:1014 = 0
+		ELSE
+			PRINTFORMW 리밍을 OFF 합니다.
+			CFLAG:1014 = 100
+		ENDIF
+	CASE 15
+		IF CFLAG:1015 = 100
+			PRINTFORMW 키스한다를 ON 합니다.
+			CFLAG:1015 = 0
+		ELSE
+			PRINTFORMW 키스한다를 OFF 합니다.
+			CFLAG:1015 = 100
+		ENDIF
+	CASE 16
+		IF CFLAG:1016 = 100
+			PRINTFORML 성기를 서로 비빈다를 ON 합니다.
+			CFLAG:1016 = 0
+		ELSE
+			PRINTFORMW 성기를 서로 비빈다를 OFF 합니다.
+			CFLAG:1016 = 100
+		ENDIF
+	CASE 17
+		IF CFLAG:1017 = 100
+			PRINTFORML 파이즈리한다를 ON 합니다.
+			CFLAG:1017 = 0
+		ELSE
+			PRINTFORMW 파이즈리한다를 OFF 합니다.
+			CFLAG:1017 = 100
+		ENDIF
+	CASE 18
+		IF CFLAG:1018 = 100
+			PRINTFORMW 풋잡한다를 ON 합니다.
+			CFLAG:1018 = 0
+		ELSE
+			PRINTFORMW 풋잡한다를 OFF 합니다.
+			CFLAG:1018 = 100
+		ENDIF
+	CASE 19
+		IF CFLAG:1019 = 100
+			PRINTFORMW 핑거링을 ON 합니다.
+			CFLAG:1019 = 0
+		ELSE
+			PRINTFORMW 핑거링을 OFF 합니다.
+			CFLAG:1019 = 100
+		ENDIF
+	CASE 27
+		IF CFLAG:1027 = 100
+			PRINTFORMW 제압한다를 ON 합니다.
+			CFLAG:1027 = 0
+		ELSE
+			PRINTFORMW 제압한다를 OFF 합니다.
+			CFLAG:1027 = 100
+		ENDIF
+	CASE 999
+		CALL COMMAND_FILTER
+ENDSELECT
+
+;------------------------------------
+;도구계 커멘드 필터
+;------------------------------------
+@FILTER_TOYS
+
+PRINTFORML [20] - 로터
+PRINTFORML [21] - 바이브
+PRINTFORML [22] - 애널바이브
+PRINTFORML [23] - 애널비즈
+PRINTFORML [24] - \@ TALENT:MASTER:여자 ? 클리캡 # 오나홀 \@
+PRINTFORML [25] - 유두캡
+PRINTFORML [26] - 페니스밴드
+PRINTFORML [999] - 커멘드 필터 설정 메뉴로 돌아갑니다
+
+SELECTCASE RESULT
+	CASE 20
+		IF CFLAG:1020 = 100
+			PRINTFORMW 로터를 ON 합니다.
+			CFLAG:1020 = 0
+		ELSE
+			PRINTFORMW 로터를 OFF 합니다.
+			CFLAG:1020 = 100
+		ENDIF
+	CASE 21
+		IF CFLAG:1021 = 100
+			PRINTFORMW 바이브레이터를 ON 합니다.
+			CFLAG:1021 = 0
+		ELSE
+			PRINTFORMW 바이브레이터를 OFF 합니다.
+			CFLAG:1021 = 100
+		ENDIF
+	CASE 22
+		IF CFLAG:1022 = 100
+			PRINTFORMW 애널 바이브레이터를 ON 합니다.
+			CFLAG:1022 = 0
+		ELSE
+			PRINTFORMW 애널 바이브레이터를 OFF 합니다.
+			CFLAG:1022 = 100
+		ENDIF
+	CASE 23
+		IF CFLAG:1023 = 100
+			PRINTFORMW 애널비즈를 ON 합니다.
+			CFLAG:1023 = 0
+		ELSE
+			PRINTFORMW 애널비즈를 OFF 합니다.
+			CFLAG:1023 = 100
+		ENDIF
+	CASE 24
+		IF CFLAG:1024 = 100
+			PRINTFORMW \@ TALENT:MASTER:여자 ? 클리캡을 # 오나홀을\@ ON 합니다.
+			CFLAG:1024 = 0
+		ELSE
+			PRINTFORMW \@ TALENT:MASTER:여자 ? 클리캡을 # 오나홀을\@ OFF 합니다.
+			CFLAG:1024 = 100
+		ENDIF
+	CASE 25
+		IF CFLAG:1025 = 100
+			PRINTFORMW 니플캡을 ON 합니다.
+			CFLAG:1025 = 0
+		ELSE
+			PRINTFORMW 니플캡을 OFF 합니다.
+			CFLAG:1025 = 100
+		ENDIF
+	CASE 26
+		IF CFLAG:1026 = 100
+			PRINTFORMW 스트랩온 딜도를 ON 합니다.
+			CFLAG:1026 = 0
+		ELSE
+			PRINTFORMW 스트랩온 딜도를 OFF 합니다.
+			CFLAG:1026 = 100
+		ENDIF
+	CASE 999
+		CALL COMMAND_FILTER
+ENDSELECT
+
+;------------------------------------
+;성교계 커멘드 필터
+;------------------------------------
+@FILTER_RAPE
+
+PRINTFORML [30] - 정상위
+PRINTFORML [31] - 후배위
+PRINTFORML [32] - 기승위
+PRINTFORML [33] - 대면좌위
+PRINTFORML [34] - 배면좌위
+PRINTFORML [35] - 애널섹스 ;정상위 애널
+;PRINTFORML [36] - 후배위 애널
+;PRINTFORML [37] - 기승위 애널
+;PRINTFORML [38] - 대면좌위 애널
+;PRINTFORML [39] - 배면좌위 애널
+PRINTFORML [999] - 커멘드 필터 설정 메뉴로 돌아갑니다
+
+SELECTCASE RESULT
+	CASE 30
+		IF CFLAG:1030 = 100
+			PRINTFORML 정상위를 ON 합니다.
+			CFLAG:1030 = 0
+		ELSE
+			PRINTFORMW 정상위를 OFF 합니다.
+			CFLAG:1030 = 100
+		ENDIF
+	CASE 31
+		IF CFLAG:1031 = 100
+			PRINTFORMW 후배위를 ON 합니다.
+			CFLAG:1031 = 0
+		ELSE
+			PRINTFORMW 후배위를 OFF 합니다.
+			CFLAG:1031 = 100
+		ENDIF
+	CASE 32
+		IF CFLAG:1032 = 100
+			PRINTFORMW 기승위를 ON 합니다.
+			CFLAG:1032 = 0
+		ELSE
+			PRINTFORMW 기승위를 OFF 합니다.
+			CFLAG:1032 = 100
+		ENDIF
+	CASE 33
+		IF CFLAG:1033 = 100
+			PRINTFORMW 대면좌위를 ON 합니다.
+			CFLAG:1033 = 0
+		ELSE
+			PRINTFORMW 대면좌위를 OFF 합니다.
+			CFLAG:1033 = 100
+		ENDIF
+	CASE 34
+		IF CFLAG:1034 = 100
+			PRINTFORMW 베면좌위를 ON 합니다.
+			CFLAG:1034 = 0
+		ELSE
+			PRINTFORMW 배면좌위를 OFF 합니다.
+			CFLAG:1034 = 100
+		ENDIF
+	CASE 35
+		IF CFLAG:1035 = 100
+			PRINTFORMW 애널섹스를 ON 합니다.
+			CFLAG:1035 = 0
+		ELSE
+			PRINTFORMW 애널섹스를 OFF 합니다.
+			CFLAG:1035 = 100
+		ENDIF
+ENDSELECT
+
+;------------------------------------
+;수치계 커멘드 필터
+;------------------------------------
+@FILTER_DARKHISTORY
+
+PRINTFORML [40] - 자위
+PRINTFORML [41] - 음부공개
+PRINTFORML [42] - 자위과시
+PRINTFORML [43] - 수치플레이
+PRINTFORML [44] - 야외플레이
+PRINTFORML [45] - 방뇨
+PRINTPLAIN [46] - 코스프레
+;PRINTFORML [47] - V조르기
+;PRINTFORML [48] - A조르기
+;PRINTFORML [49] - 삽입조르기
+
+SELECTCASE RESULT
+	CASE 40
+		IF CFLAG:1040 = 100
+			PRINTFORMW 자위시킨다를 ON 합니다.
+			CFLAG:1040 = 0
+		ELSE
+			PRINTFORMW 자위시킨다를 OFF 합니다.
+			CFLAG:1040 = 100
+		ENDIF
+	CASE 41
+		IF CFLAG:1041 = 100
+			PRINTFORMW 음부관찰을 ON 합니다.
+			CFLAG:1041 = 0
+		ELSE
+			PRINTFORMW 음부관찰을 OFF 합니다.
+			CFLAG:1041 = 100
+		ENDIF
+	CASE 42
+		IF CFLAG:1042 = 100
+			PRINTFORMW 자위를 과시한다를 ON 합니다.
+			CFLAG:1042 = 0
+		ELSE
+			PRINTFORML 자위를 과시한다를 OFF 합니다.
+			CFLAG:1042 = 100
+		ENDIF
+	CASE 43
+		IF CFLAG:1043 = 100
+			PRINTFORMW 대거울 플레이를 ON 합니다.
+			CFLAG:1043 = 0
+		ELSE
+			PRINTFORMW 대거울 플레이를 OFF 합니다.
+			CFLAG:1043 = 100
+		ENDIF
+	CASE 44
+		IF CFLAG:1044 = 100
+			PRINTFORMW 야외플레이를 ON 합니다.
+			CFLAG:1044 = 0
+		ELSE
+			PRINTFORMW 야외플레이를 OFF 합니다.
+			CFLAG:1044 = 100
+		ENDIF
+	CASE 45
+		IF CFLAG:1045 = 100
+			PRINTFORMW 방뇨시킨다를 ON 합니다.
+			CFLAG:1045 = 0
+		ELSE
+			PRINTFORMW 방뇨시킨다를 OFF 합니다.
+			CFLAG:1045 = 100
+		ENDIF
+	;CASE 47
+		;IF CFLAG:1047 = 100
+			;PRINTFORMW V에 삽입해달라고 조르게 하기를 ON 합니다.
+			;CFLAG:1047 = 0
+		;ELSE
+			;PRINTFORMW V에 삽입해달라고 조르게 하기를 OFF 합니다.
+			;CFLAG:1047 = 100
+		;ENDIF
+	;CASE 48
+		;IF CFLAG:1048 = 100
+			;PRINTFORMW A에 삽입해달라고 조르게 하기를 ON 합니다.
+			;CFLAG:1048 = 0
+		;ELSE
+			;PRINTFORMW A에 삽입해달라고 조르게 하기를 OFF 합니다.
+			;CFLAG:1048 = 100
+		;ENDIF
+	;CASE 49
+		;IF CFLAG:1049 = 100
+			;PRINTFORMW 삽입하는걸 허락해달라고 조르게 하기를 ON 합니다.
+			;CFLAG:1049 = 0
+		;ELSE
+			;PRINTFORMW 삽입하는걸 허락해달라고 조르게 하기를 OFF 합니다.
+			;CFLAG:1049 = 100
+		;ENDIF
+ENDSELECT
+
+;------------------------------------
+;봉사계 커멘드 필터
+;PRINTFORMW  ON OFF 합니다.
+;------------------------------------
+@FILTER_FOOT_BATHS
+
+PRINTFORML [50] - 손으로 애무를 강요
+PRINTFORML [51] - 입으로 애무를 강요
+PRINTFORML [52] - 파이즈리
+PRINTFORML [53] - 스마타
+PRINTFORML [55] - 발핥기강제
+PRINTFORML [56] - 이라마치오
+PRINTFORML [57] - 가슴애무강제
+
+SELECTCASE RESULT
+	CASE 50
+		IF CFLAG:1050 = 100
+			PRINTFORMW 수음 강요를 ON 합니다.
+			CFLAG:1050 = 0
+		ELSE
+			PRINTFORMW 수음 강요를 OFF 합니다.
+			CFLAG:1050 = 100
+		ENDIF
+	CASE 51
+		IF CFLAG:1051 = 100
+			PRINTFORMW 구음 강요를 ON 합니다.
+			CFLAG:1051 = 0
+		ELSE
+			PRINTFORMW 구음 강요를 OFF 합니다.
+			CFLAG:1051 = 100
+		ENDIF
+	CASE 52
+		IF CFLAG:1052 = 100
+			PRINTFORMW 파이즈리를 ON 합니다.
+			CFLAG:1052 = 0
+		ELSE
+			PRINTFORMW 파이즈리를 OFF 합니다.
+			CFLAG:1052 = 100
+		ENDIF
+	CASE 53
+		IF CFLAG:1053 = 100
+			PRINTFORMW 스마타를 ON 합니다.
+			CFLAG:1053 = 0
+		ELSE
+			PRINTFORMW 스마타를 OFF 합니다.
+			CFLAG:1053 = 100
+		ENDIF
+	CASE 55
+		IF CFLAG:1055 = 100
+			PRINTFORMW 족욕기 강요를 ON 합니다.
+			CFLAG:1055 = 0
+		ELSE
+			PRINTFORMW 발닦개 강요를 OFF 합니다.
+			CFLAG:1055 = 100
+		ENDIF
+	CASE 56
+		IF CFLAG:1056 = 100
+			PRINTFORMW 딥 쓰로트를 ON 합니다.
+			CFLAG:1056 = 0
+		ELSE
+			PRINTFORMW 딥 쓰로트를 OFF 합니다.
+			CFLAG:1056 = 100
+		ENDIF
+	CASE 57
+		IF CFLAG:1057 = 100
+			PRINTFORMW 가슴 애무 강요를 ON 합니다.
+			CFLAG:1057 = 0
+		ELSE
+			PRINTFORMW 가슴 애무 강요를 OFF 합니다.
+			CFLAG:1057 = 100
+		ENDIF
+ENDSELECT
+
+;------------------------------------
+;가학계 커멘드 필터
+;PRINTFORMW  ON OFF 합니다.
+;------------------------------------
+@FILTER_VIOLENCE
+
+PRINTFORML [60] - 스팽킹
+PRINTFORML [61] - 채찍
+PRINTFORML [62] - 바늘
+PRINTFORML [63] - 밧줄 ;구속구
+PRINTFORML [64] - 눈가리개
+PRINTFORML [65] - 볼개그
+PRINTFORML [66] - 매도
+PRINTFORML [67] - 삼각목마
+PRINTFORML [68] - 관장세트
+;PRINTFORML [69] - 목조르기
+
+SELECTCASE RESULT
+	CASE 60
+		IF CFLAG:1060 = 100
+			PRINTFORML 스팽킹을 ON 합니다.
+			CFLAG:1060 = 0
+		ELSE
+			PRINTFORML 스팽킹을 OFF 합니다.
+			CFLAG:1060 = 100
+		ENDIF
+	CASE 61
+		IF CFLAG:1061 = 100
+			PRINTFORML 채찍으로 친다를 ON 합니다.
+			CFLAG:1061 = 0
+		ELSE
+			PRINTFORML 채찍으로 친다를 OFF 합니다.
+			CFLAG:1061 = 100
+		ENDIF
+	CASE 62
+		IF CFLAG:1062 = 100
+			PRINTFORML 바늘로 찌른다를 ON 합니다.
+			CFLAG:1062 = 0
+		ELSE
+			PRINTFORML 바늘로 찌른다를 OFF 합니다.
+			CFLAG:1062 = 100
+		ENDIF
+	CASE 63
+		IF CFLAG:1063 = 100
+			PRINTFORML 구속한다를 ON 합니다.
+			CFLAG:1063 = 0
+		ELSE
+			PRINTFORML 구속한다를 OFF 합니다.
+			CFLAG:1063 = 100
+		ENDIF
+	CASE 64
+		IF CFLAG:1064 = 100
+			PRINTFORML 눈가리개를 ON 합니다.
+			CFLAG:1064 = 0
+		ELSE
+			PRINTFORML 눈가리개를 OFF 합니다.
+			CFLAG:1064 = 100
+		ENDIF

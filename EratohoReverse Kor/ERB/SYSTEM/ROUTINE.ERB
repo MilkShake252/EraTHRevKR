@@ -111,7 +111,7 @@ IF TIME++
 	DAY++
 	FLAG:일수 = DAY % 120
 	FLAG:연수 = DAY / 120
-	FLAG:계절 = FLAG:연수 / 30
+	FLAG:계절 = FLAG:일수 / 30	;이게 연수로 되어있으니 계절이 안바뀌지ㅋㅋㅋㅋㅋㅋㅋㅋ @MilkShake (20/02/13)
 	TIME = 0
 ;OriginalString : 一日が終わった・・・
 	PRINTW 하루가 끝났다···

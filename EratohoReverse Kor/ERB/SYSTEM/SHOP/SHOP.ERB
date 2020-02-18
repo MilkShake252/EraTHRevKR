@@ -87,6 +87,9 @@ CALL HTMLPRINTL(@"%HTMLBUTTON("[300] - 로드", "300", "보존한 데이터를 �
 PRINTL 
 ;OriginalString : (HTMLBUTTON("[888] - 구상표시설정", "888", "구상の表示/非表示を設定します"))
 CALL HTMLPRINTL(HTMLBUTTON("[888] - 구상표시설정", "888", "구상의 표시/비표시를 설정합니다"))
+;커멘드 필터 기능 추가 	@MilkShake(20/02/16)
+SIF TARGET >= 0
+	CALL HTMLPRINTL(@"%HTMLBUTTON("[900] - 커멘드 필터", "900", "해당 캐릭터의 커멘드 필터링을 설정합니다")%")
 DRAWLINE
 
 
@@ -120,6 +123,9 @@ ELSEIF RESULT == 300
 	CALL DATAMENU("LOAD")
 ELSEIF RESULT == 888
 	CALL KOJO_SET
+;커멘드 필터링		@MilkShake (20/02/16)
+ELSEIF RESULT == 900
+	CALL COMMAND_FILTER
 ;Emuera디버그모드기동시
 ;!!!!!!
 

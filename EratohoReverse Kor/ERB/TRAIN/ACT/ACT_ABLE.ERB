@@ -696,9 +696,10 @@ ACTABLE_REASON:18 = 물리장해_공다리없음
 SIF TALENT:다리없음
 	RETURN 0
 ;조교대상가여자
-ACTABLE_REASON:18 = 물리장해_수여성
-SIF TALENT:MASTER:후타나리 !| TALENT:MASTER:남자
-	RETURN 0
+;여자도 가능하게 변경 @MilkShake(20/02/15)
+;ACTABLE_REASON:18 = 물리장해_수여성
+;SIF TALENT:MASTER:후타나리 !| TALENT:MASTER:남자
+;	RETURN 0
 ;실행 가능
 ACTABLE_REASON:18 = 
 RETURN 1
@@ -3272,4 +3273,50 @@ SIF TEQUIP:오나홀
 ;	RETURN 0
 ;실행 가능
 ACTABLE_REASON:103 = 
+RETURN 1
+
+;-----------------------------------------------------------
+;사랑을 고백한다의 실행 판정		@MilkShake(20/02/16)
+;-----------------------------------------------------------
+@ACT_ABLE110
+SIF GLOBAL_ACTABLE(110)
+	RETURN RESULT
+
+;조교자의 호감도가 2000 미만
+ACTABLE_REASON:110 = 호의부족
+SIF CFLAG:호의 < 2000
+	RETURN 0
+
+;징계·모드
+ACTABLE_REASON:3 = 상황부적합_징계・중
+SIF TFLAG:징계·플래그
+	RETURN 0
+
+;방침가하드/이상
+;ACTABLE_REASON:3 = 방침부적합_턴방침(%POLICY("지금")%)
+;SIF IS_POLICY("지금", "하드/이상")
+	;RETURN 0
+
+;조교 대상이 피폐, 쇠약, 무기력, 분노, 싫증 상태에서는 불가능
+ACTABLE_REASON:110 = 타이밍최악
+SIF !IS_CONDITION(MASTER, "피폐", "쇠약", "무기력", "분노", "싫증")
+	RETURN 0
+
+;아이를 제외한 모든 조교자들은, 아나타에게 "예속" 보유+아나타의 주인님이 "연모" 보유를 충족한다면, 감히 NTR을 시도조차 못한다
+;그렇다. 근친 NTR은 가능하다.
+;일단 아이 NPC는 추가되지 않았으므로 생략.
+ACTABLE_REASON:110 = NTR불가능
+LOCAL:1 = 0
+FOR LOCAL,1,CHARANUM
+	IF FLAG:LOCAL:주인님
+		LOCAL:1 = LOCAL
+			BREAK
+	ENDIF
+NEXT
+LOCAL:2 = TARGET
+TARGET = LOCAL:1
+SIF TALENT:MASTER:예속 && TALENT:(LOCAL:1):연모 && !TARGET = (LOCAL:1)
+	RETURN 0
+
+ACTABLE_REASON:110 = 
 RETURN 1

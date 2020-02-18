@@ -45,10 +45,22 @@ SIF TALENT:프라이드높음 && IS_NOWCOMNAME("서투르다고 모욕한다")
 ;특정 상황에서의 효과 up ;특정 상황에서의 효과 up
 {
 SIF IS_NOWCOMNAME("애정을 담아 한다") && 
-(MENUMATCH(TFLAG:ACT, "봉사") || MENUMATCH(TFLAG:ACT, "성봉") || IS_NOWACTNAME("기승위"))
+(MENUMATCH(TFLAG:ACT, "봉사") || MENUMATCH(TFLAG:ACT, "성봉") || IS_NOWACTNAME("기승위") || IS_NOWACTNAME("기승위 애널"))
 }
 	LTEMP += 3
 
+;조교자가 연모라면 더욱 더 up
+{
+SIF TALENT:연모 && IS_NOWCOMNAME("애정을 담아 한다") && 
+(MENUMATCH(TFLAG:ACT, "봉사") || MENUMATCH(TFLAG:ACT, "성봉") || IS_NOWACTNAME("기승위") || IS_NOWACTNAME("기승위 애널"))
+}
+	LTEMP += 5
+
+;조교대상이 예속이고 조교자가 주인님일 시, 특정 커멘드에서 효과 up
+{
+SIF TALENT:TARGET:주인님 && TALENT:MASTER:예속 && (MENUMATCH(TFLAG:ACT, "봉사")|| MENUMATCH(TFLAG:ACT, "성교"))
+}
+	LTEMP += 3
 ;새드는노예의 비명을 기뻐하는;새드는 노예의 비명을 기뻐
 SIF TALENT:새드 && IS_NOWCOMNAME("비명지른다")
 	LTEMP += 2
@@ -445,12 +457,28 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "태연하게 한다"
 				LTEMP += 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				LTEMP += 1
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("허리를 흔든다")
-					LTEMP += 2
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += 3
+					IF TALENT:TARGET:연모
+						LTEMP += 5
+					ELSE
+						LTEMP += 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += 1
 				;최저한+2은 가산된다
@@ -467,12 +495,28 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "소극적으로 한다"
 				LTEMP -= 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				LTEMP += 1
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("허리를 흔든다")
-					LTEMP += 2
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += 3
+					IF TALENT:TARGET:연모
+						LTEMP += 5
+					ELSE
+						LTEMP += 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += 1
 				;최저한+2은 보증
@@ -489,10 +533,22 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "소극적으로 한다"
 				LTEMP -= 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 4
+					ELSE
+						LTEMP += 3
+					ENDIF
 				LTEMP += 2
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += 3
+					IF TALENT:TARGET:연모
+						LTEMP += 5
+					ELSE
+						LTEMP += 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += 1
 				;최저한+2은 가산된다
@@ -509,12 +565,28 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "소극적으로 한다"
 				LTEMP -= 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				LTEMP += 1
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("허리를 흔든다")
-					LTEMP += 2
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 4
+					ELSE
+						LTEMP += 2
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += 3
+					IF TALENT:TARGET:연모
+						LTEMP += 6
+					ELSE
+						LTEMP += 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += 1
 				;최저한+2은 가산된다
@@ -531,12 +603,28 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "소극적으로 한다"
 				LTEMP -= 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				LTEMP += 1
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("허리를 흔든다")
-					LTEMP += 2
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += 3
+					IF TALENT:TARGET:연모
+						LTEMP += 5
+					ELSE
+						LTEMP += 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += 1
 				;최저한+2은 가산된다
@@ -548,17 +636,33 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 					LTEMP -= 2
 				ENDIF
 		ENDSELECT
-	CASE "항문섹스"
+	CASE "정상위 애널"
 		SELECTCASE COMGRONAME(TFLAG:REACT분류)
 			CASE "소극적으로 한다"
 				LTEMP -= 1
 			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
 				LTEMP += TALENT:변태적 ? 2 # 1
 			CASE "받아들인다"
 				SIF IS_NOWCOMNAME("허리를 흔든다")
-					LTEMP += TALENT:변태적 ? 3 # 2
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += TALENT:변태적 ? 3 # 2
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸!")
-					LTEMP += TALENT:변태적 ? 4 # 3
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSE
+						LTEMP += TALENT:변태적 ? 4 # 3
+					ENDIF
 				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
 					LTEMP += TALENT:변태적 ? 2 # 1
 				;최저한+2은 가산된다
@@ -566,6 +670,152 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASE "용서를 빌다"
 				IF TALENT:새드
 					LTEMP += 3
+				ELSE
+					LTEMP -= 2
+				ENDIF
+		ENDSELECT
+	CASE "후배위 애널"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적으로 한다"
+				LTEMP -= 1
+			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
+				LTEMP += TALENT:변태적 ? 2 # 1
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += TALENT:변태적 ? 3 # 2
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸!")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSE
+						LTEMP += TALENT:변태적 ? 4 # 3
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
+					LTEMP += TALENT:변태적 ? 2 # 1
+				;최저한+2은 가산된다
+				LTEMP += 1
+			CASE "용서를 빌다"
+				IF TALENT:새드
+					LTEMP += 4
+				ELSE
+					LTEMP -= 2
+				ENDIF
+		ENDSELECT
+	CASE "기승위 애널"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적으로 한다"
+				LTEMP -= 1
+			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 4
+					ELSE
+						LTEMP += 3
+					ENDIF
+				LTEMP += TALENT:변태적 ? 3 # 2
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("안에 싸!")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSE
+						LTEMP += TALENT:변태적 ? 4 # 3
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
+					LTEMP += TALENT:변태적 ? 2 # 1
+				;최저한+2은 가산된다
+				LTEMP += 1
+			CASE "용서를 빌다"
+				IF TALENT:새드
+					LTEMP += 4
+				ELSE
+					LTEMP -= 2
+				ENDIF
+		ENDSELECT
+	CASE "대면좌위 애널"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적으로 한다"
+				LTEMP -= 1
+			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
+				LTEMP += TALENT:변태적 ? 2 # 1
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 4
+					ELSE
+						LTEMP += TALENT:변태적 ? 3 # 2
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸!")
+					IF TALENT:TARGET:연모
+						LTEMP += 5
+					ELSE
+						LTEMP += TALENT:변태적 ? 4 # 3
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
+					LTEMP += TALENT:변태적 ? 2 # 1
+				;최저한+2은 가산된다
+				LTEMP += 1
+			CASE "용서를 빌다"
+				IF TALENT:새드
+					LTEMP += 4
+				ELSE
+					LTEMP -= 2
+				ENDIF
+		ENDSELECT
+	CASE "배면좌위 애널"
+		SELECTCASE COMGRONAME(TFLAG:REACT분류)
+			CASE "소극적으로 한다"
+				LTEMP -= 1
+			CASE "적극적으로 한다", "태연하게 한다"
+				SIF IS_NOWCOMNAME("키스한다")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSEIF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += 2
+					ENDIF
+				LTEMP += TALENT:변태적 ? 2 # 1
+			CASE "받아들인다"
+				SIF IS_NOWCOMNAME("허리를 흔든다")
+					IF TALENT:TARGET:주인님 && TALENT:MASTER:예속
+						LTEMP += 3
+					ELSE
+						LTEMP += TALENT:변태적 ? 3 # 2
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸!")
+					IF TALENT:TARGET:연모
+						LTEMP += 4
+					ELSE
+						LTEMP += TALENT:변태적 ? 4 # 3
+					ENDIF
+				SIF IS_NOWCOMNAME("안에 싸면 안돼!")
+					LTEMP += TALENT:변태적 ? 2 # 1
+				;최저한+2은 가산된다
+				LTEMP += 1
+			CASE "용서를 빌다"
+				IF TALENT:새드
+					LTEMP += 4
 				ELSE
 					LTEMP -= 2
 				ENDIF
@@ -645,6 +895,8 @@ SELECTCASE GET_ACTNAME(TFLAG:ACT)
 			CASEELSE
 				LTEMP -= 2
 		ENDSELECT
+	CASE "Ｖ조르기"
+		SELECTCASE ...ㅋㅋㅋㅋㅋㅋ 메세지부터 적고 온 다음에 다시 써봐야겠다
 
 	;ACT분류/봉사계
 	;==============

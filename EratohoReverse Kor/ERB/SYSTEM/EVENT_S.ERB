@@ -198,6 +198,7 @@ IF CFLAG:MASTER:임신 == 5
 	PRINTFORMW %CALLNAME:MASTER%의 배가 조금 부풀어 올랐다.
 	;이 시점에서 부친 불명
 	;은 개뿔 뜯어고친다
+	;잘 작동하는 것도 확인했으니 이대로 간다 ㄱㄱㄱ @MilkShake (20/02/15)
 		;부친 검색
 		LOCAL:1 = 0
 		FOR LOCAL,1,CHARANUM
@@ -211,7 +212,13 @@ IF CFLAG:MASTER:임신 == 5
 ;OriginalString : どうやら임신してしまったようだ･･･
 	PRINTFORMW 아무래도 임신해버린 것 같다…
 	PRINTFORMW 아이의 아버지는 아무래도 %CALLNAME:(LOCAL:1)%이지 않을까 생각했다.
+	PRINTL
+	CALL KOJO_EVENT(9, 0, 1, ARG)
+	PRINTL
 	PRINTFORMW %CALLNAME:MASTER%의 유두에서, 모유가 나오기 시작했다…
+	PRINTL
+	CALL KOJO_EVENT(9, 0, 2, ARG)
+	PRINTL
 	TALENT:MASTER:임신 = 1
 	TALENT:MASTER:모유체질 = 1
 	MAXBASE:MASTER:모유 = 10000
@@ -224,6 +231,8 @@ IF TALENT:MASTER:임신
 		DRAWLINE
 		PRINTFORMW %CALLNAME:MASTER%의 배가 많이 부풀어 올랐다.
 		PRINTFORMW 이제 곧 아이가 태어날 것 같다.
+		PRINTL
+		CALL KOJO_EVENT(9, 1)
 	ELSEIF CFLAG:MASTER:임신 >= 16 + RAND:3
 			;부친 검색
 			LOCAL:1 = 0
@@ -237,6 +246,8 @@ IF TALENT:MASTER:임신
 			DRAWLINE
 			PRINTFORMW %CALLNAME:MASTER%의 복부에서 격통이 전해졌다.
 			PRINTFORMW 마침내 아이가 태어나는 것 같다.
+			PRINTL
+			CALL KOJO_EVENT(9, 2, 1, ARG)
 ;OriginalString : ………
 			PRINTFORMW ………
 ;OriginalString : ……
@@ -264,6 +275,7 @@ IF TALENT:MASTER:임신
 			ENDIF
 ;OriginalString : を無事出産しま했다
 			PRINTFORMW 를 무사히 출산했습니다.
+			PRINTL
 			SIF LOCAL:1
 ;OriginalString : 生まれた子供はどことなく%CALLNAME:(LOCAL:1)%に似ている…
 				PRINTFORML 태어난 아이는 어딘지 %CALLNAME:(LOCAL:1)%를 닮은 것 같습니다…
@@ -299,6 +311,9 @@ IF TALENT:MASTER:임신
 								PRINTFORMW 자신의 아이에게 질투하는 %CALLNAME:(LOCAL:1)%의 태도에 %CALLNAME:MASTER%는 곤란해 하면서도, 아이가 사랑스러워 보였습니다.
 							ENDIF
 					ENDSELECT
+				PRINTL
+				CALL KOJO_EVENT(9, 2, 2, ARG)
+				PRINTL
 				ENDIF
 			LOCAL:2 = TARGET
 			TARGET = LOCAL:1

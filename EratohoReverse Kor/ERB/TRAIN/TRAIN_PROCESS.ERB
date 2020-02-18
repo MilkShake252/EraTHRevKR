@@ -278,7 +278,7 @@ IF IS_POLICY("금일", "휴식")
 	IF RESULT < 2
 		SIF RESULT
 			PRINTL 
-		PRINTFORML %타겟은% 오늘의 조교를 중지하고、
+		PRINTFORML %타겟은% 오늘의 조교를 중지하고,
 		PRINTFORML %플레이어와% 느긋하게 시간을 보냈다…
 	ENDIF
 	CALL _BEFORE_ACT_SUB1
@@ -288,7 +288,7 @@ ELSEIF CFLAG:소모 > 5
 	IF RESULT < 2
 		SIF RESULT
 			PRINTL 
-		PRINTFORML 조교의 시간이 왔지만、들어온 %타겟은% 어째선지 피곤한 모습으로、
+		PRINTFORML 조교의 시간이 왔지만, 들어온 %타겟은% 어째선지 피곤한 모습으로,
 		PRINTFORML 이번에는 휴식이라고 말한 후 방을 나갔다…
 	ENDIF
 	CALL _BEFORE_ACT_SUB1
@@ -299,7 +299,7 @@ ELSEIF CFLAG:MASTER:소모 > 5 || (FLAG:모드 == 1 && BASE:MASTER:체력 * 100 
 	IF RESULT < 2
 		SIF RESULT
 			PRINTL 
-		PRINTFORML 조교의 시간이 왔지만、%타겟은% 심한 상태의 %플레이어를% 보고 한동안 생각한 후、
+		PRINTFORML 조교의 시간이 왔지만, %타겟은% 심한 상태의 %플레이어를% 보고 한동안 생각한 후,
 		PRINTFORML 지금은 쉬어도 좋다고 말하고 방을 나갔다…
 	ENDIF
 	CALL _BEFORE_ACT_SUB1
@@ -382,8 +382,10 @@ SIF !LINEISEMPTY()
 
 
 @EQUIP_2USE
+SIF TEQUIP:MASTER:노예목걸이
+	PRINTFORML %플레이어의% 목에는, %CALLNAME:TARGET%의 이름이 새겨져 있는 \@ TEQUIP:야외플레이 ? 초커에 목줄이 # 초커가 \@ 달려있다…
 SIF TFLAG:저항불능
-	PRINTFORML 기력을 탕진해버려、%플레이어는% %CALLNAME:TARGET%에 몸을 맡기고 말았다…
+	PRINTFORML 기력을 탕진해버려, %플레이어는% %CALLNAME:TARGET%에 몸을 맡기고 말았다…
 SIF TEQUIP:안면승마
 	PRINTFORML %타겟은% %CALLNAME:MASTER%의 얼굴에 올라타 음순을 문지르고 있다…
 SIF TEQUIP:안면승마항문
@@ -401,6 +403,15 @@ IF TEQUIP:야외플레이
 ENDIF
 SIF TEQUIP:거울
 	PRINTFORML 눈 앞의 거울에는 %타겟과% %CALLNAME:MASTER%의 치태가 비치고 있다…
+SIF TEQUIP:목조르기중
+	PRINTFORM %플레이어는% %CALLNAME:TARGET%에게 목이 졸라져, 새파랗게 질린 얼굴
+		IF TALENT:MASTER:도Ｍ
+			PRINTFORML 위에 황홀한 듯한 눈빛을 띄우며, 입술 사이론 단 한숨을 흘리고 있다…
+		ELSEIF ABL:MASTER:마조끼 >= 4
+			PRINTFORML 을 하면서도, 달큰한 한숨을 내쉬고 있다…
+		ELSE
+			PRINTFORML 로, \@ TEQUIP:밧줄 ? 몸을 버둥거리고 # %타겟의% 손을 떼어내려 하고 \@ 있다…
+		ENDIF
 SIF TCVAR:MASTER:애태움도 > 1
 	PRINTFORML %플레이어는% %CALLNAME:TARGET%에게 가는 것을 억제당해 허덕이고 있다…
 SIF TEQUIP:자위중 == 1
@@ -415,10 +426,10 @@ SIF TEQUIP:성교중
 	PRINTFORML %CALLNAME:TARGET%의 \@ TEQUIP:조교자페니스밴드 ? 모조 # \@ 페니스는 끝까지 %CALLNAME:MASTER%에게 삽입되어 있다…
 IF TEQUIP:성교봉사중
 	IF TCVAR:MASTER:질내사정후경과턴 == 1 || TCVAR:MASTER:장내사정후경과턴 == 1
-		PRINTFORML %CALLNAME:TARGET%의 \@ TEQUIP:성교봉사중 == 6 ? 장내 # 질내 \@는 금방이라도 갈 것 같은 %CALLNAME:MASTER%의 페니스로부터
+		PRINTFORML %CALLNAME:TARGET%의 \@ TEQUIP:성교봉사중 == 6  || TEQUIP:성교봉사중 == 7 ? 장내 # 질내 \@는 금방이라도 갈 것 같은 %CALLNAME:MASTER%의 페니스로부터
 		PRINTFORML 다시 정액을 짜내려하고 있다…
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%의 \@ TEQUIP:성교봉사중 == 6 ? 엉덩이 # 성기 \@는 \@ TEQUIP:페니스밴드 ? 남성기 모양의 장난감을 # %CALLNAME:MASTER%의 페니스를 \@ 뿌리까지 삼키고 있다…
+		PRINTFORML %CALLNAME:TARGET%의 \@ TEQUIP:성교봉사중 == 6  || TEQUIP:성교봉사중 == 7 ? 엉덩이 # 성기 \@는 \@ TEQUIP:페니스밴드 ? 남성기 모양의 장난감을 # %CALLNAME:MASTER%의 페니스를 \@ 뿌리까지 삼키고 있다…
 	ENDIF
 ENDIF
 SIF TEQUIP:촉수조교중
@@ -428,10 +439,10 @@ SELECTCASE TEQUIP:조교대상Ｃ사용
 		IF PENIS(MASTER) || TEQUIP:페니스밴드
 			PRINTFORML %타겟은% %CALLNAME:MASTER%의 \@ TEQUIP:페니스밴드 ? 모조품 # 페니스 \@를 잡고 느긋하게 위아래로 문지르고 있다…
 		ELSE
-			PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 클리토리스에 손가락을 올려 천천히 계속 자극하고 있다...
+			PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 클리토리스에 손가락을 대고, 천천히 계속 자극하고 있다…
 		ENDIF
 	CASE 2
-		PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 \@ PENIS(MASTER) ? 귀두 # 비순 \@에 혀를 올리고 있다…
+		PRINTFORML %조사처리(CALLNAME:TARGET,"는")% %CALLNAME:MASTER%의 \@ PENIS(MASTER) ? 귀두 # 비순 \@위에서 혀를 움직이고 있다…
 ENDSELECT
 SIF TCVAR:MASTER:가버려
 	PRINTFORML %플레이어는% 가버릴 것 같다…
@@ -499,19 +510,20 @@ IF TEQUIP:로션 || TEQUIP:미약 || TEQUIP:이뇨제 || TEQUIP:은방울꽃독 
 	SIF TEQUIP:은방울꽃독
 		PRINTFORM [은방울꽃의 독(%EFFECT(TEQUIP:은방울꽃독)%)]
 	SIF TEQUIP:바이브
-		PRINTFORM [\@ TEQUIP:바이브 > 1 ? 특주 # \@바이브래이터]
+		PRINTFORM [\@ TEQUIP:바이브 > 1 ? 특주 # \@바이브레이터]
 	SIF TEQUIP:애널바이브
-		PRINTFORM [\@ TEQUIP:애널바이브 > 1 ? 특주 # \@어널 바이브래이터]
+		PRINTFORM [\@ TEQUIP:애널바이브 > 1 ? 특주 # \@애널 바이브레이터]
 	SIF TEQUIP:애널비즈
 		PRINT [어널 비즈]
 	SIF TEQUIP:관장기＋플러그
-		PRINT [관장＋어널 플러그]
+		PRINT [관장＋애널 플러그]
 	SIF TEQUIP:클리캡
-		PRINTFORM [\@ TEQUIP:클리캡 > 1 ? 특주 # \@구리 캡]
+		PRINTFORM [\@ TEQUIP:클리캡 > 1 ? 특주 # \@클리캡]
 	SIF TEQUIP:오나홀
 		PRINTFORM [\@ TEQUIP:오나홀 > 1 ? 특주 # \@오나홀]
 	SIF TEQUIP:유두캡
 		PRINTFORM [\@ TEQUIP:유두캡 > 1 ? 특주 # \@유두캡]
+	;묶는 방법이 세분화되면, 여기부터 고치기로. 아마 리액트 분류로 추가될 것 같음.
 	SIF TEQUIP:밧줄
 		PRINT [줄로 긴박]
 	SIF TEQUIP:눈가리개
